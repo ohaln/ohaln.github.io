@@ -1,1 +1,298 @@
-# ohaln.github.io
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undercover - Édition Famille</title>
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --glass-bg: rgba(30, 10, 10, 0.4);
+            --glass-border: rgba(255, 59, 48, 0.2);
+            --apple-red: #ff3b30;
+            --apple-red-hover: #ff4f45;
+            --text-color: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 0%, rgba(255, 59, 48, 0.15), transparent 50%);
+        }
+
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 59, 48, 0.1);
+            text-align: center;
+        }
+
+        h1 { font-size: 28px; margin-bottom: 5px; color: var(--apple-red); }
+        p.subtitle { color: #aaaaaa; margin-bottom: 30px; font-size: 14px; }
+
+        .hidden { display: none !important; }
+
+        /* Formulaire d'ajout de joueurs */
+        .player-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        input { flex: 1; }
+        input:focus, select:focus { border-color: var(--apple-red); }
+
+        button {
+            background: var(--apple-red);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: var(--apple-red-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+        }
+
+        .player-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .player-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .settings { margin-top: 20px; text-align: left; }
+        .settings label { display: block; margin-bottom: 8px; font-size: 14px; color: #ccc;}
+
+        /* Écrans de jeu */
+        .player-avatar-large { font-size: 80px; margin: 20px 0; }
+        .word-display { font-size: 32px; font-weight: bold; color: var(--apple-red); margin: 30px 0; letter-spacing: 1px;}
+    </style>
+</head>
+<body>
+
+    <div class="glass-container" id="setup-screen">
+        <h1>Undercover</h1>
+        <p class="subtitle">Édition Vacances en Famille</p>
+
+        <div class="player-input-group">
+            <input type="text" id="player-name" placeholder="Nom du joueur..." maxlength="15">
+            <select id="player-avatar">
+                <option value="🦊">🦊</option>
+                <option value="🐶">🐶</option>
+                <option value="🐱">🐱</option>
+                <option value="🦁">🦁</option>
+                <option value="🐸">🐸</option>
+                <option value="🐼">🐼</option>
+                <option value="🐨">🐨</option>
+                <option value="🐻">🐻</option>
+                <option value="🐯">🐯</option>
+                <option value="🐙">🐙</option>
+            </select>
+            <button style="width: auto;" onclick="addPlayer()">+</button>
+        </div>
+
+        <div class="player-list" id="player-list"></div>
+
+        <div class="settings">
+            <label for="undercover-count">Nombre d'Undercovers :</label>
+            <select id="undercover-count" style="width: 100%; margin-bottom: 20px;">
+                <option value="1">1 Undercover</option>
+                <option value="2">2 Undercovers</option>
+                <option value="3">3 Undercovers</option>
+            </select>
+        </div>
+
+        <button onclick="startGame()">Commencer la partie</button>
+    </div>
+
+    <!-- Écran pour passer le téléphone -->
+    <div class="glass-container hidden" id="pass-screen">
+        <h1>Au tour de :</h1>
+        <div class="player-avatar-large" id="pass-avatar">👤</div>
+        <h2 id="pass-name">Nom</h2>
+        <p class="subtitle">Assure-toi que personne ne regarde ton écran !</p>
+        <button onclick="showWord()">Voir mon mot secrètement</button>
+    </div>
+
+    <!-- Écran pour afficher le mot -->
+    <div class="glass-container hidden" id="reveal-screen">
+        <div class="player-avatar-large" id="reveal-avatar">👤</div>
+        <h2>Ton mot est :</h2>
+        <div class="word-display" id="secret-word">MOT</div>
+        <p class="subtitle">Mémorise-le bien.</p>
+        <button onclick="nextPlayer()">Cacher et passer le téléphone</button>
+    </div>
+
+    <!-- Écran de début de débat -->
+    <div class="glass-container hidden" id="debate-screen">
+        <h1>Tout le monde a vu son mot !</h1>
+        <p class="subtitle">Que le débat commence...</p>
+        <button onclick="resetGame()">Nouvelle Manche</button>
+    </div>
+
+    <script>
+        // --- BASE DE DONNÉES DE MOTS ---
+        // Voici un échantillon. Il faudra l'étoffer pour arriver à 500 !
+        const wordDatabase = [
+            { civil: "Piscine", undercover: "Océan" },
+            { civil: "Loup", undercover: "Chien" },
+            { civil: "Glace", undercover: "Sorbet" },
+            { civil: "Voiture", undercover: "Camion" },
+            { civil: "Chocolat", undercover: "Cacao" },
+            { civil: "Soleil", undercover: "Lune" },
+            { civil: "Château", undercover: "Manoir" },
+            { civil: "Montagne", undercover: "Colline" },
+            { civil: "Cinéma", undercover: "Théâtre" },
+            { civil: "Avion", undercover: "Hélicoptère" }
+        ];
+
+        let players = [];
+        let gamePlayers = []; // Joueurs avec leurs rôles
+        let currentPlayerIndex = 0;
+
+        // Écrans
+        const setupScreen = document.getElementById('setup-screen');
+        const passScreen = document.getElementById('pass-screen');
+        const revealScreen = document.getElementById('reveal-screen');
+        const debateScreen = document.getElementById('debate-screen');
+
+        function addPlayer() {
+            const nameInput = document.getElementById('player-name');
+            const avatarSelect = document.getElementById('player-avatar');
+            const name = nameInput.value.trim();
+            const avatar = avatarSelect.value;
+
+            if (name === '') return alert("Choisis un nom !");
+            if (players.length >= 10) return alert("Maximum 10 joueurs !");
+
+            players.push({ name, avatar });
+            nameInput.value = '';
+            
+            // Retirer l'avatar choisi pour ne pas avoir de doublons
+            avatarSelect.options[avatarSelect.selectedIndex].remove();
+            
+            updatePlayerList();
+        }
+
+        function updatePlayerList() {
+            const list = document.getElementById('player-list');
+            list.innerHTML = '';
+            players.forEach(p => {
+                const badge = document.createElement('div');
+                badge.className = 'player-badge';
+                badge.innerHTML = `${p.avatar} ${p.name}`;
+                list.appendChild(badge);
+            });
+        }
+
+        function startGame() {
+            const undercoverCount = parseInt(document.getElementById('undercover-count').value);
+            
+            if (players.length < 3) return alert("Il faut au moins 3 joueurs pour jouer !");
+            if (undercoverCount >= players.length - 1) return alert("Trop d'Undercovers pour le nombre de joueurs !");
+
+            // Choisir un duo de mots au hasard
+            const wordPair = wordDatabase[Math.floor(Math.random() * wordDatabase.length)];
+            
+            // Préparer les rôles
+            let roles = Array(players.length).fill('civil');
+            for(let i=0; i < undercoverCount; i++) {
+                roles[i] = 'undercover';
+            }
+            // Mélanger les rôles
+            roles.sort(() => Math.random() - 0.5);
+
+            // Assigner aux joueurs
+            gamePlayers = players.map((p, index) => {
+                return {
+                    name: p.name,
+                    avatar: p.avatar,
+                    role: roles[index],
+                    word: roles[index] === 'civil' ? wordPair.civil : wordPair.undercover
+                };
+            });
+
+            // Mélanger l'ordre de passage
+            gamePlayers.sort(() => Math.random() - 0.5);
+
+            currentPlayerIndex = 0;
+            setupScreen.classList.add('hidden');
+            showPassScreen();
+        }
+
+        function showPassScreen() {
+            const player = gamePlayers[currentPlayerIndex];
+            document.getElementById('pass-name').innerText = player.name;
+            document.getElementById('pass-avatar').innerText = player.avatar;
+            passScreen.classList.remove('hidden');
+            revealScreen.classList.add('hidden');
+        }
+
+        function showWord() {
+            const player = gamePlayers[currentPlayerIndex];
+            document.getElementById('reveal-avatar').innerText = player.avatar;
+            document.getElementById('secret-word').innerText = player.word;
+            passScreen.classList.add('hidden');
+            revealScreen.classList.remove('hidden');
+        }
+
+        function nextPlayer() {
+            currentPlayerIndex++;
+            if (currentPlayerIndex < gamePlayers.length) {
+                showPassScreen();
+            } else {
+                revealScreen.classList.add('hidden');
+                debateScreen.classList.remove('hidden');
+            }
+        }
+
+        function resetGame() {
+            debateScreen.classList.add('hidden');
+            setupScreen.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
