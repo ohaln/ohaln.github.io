@@ -96,10 +96,9 @@
             background: rgba(255,255,255,0.05);
         }
 
-        /* CORRECTION CORPS DE L'AVATAR (ROND PARFAIT SUR iOS) */
         .preview-avatar {
             width: 48px; height: 48px; border-radius: 50%;
-            flex-shrink: 0; /* Empêche Safari de le transformer en ovale */
+            flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.6rem; transition: all 0.3s var(--apple-spring);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -145,14 +144,18 @@
             background: rgba(255,255,255,0.02);
             border: 1px solid var(--glass-border);
             border-radius: 16px;
-            padding: 0 16px;
+            padding: 0 12px; /* Légère réduction du padding pour donner plus d'air au texte */
             height: 54px;
         }
 
+        /* CORRECTION DU TEXTE EN UNE SEULE LIGNE */
         .config-card span {
             font-size: 0.9rem;
             font-weight: 600;
             color: var(--text-main);
+            white-space: nowrap; /* Force strictement le texte sur une seule ligne */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .config-card select {
@@ -174,14 +177,13 @@
             color: white;
         }
 
-        /* CORRECTION DU TOGGLE SLIDER POUR L'IPHONE */
         .switch { 
             position: relative; 
             display: inline-block; 
             width: 44px; 
             height: 24px; 
             margin: 0; 
-            flex-shrink: 0; /* Empêche le conteneur d'être écrasé */
+            flex-shrink: 0;
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .3s var(--apple-spring); border-radius: 34px; }
@@ -199,7 +201,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         input:checked + .slider { background-color: var(--accent-red); }
-        /* Translation recalibrée au pixel près pour éviter le débordement à droite */
         input:checked + .slider:before { transform: translateX(20px); }
 
         .lobby-grid {
@@ -250,7 +251,10 @@
         .elim-card:hover { background: rgba(255,255,255,0.06); transform: translateY(-3px); }
         .elim-card.dead { animation: killShake 0.45s var(--apple-spring) forwards; pointer-events: none; background: rgba(0,0,0,0.5); }
         @keyframes killShake { 0% { transform: scale(1); } 30% { transform: scale(0.9) rotate(-3deg); } 70% { transform: scale(1.05) rotate(3deg); } 100% { transform: scale(1); opacity: 0.3; filter: grayscale(100%); } }
-        .role-reveal { font-size: 0.8rem; font-weight: 800; margin-top: 8px; text-transform: uppercase; }
+        
+        /* Sécurité supplémentaire pour l'affichage des rôles */
+        .role-reveal { font-size: 0.8rem; font-weight: 800; margin-top: 8px; text-transform: uppercase; white-space: nowrap; }
+        
         .recap-row { display: flex; align-items: center; justify-content: space-between; padding: 14px; background: rgba(255,255,255,0.02); border-radius: 14px; margin-bottom: 10px; border: 1px solid var(--glass-border); }
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); justify-content: center; align-items: center; z-index: 9999; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
         .modal.active { display: flex; opacity: 1; }
@@ -374,11 +378,11 @@
         ["Gazon", "Mousse"], ["Désert", "Savane"], ["Volcan", "Geyser"], ["Éclair", "Tonnerre"],
         ["Pigeon", "Mouette"], ["Canard", "Oie"], ["Lapin", "Lièvre"], ["Chameau", "Dromadaire"],
 
-        // --- MAISON & OBJETS DU QUOTIDIEN ---
+        // --- MAISON & OBJETS DU QUOTEDIEN ---
         ["Guitare", "Ukulélé"], ["Crayon", "Stylo"], ["Moto", "Scooter"], ["Ordinateur", "Tablette"],
         ["Livre", "Magazine"], ["Avion", "Hélicoptère"], ["Bateau", "Sous-marin"], ["Fenêtre", "Porte"],
         ["Chapeau", "Casquette"], ["Tapis", "Moquette"], ["Téléphone", "Smartphone"], ["Montre", "Horloge"],
-        ["Lunettes", "Lentilles"], ["Ciseaux", "Couteau"], ["Chaise", "Tabouret"], ["Lit", "Canapé"],
+        ["Lunettes", "Lentilles"], ["Ciseaux", "Couteau"], ["Chaise", "Tabourret"], ["Lit", "Canapé"],
         ["Sac", "Valise"], ["Clé", "Badge"], ["Miroir", "Vitre"], ["Casserole", "Poêle"],
         ["Four", "Micro-ondes"], ["Frigo", "Congélateur"], ["Assiette", "Bol"], ["Verre", "Tasse"],
         ["Fourchette", "Cuillère"], ["Serviette", "Torchon"], ["Balai", "Aspirateur"], ["Savon", "Shampoing"],
