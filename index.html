@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undercover - MNACKE by A</title>
+    <title>Undercover - Confidential Dossier</title>
+    
+    <!-- FAVICON ESPION EMBARQUÉ (ZÉRO FICHIER EXTERNE) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕵️‍♂️</text></svg>">
+
     <style>
         :root {
             --bg-dark: #07080a;
@@ -100,7 +104,7 @@
         }
 
         @keyframes bootTerminal {
-            0% { opacity: 0; transform: translateY(8px) scale(0.98); filter: brightness(1.5); }
+            0% { opacity: 0; transform: translateY(12px) scale(0.97); filter: brightness(1.3); }
             100% { opacity: 1; transform: translateY(0) scale(1); filter: brightness(1); }
         }
 
@@ -119,6 +123,7 @@
             margin-bottom: 18px;
             gap: 12px;
             position: relative;
+            transition: all 0.3s var(--apple-spring);
         }
         .creation-zone:focus-within {
             border-color: var(--detective-blue);
@@ -141,10 +146,36 @@
         }
         .creation-zone input::placeholder { color: var(--text-dark-muted); }
 
-        /* AJUSTEMENT : Ajout de padding horizontal pour éviter le découpage du focus */
+        /* BOUTON D'AJOUT MICRO-ANIMÉ */
+        .add-player-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-tech);
+            color: var(--detective-blue);
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s var(--apple-spring);
+        }
+        .add-player-btn svg {
+            width: 16px; height: 16px; display: block;
+            transition: transform 0.2s var(--apple-spring);
+        }
+        .add-player-btn:hover {
+            background: rgba(0, 229, 255, 0.15);
+            border-color: var(--detective-blue);
+        }
+        .add-player-btn:hover svg {
+            transform: rotate(90deg);
+        }
+        .add-player-btn:active {
+            transform: scale(0.9);
+            background: var(--detective-blue);
+            color: #07080a;
+        }
+
         .mini-grid {
-            display: flex; gap: 8px; overflow-x: auto; 
-            padding: 6px 8px 16px 8px; 
+            display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden;
+            padding: 12px 8px 12px 8px; 
             margin-left: -8px; margin-right: -8px;
             scrollbar-width: none;
         }
@@ -153,14 +184,23 @@
         .opt { 
             flex-shrink: 0; width: 36px; height: 36px;
             display: flex; align-items: center; justify-content: center; font-size: 1.1rem; 
-            cursor: pointer; border-radius: 50%; transition: all 0.2s var(--apple-spring); 
+            cursor: pointer; border-radius: 50%; transition: all 0.25s var(--apple-spring); 
             background: rgba(255,255,255,0.02); border: 1px solid var(--border-tech);
+        }
+        .opt:hover {
+            transform: scale(1.08);
+            background: rgba(255,255,255,0.06);
         }
         .opt.selected { 
             border-color: var(--detective-blue);
             background: rgba(0, 229, 255, 0.1);
-            transform: scale(1.1);
+            animation: bounceSelect 0.3s var(--apple-spring) forwards;
             box-shadow: 0 0 10px var(--detective-blue-glow);
+        }
+        @keyframes bounceSelect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1.1); }
         }
         .color-dot { width: 14px; height: 14px; border-radius: 50%; }
 
@@ -180,6 +220,10 @@
             border-radius: 12px;
             padding: 0 12px;
             height: 50px;
+            transition: border-color 0.2s;
+        }
+        .config-card:focus-within {
+            border-color: rgba(255,255,255,0.15);
         }
 
         .config-card span {
@@ -213,39 +257,68 @@
         input:checked + .slider:before { transform: translateX(20px); }
 
         .lobby-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
-            margin-top: 10px; max-height: 180px; overflow-y: auto; padding-right: 2px;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+            margin-top: 10px; max-height: 180px; overflow-y: auto; padding: 6px 6px 6px 2px;
         }
         
         .player-card {
             position: relative; display: flex; align-items: center;
             background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-tech);
             padding: 8px 10px; border-radius: 10px;
-            animation: cardPop 0.3s var(--apple-spring) forwards;
+            transform-origin: center;
+            animation: cardPop 0.35s var(--apple-spring) forwards;
+            transition: opacity 0.25s var(--apple-spring), transform 0.25s var(--apple-spring);
         }
-        @keyframes cardPop { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes cardPop { 0% { opacity: 0; transform: scale(0.85) translateY(5px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         .card-badge { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; margin-right: 8px; }
         .card-name { font-weight: 600; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85px; }
         
+        /* CROIX DE SUPPRESSION FLUIDE */
         .card-delete {
-            position: absolute; top: -4px; right: -4px;
-            width: 16px; height: 16px; background: #161a22; color: var(--text-dark-muted);
+            position: absolute; top: -6px; right: -6px;
+            width: 18px; height: 18px; 
+            background: #1c212c; 
+            color: var(--accent-radar);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 0.6rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border-tech);
-            transition: all 0.2s; opacity: 0;
+            font-size: 0.65rem; font-weight: 800; cursor: pointer; 
+            border: 1px solid rgba(255, 42, 42, 0.4);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            transition: all 0.2s var(--apple-spring);
+            z-index: 10;
         }
-        .player-card:hover .card-delete { opacity: 1; }
-        .card-delete:hover { background: var(--accent-radar); color: white; }
+        .card-delete:hover { 
+            background: var(--accent-radar); 
+            color: white; 
+            transform: scale(1.15);
+            box-shadow: 0 0 8px var(--accent-radar-glow);
+        }
+        .card-delete:active {
+            transform: scale(0.85);
+        }
 
+        /* LISSAGE DES BOUTONS PRINCIPAUX */
         .btn {
             width: 100%; padding: 14px; background: var(--accent-radar); border: none; border-radius: 12px;
             color: white; font-size: 0.9rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 4px 15px var(--accent-radar-glow); transition: all 0.2s var(--apple-spring);
+            box-shadow: 0 4px 15px var(--accent-radar-glow); transition: all 0.3s var(--apple-spring);
         }
-        .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255, 42, 42, 0.5); }
-        .btn:active { transform: scale(0.98); }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 42, 42, 0.5); }
+        .btn:active { transform: translateY(0) scale(0.98); }
         .btn-secondary { background: rgba(255, 255, 255, 0.05); box-shadow: none; margin-top: 10px; color: var(--text-neon); border: 1px solid var(--border-tech); }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); box-shadow: none; }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); box-shadow: none; transform: translateY(-1px); }
+
+        /* BOUTON LANCER ULTRA FLUIDE DEPUIS LE BAS */
+        .btn-launch {
+            opacity: 0;
+            transform: translateY(15px);
+            pointer-events: none;
+            margin-top: 18px;
+        }
+        .btn-launch.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
 
         .pass-box { text-align: center; }
         .large-avatar { font-size: 3.5rem; margin-bottom: 15px; display: inline-block; padding: 16px; border-radius: 50%; background: rgba(255,255,255,0.02); }
@@ -258,7 +331,7 @@
         
         .elimination-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .elim-card { background: rgba(255,255,255,0.01); border: 1px solid var(--border-tech); padding: 16px; border-radius: 14px; text-align: center; cursor: pointer; transition: all 0.2s var(--apple-spring); position: relative; }
-        .elim-card:hover { background: rgba(255,255,255,0.03); border-color: var(--detective-blue); }
+        .elim-card:hover { background: rgba(255,255,255,0.03); border-color: var(--detective-blue); transform: translateY(-2px); }
         .elim-card.dead { animation: killShake 0.4s var(--apple-spring) forwards; pointer-events: none; background: rgba(0,0,0,0.6); border-color: rgba(255,42,42,0.2); }
         @keyframes killShake { 0% { transform: scale(1); } 50% { transform: scale(0.95) rotate(-2deg); } 100% { transform: scale(1); opacity: 0.35; filter: grayscale(100%); } }
         .role-reveal { font-size: 0.75rem; font-weight: 800; margin-top: 6px; text-transform: uppercase; white-space: nowrap; }
@@ -284,10 +357,16 @@
         <h1><span>Under</span>cover</h1>
         
         <label>Enregistrement Suspect</label>
-        <div class="creation-zone">
+        <form class="creation-zone" onsubmit="event.preventDefault(); tryAddPlayer();">
             <div id="live-preview" class="preview-avatar">🦊</div>
             <input type="text" id="player-input" placeholder="Identifiant / Prénom..." maxlength="12" autocomplete="off">
-        </div>
+            <button type="submit" class="add-player-btn" aria-label="Ajouter le joueur">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
+        </form>
         
         <label>Matrice Visuelle (Optionnel)</label>
         <div class="mini-grid" id="avatar-box"></div>
@@ -314,7 +393,7 @@
         <label style="margin-top: 12px;">Dossiers Actifs (<span id="p-count">0</span>/10)</label>
         <div class="lobby-grid" id="players-lobby"></div>
         
-        <button class="btn" id="start-btn" style="display:none; margin-top: 18px;">Lancer l'enquête</button>
+        <button class="btn btn-launch" id="start-btn">Lancer l'enquête</button>
     </div>
 
     <!-- ÉCRAN 2 : DECRYPTAGE -->
@@ -432,7 +511,11 @@
     ];
 
     const avatars = ["🦊","🐱","🐼","🦁","🐸","🐵","🦄","🐙","🐉","🥷","🐻","🐨","🐰","🐭","🐷","🐮","🐹","🐔"];
-    const colors = ["#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#007AFF", "#5856D6", "#AF52DE", "#FF2D55", "#5AC8FA", "#4CD964"];
+    const colors = [
+        "#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#00e5ff", 
+        "#007AFF", "#5856D6", "#AF52DE", "#FF2D55", "#EC4899", 
+        "#F43F5E", "#10B981", "#F59E0B", "#ffffff"
+    ];
 
     let players = [];
     let currentAvatar = "";
@@ -510,8 +593,6 @@
         nameInput.focus();
     }
 
-    nameInput.onkeydown = (e) => { if(e.key === 'Enter') tryAddPlayer(); };
-
     function updateLobbyGrid() {
         const lobby = document.getElementById('players-lobby');
         lobby.innerHTML = '';
@@ -520,17 +601,32 @@
                 <div class="player-card">
                     <div class="card-badge" style="background:${p.color}15; color:${p.color}; border: 1px solid ${p.color}35">${p.avatar}</div>
                     <div class="card-name">${p.name}</div>
-                    <div class="card-delete" onclick="removePlayer(${index})">✕</div>
+                    <div class="card-delete" onclick="removePlayer(${index}, this)">✕</div>
                 </div>
             `;
         });
         document.getElementById('p-count').innerText = players.length;
-        document.getElementById('start-btn').style.display = players.length >= 3 ? 'block' : 'none';
+        
+        // APPARITION PROGRESSIVE/FLUIDE DU BOUTON LANCER
+        const startBtn = document.getElementById('start-btn');
+        if(players.length >= 3) {
+            startBtn.classList.add('visible');
+        } else {
+            startBtn.classList.remove('visible');
+        }
     }
 
-    window.removePlayer = (index) => {
-        players.splice(index, 1);
-        updateLobbyGrid();
+    // ANIMATION DE SUPPRESSION AVANT DE RETIRER LE DOSSIER DU DOM
+    window.removePlayer = (index, buttonEl) => {
+        const card = buttonEl.closest('.player-card');
+        card.style.pointerEvents = 'none';
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.8) translateY(-10px)';
+        
+        setTimeout(() => {
+            players.splice(index, 1);
+            updateLobbyGrid();
+        }, 220); // Aligné sur le timing CSS
     };
 
     document.getElementById('start-btn').onclick = () => { initRound(); };
