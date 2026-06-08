@@ -3,296 +3,521 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undercover - Édition Famille</title>
+    <title>Undercover - Vacation Edition</title>
     <style>
         :root {
-            --bg-color: #0d0d0d;
-            --glass-bg: rgba(30, 10, 10, 0.4);
-            --glass-border: rgba(255, 59, 48, 0.2);
-            --apple-red: #ff3b30;
-            --apple-red-hover: #ff4f45;
-            --text-color: #ffffff;
+            --bg-color: #0A0A0C;
+            --accent-red: #FF3B30;
+            --accent-red-glow: rgba(255, 59, 48, 0.3);
+            --glass-bg: rgba(22, 22, 26, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #F5F5F7;
+            --text-muted: #8E8E93;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at 50% -20%, rgba(255, 59, 48, 0.18), transparent 70%);
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background-image: radial-gradient(circle at 50% 0%, rgba(255, 59, 48, 0.15), transparent 50%);
+            padding: 20px;
+            overflow-x: hidden;
         }
 
-        .glass-container {
+        /* Style Liquid Glass (Apple) */
+        .glass-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 40px;
-            width: 90%;
-            max-width: 450px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 59, 48, 0.1);
-            text-align: center;
+            padding: 30px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        h1 { font-size: 28px; margin-bottom: 5px; color: var(--apple-red); }
-        p.subtitle { color: #aaaaaa; margin-bottom: 30px; font-size: 14px; }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #A1A1A6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-        .hidden { display: none !important; }
+        h1 span {
+            color: var(--accent-red);
+            -webkit-text-fill-color: initial;
+        }
 
-        /* Formulaire d'ajout de joueurs */
-        .player-input-group {
-            display: flex;
-            gap: 10px;
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeIn 0.4s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Formulaire et boutons */
+        .input-group {
             margin-bottom: 20px;
         }
 
-        input, select {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 12px;
-            border-radius: 12px;
-            outline: none;
-            font-size: 16px;
+        label {
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
-        input { flex: 1; }
-        input:focus, select:focus { border-color: var(--apple-red); }
-
-        button {
-            background: var(--apple-red);
+        input[type="text"], select {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
             color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 10px var(--accent-red-glow);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent-red);
             border: none;
-            padding: 14px 24px;
             border-radius: 14px;
-            font-size: 16px;
+            color: white;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 10px;
+            box-shadow: 0 4px 15px var(--accent-red-glow);
+            transition: transform 0.2s, cubic-bezier(0.25, 1, 0.5, 1) 0.2s;
         }
 
-        button:hover {
-            background: var(--apple-red-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
-        }
+        .btn:active { transform: scale(0.98); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.1); box-shadow: none; margin-top: 10px;}
 
-        .player-list {
+        /* Personnages et Couleurs */
+        .customizer {
             display: flex;
-            flex-wrap: wrap;
             gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .avatar-select, .color-select {
+            flex: 1;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 5px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: none;
+        }
+
+        .avatar-select.open, .color-select.open { display: grid; }
+
+        .selector-toggle {
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid var(--glass-border);
+            font-size: 0.9rem;
+        }
+
+        .opt {
+            display: flex;
+            align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            font-size: 1.4rem;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .opt:hover { background: rgba(255,255,255,0.1); }
+        .opt.selected { border: 2px solid var(--accent-red); background: rgba(255,59,48,0.15); }
+
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        /* Listes de joueurs */
+        .player-tag {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.04);
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid var(--glass-border);
         }
 
         .player-badge {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 14px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(255,255,255,0.05);
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 1.1rem;
         }
 
-        .settings { margin-top: 20px; text-align: left; }
-        .settings label { display: block; margin-bottom: 8px; font-size: 14px; color: #ccc;}
+        .player-name { flex-grow: 1; font-weight: 500; }
+        .delete-btn { color: var(--accent-red); cursor: pointer; background: none; border: none; font-size: 1.1rem; padding: 0 5px; }
 
-        /* Écrans de jeu */
-        .player-avatar-large { font-size: 80px; margin: 20px 0; }
-        .word-display { font-size: 32px; font-weight: bold; color: var(--apple-red); margin: 30px 0; letter-spacing: 1px;}
+        /* Écrans de Jeu */
+        .pass-box {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .large-avatar { font-size: 4.5rem; margin-bottom: 15px; display: inline-block; padding: 15px; border-radius: 50%; }
+        .secret-word {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #white;
+            margin: 25px 0;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px var(--accent-red-glow);
+        }
+
+        .elimination-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .elim-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .elim-card.dead {
+            opacity: 0.35;
+            text-decoration: line-through;
+            pointer-events: none;
+            background: rgba(0,0,0,0.4);
+        }
+        
+        .role-reveal {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
-    <div class="glass-container" id="setup-screen">
-        <h1>Undercover</h1>
-        <p class="subtitle">Édition Vacances en Famille</p>
-
-        <div class="player-input-group">
-            <input type="text" id="player-name" placeholder="Nom du joueur..." maxlength="15">
-            <select id="player-avatar">
-                <option value="🦊">🦊</option>
-                <option value="🐶">🐶</option>
-                <option value="🐱">🐱</option>
-                <option value="🦁">🦁</option>
-                <option value="🐸">🐸</option>
-                <option value="🐼">🐼</option>
-                <option value="🐨">🐨</option>
-                <option value="🐻">🐻</option>
-                <option value="🐯">🐯</option>
-                <option value="🐙">🐙</option>
-            </select>
-            <button style="width: auto;" onclick="addPlayer()">+</button>
+<div class="glass-card">
+    <!-- ÉCRAN 1 : AJOUT JOUEURS -->
+    <div id="screen-setup" class="screen active">
+        <h1><span>Under</span>cover</h1>
+        <div class="input-group">
+            <label>Nouveau Joueur (<span id="p-count">0</span>/10)</label>
+            <input type="text" id="player-input" placeholder="Nom du joueur..." maxlength="12">
+        </div>
+        
+        <div class="customizer">
+            <div class="selector-toggle" id="toggle-avatar">Perso : 🦊</div>
+            <div class="selector-toggle" id="toggle-color">Couleur : 🔴</div>
         </div>
 
-        <div class="player-list" id="player-list"></div>
+        <div class="avatar-select" id="avatar-box"></div>
+        <div class="color-select" id="color-box"></div>
 
-        <div class="settings">
-            <label for="undercover-count">Nombre d'Undercovers :</label>
-            <select id="undercover-count" style="width: 100%; margin-bottom: 20px;">
+        <button class="btn btn-secondary" id="add-btn" style="margin-bottom: 25px;">Ajouter le joueur</button>
+        
+        <div class="input-group">
+            <label>Nombre d'Undercovers</label>
+            <select id="undercover-count">
                 <option value="1">1 Undercover</option>
                 <option value="2">2 Undercovers</option>
                 <option value="3">3 Undercovers</option>
             </select>
         </div>
 
-        <button onclick="startGame()">Commencer la partie</button>
+        <div id="players-list" style="margin-bottom: 20px;"></div>
+        <button class="btn" id="start-btn" style="display:none;">Lancer la partie</button>
     </div>
 
-    <!-- Écran pour passer le téléphone -->
-    <div class="glass-container hidden" id="pass-screen">
-        <h1>Au tour de :</h1>
-        <div class="player-avatar-large" id="pass-avatar">👤</div>
-        <h2 id="pass-name">Nom</h2>
-        <p class="subtitle">Assure-toi que personne ne regarde ton écran !</p>
-        <button onclick="showWord()">Voir mon mot secrètement</button>
-    </div>
-
-    <!-- Écran pour afficher le mot -->
-    <div class="glass-container hidden" id="reveal-screen">
-        <div class="player-avatar-large" id="reveal-avatar">👤</div>
-        <h2>Ton mot est :</h2>
-        <div class="word-display" id="secret-word">MOT</div>
-        <p class="subtitle">Mémorise-le bien.</p>
-        <button onclick="nextPlayer()">Cacher et passer le téléphone</button>
-    </div>
-
-    <!-- Écran de début de débat -->
-    <div class="glass-container hidden" id="debate-screen">
-        <h1>Tout le monde a vu son mot !</h1>
-        <p class="subtitle">Que le débat commence...</p>
-        <button onclick="resetGame()">Nouvelle Manche</button>
-    </div>
-
-    <script>
-        // --- BASE DE DONNÉES DE MOTS ---
-        // Voici un échantillon. Il faudra l'étoffer pour arriver à 500 !
-        const wordDatabase = [
-            { civil: "Piscine", undercover: "Océan" },
-            { civil: "Loup", undercover: "Chien" },
-            { civil: "Glace", undercover: "Sorbet" },
-            { civil: "Voiture", undercover: "Camion" },
-            { civil: "Chocolat", undercover: "Cacao" },
-            { civil: "Soleil", undercover: "Lune" },
-            { civil: "Château", undercover: "Manoir" },
-            { civil: "Montagne", undercover: "Colline" },
-            { civil: "Cinéma", undercover: "Théâtre" },
-            { civil: "Avion", undercover: "Hélicoptère" }
-        ];
-
-        let players = [];
-        let gamePlayers = []; // Joueurs avec leurs rôles
-        let currentPlayerIndex = 0;
-
-        // Écrans
-        const setupScreen = document.getElementById('setup-screen');
-        const passScreen = document.getElementById('pass-screen');
-        const revealScreen = document.getElementById('reveal-screen');
-        const debateScreen = document.getElementById('debate-screen');
-
-        function addPlayer() {
-            const nameInput = document.getElementById('player-name');
-            const avatarSelect = document.getElementById('player-avatar');
-            const name = nameInput.value.trim();
-            const avatar = avatarSelect.value;
-
-            if (name === '') return alert("Choisis un nom !");
-            if (players.length >= 10) return alert("Maximum 10 joueurs !");
-
-            players.push({ name, avatar });
-            nameInput.value = '';
+    <!-- ÉCRAN 2 : DISTRIBUTION DES MOTS (ANTI-TRICHE) -->
+    <div id="screen-distribute" class="screen">
+        <h1>Mot <span>Secret</span></h1>
+        <div class="pass-box">
+            <div id="dist-avatar" class="large-avatar"></div>
+            <h2 id="dist-name" style="margin-bottom: 10px;">Joueur</h2>
+            <p id="dist-instruction" style="color: var(--text-muted);">Donne le téléphone à cette personne.</p>
             
-            // Retirer l'avatar choisi pour ne pas avoir de doublons
-            avatarSelect.options[avatarSelect.selectedIndex].remove();
+            <div id="word-display" class="secret-word" style="display: none;">???</div>
             
-            updatePlayerList();
+            <button class="btn" id="reveal-btn">Révéler mon mot</button>
+            <button class="btn" id="next-player-btn" style="display: none;">C'est bon, j'ai retenu</button>
+        </div>
+    </div>
+
+    <!-- ÉCRAN 3 : DEROULEMENT DU JEU & ELIMINATION -->
+    <div id="screen-game" class="screen">
+        <h1>Tableau de <span>Vote</span></h1>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
+            Débattez, puis éliminez un suspect en cliquant dessus.
+        </p>
+        <div class="elimination-grid" id="elim-grid"></div>
+        <button class="btn btn-secondary" onclick="location.reload()">Recommencer</button>
+    </div>
+</div>
+
+<script>
+    // Banque de mots (Gros potentiel d'extension de paires sémantiques proches)
+    const wordBank = [
+        ["Pomme", "Poire"], ["Singe", "Gorille"], ["Guitare", "Ukulélé"], ["Café", "Thé"],
+        ["Crayon", "Stylo"], ["Lion", "Tigre"], ["Moto", "Scooter"], ["Plage", "Piscine"],
+        ["Ordinateur", "Tablette"], ["Livre", "Magazine"], ["Chocolat", "Caramel"], ["Avion", "Hélicoptère"],
+        ["Chien", "Loup"], ["Bateau", "Sous-marin"], ["Soleil", "Lune"], ["Riz", "Pâtes"],
+        ["Fraise", "Framboise"], ["Tapis", "Moquette"], ["Fenêtre", "Porte"], ["Chapeau", "Casquette"]
+    ];
+
+    const avatars = ["🦊","🐱","🐼","🦁","🐸","🐵","🦄","🐙","🐉","🥷","🐻","🐨","🐰","🐭"];
+    const colors = ["#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#007AFF", "#5856D6", "#AF52DE", "#FF2D55"];
+
+    let players = [];
+    let selectedAvatar = avatars[0];
+    let selectedColor = colors[0];
+    let currentDistributeIndex = 0;
+    let selectedPair = [];
+
+    // Init customizer
+    const avatarBox = document.getElementById('avatar-box');
+    const colorBox = document.getElementById('color-box');
+    
+    avatars.forEach((av, i) => {
+        let div = document.createElement('div');
+        div.className = `opt ${i===0?'selected':''}`;
+        div.innerText = av;
+        div.onclick = () => {
+            document.querySelectorAll('#avatar-box .opt').forEach(el=>el.classList.remove('selected'));
+            div.classList.add('selected');
+            selectedAvatar = av;
+            document.getElementById('toggle-avatar').innerText = `Perso : ${av}`;
+            avatarBox.classList.remove('open');
+        };
+        avatarBox.appendChild(div);
+    });
+
+    colors.forEach((col, i) => {
+        let div = document.createElement('div');
+        div.className = `opt ${i===0?'selected':''}`;
+        div.innerHTML = `<div class="color-dot" style="background:${col}"></div>`;
+        div.onclick = () => {
+            document.querySelectorAll('#color-box .opt').forEach(el=>el.classList.remove('selected'));
+            div.classList.add('selected');
+            selectedColor = col;
+            document.getElementById('toggle-color').innerText = `Couleur : 🔴`;
+            document.getElementById('toggle-color').style.color = col;
+            colorBox.classList.remove('open');
+        };
+        colorBox.appendChild(div);
+    });
+
+    document.getElementById('toggle-avatar').onclick = () => { avatarBox.classList.toggle('open'); colorBox.classList.remove('open'); };
+    document.getElementById('toggle-color').onclick = () => { colorBox.classList.toggle('open'); avatarBox.classList.remove('open'); };
+
+    // Logique d'ajout joueur
+    document.getElementById('add-btn').onclick = () => {
+        const nameInput = document.getElementById('player-input');
+        const name = nameInput.value.trim();
+        if(!name) return;
+        if(players.length >= 10) return alert("Maximum 10 joueurs !");
+
+        players.push({
+            name: name,
+            avatar: selectedAvatar,
+            color: selectedColor,
+            role: 'Civil',
+            alive: true,
+            word: ''
+        });
+
+        nameInput.value = '';
+        updatePlayersList();
+    };
+
+    function updatePlayersList() {
+        const list = document.getElementById('players-list');
+        list.innerHTML = '';
+        players.forEach((p, index) => {
+            list.innerHTML += `
+                <div class="player-tag">
+                    <div class="player-badge" style="background:${p.color}20; color:${p.color}; border: 1px solid ${p.color}40">${p.avatar}</div>
+                    <div class="player-name">${p.name}</div>
+                    <button class="delete-btn" onclick="removePlayer(${index})">✕</button>
+                </div>
+            `;
+        });
+        document.getElementById('p-count').innerText = players.length;
+        document.getElementById('start-btn').style.display = players.length >= 3 ? 'block' : 'none';
+    }
+
+    window.removePlayer = (index) => {
+        players.splice(index, 1);
+        updatePlayersList();
+    };
+
+    // Lancement de partie
+    document.getElementById('start-btn').onclick = () => {
+        const ucCount = parseInt(document.getElementById('undercover-count').value);
+        if(ucCount >= players.length - 1) {
+            alert("Trop d'Undercovers pour le nombre de joueurs !");
+            return;
         }
 
-        function updatePlayerList() {
-            const list = document.getElementById('player-list');
-            list.innerHTML = '';
-            players.forEach(p => {
-                const badge = document.createElement('div');
-                badge.className = 'player-badge';
-                badge.innerHTML = `${p.avatar} ${p.name}`;
-                list.appendChild(badge);
-            });
-        }
-
-        function startGame() {
-            const undercoverCount = parseInt(document.getElementById('undercover-count').value);
-            
-            if (players.length < 3) return alert("Il faut au moins 3 joueurs pour jouer !");
-            if (undercoverCount >= players.length - 1) return alert("Trop d'Undercovers pour le nombre de joueurs !");
-
-            // Choisir un duo de mots au hasard
-            const wordPair = wordDatabase[Math.floor(Math.random() * wordDatabase.length)];
-            
-            // Préparer les rôles
-            let roles = Array(players.length).fill('civil');
-            for(let i=0; i < undercoverCount; i++) {
-                roles[i] = 'undercover';
+        // Attribution des rôles
+        let roles = Array(players.length).fill('Civil');
+        let ucAssigned = 0;
+        while(ucAssigned < ucCount) {
+            let rand = Math.floor(Math.random() * players.length);
+            if(roles[rand] === 'Civil') {
+                roles[rand] = 'Undercover';
+                ucAssigned++;
             }
-            // Mélanger les rôles
-            roles.sort(() => Math.random() - 0.5);
-
-            // Assigner aux joueurs
-            gamePlayers = players.map((p, index) => {
-                return {
-                    name: p.name,
-                    avatar: p.avatar,
-                    role: roles[index],
-                    word: roles[index] === 'civil' ? wordPair.civil : wordPair.undercover
-                };
-            });
-
-            // Mélanger l'ordre de passage
-            gamePlayers.sort(() => Math.random() - 0.5);
-
-            currentPlayerIndex = 0;
-            setupScreen.classList.add('hidden');
-            showPassScreen();
         }
 
-        function showPassScreen() {
-            const player = gamePlayers[currentPlayerIndex];
-            document.getElementById('pass-name').innerText = player.name;
-            document.getElementById('pass-avatar').innerText = player.avatar;
-            passScreen.classList.remove('hidden');
-            revealScreen.classList.add('hidden');
-        }
+        // Choix des mots
+        selectedPair = wordBank[Math.floor(Math.random() * wordBank.length)];
+        const flip = Math.random() > 0.5;
+        const civilWord = flip ? selectedPair[0] : selectedPair[1];
+        const ucWord = flip ? selectedPair[1] : selectedPair[0];
 
-        function showWord() {
-            const player = gamePlayers[currentPlayerIndex];
-            document.getElementById('reveal-avatar').innerText = player.avatar;
-            document.getElementById('secret-word').innerText = player.word;
-            passScreen.classList.add('hidden');
-            revealScreen.classList.remove('hidden');
-        }
+        players.forEach((p, i) => {
+            p.role = roles[i];
+            p.word = p.role === 'Civil' ? civilWord : ucWord;
+        });
 
-        function nextPlayer() {
-            currentPlayerIndex++;
-            if (currentPlayerIndex < gamePlayers.length) {
-                showPassScreen();
-            } else {
-                revealScreen.classList.add('hidden');
-                debateScreen.classList.remove('hidden');
-            }
-        }
+        // Aller à l'écran de distribution
+        switchScreen('screen-distribute');
+        showDistributeCard();
+    };
 
-        function resetGame() {
-            debateScreen.classList.add('hidden');
-            setupScreen.classList.remove('hidden');
+    function switchScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function showDistributeCard() {
+        const p = players[currentDistributeIndex];
+        document.getElementById('dist-avatar').innerText = p.avatar;
+        document.getElementById('dist-avatar').style.background = `${p.color}20`;
+        document.getElementById('dist-avatar').style.border = `2px solid ${p.color}`;
+        document.getElementById('dist-name').innerText = p.name;
+        document.getElementById('dist-instruction').innerText = `Donne le téléphone à ${p.name}. Les autres, fermez les yeux !`;
+        
+        document.getElementById('word-display').style.display = 'none';
+        document.getElementById('reveal-btn').style.display = 'block';
+        document.getElementById('next-player-btn').style.display = 'none';
+    }
+
+    document.getElementById('reveal-btn').onclick = () => {
+        const p = players[currentDistributeIndex];
+        const display = document.getElementById('word-display');
+        display.innerText = p.word;
+        display.style.display = 'block';
+        document.getElementById('reveal-btn').style.display = 'none';
+        document.getElementById('next-player-btn').style.display = 'block';
+        document.getElementById('dist-instruction').innerText = "Retiens bien ton mot et cache l'écran !";
+    };
+
+    document.getElementById('next-player-btn').onclick = () => {
+        currentDistributeIndex++;
+        if(currentDistributeIndex < players.length) {
+            showDistributeCard();
+        } else {
+            setupGameBoard();
+            switchScreen('screen-game');
         }
-    </script>
+    };
+
+    // Plateau de jeu final
+    function setupGameBoard() {
+        const grid = document.getElementById('elim-grid');
+        grid.innerHTML = '';
+        players.forEach((p, i) => {
+            grid.innerHTML += `
+                <div class="elim-card" id="card-${i}" onclick="eliminatePlayer(${i})">
+                    <div style="font-size: 2rem; margin-bottom: 5px;">${p.avatar}</div>
+                    <div style="font-weight: 600;">${p.name}</div>
+                    <div class="role-reveal" id="reveal-${i}" style="color:transparent;">En vie</div>
+                </div>
+            `;
+        });
+    }
+
+    window.eliminatePlayer = (index) => {
+        const p = players[index];
+        if(!p.alive) return;
+        
+        if(confirm(`Éliminer ${p.name} ?`)) {
+            p.alive = false;
+            const card = document.getElementById(`card-${index}`);
+            const reveal = document.getElementById(`reveal-${index}`);
+            
+            card.classList.add('dead');
+            reveal.innerText = p.role;
+            reveal.style.color = p.role === 'Undercover' ? 'var(--accent-red)' : '#34C759';
+            
+            checkGameEnd();
+        }
+    };
+
+    function checkGameEnd() {
+        const alives = players.filter(p => p.alive);
+        const ucs = alives.filter(p => p.role === 'Undercover');
+        const civils = alives.filter(p => p.role === 'Civil');
+
+        if(ucs.length === 0) {
+            alert("Victoire des Civils ! Tous les Undercovers ont été éliminés. Les mots étaient : " + selectedPair.join(' / '));
+        } else if(ucs.length >= civils.length) {
+            alert("Victoire des Undercovers ! Ils ont pris le contrôle. Les mots étaient : " + selectedPair.join(' / '));
+        }
+    }
+</script>
+
 </body>
 </html>
