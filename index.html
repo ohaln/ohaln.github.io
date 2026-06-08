@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undercover - Confidential Dossier</title>
+    <title>Undercover - MNACKE by A</title>
     <style>
         :root {
             --bg-dark: #07080a;
@@ -29,7 +29,6 @@
 
         body {
             background: var(--bg-dark);
-            /* Arrière-plan style grille radar tactique */
             background-image: 
                 linear-gradient(rgba(255, 255, 255, 0.005) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 255, 255, 0.005) 1px, transparent 1px),
@@ -58,14 +57,12 @@
             position: relative;
         }
 
-        /* Éléments de viseurs/angles de détective */
         .glass-card::before, .glass-card::after {
             content: ''; position: absolute; width: 14px; height: 14px; border-color: var(--accent-radar); border-style: solid; opacity: 0.6; pointer-events: none;
         }
         .glass-card::before { top: 12px; left: 12px; border-width: 2px 0 0 2px; }
         .glass-card::after { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; }
 
-        /* En-tête de l'agence */
         .agency-header {
             display: flex;
             justify-content: space-between;
@@ -112,7 +109,6 @@
             letter-spacing: 1.5px; color: var(--detective-blue); margin-bottom: 8px; font-weight: 700;
         }
 
-        /* Formulaire d'interrogatoire (Input) */
         .creation-zone {
             display: flex;
             align-items: center;
@@ -129,7 +125,6 @@
             box-shadow: 0 0 14px var(--detective-blue-glow);
         }
 
-        /* FIX IPHONE 15 PRO : Avatar Rond stable */
         .preview-avatar {
             width: 44px; height: 44px; border-radius: 50%;
             flex-shrink: 0;
@@ -146,9 +141,11 @@
         }
         .creation-zone input::placeholder { color: var(--text-dark-muted); }
 
-        /* Grilles d'options tactiques */
+        /* AJUSTEMENT : Ajout de padding horizontal pour éviter le découpage du focus */
         .mini-grid {
-            display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 16px 0;
+            display: flex; gap: 8px; overflow-x: auto; 
+            padding: 6px 8px 16px 8px; 
+            margin-left: -8px; margin-right: -8px;
             scrollbar-width: none;
         }
         .mini-grid::-webkit-scrollbar { display: none; }
@@ -167,7 +164,6 @@
         }
         .color-dot { width: 14px; height: 14px; border-radius: 50%; }
 
-        /* Configuration des paramètres de mission */
         .config-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -186,7 +182,6 @@
             height: 50px;
         }
 
-        /* FIX IPHONE 15 PRO : Une seule ligne pour Mr. White */
         .config-card span {
             font-size: 0.8rem;
             font-weight: 600;
@@ -203,7 +198,6 @@
         }
         .config-card select option { background: #0e1117; color: white; }
 
-        /* FIX IPHONE 15 PRO : Toggle Switch calibré au millimètre */
         .switch { 
             position: relative; display: inline-block; 
             width: 42px; height: 22px; margin: 0; flex-shrink: 0;
@@ -218,7 +212,6 @@
         input:checked + .slider { background-color: var(--accent-radar); border-color: rgba(255,42,42,0.3); box-shadow: 0 0 8px var(--accent-radar-glow); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* Dossiers des suspects (Lobby) */
         .lobby-grid {
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
             margin-top: 10px; max-height: 180px; overflow-y: auto; padding-right: 2px;
@@ -244,7 +237,6 @@
         .player-card:hover .card-delete { opacity: 1; }
         .card-delete:hover { background: var(--accent-radar); color: white; }
 
-        /* Boutons d'action tactiques */
         .btn {
             width: 100%; padding: 14px; background: var(--accent-radar); border: none; border-radius: 12px;
             color: white; font-size: 0.9rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
@@ -255,7 +247,6 @@
         .btn-secondary { background: rgba(255, 255, 255, 0.05); box-shadow: none; margin-top: 10px; color: var(--text-neon); border: 1px solid var(--border-tech); }
         .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); box-shadow: none; }
 
-        /* Écran Scanner Décryptage (Distribution) */
         .pass-box { text-align: center; }
         .large-avatar { font-size: 3.5rem; margin-bottom: 15px; display: inline-block; padding: 16px; border-radius: 50%; background: rgba(255,255,255,0.02); }
         .secure-envelope { position: relative; background: #000000; border: 1px solid var(--border-tech); border-radius: 16px; padding: 35px 20px; margin: 25px 0; overflow: hidden; }
@@ -265,7 +256,6 @@
         .envelope-blur.melted { opacity: 0; pointer-events: none; transform: scale(1.05); filter: blur(8px); }
         .secret-word { font-size: 2.2rem; font-weight: 900; color: #ffffff; letter-spacing: 1px; text-shadow: 0 0 15px rgba(255,255,255,0.2); text-transform: uppercase; }
         
-        /* Grille des suspect à abattre / éliminer */
         .elimination-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .elim-card { background: rgba(255,255,255,0.01); border: 1px solid var(--border-tech); padding: 16px; border-radius: 14px; text-align: center; cursor: pointer; transition: all 0.2s var(--apple-spring); position: relative; }
         .elim-card:hover { background: rgba(255,255,255,0.03); border-color: var(--detective-blue); }
@@ -273,10 +263,8 @@
         @keyframes killShake { 0% { transform: scale(1); } 50% { transform: scale(0.95) rotate(-2deg); } 100% { transform: scale(1); opacity: 0.35; filter: grayscale(100%); } }
         .role-reveal { font-size: 0.75rem; font-weight: 800; margin-top: 6px; text-transform: uppercase; white-space: nowrap; }
 
-        /* Tableau récapitulatif final */
         .recap-row { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-tech); }
         
-        /* Modal d'exécution */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); justify-content: center; align-items: center; z-index: 9999; padding: 16px; opacity: 0; transition: opacity 0.25s ease; }
         .modal.active { display: flex; opacity: 1; }
         .modal-box { max-width: 320px; text-align: center; transform: scale(0.95); transition: transform 0.25s var(--apple-spring); border-color: var(--accent-radar); }
@@ -286,7 +274,6 @@
 <body>
 
 <div class="glass-card">
-    <!-- En-tête tactique présent sur tous les écrans -->
     <div class="agency-header">
         <div><span class="status-pulse"></span>BUREAU DES OPÉRATIONS</div>
         <div style="color: var(--accent-radar);">CLASSIFIED // TOP SECRET</div>
@@ -330,7 +317,7 @@
         <button class="btn" id="start-btn" style="display:none; margin-top: 18px;">Lancer l'enquête</button>
     </div>
 
-    <!-- ÉCRAN 2 : DECRYPTAGE (DISTRIBUTION) -->
+    <!-- ÉCRAN 2 : DECRYPTAGE -->
     <div id="screen-distribute" class="screen">
         <h1>Analyse <span>Profil</span></h1>
         <div class="pass-box">
@@ -368,7 +355,7 @@
     </div>
 </div>
 
-<!-- MODAL DE CONFIRMATION D'ELIMINATION -->
+<!-- MODAL DE CONFIRMATION -->
 <div id="confirm-modal" class="modal">
     <div class="glass-card modal-box">
         <h3 id="modal-title" style="margin-bottom: 18px; font-size: 1.1rem; font-weight: 800; text-transform:uppercase; letter-spacing:0.5px;">Neutraliser la cible ?</h3>
@@ -378,7 +365,6 @@
 </div>
 
 <script>
-    // BANQUE DE MOTS GÉANTE (+250 paires / +500 mots)
     const wordBank = [
         ["Pomme", "Poire"], ["Café", "Thé"], ["Chocolat", "Caramel"], ["Riz", "Pâtes"], 
         ["Fraise", "Framboise"], ["Pain", "Brioche"], ["Beurre", "Margarine"], ["Sucre", "Sel"],
