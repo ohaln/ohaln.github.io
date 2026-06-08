@@ -139,15 +139,23 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
+        /* AJUSTEMENT CRUCIAL POUR L'INPUT SUR MOBILE */
         .creation-zone input {
-            flex-grow: 1; background: none; border: none;
-            color: white; font-size: 1rem; font-weight: 600; outline: none;
+            flex-grow: 1;
+            min-width: 0; /* Empêche l'input de déborder sur mobile */
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
             letter-spacing: 0.5px;
         }
         .creation-zone input::placeholder { color: var(--text-dark-muted); }
 
-        /* BOUTON D'AJOUT MICRO-ANIMÉ */
+        /* SÉCURISATION DU BOUTON CONTRE L'ÉCRASEMENT */
         .add-player-btn {
+            flex-shrink: 0; /* Interdit au bouton de se déformer */
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-tech);
             color: var(--detective-blue);
@@ -307,7 +315,7 @@
         .btn-secondary { background: rgba(255, 255, 255, 0.05); box-shadow: none; margin-top: 10px; color: var(--text-neon); border: 1px solid var(--border-tech); }
         .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); box-shadow: none; transform: translateY(-1px); }
 
-        /* BOUTON LANCER ULTRA FLUIDE DEPUIS LE BAS */
+        /* BOUTON LANCER ULTRA FLUIDE */
         .btn-launch {
             opacity: 0;
             transform: translateY(15px);
@@ -342,6 +350,13 @@
         .modal.active { display: flex; opacity: 1; }
         .modal-box { max-width: 320px; text-align: center; transform: scale(0.95); transition: transform 0.25s var(--apple-spring); border-color: var(--accent-radar); }
         .modal.active .modal-box { transform: scale(1); }
+
+        /* SÉCURITÉ RESPONSIVE POUR PETITS ÉCRANS (IPHONE SE, ETC) */
+        @media (max-width: 360px) {
+            .glass-card { padding: 16px; }
+            .creation-zone { padding: 10px; gap: 8px; }
+            .preview-avatar { width: 38px; height: 38px; font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
@@ -607,7 +622,6 @@
         });
         document.getElementById('p-count').innerText = players.length;
         
-        // APPARITION PROGRESSIVE/FLUIDE DU BOUTON LANCER
         const startBtn = document.getElementById('start-btn');
         if(players.length >= 3) {
             startBtn.classList.add('visible');
@@ -616,7 +630,6 @@
         }
     }
 
-    // ANIMATION DE SUPPRESSION AVANT DE RETIRER LE DOSSIER DU DOM
     window.removePlayer = (index, buttonEl) => {
         const card = buttonEl.closest('.player-card');
         card.style.pointerEvents = 'none';
@@ -626,7 +639,7 @@
         setTimeout(() => {
             players.splice(index, 1);
             updateLobbyGrid();
-        }, 220); // Aligné sur le timing CSS
+        }, 220);
     };
 
     document.getElementById('start-btn').onclick = () => { initRound(); };
