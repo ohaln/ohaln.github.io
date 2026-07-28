@@ -6,27 +6,27 @@
 <title>Taux d'encadrement — ALSH</title>
 <style>
   :root{
-    --glass-fill: rgba(255,255,255,0.14);
-    --glass-fill-strong: rgba(255,255,255,0.22);
-    --glass-border: rgba(255,255,255,0.35);
-    --glass-border-soft: rgba(255,255,255,0.16);
-    --text-hi: rgba(255,255,255,0.96);
-    --text-mid: rgba(255,255,255,0.72);
-    --text-low: rgba(255,255,255,0.48);
+    --glass-fill: rgba(255, 255, 255, 0.08);
+    --glass-fill-strong: rgba(255, 255, 255, 0.16);
+    --glass-border: rgba(255, 255, 255, 0.22);
+    --glass-border-soft: rgba(255, 255, 255, 0.12);
+    --text-hi: #FFFFFF;
+    --text-mid: rgba(255, 255, 255, 0.72);
+    --text-low: rgba(255, 255, 255, 0.45);
     --a: #6FD6FF;   /* 3–6 ans */
     --b: #B98CFF;   /* 6–12 ans */
     --accent: #FF9F5A;
-    --radius-xl: 30px;
-    --radius-lg: 22px;
-    --radius-md: 16px;
-    --radius-sm: 11px;
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
   }
 
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-  html,body{
-    height:100%;
-    margin:0;
+  html, body{
+    height: 100%;
+    margin: 0;
   }
 
   body{
@@ -36,12 +36,12 @@
     background: #0B0D1A;
     min-height: 100vh;
     overflow-x: hidden;
-    display:flex;
-    justify-content:center;
-    padding: 28px 16px 60px;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 48px;
   }
 
-  /* ---------- animated liquid backdrop ---------- */
+  /* ---------- background ---------- */
   .backdrop{
     position: fixed; inset: 0; z-index: -1; overflow: hidden;
     background:
@@ -50,7 +50,7 @@
       #0B0D1A;
   }
   .blob{
-    position:absolute; border-radius:50%; filter: blur(70px); opacity:.55;
+    position: absolute; border-radius: 50%; filter: blur(70px); opacity: .50;
     will-change: transform;
   }
   .b1{ width:520px; height:520px; left:-140px; top:-120px;
@@ -61,7 +61,7 @@
        animation: drift2 32s ease-in-out infinite; }
   .b3{ width:480px; height:480px; left:10%; bottom:-200px;
        background: radial-gradient(circle, #FF9F5A 0%, transparent 72%);
-       opacity:.35;
+       opacity:.30;
        animation: drift3 30s ease-in-out infinite; }
 
   @keyframes drift1{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(40px,60px) } }
@@ -73,7 +73,7 @@
   }
 
   /* ---------- layout ---------- */
-  main{ width:100%; max-width: 480px; display:flex; flex-direction:column; gap:16px; }
+  main{ width:100%; max-width: 460px; display:flex; flex-direction:column; gap:14px; }
 
   .glass{
     background: var(--glass-fill);
@@ -82,27 +82,27 @@
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
     box-shadow:
-      0 1px 0 rgba(255,255,255,0.35) inset,
+      0 1px 0 rgba(255,255,255,0.25) inset,
       0 0 0 1px rgba(255,255,255,0.02) inset,
-      0 24px 60px -18px rgba(0,0,0,0.55);
-    position:relative;
+      0 20px 50px -15px rgba(0,0,0,0.5);
+    position: relative;
     opacity: 0;
-    animation: cardIn .7s cubic-bezier(.16,.84,.44,1) forwards;
+    animation: cardIn .6s cubic-bezier(.16,.84,.44,1) forwards;
   }
   main > *:nth-child(1){ animation-delay: .02s; }
-  main > *:nth-child(2){ animation-delay: .10s; }
-  main > *:nth-child(3){ animation-delay: .18s; }
-  main > *:nth-child(4){ animation-delay: .26s; }
+  main > *:nth-child(2){ animation-delay: .08s; }
+  main > *:nth-child(3){ animation-delay: .14s; }
+  main > *:nth-child(4){ animation-delay: .20s; }
 
   .glass::before{
     content:""; position:absolute; inset:0; border-radius:inherit;
-    background: linear-gradient(160deg, rgba(255,255,255,0.20), rgba(255,255,255,0) 40%);
+    background: linear-gradient(155deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 35%);
     pointer-events:none;
     z-index: 1;
   }
 
   @keyframes cardIn{
-    from{ opacity:0; transform: translateY(18px) scale(.98); }
+    from{ opacity:0; transform: translateY(16px) scale(.98); }
     to{ opacity:1; transform: translateY(0) scale(1); }
   }
 
@@ -110,153 +110,172 @@
     .glass{ animation: none; opacity: 1; }
   }
 
-  .panel{ padding: 22px 22px 24px; position: relative; z-index: 2; }
+  .panel{ padding: 20px 20px 22px; position: relative; z-index: 2; }
 
   /* ---------- hero ---------- */
-  .hero{ padding: 26px 24px 22px; text-align:left; position: relative; z-index: 2; }
-  .eyebrow{
-    margin:0 0 8px; font-size: 12.5px; letter-spacing:.04em; font-weight:600;
-    color: var(--text-mid); text-transform: uppercase;
+  .hero{ padding: 22px 22px 18px; position: relative; z-index: 2; }
+  .eyebrow-badge{
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border-soft);
+    font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--a); margin-bottom: 10px;
   }
-  h1{ margin:0; font-size: 30px; font-weight:700; letter-spacing:-0.02em; }
-  .sub{ margin: 4px 0 0; color: var(--text-mid); font-size:15px; }
+  h1{ margin:0; font-size: 28px; font-weight:800; letter-spacing:-0.02em; }
+  .sub{ margin: 4px 0 0; color: var(--text-mid); font-size:14px; }
 
-  /* ---------- inputs ---------- */
-  .field{ margin-bottom: 18px; }
-  .field:last-of-type{ margin-bottom: 4px; }
-  label{ display:block; font-size:14.5px; font-weight:600; color: var(--text-hi); margin-bottom:9px; }
-
-  .select-wrapper {
-    position: relative;
-    margin-bottom: 18px;
+  /* ---------- regime selector (pills grid) ---------- */
+  .section-label{
+    display: block; font-size: 13px; font-weight: 700;
+    color: var(--text-mid); text-transform: uppercase; letter-spacing: .04em;
+    margin-bottom: 10px;
   }
-  .glass-select {
-    width: 100%;
-    padding: 12px 16px;
-    background: rgba(0, 0, 0, 0.25);
+
+  .regime-grid{
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px;
+  }
+  .regime-card{
+    background: rgba(0,0,0,0.22);
     border: 1px solid var(--glass-border-soft);
     border-radius: var(--radius-md);
-    color: var(--text-hi);
-    font-size: 14.5px;
-    font-weight: 600;
-    outline: none;
+    padding: 10px 12px;
+    text-align: left;
     cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.8)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
+    transition: all .2s cubic-bezier(.16,1,.3,1);
+    color: var(--text-mid);
+    outline: none;
   }
-  .glass-select option {
-    background: #182042;
+  .regime-card .r-title{ display: block; font-size: 13px; font-weight: 700; color: var(--text-hi); }
+  .regime-card .r-sub{ display: block; font-size: 11px; opacity: 0.7; margin-top: 2px; }
+  
+  .regime-card:hover{
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.25);
+  }
+  .regime-card.active{
+    background: linear-gradient(135deg, rgba(111, 214, 255, 0.20), rgba(185, 140, 255, 0.20));
+    border-color: rgba(111, 214, 255, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     color: #fff;
   }
+  .regime-card.active .r-title{ color: #fff; }
+  .regime-card.active .r-sub{ opacity: 0.9; color: var(--a); }
+
+  /* ---------- inputs ---------- */
+  .field{ margin-bottom: 14px; }
+  .field:last-of-type{ margin-bottom: 0; }
+  .field label{ display:block; font-size:13.5px; font-weight:600; color: var(--text-hi); margin-bottom:8px; }
 
   .stepper{
-    display:flex; align-items:center; gap:10px;
-    background: rgba(0,0,0,0.20);
+    display:flex; align-items:center; gap:8px;
+    background: rgba(0,0,0,0.25);
     border: 1px solid var(--glass-border-soft);
     border-radius: var(--radius-md);
-    padding: 6px;
-    overflow: hidden;
+    padding: 5px;
   }
   .stepper input{
-    flex: 1 1 0%; min-width: 0; width: 100%;
+    flex: 1; min-width: 0; width: 100%;
     text-align:center; border:none; background:transparent; color:var(--text-hi);
-    font-size: 22px; font-weight:700; font-variant-numeric: tabular-nums;
-    -moz-appearance: textfield; outline:none;
+    font-size: 20px; font-weight:700; font-variant-numeric: tabular-nums;
+    outline:none;
   }
   .stepper input::-webkit-outer-spin-button,
   .stepper input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
 
   .stepbtn{
-    width:40px; height:40px; flex-shrink:0; border-radius: var(--radius-sm);
+    width:38px; height:38px; flex-shrink:0; border-radius: var(--radius-sm);
     border: 1px solid var(--glass-border-soft);
     background: var(--glass-fill-strong);
-    color: var(--text-hi); font-size:20px; font-weight:600; line-height:1;
+    color: var(--text-hi); font-size:18px; font-weight:600;
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer; transition: transform .12s ease, background .12s ease;
+    cursor:pointer; transition: transform .1s ease, background .12s ease;
+    user-select: none;
   }
-  .stepbtn:active{ transform: scale(0.90); background: rgba(255,255,255,0.32); }
+  .stepbtn:active{ transform: scale(0.92); background: rgba(255,255,255,0.30); }
 
   .toggle-row{
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
-    margin-top: 6px; padding-top: 16px; border-top: 1px solid var(--glass-border-soft);
-    cursor:pointer; font-size: 14px; font-weight:600; color: var(--text-hi);
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--glass-border-soft);
+    cursor:pointer; font-size: 13.5px; font-weight:600; color: var(--text-hi);
   }
-  .toggle-row small{ display:block; font-weight:500; color: var(--text-low); font-size:12px; margin-top:2px; }
+  .toggle-row small{ display:block; font-weight:500; color: var(--text-low); font-size:11.5px; margin-top:2px; }
   .toggle-row input{ display:none; }
   .switch{
-    width:46px; height:28px; border-radius:999px; background: rgba(0,0,0,0.35);
+    width:44px; height:26px; border-radius:999px; background: rgba(0,0,0,0.4);
     border:1px solid var(--glass-border-soft); position:relative; flex-shrink:0;
-    transition: background .18s ease;
+    transition: background .2s ease;
   }
   .switch::after{
-    content:""; position:absolute; top:2px; left:2px; width:22px; height:22px; border-radius:50%;
-    background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.35);
-    transition: transform .18s ease;
+    content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%;
+    background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    transition: transform .2s cubic-bezier(.34,1.56,.64,1);
   }
   .toggle-row input:checked + .switch{ background: linear-gradient(135deg, var(--a), var(--b)); }
   .toggle-row input:checked + .switch::after{ transform: translateX(18px); }
-  .toggle-row.disabled{ opacity:.4; pointer-events:none; }
+  .toggle-row.disabled{ opacity:.35; pointer-events:none; }
 
-  /* ---------- pool / signature visual ---------- */
-  .pool-label{ font-size:13px; font-weight:600; color: var(--text-mid); margin-bottom:12px; }
-  .pool-track{ display:flex; gap:6px; }
+  /* ---------- visual pool ---------- */
+  .pool-header{
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .pool-label{ font-size:12.5px; font-weight:700; color: var(--text-mid); letter-spacing: .02em; }
+  
+  /* sleek integrated badge replaces old big green box */
+  .badge-mutualized{
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 6px;
+    background: rgba(111, 214, 255, 0.12);
+    border: 1px solid rgba(111, 214, 255, 0.3);
+    color: var(--a); font-size: 11px; font-weight: 700;
+    opacity: 0; transform: scale(0.9);
+    transition: all .25s cubic-bezier(.16,1,.3,1);
+  }
+  .badge-mutualized.visible{
+    opacity: 1; transform: scale(1);
+  }
+
+  .pool-track{ display:flex; gap:5px; }
   .segment{
-    flex:1; height:46px; border-radius: 12px; overflow:hidden; position:relative;
-    background: rgba(0,0,0,0.28);
+    flex:1; height:42px; border-radius: 10px; overflow:hidden; position:relative;
+    background: rgba(0,0,0,0.3);
     border: 1px solid var(--glass-border-soft);
-    display:flex;
+    display:flex; transition: transform .3s ease, opacity .3s ease;
   }
   .segment .fillA, .segment .fillB{
-    height:100%;
-    width: 0%;
-    transition: width .55s cubic-bezier(.22,.85,.32,1);
+    height:100%; width: 0%;
+    transition: width .5s cubic-bezier(.22,.85,.32,1);
   }
   .fillA{ background: linear-gradient(180deg, var(--a), #3FA9DE); }
   .fillB{ background: linear-gradient(180deg, var(--b), #7C5CE0); }
-  .segment{ transition: transform .3s ease, opacity .3s ease; }
-  .segment.ghost{ opacity:.5; }
+  .segment.ghost{ opacity:.4; }
   .segment.ghost::after{
     content:"–"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    color: var(--text-low); font-size:18px;
+    color: var(--text-low); font-size:16px;
   }
 
-  .pool-legend{ display:flex; gap:18px; margin-top:12px; }
-  .pool-legend span{ display:flex; align-items:center; gap:7px; font-size:12.5px; color: var(--text-mid); }
-  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .pool-legend{ display:flex; gap:16px; margin-top:10px; }
+  .pool-legend span{ display:flex; align-items:center; gap:6px; font-size:12px; color: var(--text-mid); font-weight: 500; }
+  .dot{ width:8px; height:8px; border-radius:50%; display:inline-block; }
   .dot-a{ background: var(--a); }
   .dot-b{ background: var(--b); }
 
-  .headline{ display:flex; align-items:baseline; gap:12px; margin-top:22px; flex-wrap:wrap; }
+  /* ---------- total & count display ---------- */
+  .headline{ display:flex; align-items:baseline; gap:12px; margin-top:18px; flex-wrap:wrap; }
   .big{
-    font-size: 56px; font-weight:800; letter-spacing:-0.03em; line-height:1;
-    background: linear-gradient(135deg, #fff, #cfe7ff);
+    font-size: 52px; font-weight:800; letter-spacing:-0.03em; line-height:1;
+    background: linear-gradient(135deg, #fff 30%, #cfe7ff 100%);
     -webkit-background-clip:text; background-clip:text; color:transparent;
     font-variant-numeric: tabular-nums;
   }
-  .biglabel{ font-size:14.5px; color: var(--text-mid); font-weight:600; max-width: 230px; }
-
-  .hint{
-    font-size: 13px; color: var(--text-mid); line-height: 1.5;
-    border-radius: var(--radius-sm);
-    background: rgba(255,255,255,0.06); border: 1px solid transparent;
-    height: 0; opacity: 0; padding: 0 14px; margin-top: 0;
-    transition: opacity .3s ease, margin-top .35s ease, padding .35s ease, border-color .35s ease;
-  }
-  .hint.show{
-    height: auto; opacity: 1; margin-top: 14px; padding: 11px 14px;
-    border-color: var(--glass-border-soft);
-  }
-  .hint.saved{ color: #C9F7D9; background: rgba(70, 210, 140, 0.10); border-color: rgba(120,230,170,0.25); }
+  .biglabel{ font-size:14px; color: var(--text-mid); font-weight:600; max-width: 220px; line-height: 1.35; }
 
   @keyframes numPulse{
     0%{ transform: scale(1); }
-    35%{ transform: scale(1.10); }
+    35%{ transform: scale(1.08); }
     100%{ transform: scale(1); }
   }
-  .num-pulse{ animation: numPulse .42s cubic-bezier(.34,1.56,.64,1); }
+  .num-pulse{ animation: numPulse .35s cubic-bezier(.34,1.56,.64,1); }
 
   @media (prefers-reduced-motion: reduce){
     .num-pulse{ animation: none; }
@@ -264,27 +283,28 @@
   }
 
   /* ---------- qualifications ---------- */
-  .quali h2{ margin:0 0 16px; font-size:16px; font-weight:700; letter-spacing:-0.01em; }
-  .qgrid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+  .quali h2{ margin:0 0 14px; font-size:15px; font-weight:700; letter-spacing:-0.01em; }
+  .qgrid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
   .qcard{
-    border-radius: var(--radius-md); padding: 14px 8px; text-align:center;
-    border: 1px solid var(--glass-border-soft); background: rgba(255,255,255,0.06);
+    border-radius: var(--radius-md); padding: 12px 6px; text-align:center;
+    border: 1px solid var(--glass-border-soft); background: rgba(255,255,255,0.04);
   }
-  .qnum{ display:block; font-size: 26px; font-weight:800; font-variant-numeric: tabular-nums; }
-  .qlabel{ display:block; margin-top:6px; font-size:11.5px; line-height:1.35; color: var(--text-mid); font-weight:600; }
-  .qlabel small{ color: var(--text-low); font-weight:500; }
+  .qnum{ display:block; font-size: 24px; font-weight:800; font-variant-numeric: tabular-nums; }
+  .qlabel{ display:block; margin-top:4px; font-size:11px; line-height:1.3; color: var(--text-mid); font-weight:600; }
+  .qlabel small{ color: var(--text-low); font-weight:500; font-size: 10px; }
   .qmin .qnum{ color: #8FE3B4; }
   .qmax .qnum{ color: #FFB199; }
   .qflex .qnum{ color: #C9C2FF; }
 
   footer.note{
-    font-size: 11.5px; line-height:1.55; color: var(--text-low);
-    padding: 4px 10px 0; text-align:center;
+    font-size: 11px; line-height:1.5; color: var(--text-low);
+    padding: 0 8px; text-align:center;
   }
 
   @media (max-width: 380px){
-    .big{ font-size: 46px; }
-    h1{ font-size: 26px; }
+    .big{ font-size: 42px; }
+    h1{ font-size: 24px; }
+    .regime-card{ padding: 8px 10px; }
   }
 </style>
 </head>
@@ -299,36 +319,46 @@
   <main>
 
     <header class="glass hero">
-      <p class="eyebrow" id="eyebrowLabel">ALSH · Hors PEDT · Accueil de plus de 5h</p>
+      <div class="eyebrow-badge" id="eyebrowBadge">Hors PEDT · > 5h / jour</div>
       <h1>Taux d'encadrement</h1>
-      <p class="sub">Enfants de 3 à 12 ans</p>
+      <p class="sub">Calculateur ALSH intelligent</p>
     </header>
 
     <section class="glass panel inputs">
-      <div class="select-wrapper">
-        <label for="regimeSelect">Régime d'accueil</label>
-        <select id="regimeSelect" class="glass-select">
-          <option value="hors_p5">1. Hors PEDT — Plus de 5h par jour</option>
-          <option value="hors_m5">2. Hors PEDT — 5h ou moins par jour</option>
-          <option value="avec_p5">3. Avec PEDT — Plus de 5h par jour</option>
-          <option value="avec_m5">4. Avec PEDT — 5h ou moins par jour</option>
-        </select>
+      <span class="section-label">Régime d'accueil</span>
+      <div class="regime-grid">
+        <button type="button" class="regime-card active" data-regime="hors_p5">
+          <span class="r-title">Hors PEDT</span>
+          <span class="r-sub">+5h par jour</span>
+        </button>
+        <button type="button" class="regime-card" data-regime="hors_m5">
+          <span class="r-title">Hors PEDT</span>
+          <span class="r-sub">-5h par jour</span>
+        </button>
+        <button type="button" class="regime-card" data-regime="avec_p5">
+          <span class="r-title">Avec PEDT</span>
+          <span class="r-sub">+5h par jour</span>
+        </button>
+        <button type="button" class="regime-card" data-regime="avec_m5">
+          <span class="r-title">Avec PEDT</span>
+          <span class="r-sub">-5h par jour</span>
+        </button>
       </div>
 
       <div class="field">
         <label for="n36">Enfants de 3 à 6 ans</label>
         <div class="stepper">
-          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer un enfant 3-6 ans">–</button>
+          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
           <input id="n36" type="number" min="0" value="0" inputmode="numeric">
-          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter un enfant 3-6 ans">+</button>
+          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
         </div>
       </div>
       <div class="field">
         <label for="n612">Enfants de 6 à 12 ans</label>
         <div class="stepper">
-          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer un enfant 6-12 ans">–</button>
+          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
           <input id="n612" type="number" min="0" value="0" inputmode="numeric">
-          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter un enfant 6-12 ans">+</button>
+          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
         </div>
       </div>
 
@@ -341,7 +371,10 @@
 
     <section class="glass panel result">
       <div class="pool">
-        <div class="pool-label">Postes d'animateurs — charge mutualisée</div>
+        <div class="pool-header">
+          <span class="pool-label">Postes d'animateurs</span>
+          <span class="badge-mutualized" id="mutualBadge">⚡ -1 mutualisé</span>
+        </div>
         <div class="pool-track" id="poolTrack"></div>
         <div class="pool-legend">
           <span><i class="dot dot-a"></i>3–6 ans</span>
@@ -353,8 +386,6 @@
         <span class="big" id="totalAnim">0</span>
         <span class="biglabel" id="totalAnimLabel">animateur requis sur le terrain</span>
       </div>
-
-      <p class="hint" id="hint"></p>
     </section>
 
     <section class="glass panel quali">
@@ -362,15 +393,15 @@
       <div class="qgrid">
         <div class="qcard qmin">
           <span class="qnum" id="qDiplomes">0</span>
-          <span class="qlabel">diplômés<br><small>minimum · 50%</small></span>
+          <span class="qlabel">diplômés<br><small>min. 50%</small></span>
         </div>
         <div class="qcard qmax">
           <span class="qnum" id="qNonDiplomes">0</span>
-          <span class="qlabel">non-diplômés<br><small>maximum · 20%</small></span>
+          <span class="qlabel">non-diplômés<br><small>max. 20%</small></span>
         </div>
         <div class="qcard qflex">
           <span class="qnum" id="qStagiaires">0</span>
-          <span class="qlabel">stagiaires BAFA<br><small>variable d'ajustement</small></span>
+          <span class="qlabel">stagiaires BAFA<br><small>ajustement</small></span>
         </div>
       </div>
     </section>
@@ -386,26 +417,36 @@
   const n612input = document.getElementById('n612');
   const dirToggle = document.getElementById('dirToggle');
   const dirRow = document.getElementById('dirRow');
-  const regimeSelect = document.getElementById('regimeSelect');
-  const eyebrowLabel = document.getElementById('eyebrowLabel');
+  const eyebrowBadge = document.getElementById('eyebrowBadge');
   const footerNote = document.getElementById('footerNote');
+  const mutualBadge = document.getElementById('mutualBadge');
 
   const poolTrack = document.getElementById('poolTrack');
   const totalAnimEl = document.getElementById('totalAnim');
   const totalAnimLabelEl = document.getElementById('totalAnimLabel');
-  const hintEl = document.getElementById('hint');
 
   const qDiplomes = document.getElementById('qDiplomes');
   const qNonDiplomes = document.getElementById('qNonDiplomes');
   const qStagiaires = document.getElementById('qStagiaires');
 
-  // Regimes configuration
+  let activeRegimeKey = 'hors_p5';
+
   const REGIMES = {
-    hors_p5: { ratio36: 8,  ratio612: 12, label: "ALSH · Hors PEDT · Accueil de plus de 5h" },
-    hors_m5: { ratio36: 10, ratio612: 14, label: "ALSH · Hors PEDT · Accueil de 5h ou moins" },
-    avec_p5: { ratio36: 10, ratio612: 14, label: "ALSH · Avec PEDT · Accueil de plus de 5h" },
-    avec_m5: { ratio36: 14, ratio612: 18, label: "ALSH · Avec PEDT · Accueil de 5h ou moins" }
+    hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
+    hors_m5: { ratio36: 10, ratio612: 14, tag: "Hors PEDT · ≤ 5h / jour" },
+    avec_p5: { ratio36: 10, ratio612: 14, tag: "Avec PEDT · > 5h / jour" },
+    avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
   };
+
+  // Regime buttons handlers
+  document.querySelectorAll('.regime-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.regime-card').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      activeRegimeKey = btn.dataset.regime;
+      recalc();
+    });
+  });
 
   function clampInt(v){
     v = parseInt(v, 10);
@@ -413,7 +454,7 @@
     return v;
   }
 
-  // stepper buttons
+  // Stepper buttons
   document.querySelectorAll('.stepbtn').forEach(btn => {
     btn.addEventListener('click', () => {
       const target = document.getElementById(btn.dataset.target);
@@ -429,7 +470,6 @@
   });
 
   dirToggle.addEventListener('change', recalc);
-  regimeSelect.addEventListener('change', recalc);
 
   function renderPool(need36, need612, totalNeeded){
     if (totalNeeded === 0){
@@ -458,7 +498,7 @@
         if (b) b.style.width = '0%';
         seg.style.opacity = '0';
         seg.style.transform = 'scale(0.82)';
-        setTimeout(() => seg.remove(), 380);
+        setTimeout(() => seg.remove(), 350);
       }
     }
 
@@ -491,7 +531,7 @@
   function animateNumber(el, to){
     const from = parseInt(el.textContent, 10) || 0;
     if (from === to){ return; }
-    const duration = 320;
+    const duration = 280;
     const start = performance.now();
     const ease = t => 1 - Math.pow(1 - t, 3);
 
@@ -509,8 +549,8 @@
   }
 
   function recalc(){
-    const currentRegime = REGIMES[regimeSelect.value];
-    eyebrowLabel.textContent = currentRegime.label;
+    const currentRegime = REGIMES[activeRegimeKey];
+    eyebrowBadge.textContent = currentRegime.tag;
 
     const n36 = clampInt(n36input.value);
     const n612 = clampInt(n612input.value);
@@ -524,7 +564,7 @@
 
     renderPool(need36, need612, totalNeeded);
 
-    // director eligibility
+    // Director eligibility
     const directorEligible = effectif > 0 && effectif <= 50;
     dirRow.classList.toggle('disabled', !directorEligible);
     if (!directorEligible) dirToggle.checked = false;
@@ -532,7 +572,7 @@
     let displayed = totalNeeded;
     if (dirToggle.checked && directorEligible){
       displayed = Math.max(totalNeeded - 1, 0);
-      totalAnimLabelEl.textContent = 'animateur(s) à recruter, en plus du directeur';
+      totalAnimLabelEl.textContent = 'animateur(s) à recruter (+ le directeur)';
     } else {
       totalAnimLabelEl.textContent = totalNeeded > 1
         ? 'animateurs requis sur le terrain'
@@ -540,24 +580,19 @@
     }
     animateNumber(totalAnimEl, displayed);
 
-    // mutualisation hint
+    // Discrete Mutualization Badge
     const naive36 = need36 > 0 ? Math.ceil(need36 - EPS) : 0;
     const naive612 = need612 > 0 ? Math.ceil(need612 - EPS) : 0;
-    const naiveSum = naive36 + naive612;
-    const saved = naiveSum - totalNeeded;
+    const saved = (naive36 + naive612) - totalNeeded;
 
-    if (effectif === 0){
-      hintEl.className = 'hint show';
-      hintEl.textContent = 'Renseignez les effectifs ci-dessus pour lancer le calcul.';
-    } else if (saved > 0){
-      hintEl.className = 'hint show saved';
-      hintEl.textContent = '✓ Mutualisation active : ' + saved + ' animateur(s) économisé(s) en regroupant les deux tranches d\'âge plutôt qu\'en les calculant séparément.';
+    if (saved > 0 && effectif > 0){
+      mutualBadge.textContent = `⚡ -${saved} anim. mutualisé${saved > 1 ? 's' : ''}`;
+      mutualBadge.classList.add('visible');
     } else {
-      hintEl.className = 'hint';
-      hintEl.textContent = '';
+      mutualBadge.classList.remove('visible');
     }
 
-    // qualifications
+    // Qualifications
     const base = displayed;
     const diplomesMin = Math.ceil(base * 0.5);
     const nonDiplomesMax = Math.floor(base * 0.2);
@@ -567,8 +602,8 @@
     animateNumber(qNonDiplomes, nonDiplomesMax);
     animateNumber(qStagiaires, stagiaires);
 
-    // update footer dynamic note
-    footerNote.textContent = `${currentRegime.label} : 1 animateur pour ${currentRegime.ratio36} enfants de moins de 6 ans, 1 animateur pour ${currentRegime.ratio612} enfants de 6 ans et plus. Qualifications : au moins 50% de diplômés, au plus 20% de non-diplômés, le reste en stagiaires BAFA. Outil indicatif — à vérifier avec votre référent SDJES.`;
+    // Dynamic Footer Note
+    footerNote.textContent = `${currentRegime.tag} : Taux 1/${currentRegime.ratio36} (<6 ans) et 1/${currentRegime.ratio612} (≥6 ans). Équipe : 50% min. diplômés, 20% max. non-diplômés. Outil indicatif SDJES.`;
   }
 
   recalc();
