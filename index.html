@@ -260,7 +260,7 @@
   }
 
   .toggle-row{
-    display:flex; align-items:center; justify-space-between; gap:12px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
     cursor:pointer; font-size: 13.5px; font-weight:600; color: var(--text-hi);
   }
   .toggle-row small{ display:block; font-weight:500; color: var(--text-low); font-size:11.5px; margin-top:2px; }
@@ -308,10 +308,27 @@
   }
   .segment .fillA, .segment .fillB{
     height:100%; width: 0%;
-    transition: width .5s cubic-bezier(.22,.85,.32,1);
+    transition: width .4s cubic-bezier(.22,.85,.32,1);
   }
   .fillA{ background: linear-gradient(180deg, var(--a), #3FA9DE); }
   .fillB{ background: linear-gradient(180deg, var(--b), #7C5CE0); }
+  
+  /* Texte de jauge au centre des barres */
+  .gauge-label{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+    z-index: 2;
+  }
+
   .segment.ghost{ opacity:.4; }
   .segment.ghost::after{
     content:"–"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
@@ -434,7 +451,7 @@
         <label for="n36">Enfants de 3 à 6 ans</label>
         <div class="stepper">
           <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
-          <input id="n36" type="number" min="0" value="21" inputmode="numeric">
+          <input id="n36" type="number" min="0" value="0" inputmode="numeric">
           <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
         </div>
       </div>
@@ -442,7 +459,7 @@
         <label for="n612">Enfants de 6 à 12 ans</label>
         <div class="stepper">
           <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
-          <input id="n612" type="number" min="0" value="16" inputmode="numeric">
+          <input id="n612" type="number" min="0" value="25" inputmode="numeric">
           <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
         </div>
       </div>
@@ -458,11 +475,11 @@
             <strong>Classique</strong>
             <small>Prorata continu</small>
           </button>
-          <button type="button" class="mutual-btn active" data-mode="federation">
+          <button type="button" class="mutual-btn" data-mode="federation">
             <strong>Fédération</strong>
             <small>Tableur Excel</small>
           </button>
-          <button type="button" class="mutual-btn" data-mode="aucun">
+          <button type="button" class="mutual-btn active" data-mode="aucun">
             <strong>Sans</strong>
             <small>Calcul séparé</small>
           </button>
@@ -540,7 +557,7 @@
   const qStagiaires = document.getElementById('qStagiaires');
 
   let activeRegimeKey = 'hors_p5';
-  let activeMutualMode = 'federation'; // 'classique', 'federation', ou 'aucun'
+  let activeMutualMode = 'aucun'; // 'classique', 'federation', ou 'aucun'
 
   const REGIMES = {
     hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
@@ -601,7 +618,7 @@
     poolTrack.innerHTML = '';
 
     if (isSplitMode) {
-      // Mode SANS mutualisation : affichage séparé par tranche d'âge
+      // Mode SANS mutualisation : barres-jauges par tranche d'âge
       const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
       const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
 
@@ -615,10 +632,19 @@
         groupA.innerHTML = `<span class="subgroup-label lbl-a">3–6 ans (${count36} anim. / ${n36} enf.)</span>`;
         const trackA = document.createElement('div');
         trackA.className = 'pool-track';
+
         for (let i = 0; i < count36; i++) {
           const seg = document.createElement('div');
           seg.className = 'segment';
-          seg.innerHTML = '<div class="fillA" style="width:100%"></div>';
+          
+          // Calcul de la charge de cet animateur précis
+          const kidsForAnim = Math.min(r1, n36 - (i * r1));
+          const fillPct = (kidsForAnim / r1) * 100;
+
+          seg.innerHTML = `
+            <div class="fillA" style="width:${fillPct}%"></div>
+            <span class="gauge-label">${kidsForAnim}/${r1}</span>
+          `;
           trackA.appendChild(seg);
         }
         groupA.appendChild(trackA);
@@ -632,10 +658,19 @@
         groupB.innerHTML = `<span class="subgroup-label lbl-b">6–12 ans (${count612} anim. / ${n612} enf.)</span>`;
         const trackB = document.createElement('div');
         trackB.className = 'pool-track';
+
         for (let i = 0; i < count612; i++) {
           const seg = document.createElement('div');
           seg.className = 'segment';
-          seg.innerHTML = '<div class="fillB" style="width:100%"></div>';
+
+          // Calcul de la charge de cet animateur précis
+          const kidsForAnim = Math.min(r2, n612 - (i * r2));
+          const fillPct = (kidsForAnim / r2) * 100;
+
+          seg.innerHTML = `
+            <div class="fillB" style="width:${fillPct}%"></div>
+            <span class="gauge-label">${kidsForAnim}/${r2}</span>
+          `;
           trackB.appendChild(seg);
         }
         groupB.appendChild(trackB);
@@ -645,7 +680,7 @@
       poolTrack.appendChild(container);
 
     } else {
-      // Modes MUTUALISÉS (Classique ou Fédération) : affichage continu unifié
+      // Modes MUTUALISÉS (Classique ou Fédération)
       for (let i = 0; i < totalNeeded; i++){
         const seg = document.createElement('div');
         seg.className = 'segment';
@@ -728,11 +763,9 @@
 
     if (effectif > 0) {
       if (activeMutualMode === 'classique') {
-        // Choix 1 : Prorata continu mathématique
         const rawNeed = (n36 / r1) + (n612 / r2);
         totalNeeded = Math.ceil(rawNeed - EPS);
       } else if (activeMutualMode === 'federation') {
-        // Choix 2 : Formule Exacte Fédération (Tableur Excel)
         if (effectif <= 12) {
           totalNeeded = 2;
         } else {
@@ -750,7 +783,6 @@
           }
         }
       } else {
-        // Choix 3 : Pas de mutualisation (calcul séparé)
         totalNeeded = naiveSum;
       }
     }
