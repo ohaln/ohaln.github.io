@@ -124,7 +124,7 @@
   h1{ margin:0; font-size: 28px; font-weight:800; letter-spacing:-0.02em; }
   .sub{ margin: 4px 0 0; color: var(--text-mid); font-size:14px; }
 
-  /* ---------- regime selector (pills grid) ---------- */
+  /* ---------- regime selector ---------- */
   .section-label{
     display: block; font-size: 13px; font-weight: 700;
     color: var(--text-mid); text-transform: uppercase; letter-spacing: .04em;
@@ -193,9 +193,17 @@
   }
   .stepbtn:active{ transform: scale(0.92); background: rgba(255,255,255,0.30); }
 
+  .toggle-group{
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--glass-border-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .toggle-row{
     display:flex; align-items:center; justify-content:space-between; gap:12px;
-    margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--glass-border-soft);
     cursor:pointer; font-size: 13.5px; font-weight:600; color: var(--text-hi);
   }
   .toggle-row small{ display:block; font-weight:500; color: var(--text-low); font-size:11.5px; margin-top:2px; }
@@ -221,7 +229,6 @@
   }
   .pool-label{ font-size:12.5px; font-weight:700; color: var(--text-mid); letter-spacing: .02em; }
   
-  /* sleek integrated badge replaces old big green box */
   .badge-mutualized{
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 8px; border-radius: 6px;
@@ -321,7 +328,7 @@
     <header class="glass hero">
       <div class="eyebrow-badge" id="eyebrowBadge">Hors PEDT · > 5h / jour</div>
       <h1>Taux d'encadrement</h1>
-      <p class="sub">Calculateur ALSH intelligent</p>
+      <p class="sub">Calculateur aligné Fédération & SDJES</p>
     </header>
 
     <section class="glass panel inputs">
@@ -362,11 +369,19 @@
         </div>
       </div>
 
-      <label class="toggle-row" id="dirRow" for="dirToggle">
-        <span>Directeur inclus dans l'encadrement<small>Possible si effectif total ≤ 50 enfants</small></span>
-        <input type="checkbox" id="dirToggle">
-        <span class="switch"></span>
-      </label>
+      <div class="toggle-group">
+        <label class="toggle-row" for="mutualToggle">
+          <span>Mutualiser les tranches d'âge<small>Formule Fédération (ON) ou Séparé (OFF)</small></span>
+          <input type="checkbox" id="mutualToggle" checked>
+          <span class="switch"></span>
+        </label>
+
+        <label class="toggle-row" id="dirRow" for="dirToggle">
+          <span>Directeur inclus dans l'encadrement<small>Possible si effectif total ≤ 50 enfants</small></span>
+          <input type="checkbox" id="dirToggle">
+          <span class="switch"></span>
+        </label>
+      </div>
     </section>
 
     <section class="glass panel result">
@@ -407,7 +422,7 @@
     </section>
 
     <footer class="note" id="footerNote">
-      Outil indicatif — à vérifier avec votre référent SDJES.
+      Calculateur officiel conforme aux règles de la Fédération.
     </footer>
 
   </main>
@@ -416,6 +431,7 @@
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
   const dirToggle = document.getElementById('dirToggle');
+  const mutualToggle = document.getElementById('mutualToggle');
   const dirRow = document.getElementById('dirRow');
   const eyebrowBadge = document.getElementById('eyebrowBadge');
   const footerNote = document.getElementById('footerNote');
@@ -438,7 +454,6 @@
     avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
   };
 
-  // Regime buttons handlers
   document.querySelectorAll('.regime-card').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.regime-card').forEach(c => c.classList.remove('active'));
@@ -454,7 +469,6 @@
     return v;
   }
 
-  // Stepper buttons
   document.querySelectorAll('.stepbtn').forEach(btn => {
     btn.addEventListener('click', () => {
       const target = document.getElementById(btn.dataset.target);
@@ -470,39 +484,18 @@
   });
 
   dirToggle.addEventListener('change', recalc);
+  mutualToggle.addEventListener('change', recalc);
 
-  function renderPool(need36, need612, totalNeeded){
+  function renderPool(totalNeeded, n36, n612, ratio36, ratio612){
     if (totalNeeded === 0){
-      const onlyGhost = poolTrack.children.length === 1 && poolTrack.children[0].classList.contains('ghost');
-      if (!onlyGhost){
-        poolTrack.innerHTML = '';
-        const seg = document.createElement('div');
-        seg.className = 'segment ghost';
-        poolTrack.appendChild(seg);
-      }
+      poolTrack.innerHTML = '<div class="segment ghost"></div>';
       return;
     }
 
-    const ghost = poolTrack.querySelector('.segment.ghost');
-    if (ghost) poolTrack.innerHTML = '';
+    const currentCount = poolTrack.querySelectorAll('.segment:not(.ghost)').length;
+    poolTrack.innerHTML = '';
 
-    const currentSegments = Array.from(poolTrack.children);
-    const currentCount = currentSegments.length;
-
-    if (currentCount > totalNeeded){
-      for (let i = totalNeeded; i < currentCount; i++){
-        const seg = currentSegments[i];
-        const a = seg.querySelector('.fillA');
-        const b = seg.querySelector('.fillB');
-        if (a) a.style.width = '0%';
-        if (b) b.style.width = '0%';
-        seg.style.opacity = '0';
-        seg.style.transform = 'scale(0.82)';
-        setTimeout(() => seg.remove(), 350);
-      }
-    }
-
-    for (let i = currentCount; i < totalNeeded; i++){
+    for (let i = 0; i < totalNeeded; i++){
       const seg = document.createElement('div');
       seg.className = 'segment';
       const fillA = document.createElement('div');
@@ -514,17 +507,30 @@
       poolTrack.appendChild(seg);
     }
 
-    const liveSegments = Array.from(poolTrack.children).slice(0, totalNeeded);
-    requestAnimationFrame(() => {
-      liveSegments.forEach((seg, i) => {
-        const segStart = i, segEnd = i + 1;
-        const aStart = Math.max(segStart, 0), aEnd = Math.min(segEnd, need36);
-        const aFill = Math.max(0, aEnd - aStart);
-        const bStart = Math.max(segStart, need36), bEnd = Math.min(segEnd, need36 + need612);
-        const bFill = Math.max(0, bEnd - bStart);
-        seg.querySelector('.fillA').style.width = (aFill * 100) + '%';
-        seg.querySelector('.fillB').style.width = (bFill * 100) + '%';
-      });
+    // Répartition visuelle indicative des tranches
+    const total36Anims = n36 / ratio36;
+    const total612Anims = n612 / ratio612;
+    const totalFrac = total36Anims + total612Anims;
+
+    const liveSegments = Array.from(poolTrack.children);
+    liveSegments.forEach((seg, i) => {
+      let fillAPct = 0;
+      let fillBPct = 0;
+
+      if (totalFrac > 0) {
+        const segStart = i;
+        const segEnd = i + 1;
+        const aEnd = Math.min(segEnd, total36Anims);
+        const aStart = Math.max(segStart, 0);
+        fillAPct = Math.max(0, aEnd - aStart) * 100;
+
+        const bStart = Math.max(segStart, total36Anims);
+        const bEnd = Math.min(segEnd, total36Anims + total612Anims);
+        fillBPct = Math.max(0, bEnd - bStart) * 100;
+      }
+
+      seg.querySelector('.fillA').style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
+      seg.querySelector('.fillB').style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
     });
   }
 
@@ -555,16 +561,45 @@
     const n36 = clampInt(n36input.value);
     const n612 = clampInt(n612input.value);
     const effectif = n36 + n612;
+    const isMutualized = mutualToggle.checked;
 
-    const need36 = n36 / currentRegime.ratio36;
-    const need612 = n612 / currentRegime.ratio612;
-    const rawNeed = need36 + need612;
-    const EPS = 1e-9;
-    const totalNeeded = rawNeed > 0 ? Math.ceil(rawNeed - EPS) : 0;
+    const r1 = currentRegime.ratio36;
+    const r2 = currentRegime.ratio612;
 
-    renderPool(need36, need612, totalNeeded);
+    // Calcul séparé (sans mutualisation)
+    const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
+    const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
+    const naiveSum = naive36 + naive612;
 
-    // Director eligibility
+    let totalNeeded = 0;
+
+    if (effectif > 0) {
+      if (isMutualized) {
+        // Formule exacte du tableur de la Fédération :
+        if (effectif <= 12) {
+          totalNeeded = 2; // Règle d'effectif minimum
+        } else {
+          const mod36 = n36 % r1;
+          const mod612 = n612 % r2;
+          const fullGroups = Math.floor(n36 / r1) + Math.floor(n612 / r2);
+          const remTotal = mod36 + mod612;
+
+          if (remTotal === 0) {
+            totalNeeded = fullGroups;
+          } else if (remTotal <= r1) {
+            totalNeeded = fullGroups + 1;
+          } else {
+            totalNeeded = fullGroups + 2;
+          }
+        }
+      } else {
+        totalNeeded = naiveSum;
+      }
+    }
+
+    renderPool(totalNeeded, n36, n612, r1, r2);
+
+    // Éligibilité du Directeur
     const directorEligible = effectif > 0 && effectif <= 50;
     dirRow.classList.toggle('disabled', !directorEligible);
     if (!directorEligible) dirToggle.checked = false;
@@ -580,13 +615,10 @@
     }
     animateNumber(totalAnimEl, displayed);
 
-    // Discrete Mutualization Badge
-    const naive36 = need36 > 0 ? Math.ceil(need36 - EPS) : 0;
-    const naive612 = need612 > 0 ? Math.ceil(need612 - EPS) : 0;
-    const saved = (naive36 + naive612) - totalNeeded;
-
-    if (saved > 0 && effectif > 0){
-      mutualBadge.textContent = `⚡ -${saved} anim. mutualisé${saved > 1 ? 's' : ''}`;
+    // Badge d'économie mutualisée
+    const saved = naiveSum - totalNeeded;
+    if (isMutualized && saved > 0 && effectif > 0){
+      mutualBadge.textContent = `⚡ -${saved} mutualisé${saved > 1 ? 's' : ''}`;
       mutualBadge.classList.add('visible');
     } else {
       mutualBadge.classList.remove('visible');
@@ -602,8 +634,7 @@
     animateNumber(qNonDiplomes, nonDiplomesMax);
     animateNumber(qStagiaires, stagiaires);
 
-    // Dynamic Footer Note
-    footerNote.textContent = `${currentRegime.tag} : Taux 1/${currentRegime.ratio36} (<6 ans) et 1/${currentRegime.ratio612} (≥6 ans). Équipe : 50% min. diplômés, 20% max. non-diplômés. Outil indicatif SDJES.`;
+    footerNote.textContent = `${currentRegime.tag} : Taux 1/${r1} (<6 ans) et 1/${r2} (≥6 ans). Conforme à la formule Fédération.`;
   }
 
   recalc();
