@@ -186,7 +186,7 @@
   h1{ margin:0; font-size: 24px; font-weight:800; letter-spacing:-0.02em; }
   .sub{ margin: 4px 0 0; color: var(--text-mid); font-size:13px; }
 
-  /* ---------- Section Labels & Tooltips CORRIGÉS ---------- */
+  /* ---------- Section Labels & Tooltips ---------- */
   .section-label{
     display: flex; align-items: center; justify-content: space-between;
     font-size: 11.5px; font-weight: 700;
@@ -202,7 +202,6 @@
     cursor: help; position: relative; text-transform: none; letter-spacing: normal;
   }
   
-  /* Correction du survol : retour à la ligne automatique et cadrage sécurisé */
   .info-icon:hover::after, .info-icon:focus::after {
     content: attr(data-tooltip);
     position: absolute; 
@@ -226,7 +225,7 @@
     text-align: left;
   }
 
-  /* Note explicative PEDT sous la grille */
+  /* Note explicative PEDT recadrée */
   .pedt-info-note {
     font-size: 11.5px;
     color: var(--text-mid);
@@ -389,7 +388,7 @@
   .toggle-row input:checked + .switch::after{ transform: translateX(20px); }
   .toggle-row.disabled{ opacity:.35; pointer-events:none; }
 
-  /* ---------- Visual Pool & Continuous Living Gauges ---------- */
+  /* ---------- Visual Pool & Sleek Static Glass Gauges ---------- */
   .pool-header{
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 12px;
@@ -410,7 +409,7 @@
   .pool-track{ display:flex; gap:6px; flex-wrap: wrap; }
   
   .segment{
-    flex:1; min-width: 44px; height:42px; border-radius: 10px; overflow:hidden; position:relative;
+    flex:1; min-width: 44px; height:38px; border-radius: 10px; overflow:hidden; position:relative;
     background: rgba(0,0,0,0.35); border: 1px solid var(--glass-border-soft);
     display:flex; 
     transition: transform 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
@@ -421,51 +420,30 @@
   }
 
   @keyframes segPop {
-    from { opacity: 0; transform: scale(0.8) translateY(6px); }
+    from { opacity: 0; transform: scale(0.85) translateY(4px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
 
+  /* Remplissage épuré et moderne (sans animations en boucle) */
   .segment .fillA, .segment .fillB{
     height:100%; width: 0%;
-    transition: width 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: width 0.4s var(--ease-out);
     position: relative;
-    overflow: hidden;
   }
 
   .fillA{ 
-    background: linear-gradient(110deg, #3FA9DE 0%, #6FD6FF 45%, #B3ECFF 50%, #6FD6FF 55%, #3FA9DE 100%);
-    background-size: 250% 100%;
-    animation: liquidFlow 4s ease infinite;
+    background: linear-gradient(135deg, #3A8DFF, #6FD6FF);
+    box-shadow: 0 0 12px rgba(111, 214, 255, 0.3);
   }
   .fillB{ 
-    background: linear-gradient(110deg, #7C5CE0 0%, #B98CFF 45%, #E2CEFF 50%, #B98CFF 55%, #7C5CE0 100%);
-    background-size: 250% 100%;
-    animation: liquidFlow 4s ease infinite;
+    background: linear-gradient(135deg, #7C5CE0, #B98CFF);
+    box-shadow: 0 0 12px rgba(185, 140, 255, 0.3);
   }
 
-  .fillA::after, .fillB::after {
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-    transform: translateX(-100%);
-    animation: waveLight 3s infinite ease-in-out;
-  }
-
-  @keyframes liquidFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  @keyframes waveLight {
-    0% { transform: translateX(-100%); }
-    60%, 100% { transform: translateX(100%); }
-  }
-  
   .gauge-label{
     position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
     font-size: 11.5px; font-weight: 700; color: #FFFFFF;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.9); pointer-events: none;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8); pointer-events: none;
     font-variant-numeric: tabular-nums; z-index: 2;
   }
 
@@ -589,7 +567,7 @@
 
   @media (prefers-reduced-motion: reduce){
     .blob, .glass, .num-pulse, .btn-share, .regime-card, .stepbtn, .segment{ animation: none !important; transition: none !important; }
-    .segment .fillA, .segment .fillB{ transition: none !important; animation: none !important; }
+    .segment .fillA, .segment .fillB{ transition: none !important; }
   }
 
   @media print {
@@ -625,7 +603,7 @@
     <section class="glass panel inputs">
       <div class="section-label">
         <span>1. Régime d'accueil</span>
-        <span class="info-icon" tabindex="0" data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT locale.">ⓘ</span>
+        <span class="info-icon" tabindex="0" data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
       </div>
       <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
         <button type="button" class="regime-card active" role="radio" aria-checked="true" data-regime="hors_p5">
@@ -646,9 +624,9 @@
         </button>
       </div>
 
-      <!-- Explication discrète et claire du PEDT -->
+      <!-- Explication recadrée du PEDT -->
       <div class="pedt-info-note">
-        💡 <strong>C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> est un accord signé par la commune qui permet d'assouplir les taux (ex: 1 animateur pour 10 au lieu de 8 pour les - de 6 ans).
+        💡 <strong>C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> est une démarche portée par la commune réunissant tous les acteurs éducatifs locaux (écoles, associations, CAF). Il permet de bénéficier de taux d'encadrement adaptés.
       </div>
 
       <div class="section-label">
