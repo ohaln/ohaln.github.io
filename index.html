@@ -193,6 +193,25 @@
   }
   .stepbtn:active{ transform: scale(0.92); background: rgba(255,255,255,0.30); }
 
+  /* Total kids badge */
+  .total-kids-indicator{
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-mid);
+    margin-top: 10px;
+    margin-bottom: 6px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border-soft);
+    display: block;
+    width: 100%;
+  }
+  .total-kids-indicator strong{
+    color: var(--text-hi);
+    font-weight: 700;
+  }
+
   /* ---------- 3-way mutualisation selector ---------- */
   .mutual-selector{
     display: grid;
@@ -241,7 +260,7 @@
   }
 
   .toggle-row{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    display:flex; align-items:center; justify-space-between; gap:12px;
     cursor:pointer; font-size: 13.5px; font-weight:600; color: var(--text-hi);
   }
   .toggle-row small{ display:block; font-weight:500; color: var(--text-low); font-size:11.5px; margin-top:2px; }
@@ -298,6 +317,27 @@
     content:"–"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     color: var(--text-low); font-size:16px;
   }
+
+  /* Separate track layout when "Sans mutualisation" is selected */
+  .pool-split-container{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .pool-subgroup{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .subgroup-label{
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .subgroup-label.lbl-a{ color: var(--a); }
+  .subgroup-label.lbl-b{ color: var(--b); }
 
   .pool-legend{ display:flex; gap:16px; margin-top:10px; }
   .pool-legend span{ display:flex; align-items:center; gap:6px; font-size:12px; color: var(--text-mid); font-weight: 500; }
@@ -407,6 +447,10 @@
         </div>
       </div>
 
+      <div class="total-kids-indicator" id="totalKidsIndicator">
+        Effectif total : <strong>0</strong> enfant
+      </div>
+
       <div class="field">
         <span class="section-label" style="margin-top: 10px;">Règle de Mutualisation</span>
         <div class="mutual-selector">
@@ -480,6 +524,7 @@
 <script>
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
+  const totalKidsIndicator = document.getElementById('totalKidsIndicator');
   const dirToggle = document.getElementById('dirToggle');
   const dirRow = document.getElementById('dirRow');
   const eyebrowBadge = document.getElementById('eyebrowBadge');
@@ -547,7 +592,7 @@
 
   dirToggle.addEventListener('change', recalc);
 
-  function renderPool(totalNeeded, n36, n612, r1, r2){
+  function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
     if (totalNeeded === 0){
       poolTrack.innerHTML = '<div class="segment ghost"></div>';
       return;
@@ -555,41 +600,88 @@
 
     poolTrack.innerHTML = '';
 
-    for (let i = 0; i < totalNeeded; i++){
-      const seg = document.createElement('div');
-      seg.className = 'segment';
-      const fillA = document.createElement('div');
-      fillA.className = 'fillA';
-      const fillB = document.createElement('div');
-      fillB.className = 'fillB';
-      seg.appendChild(fillA);
-      seg.appendChild(fillB);
-      poolTrack.appendChild(seg);
-    }
+    if (isSplitMode) {
+      // Mode SANS mutualisation : affichage séparé par tranche d'âge
+      const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
+      const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
 
-    const total36Anims = n36 / r1;
-    const total612Anims = n612 / r2;
+      const container = document.createElement('div');
+      container.className = 'pool-split-container';
 
-    const liveSegments = Array.from(poolTrack.children);
-    liveSegments.forEach((seg, i) => {
-      let fillAPct = 0;
-      let fillBPct = 0;
-
-      if (total36Anims + total612Anims > 0) {
-        const segStart = i;
-        const segEnd = i + 1;
-        const aEnd = Math.min(segEnd, total36Anims);
-        const aStart = Math.max(segStart, 0);
-        fillAPct = Math.max(0, aEnd - aStart) * 100;
-
-        const bStart = Math.max(segStart, total36Anims);
-        const bEnd = Math.min(segEnd, total36Anims + total612Anims);
-        fillBPct = Math.max(0, bEnd - bStart) * 100;
+      // Groupe 3-6 ans
+      if (count36 > 0) {
+        const groupA = document.createElement('div');
+        groupA.className = 'pool-subgroup';
+        groupA.innerHTML = `<span class="subgroup-label lbl-a">3–6 ans (${count36} anim. / ${n36} enf.)</span>`;
+        const trackA = document.createElement('div');
+        trackA.className = 'pool-track';
+        for (let i = 0; i < count36; i++) {
+          const seg = document.createElement('div');
+          seg.className = 'segment';
+          seg.innerHTML = '<div class="fillA" style="width:100%"></div>';
+          trackA.appendChild(seg);
+        }
+        groupA.appendChild(trackA);
+        container.appendChild(groupA);
       }
 
-      seg.querySelector('.fillA').style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
-      seg.querySelector('.fillB').style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
-    });
+      // Groupe 6-12 ans
+      if (count612 > 0) {
+        const groupB = document.createElement('div');
+        groupB.className = 'pool-subgroup';
+        groupB.innerHTML = `<span class="subgroup-label lbl-b">6–12 ans (${count612} anim. / ${n612} enf.)</span>`;
+        const trackB = document.createElement('div');
+        trackB.className = 'pool-track';
+        for (let i = 0; i < count612; i++) {
+          const seg = document.createElement('div');
+          seg.className = 'segment';
+          seg.innerHTML = '<div class="fillB" style="width:100%"></div>';
+          trackB.appendChild(seg);
+        }
+        groupB.appendChild(trackB);
+        container.appendChild(groupB);
+      }
+
+      poolTrack.appendChild(container);
+
+    } else {
+      // Modes MUTUALISÉS (Classique ou Fédération) : affichage continu unifié
+      for (let i = 0; i < totalNeeded; i++){
+        const seg = document.createElement('div');
+        seg.className = 'segment';
+        const fillA = document.createElement('div');
+        fillA.className = 'fillA';
+        const fillB = document.createElement('div');
+        fillB.className = 'fillB';
+        seg.appendChild(fillA);
+        seg.appendChild(fillB);
+        poolTrack.appendChild(seg);
+      }
+
+      const total36Anims = n36 / r1;
+      const total612Anims = n612 / r2;
+
+      const liveSegments = Array.from(poolTrack.children);
+      liveSegments.forEach((seg, i) => {
+        let fillAPct = 0;
+        let fillBPct = 0;
+
+        if (total36Anims + total612Anims > 0) {
+          const segStart = i;
+          const segEnd = i + 1;
+          const aEnd = Math.min(segEnd, total36Anims);
+          const aStart = Math.max(segStart, 0);
+          fillAPct = Math.max(0, aEnd - aStart) * 100;
+
+          const bStart = Math.max(segStart, total36Anims);
+          const bEnd = Math.min(segEnd, total36Anims + total612Anims);
+          fillBPct = Math.max(0, bEnd - bStart) * 100;
+        }
+
+        seg.querySelector('.fillA').style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
+        seg.querySelector('.fillB').style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
+      });
+    }
   }
 
   function animateNumber(el, to){
@@ -620,11 +712,14 @@
     const n612 = clampInt(n612input.value);
     const effectif = n36 + n612;
 
+    // Mise à jour de l'indicateur d'effectif total
+    totalKidsIndicator.innerHTML = `Effectif total : <strong>${effectif}</strong> enfant${effectif > 1 ? 's' : ''}`;
+
     const r1 = currentRegime.ratio36;
     const r2 = currentRegime.ratio612;
     const EPS = 1e-9;
 
-    // Calcul sans mutualisation (référence)
+    // Calcul sans mutualisation (séparé)
     const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
     const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
     const naiveSum = naive36 + naive612;
@@ -660,7 +755,8 @@
       }
     }
 
-    renderPool(totalNeeded, n36, n612, r1, r2);
+    const isSplitMode = (activeMutualMode === 'aucun');
+    renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode);
 
     // Éligibilité Directeur
     const directorEligible = effectif > 0 && effectif <= 50;
@@ -678,7 +774,7 @@
     }
     animateNumber(totalAnimEl, displayed);
 
-    // Dynamic Badge Status
+    // Badge dynamique d'économie
     const saved = naiveSum - totalNeeded;
     if (activeMutualMode !== 'aucun' && saved > 0 && effectif > 0){
       mutualBadge.textContent = `⚡ -${saved} mutualisé${saved > 1 ? 's' : ''}`;
