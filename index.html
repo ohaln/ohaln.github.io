@@ -13,8 +13,8 @@
     --text-hi: #FFFFFF;
     --text-mid: rgba(255, 255, 255, 0.72);
     --text-low: rgba(255, 255, 255, 0.45);
-    --a: #6FD6FF;   /* 3–6 ans */
-    --b: #B98CFF;   /* 6–12 ans */
+    --a: #6FD6FF;   /* - de 6 ans */
+    --b: #B98CFF;   /* + de 6 ans */
     --accent: #FF9F5A;
     --radius-xl: 28px;
     --radius-lg: 20px;
@@ -212,10 +212,10 @@
     font-weight: 700;
   }
 
-  /* ---------- 3-way mutualisation selector ---------- */
+  /* ---------- 2-way mutualisation selector ---------- */
   .mutual-selector{
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 6px;
     background: rgba(0, 0, 0, 0.25);
     padding: 4px;
@@ -239,8 +239,8 @@
     text-align: center;
     outline: none;
   }
-  .mutual-btn strong{ font-size: 11.5px; font-weight: 700; color: var(--text-hi); }
-  .mutual-btn small{ font-size: 9.5px; opacity: 0.7; margin-top: 3px; line-height: 1.1; }
+  .mutual-btn strong{ font-size: 12px; font-weight: 700; color: var(--text-hi); }
+  .mutual-btn small{ font-size: 10px; opacity: 0.7; margin-top: 3px; line-height: 1.1; }
 
   .mutual-btn:hover{ background: rgba(255,255,255,0.06); }
 
@@ -313,7 +313,6 @@
   .fillA{ background: linear-gradient(180deg, var(--a), #3FA9DE); }
   .fillB{ background: linear-gradient(180deg, var(--b), #7C5CE0); }
   
-  /* Texte de jauge au centre des barres */
   .gauge-label{
     position: absolute;
     inset: 0;
@@ -335,7 +334,6 @@
     color: var(--text-low); font-size:16px;
   }
 
-  /* Separate track layout when "Sans mutualisation" is selected */
   .pool-split-container{
     display: flex;
     flex-direction: column;
@@ -448,7 +446,7 @@
       </div>
 
       <div class="field">
-        <label for="n36">Enfants de 3 à 6 ans</label>
+        <label for="n36">Enfants de - de 6 ans</label>
         <div class="stepper">
           <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
           <input id="n36" type="number" min="0" value="0" inputmode="numeric">
@@ -456,10 +454,10 @@
         </div>
       </div>
       <div class="field">
-        <label for="n612">Enfants de 6 à 12 ans</label>
+        <label for="n612">Enfants de + de 6 ans</label>
         <div class="stepper">
           <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
-          <input id="n612" type="number" min="0" value="25" inputmode="numeric">
+          <input id="n612" type="number" min="0" value="0" inputmode="numeric">
           <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
         </div>
       </div>
@@ -471,16 +469,12 @@
       <div class="field">
         <span class="section-label" style="margin-top: 10px;">Règle de Mutualisation</span>
         <div class="mutual-selector">
-          <button type="button" class="mutual-btn" data-mode="classique">
-            <strong>Classique</strong>
-            <small>Prorata continu</small>
+          <button type="button" class="mutual-btn active" data-mode="avec">
+            <strong>Avec mutualisation</strong>
+            <small>Règle SDJES</small>
           </button>
-          <button type="button" class="mutual-btn" data-mode="federation">
-            <strong>Fédération</strong>
-            <small>Tableur Excel</small>
-          </button>
-          <button type="button" class="mutual-btn active" data-mode="aucun">
-            <strong>Sans</strong>
+          <button type="button" class="mutual-btn" data-mode="sans">
+            <strong>Sans mutualisation</strong>
             <small>Calcul séparé</small>
           </button>
         </div>
@@ -503,8 +497,8 @@
         </div>
         <div class="pool-track" id="poolTrack"></div>
         <div class="pool-legend">
-          <span><i class="dot dot-a"></i>3–6 ans</span>
-          <span><i class="dot dot-b"></i>6–12 ans</span>
+          <span><i class="dot dot-a"></i>- de 6 ans</span>
+          <span><i class="dot dot-b"></i>+ de 6 ans</span>
         </div>
       </div>
 
@@ -533,7 +527,7 @@
     </section>
 
     <footer class="note" id="footerNote">
-      Outil indicatif SDJES & Fédération.
+      Outil indicatif SDJES.
     </footer>
 
   </main>
@@ -557,7 +551,7 @@
   const qStagiaires = document.getElementById('qStagiaires');
 
   let activeRegimeKey = 'hors_p5';
-  let activeMutualMode = 'aucun'; // 'classique', 'federation', ou 'aucun'
+  let activeMutualMode = 'avec'; // 'avec' ou 'sans'
 
   const REGIMES = {
     hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
@@ -576,7 +570,7 @@
     });
   });
 
-  // Mutualisation 3-way handlers
+  // Mutualisation 2-way handlers
   document.querySelectorAll('.mutual-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.mutual-btn').forEach(b => b.classList.remove('active'));
@@ -625,11 +619,11 @@
       const container = document.createElement('div');
       container.className = 'pool-split-container';
 
-      // Groupe 3-6 ans
+      // Groupe - de 6 ans
       if (count36 > 0) {
         const groupA = document.createElement('div');
         groupA.className = 'pool-subgroup';
-        groupA.innerHTML = `<span class="subgroup-label lbl-a">3–6 ans (${count36} anim. / ${n36} enf.)</span>`;
+        groupA.innerHTML = `<span class="subgroup-label lbl-a">- de 6 ans (${count36} anim. / ${n36} enf.)</span>`;
         const trackA = document.createElement('div');
         trackA.className = 'pool-track';
 
@@ -637,7 +631,6 @@
           const seg = document.createElement('div');
           seg.className = 'segment';
           
-          // Calcul de la charge de cet animateur précis
           const kidsForAnim = Math.min(r1, n36 - (i * r1));
           const fillPct = (kidsForAnim / r1) * 100;
 
@@ -651,11 +644,11 @@
         container.appendChild(groupA);
       }
 
-      // Groupe 6-12 ans
+      // Groupe + de 6 ans
       if (count612 > 0) {
         const groupB = document.createElement('div');
         groupB.className = 'pool-subgroup';
-        groupB.innerHTML = `<span class="subgroup-label lbl-b">6–12 ans (${count612} anim. / ${n612} enf.)</span>`;
+        groupB.innerHTML = `<span class="subgroup-label lbl-b">+ de 6 ans (${count612} anim. / ${n612} enf.)</span>`;
         const trackB = document.createElement('div');
         trackB.className = 'pool-track';
 
@@ -663,7 +656,6 @@
           const seg = document.createElement('div');
           seg.className = 'segment';
 
-          // Calcul de la charge de cet animateur précis
           const kidsForAnim = Math.min(r2, n612 - (i * r2));
           const fillPct = (kidsForAnim / r2) * 100;
 
@@ -680,7 +672,7 @@
       poolTrack.appendChild(container);
 
     } else {
-      // Modes MUTUALISÉS (Classique ou Fédération)
+      // Mode AVEC MUTUALISATION (Règle SDJES)
       for (let i = 0; i < totalNeeded; i++){
         const seg = document.createElement('div');
         seg.className = 'segment';
@@ -752,7 +744,6 @@
 
     const r1 = currentRegime.ratio36;
     const r2 = currentRegime.ratio612;
-    const EPS = 1e-9;
 
     // Calcul sans mutualisation (séparé)
     const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
@@ -762,10 +753,8 @@
     let totalNeeded = 0;
 
     if (effectif > 0) {
-      if (activeMutualMode === 'classique') {
-        const rawNeed = (n36 / r1) + (n612 / r2);
-        totalNeeded = Math.ceil(rawNeed - EPS);
-      } else if (activeMutualMode === 'federation') {
+      if (activeMutualMode === 'avec') {
+        // Règle SDJES / Fédération
         if (effectif <= 12) {
           totalNeeded = 2;
         } else {
@@ -783,11 +772,12 @@
           }
         }
       } else {
+        // Sans mutualisation
         totalNeeded = naiveSum;
       }
     }
 
-    const isSplitMode = (activeMutualMode === 'aucun');
+    const isSplitMode = (activeMutualMode === 'sans');
     renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode);
 
     // Éligibilité Directeur
@@ -808,7 +798,7 @@
 
     // Badge dynamique d'économie
     const saved = naiveSum - totalNeeded;
-    if (activeMutualMode !== 'aucun' && saved > 0 && effectif > 0){
+    if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
       mutualBadge.textContent = `⚡ -${saved} mutualisé${saved > 1 ? 's' : ''}`;
       mutualBadge.classList.add('visible');
     } else {
@@ -825,11 +815,11 @@
     animateNumber(qNonDiplomes, nonDiplomesMax);
     animateNumber(qStagiaires, stagiaires);
 
-    let modeText = activeMutualMode === 'classique' 
-      ? "Mutualisation Classique (Prorata continu)" 
-      : (activeMutualMode === 'federation' ? "Mutualisation Fédération (Tableur Excel)" : "Calcul séparé (Sans mutualisation)");
+    let modeText = activeMutualMode === 'avec' 
+      ? "Avec mutualisation (Règle SDJES)" 
+      : "Sans mutualisation (Calcul séparé par tranche)";
 
-    footerNote.textContent = `${currentRegime.tag} — Mode sélectionné : ${modeText}.`;
+    footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
   }
 
   recalc();
