@@ -3,15 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Taux d'encadrement — ALSH</title>
+<meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
+<meta name="theme-color" content="#0B0D1A">
+<title>Calculateur Taux d'encadrement ALSH — Outil SDJES</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
+
 <style>
   :root{
-    --glass-fill: rgba(255, 255, 255, 0.08);
-    --glass-fill-strong: rgba(255, 255, 255, 0.16);
-    --glass-border: rgba(255, 255, 255, 0.22);
-    --glass-border-soft: rgba(255, 255, 255, 0.12);
+    --glass-fill: rgba(255, 255, 255, 0.07);
+    --glass-fill-strong: rgba(255, 255, 255, 0.14);
+    --glass-border: rgba(255, 255, 255, 0.20);
+    --glass-border-soft: rgba(255, 255, 255, 0.10);
     --text-hi: #FFFFFF;
-    --text-mid: rgba(255, 255, 255, 0.72);
+    --text-mid: rgba(255, 255, 255, 0.75);
     --text-low: rgba(255, 255, 255, 0.45);
     --a: #6FD6FF;   /* - de 6 ans */
     --b: #B98CFF;   /* + de 6 ans */
@@ -31,7 +35,7 @@
 
   body{
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-                 "Helvetica Neue", Arial, sans-serif;
+                 "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: var(--text-hi);
     background: #0B0D1A;
     min-height: 100vh;
@@ -41,7 +45,13 @@
     padding: 24px 16px 48px;
   }
 
-  /* ---------- background ---------- */
+  /* Focus visible accessibility */
+  :focus-visible {
+    outline: 2px solid var(--a);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Background Animé ---------- */
   .backdrop{
     position: fixed; inset: 0; z-index: -1; overflow: hidden;
     background:
@@ -50,7 +60,7 @@
       #0B0D1A;
   }
   .blob{
-    position: absolute; border-radius: 50%; filter: blur(70px); opacity: .50;
+    position: absolute; border-radius: 50%; filter: blur(75px); opacity: .45;
     will-change: transform;
   }
   .b1{ width:520px; height:520px; left:-140px; top:-120px;
@@ -61,7 +71,7 @@
        animation: drift2 32s ease-in-out infinite; }
   .b3{ width:480px; height:480px; left:10%; bottom:-200px;
        background: radial-gradient(circle, #FF9F5A 0%, transparent 72%);
-       opacity:.30;
+       opacity:.25;
        animation: drift3 30s ease-in-out infinite; }
 
   @keyframes drift1{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(40px,60px) } }
@@ -72,8 +82,8 @@
     .blob{ animation: none !important; }
   }
 
-  /* ---------- layout ---------- */
-  main{ width:100%; max-width: 460px; display:flex; flex-direction:column; gap:14px; }
+  /* ---------- Layout ---------- */
+  main{ width:100%; max-width: 480px; display:flex; flex-direction:column; gap:14px; }
 
   .glass{
     background: var(--glass-fill);
@@ -96,7 +106,7 @@
 
   .glass::before{
     content:""; position:absolute; inset:0; border-radius:inherit;
-    background: linear-gradient(155deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 35%);
+    background: linear-gradient(155deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 35%);
     pointer-events:none;
     z-index: 1;
   }
@@ -110,24 +120,47 @@
     .glass{ animation: none; opacity: 1; }
   }
 
-  .panel{ padding: 20px 20px 22px; position: relative; z-index: 2; }
+  .panel{ padding: 20px; position: relative; z-index: 2; }
 
-  /* ---------- hero ---------- */
+  /* ---------- Header ---------- */
   .hero{ padding: 22px 22px 18px; position: relative; z-index: 2; }
+  .header-top{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  
   .eyebrow-badge{
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 10px; border-radius: 999px;
     background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border-soft);
     font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
-    color: var(--a); margin-bottom: 10px;
+    color: var(--a);
   }
-  h1{ margin:0; font-size: 28px; font-weight:800; letter-spacing:-0.02em; }
-  .sub{ margin: 4px 0 0; color: var(--text-mid); font-size:14px; }
 
-  /* ---------- regime selector ---------- */
+  .btn-reset{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border-soft);
+    color: var(--text-mid);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-reset:hover{
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  h1{ margin:0; font-size: 26px; font-weight:800; letter-spacing:-0.02em; }
+  .sub{ margin: 4px 0 0; color: var(--text-mid); font-size:13.5px; }
+
+  /* ---------- Regime Selector ---------- */
   .section-label{
-    display: block; font-size: 12px; font-weight: 700;
-    color: var(--text-mid); text-transform: uppercase; letter-spacing: .04em;
+    display: block; font-size: 11.5px; font-weight: 700;
+    color: var(--text-mid); text-transform: uppercase; letter-spacing: .05em;
     margin-bottom: 8px;
   }
 
@@ -143,7 +176,6 @@
     cursor: pointer;
     transition: all .2s cubic-bezier(.16,1,.3,1);
     color: var(--text-mid);
-    outline: none;
   }
   .regime-card .r-title{ display: block; font-size: 13px; font-weight: 700; color: var(--text-hi); }
   .regime-card .r-sub{ display: block; font-size: 11px; opacity: 0.7; margin-top: 2px; }
@@ -161,7 +193,7 @@
   .regime-card.active .r-title{ color: #fff; }
   .regime-card.active .r-sub{ opacity: 0.9; color: var(--a); }
 
-  /* ---------- inputs ---------- */
+  /* ---------- Inputs ---------- */
   .field{ margin-bottom: 14px; }
   .field:last-of-type{ margin-bottom: 0; }
   .field label{ display:block; font-size:13.5px; font-weight:600; color: var(--text-hi); margin-bottom:8px; }
@@ -193,14 +225,13 @@
   }
   .stepbtn:active{ transform: scale(0.92); background: rgba(255,255,255,0.30); }
 
-  /* Total kids badge */
   .total-kids-indicator{
     text-align: center;
     font-size: 12px;
     color: var(--text-mid);
     margin-top: 10px;
     margin-bottom: 6px;
-    padding: 6px 12px;
+    padding: 7px 12px;
     background: rgba(255, 255, 255, 0.04);
     border-radius: var(--radius-sm);
     border: 1px solid var(--glass-border-soft);
@@ -212,7 +243,7 @@
     font-weight: 700;
   }
 
-  /* ---------- 2-way mutualisation selector ---------- */
+  /* ---------- Mutualisation Selector ---------- */
   .mutual-selector{
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -237,7 +268,6 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    outline: none;
   }
   .mutual-btn strong{ font-size: 12px; font-weight: 700; color: var(--text-hi); }
   .mutual-btn small{ font-size: 10px; opacity: 0.7; margin-top: 3px; line-height: 1.1; }
@@ -252,7 +282,7 @@
   .mutual-btn.active strong{ color: #fff; }
   .mutual-btn.active small{ color: var(--a); opacity: 1; }
 
-  /* ---------- toggle row ---------- */
+  /* ---------- Toggle Row ---------- */
   .toggle-group{
     margin-top: 10px;
     padding-top: 10px;
@@ -279,12 +309,12 @@
   .toggle-row input:checked + .switch::after{ transform: translateX(18px); }
   .toggle-row.disabled{ opacity:.35; pointer-events:none; }
 
-  /* ---------- visual pool ---------- */
+  /* ---------- Visual Pool ---------- */
   .pool-header{
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 10px;
   }
-  .pool-label{ font-size:12.5px; font-weight:700; color: var(--text-mid); letter-spacing: .02em; }
+  .pool-label{ font-size:12px; font-weight:700; color: var(--text-mid); letter-spacing: .03em; text-transform: uppercase; }
   
   .badge-mutualized{
     display: inline-flex; align-items: center; gap: 4px;
@@ -295,9 +325,7 @@
     opacity: 0; transform: scale(0.9);
     transition: all .25s cubic-bezier(.16,1,.3,1);
   }
-  .badge-mutualized.visible{
-    opacity: 1; transform: scale(1);
-  }
+  .badge-mutualized.visible{ opacity: 1; transform: scale(1); }
 
   .pool-track{ display:flex; gap:5px; }
   .segment{
@@ -314,43 +342,21 @@
   .fillB{ background: linear-gradient(180deg, var(--b), #7C5CE0); }
   
   .gauge-label{
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: #FFFFFF;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-    pointer-events: none;
-    font-variant-numeric: tabular-nums;
-    z-index: 2;
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #FFFFFF;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9); pointer-events: none;
+    font-variant-numeric: tabular-nums; z-index: 2;
   }
 
-  .segment.ghost{ opacity:.4; }
+  .segment.ghost{ opacity:.35; }
   .segment.ghost::after{
     content:"–"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     color: var(--text-low); font-size:16px;
   }
 
-  .pool-split-container{
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-  }
-  .pool-subgroup{
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .subgroup-label{
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-  }
+  .pool-split-container{ display: flex; flex-direction: column; gap: 12px; width: 100%; }
+  .pool-subgroup{ display: flex; flex-direction: column; gap: 6px; }
+  .subgroup-label{ font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
   .subgroup-label.lbl-a{ color: var(--a); }
   .subgroup-label.lbl-b{ color: var(--b); }
 
@@ -360,7 +366,7 @@
   .dot-a{ background: var(--a); }
   .dot-b{ background: var(--b); }
 
-  /* ---------- total & count display ---------- */
+  /* ---------- Display Total ---------- */
   .headline{ display:flex; align-items:baseline; gap:12px; margin-top:18px; flex-wrap:wrap; }
   .big{
     font-size: 52px; font-weight:800; letter-spacing:-0.03em; line-height:1;
@@ -368,7 +374,7 @@
     -webkit-background-clip:text; background-clip:text; color:transparent;
     font-variant-numeric: tabular-nums;
   }
-  .biglabel{ font-size:14px; color: var(--text-mid); font-weight:600; max-width: 220px; line-height: 1.35; }
+  .biglabel{ font-size:14px; color: var(--text-mid); font-weight:600; max-width: 230px; line-height: 1.35; }
 
   @keyframes numPulse{
     0%{ transform: scale(1); }
@@ -382,12 +388,12 @@
     .segment .fillA, .segment .fillB{ transition: none; }
   }
 
-  /* ---------- qualifications ---------- */
-  .quali h2{ margin:0 0 14px; font-size:15px; font-weight:700; letter-spacing:-0.01em; }
+  /* ---------- Qualifications ---------- */
+  .quali h2{ margin:0 0 12px; font-size:14px; font-weight:700; letter-spacing:-0.01em; text-transform: uppercase; color: var(--text-mid); }
   .qgrid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
   .qcard{
     border-radius: var(--radius-md); padding: 12px 6px; text-align:center;
-    border: 1px solid var(--glass-border-soft); background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border-soft); background: rgba(255,255,255,0.03);
   }
   .qnum{ display:block; font-size: 24px; font-weight:800; font-variant-numeric: tabular-nums; }
   .qlabel{ display:block; margin-top:4px; font-size:11px; line-height:1.3; color: var(--text-mid); font-weight:600; }
@@ -396,14 +402,77 @@
   .qmax .qnum{ color: #FFB199; }
   .qflex .qnum{ color: #C9C2FF; }
 
+  /* ---------- Action Share Button ---------- */
+  .btn-share{
+    width: 100%;
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border-soft);
+    background: var(--glass-fill-strong);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all .2s ease;
+  }
+  .btn-share:hover{
+    background: rgba(255,255,255,0.22);
+    border-color: rgba(255,255,255,0.35);
+  }
+
+  /* ---------- Toast Notification ---------- */
+  .toast{
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    opacity: 0;
+    transition: all .3s cubic-bezier(.16,1,.3,1);
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .toast.show{
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
   footer.note{
     font-size: 11px; line-height:1.5; color: var(--text-low);
     padding: 0 8px; text-align:center;
   }
 
+  /* ---------- Print Stylesheet ---------- */
+  @media print {
+    body { background: #fff !important; color: #000 !important; padding: 0 !important; }
+    .backdrop, .btn-reset, .btn-share, .stepper button, .toast { display: none !important; }
+    .glass { background: #fff !important; border: 1px solid #ccc !important; box-shadow: none !important; backdrop-filter: none !important; opacity: 1 !important; color: #000 !important; }
+    h1, .big, .qnum, label, span { color: #000 !important; background: none !important; -webkit-text-fill-color: initial !important; }
+    .segment { border: 1px solid #000 !important; }
+    .fillA { background: #6FD6FF !important; }
+    .fillB { background: #B98CFF !important; }
+  }
+
   @media (max-width: 380px){
     .big{ font-size: 42px; }
-    h1{ font-size: 24px; }
+    h1{ font-size: 23px; }
     .regime-card{ padding: 8px 10px; }
   }
 </style>
@@ -419,13 +488,18 @@
   <main>
 
     <header class="glass hero">
-      <div class="eyebrow-badge" id="eyebrowBadge">Hors PEDT · > 5h / jour</div>
+      <div class="header-top">
+        <div class="eyebrow-badge" id="eyebrowBadge">Hors PEDT · > 5h / jour</div>
+        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser les effectifs à zéro">
+          ↺ Réinitialiser
+        </button>
+      </div>
       <h1>Taux d'encadrement</h1>
-      <p class="sub">Calculateur ALSH multi-règles</p>
+      <p class="sub">Calculateur ALSH conforme réglementation SDJES</p>
     </header>
 
     <section class="glass panel inputs">
-      <span class="section-label">Régime d'accueil</span>
+      <span class="section-label">1. Régime d'accueil</span>
       <div class="regime-grid">
         <button type="button" class="regime-card active" data-regime="hors_p5">
           <span class="r-title">Hors PEDT</span>
@@ -433,7 +507,7 @@
         </button>
         <button type="button" class="regime-card" data-regime="hors_m5">
           <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">-5h par jour</span>
+          <span class="r-sub">≤ 5h par jour</span>
         </button>
         <button type="button" class="regime-card" data-regime="avec_p5">
           <span class="r-title">Avec PEDT</span>
@@ -441,24 +515,25 @@
         </button>
         <button type="button" class="regime-card" data-regime="avec_m5">
           <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">-5h par jour</span>
+          <span class="r-sub">≤ 5h par jour</span>
         </button>
       </div>
 
+      <span class="section-label">2. Effectifs enregistrés</span>
       <div class="field">
         <label for="n36">Enfants de - de 6 ans</label>
         <div class="stepper">
-          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
-          <input id="n36" type="number" min="0" value="0" inputmode="numeric">
-          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
+          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant de - de 6 ans">–</button>
+          <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
+          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant de - de 6 ans">+</button>
         </div>
       </div>
       <div class="field">
         <label for="n612">Enfants de + de 6 ans</label>
         <div class="stepper">
-          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
-          <input id="n612" type="number" min="0" value="0" inputmode="numeric">
-          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
+          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant de + de 6 ans">–</button>
+          <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
+          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant de + de 6 ans">+</button>
         </div>
       </div>
 
@@ -467,7 +542,7 @@
       </div>
 
       <div class="field">
-        <span class="section-label" style="margin-top: 10px;">Règle de Mutualisation</span>
+        <span class="section-label" style="margin-top: 12px;">3. Mode de calcul</span>
         <div class="mutual-selector">
           <button type="button" class="mutual-btn active" data-mode="avec">
             <strong>Avec mutualisation</strong>
@@ -492,7 +567,7 @@
     <section class="glass panel result">
       <div class="pool">
         <div class="pool-header">
-          <span class="pool-label">Postes d'animateurs</span>
+          <span class="pool-label">Postes d'encadrement</span>
           <span class="badge-mutualized" id="mutualBadge">⚡ Mutualisé</span>
         </div>
         <div class="pool-track" id="poolTrack"></div>
@@ -509,28 +584,34 @@
     </section>
 
     <section class="glass panel quali">
-      <h2>Qualifications de l'équipe</h2>
+      <h2>Composition de l'équipe</h2>
       <div class="qgrid">
         <div class="qcard qmin">
           <span class="qnum" id="qDiplomes">0</span>
-          <span class="qlabel">diplômés<br><small>min. 50%</small></span>
+          <span class="qlabel">Diplômés<br><small>Min. 50%</small></span>
         </div>
         <div class="qcard qmax">
           <span class="qnum" id="qNonDiplomes">0</span>
-          <span class="qlabel">non-diplômés<br><small>max. 20%</small></span>
+          <span class="qlabel">Non-diplômés<br><small>Max. 20%</small></span>
         </div>
         <div class="qcard qflex">
           <span class="qnum" id="qStagiaires">0</span>
-          <span class="qlabel">stagiaires BAFA<br><small>ajustement</small></span>
+          <span class="qlabel">Stagiaires BAFA<br><small>Ajustement</small></span>
         </div>
       </div>
+
+      <button type="button" class="btn-share" id="copyBtn">
+        📋 Copier le bilan de calcul
+      </button>
     </section>
 
     <footer class="note" id="footerNote">
-      Outil indicatif SDJES.
+      Outil indicatif SDJES — Conforme à la législation ALSH en vigueur.
     </footer>
 
   </main>
+
+  <div class="toast" id="toast">📋 Bilan copié dans le presse-papier !</div>
 
 <script>
   const n36input = document.getElementById('n36');
@@ -541,6 +622,9 @@
   const eyebrowBadge = document.getElementById('eyebrowBadge');
   const footerNote = document.getElementById('footerNote');
   const mutualBadge = document.getElementById('mutualBadge');
+  const resetBtn = document.getElementById('resetBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const toast = document.getElementById('toast');
 
   const poolTrack = document.getElementById('poolTrack');
   const totalAnimEl = document.getElementById('totalAnim');
@@ -551,7 +635,7 @@
   const qStagiaires = document.getElementById('qStagiaires');
 
   let activeRegimeKey = 'hors_p5';
-  let activeMutualMode = 'avec'; // 'avec' ou 'sans'
+  let activeMutualMode = 'avec';
 
   const REGIMES = {
     hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
@@ -560,7 +644,14 @@
     avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
   };
 
-  // Régimes handlers
+  // Toast Handler
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, 2600);
+  }
+
+  // Régimes Handlers
   document.querySelectorAll('.regime-card').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.regime-card').forEach(c => c.classList.remove('active'));
@@ -570,7 +661,7 @@
     });
   });
 
-  // Mutualisation 2-way handlers
+  // Mutualisation 2-way Handlers
   document.querySelectorAll('.mutual-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.mutual-btn').forEach(b => b.classList.remove('active'));
@@ -586,7 +677,7 @@
     return v;
   }
 
-  // Steppers handlers
+  // Stepper Buttons
   document.querySelectorAll('.stepbtn').forEach(btn => {
     btn.addEventListener('click', () => {
       const target = document.getElementById(btn.dataset.target);
@@ -603,6 +694,15 @@
 
   dirToggle.addEventListener('change', recalc);
 
+  // Reset Button
+  resetBtn.addEventListener('click', () => {
+    n36input.value = 0;
+    n612input.value = 0;
+    dirToggle.checked = false;
+    recalc();
+    showToast("🔄 Effectifs réinitialisés à zéro");
+  });
+
   function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
     if (totalNeeded === 0){
       poolTrack.innerHTML = '<div class="segment ghost"></div>';
@@ -612,14 +712,13 @@
     poolTrack.innerHTML = '';
 
     if (isSplitMode) {
-      // Mode SANS mutualisation : barres-jauges par tranche d'âge
+      // Mode SANS mutualisation
       const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
       const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
 
       const container = document.createElement('div');
       container.className = 'pool-split-container';
 
-      // Groupe - de 6 ans
       if (count36 > 0) {
         const groupA = document.createElement('div');
         groupA.className = 'pool-subgroup';
@@ -630,7 +729,6 @@
         for (let i = 0; i < count36; i++) {
           const seg = document.createElement('div');
           seg.className = 'segment';
-          
           const kidsForAnim = Math.min(r1, n36 - (i * r1));
           const fillPct = (kidsForAnim / r1) * 100;
 
@@ -644,7 +742,6 @@
         container.appendChild(groupA);
       }
 
-      // Groupe + de 6 ans
       if (count612 > 0) {
         const groupB = document.createElement('div');
         groupB.className = 'pool-subgroup';
@@ -655,7 +752,6 @@
         for (let i = 0; i < count612; i++) {
           const seg = document.createElement('div');
           seg.className = 'segment';
-
           const kidsForAnim = Math.min(r2, n612 - (i * r2));
           const fillPct = (kidsForAnim / r2) * 100;
 
@@ -739,13 +835,11 @@
     const n612 = clampInt(n612input.value);
     const effectif = n36 + n612;
 
-    // Mise à jour de l'indicateur d'effectif total
     totalKidsIndicator.innerHTML = `Effectif total : <strong>${effectif}</strong> enfant${effectif > 1 ? 's' : ''}`;
 
     const r1 = currentRegime.ratio36;
     const r2 = currentRegime.ratio612;
 
-    // Calcul sans mutualisation (séparé)
     const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
     const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
     const naiveSum = naive36 + naive612;
@@ -754,7 +848,6 @@
 
     if (effectif > 0) {
       if (activeMutualMode === 'avec') {
-        // Règle SDJES / Fédération
         if (effectif <= 12) {
           totalNeeded = 2;
         } else {
@@ -772,7 +865,6 @@
           }
         }
       } else {
-        // Sans mutualisation
         totalNeeded = naiveSum;
       }
     }
@@ -780,7 +872,6 @@
     const isSplitMode = (activeMutualMode === 'sans');
     renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode);
 
-    // Éligibilité Directeur
     const directorEligible = effectif > 0 && effectif <= 50;
     dirRow.classList.toggle('disabled', !directorEligible);
     if (!directorEligible) dirToggle.checked = false;
@@ -796,7 +887,6 @@
     }
     animateNumber(totalAnimEl, displayed);
 
-    // Badge dynamique d'économie
     const saved = naiveSum - totalNeeded;
     if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
       mutualBadge.textContent = `⚡ -${saved} mutualisé${saved > 1 ? 's' : ''}`;
@@ -805,7 +895,6 @@
       mutualBadge.classList.remove('visible');
     }
 
-    // Qualifications
     const base = displayed;
     const diplomesMin = Math.ceil(base * 0.5);
     const nonDiplomesMax = Math.floor(base * 0.2);
@@ -817,11 +906,45 @@
 
     let modeText = activeMutualMode === 'avec' 
       ? "Avec mutualisation (Règle SDJES)" 
-      : "Sans mutualisation (Calcul séparé par tranche)";
+      : "Sans mutualisation (Calcul séparé)";
 
     footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
   }
 
+  // Copie de synthèse dans le presse-papier
+  copyBtn.addEventListener('click', () => {
+    const currentRegime = REGIMES[activeRegimeKey];
+    const n36 = clampInt(n36input.value);
+    const n612 = clampInt(n612input.value);
+    const totalKids = n36 + n612;
+    const totalAnim = totalAnimEl.textContent;
+    const mode = activeMutualMode === 'avec' ? "Avec mutualisation" : "Sans mutualisation";
+    const dirInclus = dirToggle.checked ? "Oui" : "Non";
+
+    const textSummary = 
+`📋 BILAN TAUX D'ENCADREMENT ALSH
+-----------------------------------
+- Régime : ${currentRegime.tag}
+- Effectifs : ${totalKids} enfants (-6ans: ${n36} | +6ans: ${n612})
+- Mode de calcul : ${mode}
+- Directeur inclus sur le terrain : ${dirInclus}
+-----------------------------------
+> ANIMATEURS REQUIS : ${totalAnim}
+
+Composition recommandée de l'équipe :
+• Diplômés (Min. 50%) : ${qDiplomes.textContent}
+• Non-diplômés (Max. 20%) : ${qNonDiplomes.textContent}
+• Stagiaires BAFA : ${qStagiaires.textContent}
+`;
+
+    navigator.clipboard.writeText(textSummary).then(() => {
+      showToast("📋 Bilan copié dans le presse-papier !");
+    }).catch(() => {
+      showToast("Impossible de copier automatiquement.");
+    });
+  });
+
+  // Initialisation
   recalc();
 </script>
 
