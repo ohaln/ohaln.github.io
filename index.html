@@ -126,13 +126,13 @@
 
   /* ---------- regime selector ---------- */
   .section-label{
-    display: block; font-size: 13px; font-weight: 700;
+    display: block; font-size: 12px; font-weight: 700;
     color: var(--text-mid); text-transform: uppercase; letter-spacing: .04em;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .regime-grid{
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;
   }
   .regime-card{
     background: rgba(0,0,0,0.22);
@@ -193,13 +193,51 @@
   }
   .stepbtn:active{ transform: scale(0.92); background: rgba(255,255,255,0.30); }
 
-  .toggle-group{
-    margin-top: 14px;
-    padding-top: 10px;
-    border-top: 1px solid var(--glass-border-soft);
+  /* ---------- 3-way mutualisation selector ---------- */
+  .mutual-selector{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border-soft);
+    margin-top: 6px;
+    margin-bottom: 14px;
+  }
+
+  .mutual-btn{
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 8px 4px;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all .2s ease;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    text-align: center;
+    outline: none;
+  }
+  .mutual-btn strong{ font-size: 11.5px; font-weight: 700; color: var(--text-hi); }
+  .mutual-btn small{ font-size: 9.5px; opacity: 0.7; margin-top: 3px; line-height: 1.1; }
+
+  .mutual-btn:hover{ background: rgba(255,255,255,0.06); }
+
+  .mutual-btn.active{
+    background: linear-gradient(135deg, rgba(111, 214, 255, 0.25), rgba(185, 140, 255, 0.25));
+    border-color: rgba(111, 214, 255, 0.5);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+  .mutual-btn.active strong{ color: #fff; }
+  .mutual-btn.active small{ color: var(--a); opacity: 1; }
+
+  /* ---------- toggle row ---------- */
+  .toggle-group{
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--glass-border-soft);
   }
 
   .toggle-row{
@@ -328,7 +366,7 @@
     <header class="glass hero">
       <div class="eyebrow-badge" id="eyebrowBadge">Hors PEDT · > 5h / jour</div>
       <h1>Taux d'encadrement</h1>
-      <p class="sub">Calculateur aligné Fédération & SDJES</p>
+      <p class="sub">Calculateur ALSH multi-règles</p>
     </header>
 
     <section class="glass panel inputs">
@@ -356,7 +394,7 @@
         <label for="n36">Enfants de 3 à 6 ans</label>
         <div class="stepper">
           <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
-          <input id="n36" type="number" min="0" value="0" inputmode="numeric">
+          <input id="n36" type="number" min="0" value="21" inputmode="numeric">
           <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
         </div>
       </div>
@@ -364,18 +402,30 @@
         <label for="n612">Enfants de 6 à 12 ans</label>
         <div class="stepper">
           <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
-          <input id="n612" type="number" min="0" value="0" inputmode="numeric">
+          <input id="n612" type="number" min="0" value="16" inputmode="numeric">
           <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
         </div>
       </div>
 
-      <div class="toggle-group">
-        <label class="toggle-row" for="mutualToggle">
-          <span>Mutualiser les tranches d'âge<small>Formule Fédération (ON) ou Séparé (OFF)</small></span>
-          <input type="checkbox" id="mutualToggle" checked>
-          <span class="switch"></span>
-        </label>
+      <div class="field">
+        <span class="section-label" style="margin-top: 10px;">Règle de Mutualisation</span>
+        <div class="mutual-selector">
+          <button type="button" class="mutual-btn" data-mode="classique">
+            <strong>Classique</strong>
+            <small>Prorata continu</small>
+          </button>
+          <button type="button" class="mutual-btn active" data-mode="federation">
+            <strong>Fédération</strong>
+            <small>Tableur Excel</small>
+          </button>
+          <button type="button" class="mutual-btn" data-mode="aucun">
+            <strong>Sans</strong>
+            <small>Calcul séparé</small>
+          </button>
+        </div>
+      </div>
 
+      <div class="toggle-group">
         <label class="toggle-row" id="dirRow" for="dirToggle">
           <span>Directeur inclus dans l'encadrement<small>Possible si effectif total ≤ 50 enfants</small></span>
           <input type="checkbox" id="dirToggle">
@@ -388,7 +438,7 @@
       <div class="pool">
         <div class="pool-header">
           <span class="pool-label">Postes d'animateurs</span>
-          <span class="badge-mutualized" id="mutualBadge">⚡ -1 mutualisé</span>
+          <span class="badge-mutualized" id="mutualBadge">⚡ Mutualisé</span>
         </div>
         <div class="pool-track" id="poolTrack"></div>
         <div class="pool-legend">
@@ -422,7 +472,7 @@
     </section>
 
     <footer class="note" id="footerNote">
-      Calculateur officiel conforme aux règles de la Fédération.
+      Outil indicatif SDJES & Fédération.
     </footer>
 
   </main>
@@ -431,7 +481,6 @@
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
   const dirToggle = document.getElementById('dirToggle');
-  const mutualToggle = document.getElementById('mutualToggle');
   const dirRow = document.getElementById('dirRow');
   const eyebrowBadge = document.getElementById('eyebrowBadge');
   const footerNote = document.getElementById('footerNote');
@@ -446,6 +495,7 @@
   const qStagiaires = document.getElementById('qStagiaires');
 
   let activeRegimeKey = 'hors_p5';
+  let activeMutualMode = 'federation'; // 'classique', 'federation', ou 'aucun'
 
   const REGIMES = {
     hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
@@ -454,11 +504,22 @@
     avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
   };
 
+  // Régimes handlers
   document.querySelectorAll('.regime-card').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.regime-card').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
       activeRegimeKey = btn.dataset.regime;
+      recalc();
+    });
+  });
+
+  // Mutualisation 3-way handlers
+  document.querySelectorAll('.mutual-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mutual-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeMutualMode = btn.dataset.mode;
       recalc();
     });
   });
@@ -469,6 +530,7 @@
     return v;
   }
 
+  // Steppers handlers
   document.querySelectorAll('.stepbtn').forEach(btn => {
     btn.addEventListener('click', () => {
       const target = document.getElementById(btn.dataset.target);
@@ -484,15 +546,13 @@
   });
 
   dirToggle.addEventListener('change', recalc);
-  mutualToggle.addEventListener('change', recalc);
 
-  function renderPool(totalNeeded, n36, n612, ratio36, ratio612){
+  function renderPool(totalNeeded, n36, n612, r1, r2){
     if (totalNeeded === 0){
       poolTrack.innerHTML = '<div class="segment ghost"></div>';
       return;
     }
 
-    const currentCount = poolTrack.querySelectorAll('.segment:not(.ghost)').length;
     poolTrack.innerHTML = '';
 
     for (let i = 0; i < totalNeeded; i++){
@@ -507,17 +567,15 @@
       poolTrack.appendChild(seg);
     }
 
-    // Répartition visuelle indicative des tranches
-    const total36Anims = n36 / ratio36;
-    const total612Anims = n612 / ratio612;
-    const totalFrac = total36Anims + total612Anims;
+    const total36Anims = n36 / r1;
+    const total612Anims = n612 / r2;
 
     const liveSegments = Array.from(poolTrack.children);
     liveSegments.forEach((seg, i) => {
       let fillAPct = 0;
       let fillBPct = 0;
 
-      if (totalFrac > 0) {
+      if (total36Anims + total612Anims > 0) {
         const segStart = i;
         const segEnd = i + 1;
         const aEnd = Math.min(segEnd, total36Anims);
@@ -561,12 +619,12 @@
     const n36 = clampInt(n36input.value);
     const n612 = clampInt(n612input.value);
     const effectif = n36 + n612;
-    const isMutualized = mutualToggle.checked;
 
     const r1 = currentRegime.ratio36;
     const r2 = currentRegime.ratio612;
+    const EPS = 1e-9;
 
-    // Calcul séparé (sans mutualisation)
+    // Calcul sans mutualisation (référence)
     const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
     const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
     const naiveSum = naive36 + naive612;
@@ -574,15 +632,19 @@
     let totalNeeded = 0;
 
     if (effectif > 0) {
-      if (isMutualized) {
-        // Formule exacte du tableur de la Fédération :
+      if (activeMutualMode === 'classique') {
+        // Choix 1 : Prorata continu mathématique
+        const rawNeed = (n36 / r1) + (n612 / r2);
+        totalNeeded = Math.ceil(rawNeed - EPS);
+      } else if (activeMutualMode === 'federation') {
+        // Choix 2 : Formule Exacte Fédération (Tableur Excel)
         if (effectif <= 12) {
-          totalNeeded = 2; // Règle d'effectif minimum
+          totalNeeded = 2;
         } else {
-          const mod36 = n36 % r1;
-          const mod612 = n612 % r2;
           const fullGroups = Math.floor(n36 / r1) + Math.floor(n612 / r2);
-          const remTotal = mod36 + mod612;
+          const rem36 = n36 % r1;
+          const rem612 = n612 % r2;
+          const remTotal = rem36 + rem612;
 
           if (remTotal === 0) {
             totalNeeded = fullGroups;
@@ -593,13 +655,14 @@
           }
         }
       } else {
+        // Choix 3 : Pas de mutualisation (calcul séparé)
         totalNeeded = naiveSum;
       }
     }
 
     renderPool(totalNeeded, n36, n612, r1, r2);
 
-    // Éligibilité du Directeur
+    // Éligibilité Directeur
     const directorEligible = effectif > 0 && effectif <= 50;
     dirRow.classList.toggle('disabled', !directorEligible);
     if (!directorEligible) dirToggle.checked = false;
@@ -615,9 +678,9 @@
     }
     animateNumber(totalAnimEl, displayed);
 
-    // Badge d'économie mutualisée
+    // Dynamic Badge Status
     const saved = naiveSum - totalNeeded;
-    if (isMutualized && saved > 0 && effectif > 0){
+    if (activeMutualMode !== 'aucun' && saved > 0 && effectif > 0){
       mutualBadge.textContent = `⚡ -${saved} mutualisé${saved > 1 ? 's' : ''}`;
       mutualBadge.classList.add('visible');
     } else {
@@ -634,7 +697,11 @@
     animateNumber(qNonDiplomes, nonDiplomesMax);
     animateNumber(qStagiaires, stagiaires);
 
-    footerNote.textContent = `${currentRegime.tag} : Taux 1/${r1} (<6 ans) et 1/${r2} (≥6 ans). Conforme à la formule Fédération.`;
+    let modeText = activeMutualMode === 'classique' 
+      ? "Mutualisation Classique (Prorata continu)" 
+      : (activeMutualMode === 'federation' ? "Mutualisation Fédération (Tableur Excel)" : "Calcul séparé (Sans mutualisation)");
+
+    footerNote.textContent = `${currentRegime.tag} — Mode sélectionné : ${modeText}.`;
   }
 
   recalc();
