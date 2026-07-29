@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
-<meta name="theme-color" content="#0D0B1A">
+<meta name="theme-color" content="#0F081D">
 <title>Calculateur Taux d'encadrement ALSH — Outil SDJES</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
 
@@ -19,9 +19,10 @@
     --text-mid: rgba(255, 255, 255, 0.78);
     --text-low: rgba(255, 255, 255, 0.45);
     
-    /* Nouvelle Palette : Jaune & Violet */
-    --a: #FFD166;   /* - de 6 ans (Jaune Solaire) */
-    --b: #C77DFF;   /* + de 6 ans (Violet Lumineux) */
+    /* Palette ajustée : Violet Dominant & Jaune Pastel Doux */
+    --a: #FFE066;   /* - de 6 ans (Jaune doux pastel) */
+    --b: #C77DFF;   /* + de 6 ans (Violet Néon) */
+    --violet-bright: #E0AAFF;
     --accent: #FF9F5A;
     --success: #52E596;
     --radius-xl: 26px;
@@ -47,7 +48,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
                  "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: var(--text-hi);
-    background: #0D0B1A;
+    background: #0F081D;
     min-height: 100vh;
     overflow-x: hidden;
     display: flex;
@@ -57,17 +58,17 @@
 
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #0D0B1A, 0 0 0 4px var(--a);
+    box-shadow: 0 0 0 2px #0F081D, 0 0 0 4px var(--b);
     border-radius: inherit;
   }
 
-  /* ---------- Background Noise & Blobs ---------- */
+  /* ---------- Background Noise & Blobs Violet-Dominant ---------- */
   .backdrop{
     position: fixed; inset: 0; z-index: -1; overflow: hidden;
     background:
-      radial-gradient(circle at 18% 8%, #241A0E 0%, transparent 45%),
-      radial-gradient(circle at 85% 92%, #1D0D2E 0%, transparent 50%),
-      #0D0B1A;
+      radial-gradient(circle at 75% 15%, #230B3B 0%, transparent 55%),
+      radial-gradient(circle at 15% 85%, #18092B 0%, transparent 60%),
+      #0F081D;
   }
   
   .backdrop::before {
@@ -79,23 +80,23 @@
   }
 
   .blob{
-    position: absolute; border-radius: 50%; filter: blur(90px); opacity: .4;
+    position: absolute; border-radius: 50%; filter: blur(100px); opacity: .45;
     will-change: transform;
   }
-  .b1{ width:500px; height:500px; left:-130px; top:-100px;
-       background: radial-gradient(circle, #F59E0B 0%, transparent 70%);
-       animation: drift1 26s ease-in-out infinite; }
-  .b2{ width:480px; height:480px; right:-120px; top:120px;
+  .b1{ width:520px; height:520px; right:-100px; top:-100px;
        background: radial-gradient(circle, #7B2CBF 0%, transparent 70%);
+       animation: drift1 28s ease-in-out infinite; }
+  .b2{ width:480px; height:480px; left:-120px; top:220px;
+       background: radial-gradient(circle, #5A189A 0%, transparent 70%);
        animation: drift2 32s ease-in-out infinite; }
-  .b3{ width:450px; height:450px; left:15%; bottom:-180px;
-       background: radial-gradient(circle, #FFD166 0%, transparent 72%);
-       opacity:.2;
+  .b3{ width:400px; height:400px; right:20%; bottom:-140px;
+       background: radial-gradient(circle, #FFE066 0%, transparent 75%);
+       opacity:.12;
        animation: drift3 30s ease-in-out infinite; }
 
-  @keyframes drift1{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(40px,60px) } }
-  @keyframes drift2{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(-50px,40px) } }
-  @keyframes drift3{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(30px,-40px) } }
+  @keyframes drift1{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(-40px,50px) } }
+  @keyframes drift2{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(50px,-30px) } }
+  @keyframes drift3{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(-30px,-40px) } }
 
   /* ---------- Layout ---------- */
   main{ width:100%; max-width: 480px; display:flex; flex-direction:column; gap:16px; }
@@ -107,8 +108,8 @@
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
     box-shadow:
-      0 1px 0 rgba(255,255,255,0.18) inset,
-      0 20px 40px -15px rgba(0,0,0,0.5);
+      0 1px 0 rgba(255,255,255,0.15) inset,
+      0 20px 40px -15px rgba(0,0,0,0.6);
     position: relative;
     opacity: 0;
     animation: cardIn .6s var(--ease-out) forwards;
@@ -122,7 +123,7 @@
 
   .glass::before{
     content:""; position:absolute; inset:0; border-radius:inherit;
-    background: linear-gradient(155deg, rgba(255,255,255,0.08), rgba(255,255,255,0) 35%);
+    background: linear-gradient(155deg, rgba(255,255,255,0.07), rgba(255,255,255,0) 35%);
     pointer-events:none;
     z-index: 1;
   }
@@ -141,7 +142,7 @@
     content: "";
     position: absolute;
     top: 0; left: 15%; right: 15%; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--a), var(--b), transparent);
+    background: linear-gradient(90deg, transparent, var(--b), var(--violet-bright), transparent);
     opacity: 0.8;
   }
 
@@ -157,9 +158,9 @@
   .eyebrow-badge{
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 10px; border-radius: 999px;
-    background: rgba(255, 209, 102, 0.12); border: 1px solid rgba(255, 209, 102, 0.3);
+    background: rgba(199, 125, 255, 0.12); border: 1px solid rgba(199, 125, 255, 0.3);
     font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-    color: var(--a);
+    color: var(--violet-bright);
     transition: all var(--transition-smooth);
   }
 
@@ -213,8 +214,8 @@
     max-width: 75vw;
     white-space: normal;
     word-wrap: break-word;
-    background: rgba(20, 15, 35, 0.96); 
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(18, 10, 32, 0.96); 
+    border: 1px solid rgba(199, 125, 255, 0.3);
     color: #fff; 
     padding: 8px 12px; 
     border-radius: var(--radius-sm);
@@ -227,7 +228,6 @@
     text-align: left;
   }
 
-  /* Note explicative PEDT recadrée */
   .pedt-info-note {
     font-size: 11.5px;
     color: var(--text-mid);
@@ -239,7 +239,7 @@
     margin-bottom: 18px;
     line-height: 1.4;
   }
-  .pedt-info-note strong { color: var(--a); font-weight: 700; }
+  .pedt-info-note strong { color: var(--violet-bright); font-weight: 700; }
 
   /* ---------- Regime Selector ---------- */
   .regime-grid{
@@ -267,13 +267,13 @@
   .regime-card:active{ transform: scale(0.97); }
 
   .regime-card.active{
-    background: linear-gradient(135deg, rgba(255, 209, 102, 0.2), rgba(199, 125, 255, 0.2));
-    border-color: rgba(255, 209, 102, 0.55);
-    box-shadow: 0 6px 20px -4px rgba(255, 209, 102, 0.2);
+    background: linear-gradient(135deg, rgba(123, 44, 191, 0.35), rgba(199, 125, 255, 0.25));
+    border-color: rgba(199, 125, 255, 0.6);
+    box-shadow: 0 6px 20px -4px rgba(123, 44, 191, 0.3);
     color: #fff;
   }
   .regime-card.active .r-title{ color: #fff; }
-  .regime-card.active .r-sub{ opacity: 0.95; color: var(--a); }
+  .regime-card.active .r-sub{ opacity: 0.95; color: var(--violet-bright); }
 
   /* ---------- Inputs & Stepper ---------- */
   .field{ margin-bottom: 14px; }
@@ -289,8 +289,8 @@
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   }
   .stepper:focus-within{
-    border-color: rgba(255, 209, 102, 0.4);
-    box-shadow: 0 0 12px rgba(255, 209, 102, 0.15);
+    border-color: rgba(199, 125, 255, 0.5);
+    box-shadow: 0 0 12px rgba(199, 125, 255, 0.2);
   }
 
   .stepper input{
@@ -322,7 +322,7 @@
     border: 1px solid var(--glass-border-soft);
     font-variant-numeric: tabular-nums;
   }
-  .total-kids-indicator strong{ color: var(--a); font-weight: 700; }
+  .total-kids-indicator strong{ color: var(--violet-bright); font-weight: 700; }
 
   .safety-alert{
     display: none; align-items: center; gap: 8px;
@@ -352,12 +352,12 @@
 
   .mutual-btn:hover{ background: rgba(255,255,255,0.08); }
   .mutual-btn.active{
-    background: linear-gradient(135deg, rgba(255, 209, 102, 0.2), rgba(199, 125, 255, 0.2));
-    border-color: rgba(255, 209, 102, 0.45);
+    background: linear-gradient(135deg, rgba(123, 44, 191, 0.35), rgba(199, 125, 255, 0.25));
+    border-color: rgba(199, 125, 255, 0.5);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
   .mutual-btn.active strong{ color: #fff; }
-  .mutual-btn.active small{ color: var(--a); opacity: 1; }
+  .mutual-btn.active small{ color: var(--violet-bright); opacity: 1; }
 
   /* ---------- Toggle Row ---------- */
   .toggle-group{
@@ -384,13 +384,13 @@
     transition: transform 0.3s var(--ease-spring);
   }
   .toggle-row input:checked + .switch{
-    background: linear-gradient(135deg, var(--a), var(--b));
+    background: linear-gradient(135deg, var(--b), var(--violet-bright));
     border-color: rgba(255,255,255,0.4);
   }
   .toggle-row input:checked + .switch::after{ transform: translateX(20px); }
   .toggle-row.disabled{ opacity:.35; pointer-events:none; }
 
-  /* ---------- Visual Pool & Sleek Static Glass Gauges ---------- */
+  /* ---------- Visual Pool & Gauges ---------- */
   .pool-header{
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 12px;
@@ -400,9 +400,9 @@
   .badge-mutualized{
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 9px; border-radius: 999px;
-    background: rgba(255, 209, 102, 0.15);
-    border: 1px solid rgba(255, 209, 102, 0.35);
-    color: var(--a); font-size: 11px; font-weight: 700;
+    background: rgba(199, 125, 255, 0.15);
+    border: 1px solid rgba(199, 125, 255, 0.35);
+    color: var(--violet-bright); font-size: 11px; font-weight: 700;
     opacity: 0; transform: scale(0.85);
     transition: all 0.3s var(--ease-spring);
   }
@@ -426,7 +426,7 @@
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
 
-  /* Remplissage épuré Jaune (-6ans) et Violet (+6ans) */
+  /* Remplissage : Jaune pastel (-6ans) et Violet lumineux (+6ans) */
   .segment .fillA, .segment .fillB{
     height:100%; width: 0%;
     transition: width 0.4s var(--ease-out);
@@ -434,8 +434,8 @@
   }
 
   .fillA{ 
-    background: linear-gradient(135deg, #F59E0B, #FFD166);
-    box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
+    background: linear-gradient(135deg, #FACC15, #FFE066);
+    box-shadow: 0 0 10px rgba(254, 224, 102, 0.25);
   }
   .fillB{ 
     background: linear-gradient(135deg, #7B2CBF, #C77DFF);
@@ -464,14 +464,14 @@
   .pool-legend{ display:flex; gap:16px; margin-top:12px; }
   .pool-legend span{ display:flex; align-items:center; gap:6px; font-size:12px; color: var(--text-mid); font-weight: 500; }
   .dot{ width:8px; height:8px; border-radius:50%; display:inline-block; }
-  .dot-a{ background: var(--a); box-shadow: 0 0 8px var(--a); }
+  .dot-a{ background: var(--a); box-shadow: 0 0 6px var(--a); }
   .dot-b{ background: var(--b); box-shadow: 0 0 8px var(--b); }
 
   /* ---------- Display Total ---------- */
   .headline{ display:flex; align-items:baseline; gap:12px; margin-top:20px; flex-wrap:wrap; }
   .big{
     font-size: 54px; font-weight:800; letter-spacing:-0.03em; line-height:1;
-    background: linear-gradient(135deg, #FFF 30%, #FFE8A3 100%);
+    background: linear-gradient(135deg, #FFF 40%, var(--violet-bright) 100%);
     -webkit-background-clip:text; background-clip:text; color:transparent;
     font-variant-numeric: tabular-nums;
     display: inline-block;
@@ -526,8 +526,8 @@
     position: fixed; bottom: 16px; left: 50%;
     transform: translateX(-50%) translateY(120px);
     width: calc(100% - 32px); max-width: 440px;
-    background: rgba(20, 15, 35, 0.88);
-    border: 1px solid rgba(255, 209, 102, 0.4);
+    background: rgba(18, 10, 32, 0.92);
+    border: 1px solid rgba(199, 125, 255, 0.4);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border-radius: 999px;
@@ -544,7 +544,7 @@
     opacity: 1;
   }
   .mini-info{ display: flex; align-items: center; gap: 10px; }
-  .mini-count{ font-size: 22px; font-weight: 800; color: var(--a); font-variant-numeric: tabular-nums; }
+  .mini-count{ font-size: 22px; font-weight: 800; color: var(--violet-bright); font-variant-numeric: tabular-nums; }
   .mini-label{ font-size: 12px; font-weight: 700; color: #fff; }
   .mini-arrow{ font-size: 12px; color: var(--text-mid); background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 999px; }
 
@@ -552,7 +552,7 @@
   .toast{
     position: fixed; bottom: 24px; left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: rgba(20, 15, 35, 0.95); border: 1px solid var(--glass-border);
+    background: rgba(18, 10, 32, 0.95); border: 1px solid var(--glass-border);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     color: #fff; padding: 10px 20px; border-radius: 999px;
     font-size: 12.5px; font-weight: 600;
@@ -626,7 +626,7 @@
         </button>
       </div>
 
-      <!-- Explication recadrée du PEDT -->
+      <!-- Explication PEDT -->
       <div class="pedt-info-note">
         💡 <strong>C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> est une démarche portée par la commune réunissant tous les acteurs éducatifs locaux (écoles, associations, CAF). Il permet de bénéficier de taux d'encadrement adaptés.
       </div>
@@ -656,7 +656,7 @@
       </div>
 
       <div class="safety-alert" id="safetyAlert">
-        <span>⚠️ <strong>Règle de sécurité :</strong> Minimum 2 encadrants requis sur tout ALSH actif.</span>
+        <span>⚠️ <strong>Règle de sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
       </div>
 
       <div class="field">
@@ -701,7 +701,7 @@
 
       <div class="headline">
         <span class="big" id="totalAnim">0</span>
-        <span class="biglabel" id="totalAnimLabel">animateur requis sur le terrain</span>
+        <span class="biglabel" id="totalAnimLabel">Anim' sur le terrain</span>
       </div>
     </section>
 
@@ -710,11 +710,11 @@
       <div class="qgrid">
         <div class="qcard qmin">
           <span class="qnum" id="qDiplomes">0</span>
-          <span class="qlabel">Diplômés<br><small>Min. 50%</small></span>
+          <span class="qlabel">Diplômé·e·s<br><small>Min. 50%</small></span>
         </div>
         <div class="qcard qmax">
           <span class="qnum" id="qNonDiplomes">0</span>
-          <span class="qlabel">Non-diplômés<br><small>Max. 20%</small></span>
+          <span class="qlabel">Non-diplômé·e·s<br><small>Max. 20%</small></span>
         </div>
         <div class="qcard qflex">
           <span class="qnum" id="qStagiaires">0</span>
@@ -737,7 +737,7 @@
   <div class="sticky-mini-bar" id="stickyMiniBar">
     <div class="mini-info">
       <span class="mini-count" id="miniAnimCount">0</span>
-      <span class="mini-label" id="miniAnimLabel">animateur requis</span>
+      <span class="mini-label" id="miniAnimLabel">Anim' requis</span>
     </div>
     <span class="mini-arrow">Voir détails ➔</span>
   </div>
@@ -938,8 +938,8 @@
         });
       }
 
-      syncTrack('group-a', `- de 6 ans (${count36} anim. / ${n36} enf.)`, count36, r1, n36, 'fillA', 'lbl-a');
-      syncTrack('group-b', `+ de 6 ans (${count612} anim. / ${n612} enf.)`, count612, r2, n612, 'fillB', 'lbl-b');
+      syncTrack('group-a', `- de 6 ans (${count36} Anim' / ${n36} enf.)`, count36, r1, n36, 'fillA', 'lbl-a');
+      syncTrack('group-b', `+ de 6 ans (${count612} Anim' / ${n612} enf.)`, count612, r2, n612, 'fillB', 'lbl-b');
 
     } else {
       let existingSegs = Array.from(poolTrack.querySelectorAll(':scope > .segment'));
@@ -1067,20 +1067,18 @@
     let displayed = totalNeeded;
     if (dirToggle.checked && directorEligible){
       displayed = Math.max(totalNeeded - 1, 0);
-      totalAnimLabelEl.textContent = 'animateur(s) à recruter (+ le directeur)';
+      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ le directeur)";
     } else {
-      totalAnimLabelEl.textContent = totalNeeded > 1
-        ? 'animateurs requis sur le terrain'
-        : 'animateur requis sur le terrain';
+      totalAnimLabelEl.textContent = "Anim' sur le terrain";
     }
     
     animateNumber(totalAnimEl, displayed);
     miniAnimCount.textContent = displayed;
-    miniAnimLabel.textContent = displayed > 1 ? 'animateurs requis' : 'animateur requis';
+    miniAnimLabel.textContent = "Anim' requis";
 
     const saved = naiveSum - totalNeeded;
     if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
-      mutualBadge.textContent = `⚡ -${saved} mutualisé${saved > 1 ? 's' : ''}`;
+      mutualBadge.textContent = `⚡ -${saved} Anim' mutualisé${saved > 1 ? 's' : ''}`;
       mutualBadge.classList.add('visible');
     } else {
       mutualBadge.classList.remove('visible');
@@ -1120,11 +1118,11 @@
 - Mode de calcul : ${mode}
 - Directeur inclus sur le terrain : ${dirInclus}
 -----------------------------------
-> ANIMATEURS REQUIS : ${totalAnim}
+> ANIM' REQUIS : ${totalAnim}
 
 Composition recommandée de l'équipe :
-• Diplômés (Min. 50%) : ${qDiplomes.textContent}
-• Non-diplômés (Max. 20%) : ${qNonDiplomes.textContent}
+• Diplômé·e·s (Min. 50%) : ${qDiplomes.textContent}
+• Non-diplômé·e·s (Max. 20%) : ${qNonDiplomes.textContent}
 • Stagiaires BAFA : ${qStagiaires.textContent}
 `;
 
