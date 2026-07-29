@@ -4,22 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
-<meta name="theme-color" content="#0B0D1A">
+<meta name="theme-color" content="#0D0B1A">
 <title>Calculateur Taux d'encadrement ALSH — Outil SDJES</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
 
 <style>
   :root{
-    --glass-fill: rgba(255, 255, 255, 0.05);
-    --glass-fill-hover: rgba(255, 255, 255, 0.09);
-    --glass-fill-strong: rgba(255, 255, 255, 0.13);
+    --glass-fill: rgba(255, 255, 255, 0.04);
+    --glass-fill-hover: rgba(255, 255, 255, 0.08);
+    --glass-fill-strong: rgba(255, 255, 255, 0.12);
     --glass-border: rgba(255, 255, 255, 0.16);
-    --glass-border-soft: rgba(255, 255, 255, 0.09);
+    --glass-border-soft: rgba(255, 255, 255, 0.08);
     --text-hi: #FFFFFF;
     --text-mid: rgba(255, 255, 255, 0.78);
     --text-low: rgba(255, 255, 255, 0.45);
-    --a: #6FD6FF;   /* - de 6 ans */
-    --b: #B98CFF;   /* + de 6 ans */
+    
+    /* Nouvelle Palette : Jaune & Violet */
+    --a: #FFD166;   /* - de 6 ans (Jaune Solaire) */
+    --b: #C77DFF;   /* + de 6 ans (Violet Lumineux) */
     --accent: #FF9F5A;
     --success: #52E596;
     --radius-xl: 26px;
@@ -45,7 +47,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
                  "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: var(--text-hi);
-    background: #0B0D1A;
+    background: #0D0B1A;
     min-height: 100vh;
     overflow-x: hidden;
     display: flex;
@@ -55,7 +57,7 @@
 
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #0B0D1A, 0 0 0 4px var(--a);
+    box-shadow: 0 0 0 2px #0D0B1A, 0 0 0 4px var(--a);
     border-radius: inherit;
   }
 
@@ -63,9 +65,9 @@
   .backdrop{
     position: fixed; inset: 0; z-index: -1; overflow: hidden;
     background:
-      radial-gradient(circle at 18% 8%, #182042 0%, transparent 45%),
-      radial-gradient(circle at 85% 92%, #1a1230 0%, transparent 50%),
-      #0B0D1A;
+      radial-gradient(circle at 18% 8%, #241A0E 0%, transparent 45%),
+      radial-gradient(circle at 85% 92%, #1D0D2E 0%, transparent 50%),
+      #0D0B1A;
   }
   
   .backdrop::before {
@@ -77,18 +79,18 @@
   }
 
   .blob{
-    position: absolute; border-radius: 50%; filter: blur(80px); opacity: .45;
+    position: absolute; border-radius: 50%; filter: blur(90px); opacity: .4;
     will-change: transform;
   }
-  .b1{ width:520px; height:520px; left:-140px; top:-120px;
-       background: radial-gradient(circle, #3A8DFF 0%, transparent 70%);
+  .b1{ width:500px; height:500px; left:-130px; top:-100px;
+       background: radial-gradient(circle, #F59E0B 0%, transparent 70%);
        animation: drift1 26s ease-in-out infinite; }
-  .b2{ width:460px; height:460px; right:-120px; top:120px;
-       background: radial-gradient(circle, #B98CFF 0%, transparent 70%);
+  .b2{ width:480px; height:480px; right:-120px; top:120px;
+       background: radial-gradient(circle, #7B2CBF 0%, transparent 70%);
        animation: drift2 32s ease-in-out infinite; }
-  .b3{ width:480px; height:480px; left:10%; bottom:-200px;
-       background: radial-gradient(circle, #FF9F5A 0%, transparent 72%);
-       opacity:.25;
+  .b3{ width:450px; height:450px; left:15%; bottom:-180px;
+       background: radial-gradient(circle, #FFD166 0%, transparent 72%);
+       opacity:.2;
        animation: drift3 30s ease-in-out infinite; }
 
   @keyframes drift1{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(40px,60px) } }
@@ -120,7 +122,7 @@
 
   .glass::before{
     content:""; position:absolute; inset:0; border-radius:inherit;
-    background: linear-gradient(155deg, rgba(255,255,255,0.1), rgba(255,255,255,0) 35%);
+    background: linear-gradient(155deg, rgba(255,255,255,0.08), rgba(255,255,255,0) 35%);
     pointer-events:none;
     z-index: 1;
   }
@@ -140,7 +142,7 @@
     position: absolute;
     top: 0; left: 15%; right: 15%; height: 1px;
     background: linear-gradient(90deg, transparent, var(--a), var(--b), transparent);
-    opacity: 0.7;
+    opacity: 0.8;
   }
 
   .header-top{ 
@@ -155,7 +157,7 @@
   .eyebrow-badge{
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 10px; border-radius: 999px;
-    background: rgba(111, 214, 255, 0.1); border: 1px solid rgba(111, 214, 255, 0.25);
+    background: rgba(255, 209, 102, 0.12); border: 1px solid rgba(255, 209, 102, 0.3);
     font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
     color: var(--a);
     transition: all var(--transition-smooth);
@@ -211,7 +213,7 @@
     max-width: 75vw;
     white-space: normal;
     word-wrap: break-word;
-    background: rgba(15, 23, 42, 0.96); 
+    background: rgba(20, 15, 35, 0.96); 
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff; 
     padding: 8px 12px; 
@@ -229,7 +231,7 @@
   .pedt-info-note {
     font-size: 11.5px;
     color: var(--text-mid);
-    background: rgba(255, 255, 255, 0.035);
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--glass-border-soft);
     border-radius: var(--radius-sm);
     padding: 9px 12px;
@@ -265,9 +267,9 @@
   .regime-card:active{ transform: scale(0.97); }
 
   .regime-card.active{
-    background: linear-gradient(135deg, rgba(111, 214, 255, 0.22), rgba(185, 140, 255, 0.22));
-    border-color: rgba(111, 214, 255, 0.55);
-    box-shadow: 0 6px 20px -4px rgba(111, 214, 255, 0.25);
+    background: linear-gradient(135deg, rgba(255, 209, 102, 0.2), rgba(199, 125, 255, 0.2));
+    border-color: rgba(255, 209, 102, 0.55);
+    box-shadow: 0 6px 20px -4px rgba(255, 209, 102, 0.2);
     color: #fff;
   }
   .regime-card.active .r-title{ color: #fff; }
@@ -287,8 +289,8 @@
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   }
   .stepper:focus-within{
-    border-color: rgba(111, 214, 255, 0.4);
-    box-shadow: 0 0 12px rgba(111, 214, 255, 0.15);
+    border-color: rgba(255, 209, 102, 0.4);
+    box-shadow: 0 0 12px rgba(255, 209, 102, 0.15);
   }
 
   .stepper input{
@@ -350,8 +352,8 @@
 
   .mutual-btn:hover{ background: rgba(255,255,255,0.08); }
   .mutual-btn.active{
-    background: linear-gradient(135deg, rgba(111, 214, 255, 0.22), rgba(185, 140, 255, 0.22));
-    border-color: rgba(111, 214, 255, 0.45);
+    background: linear-gradient(135deg, rgba(255, 209, 102, 0.2), rgba(199, 125, 255, 0.2));
+    border-color: rgba(255, 209, 102, 0.45);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
   .mutual-btn.active strong{ color: #fff; }
@@ -398,8 +400,8 @@
   .badge-mutualized{
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 9px; border-radius: 999px;
-    background: rgba(111, 214, 255, 0.15);
-    border: 1px solid rgba(111, 214, 255, 0.35);
+    background: rgba(255, 209, 102, 0.15);
+    border: 1px solid rgba(255, 209, 102, 0.35);
     color: var(--a); font-size: 11px; font-weight: 700;
     opacity: 0; transform: scale(0.85);
     transition: all 0.3s var(--ease-spring);
@@ -424,7 +426,7 @@
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
 
-  /* Remplissage épuré et moderne (sans animations en boucle) */
+  /* Remplissage épuré Jaune (-6ans) et Violet (+6ans) */
   .segment .fillA, .segment .fillB{
     height:100%; width: 0%;
     transition: width 0.4s var(--ease-out);
@@ -432,18 +434,18 @@
   }
 
   .fillA{ 
-    background: linear-gradient(135deg, #3A8DFF, #6FD6FF);
-    box-shadow: 0 0 12px rgba(111, 214, 255, 0.3);
+    background: linear-gradient(135deg, #F59E0B, #FFD166);
+    box-shadow: 0 0 12px rgba(255, 209, 102, 0.35);
   }
   .fillB{ 
-    background: linear-gradient(135deg, #7C5CE0, #B98CFF);
-    box-shadow: 0 0 12px rgba(185, 140, 255, 0.3);
+    background: linear-gradient(135deg, #7B2CBF, #C77DFF);
+    box-shadow: 0 0 12px rgba(199, 125, 255, 0.35);
   }
 
   .gauge-label{
     position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
     font-size: 11.5px; font-weight: 700; color: #FFFFFF;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8); pointer-events: none;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9); pointer-events: none;
     font-variant-numeric: tabular-nums; z-index: 2;
   }
 
@@ -469,7 +471,7 @@
   .headline{ display:flex; align-items:baseline; gap:12px; margin-top:20px; flex-wrap:wrap; }
   .big{
     font-size: 54px; font-weight:800; letter-spacing:-0.03em; line-height:1;
-    background: linear-gradient(135deg, #fff 30%, #cfe7ff 100%);
+    background: linear-gradient(135deg, #FFF 30%, #FFE8A3 100%);
     -webkit-background-clip:text; background-clip:text; color:transparent;
     font-variant-numeric: tabular-nums;
     display: inline-block;
@@ -497,7 +499,7 @@
   .qlabel small{ color: var(--text-low); font-weight:500; font-size: 10px; }
   .qmin .qnum{ color: #8FE3B4; text-shadow: 0 0 12px rgba(143, 227, 180, 0.25); }
   .qmax .qnum{ color: #FFB199; text-shadow: 0 0 12px rgba(255, 177, 153, 0.25); }
-  .qflex .qnum{ color: #C9C2FF; text-shadow: 0 0 12px rgba(201, 194, 255, 0.25); }
+  .qflex .qnum{ color: #D8B4FE; text-shadow: 0 0 12px rgba(216, 180, 254, 0.25); }
 
   /* ---------- Action Share Button ---------- */
   .btn-share{
@@ -524,8 +526,8 @@
     position: fixed; bottom: 16px; left: 50%;
     transform: translateX(-50%) translateY(120px);
     width: calc(100% - 32px); max-width: 440px;
-    background: rgba(15, 23, 42, 0.88);
-    border: 1px solid rgba(111, 214, 255, 0.4);
+    background: rgba(20, 15, 35, 0.88);
+    border: 1px solid rgba(255, 209, 102, 0.4);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border-radius: 999px;
@@ -550,7 +552,7 @@
   .toast{
     position: fixed; bottom: 24px; left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: rgba(15, 23, 42, 0.95); border: 1px solid var(--glass-border);
+    background: rgba(20, 15, 35, 0.95); border: 1px solid var(--glass-border);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     color: #fff; padding: 10px 20px; border-radius: 999px;
     font-size: 12.5px; font-weight: 600;
