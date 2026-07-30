@@ -20,8 +20,8 @@
     --text-low: rgba(255, 255, 255, 0.45);
     
     /* Couleurs principales : Violet Dominant + Touches Jaune Chaleureux */
-    --a: #FFD166;   /* Jaune pastel/chaleureux (- de 6 ans & touches d'accentuation) */
-    --b: #C77DFF;   /* Violet Néon (+ de 6 ans) */
+    --a: #FFD166;   /* Jaune chaleureux */
+    --b: #C77DFF;   /* Violet Néon */
     --violet-bright: #E0AAFF;
     --accent: #FF9F5A;
     --success: #52E596;
@@ -58,11 +58,11 @@
 
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #0F081D, 0 0 0 4px var(--b);
+    box-shadow: 0 0 0 2px #0F081D, 0 0 0 4px var(--a);
     border-radius: inherit;
   }
 
-  /* ---------- Background Noise & Blobs Violet-Dominant ---------- */
+  /* ---------- Background Noise & Blobs ---------- */
   .backdrop{
     position: fixed; inset: 0; z-index: -1; overflow: hidden;
     background:
@@ -89,9 +89,9 @@
   .b2{ width:480px; height:480px; left:-120px; top:220px;
        background: radial-gradient(circle, #5A189A 0%, transparent 70%);
        animation: drift2 32s ease-in-out infinite; }
-  .b3{ width:420px; height:420px; right:15%; bottom:-120px;
+  .b3{ width:450px; height:450px; right:10%; bottom:-100px;
        background: radial-gradient(circle, #FFD166 0%, transparent 70%);
-       opacity:.22; /* Révisé à la hausse pour réchauffer le fond */
+       opacity:.28;
        animation: drift3 30s ease-in-out infinite; }
 
   @keyframes drift1{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(-40px,50px) } }
@@ -138,12 +138,13 @@
   /* ---------- Header ---------- */
   .hero{ padding: 20px 20px 18px; position: relative; z-index: 2; }
   
+  /* Ligne supérieure d'accentuation en Jaune */
   .hero::after {
     content: "";
     position: absolute;
-    top: 0; left: 15%; right: 15%; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--b), var(--violet-bright), transparent);
-    opacity: 0.8;
+    top: 0; left: 15%; right: 15%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--a), transparent);
+    opacity: 0.85;
   }
 
   .header-top{ 
@@ -158,9 +159,9 @@
   .eyebrow-badge{
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 10px; border-radius: 999px;
-    background: rgba(199, 125, 255, 0.12); border: 1px solid rgba(199, 125, 255, 0.3);
+    background: rgba(255, 209, 102, 0.1); border: 1px solid rgba(255, 209, 102, 0.3);
     font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-    color: var(--violet-bright);
+    color: var(--a);
     transition: all var(--transition-smooth);
   }
 
@@ -180,9 +181,9 @@
     flex-shrink: 0;
   }
   .btn-reset:hover{
-    background: rgba(255,255,255,0.16);
-    color: #fff;
-    border-color: rgba(255,255,255,0.3);
+    background: rgba(255, 209, 102, 0.15);
+    color: var(--a);
+    border-color: rgba(255, 209, 102, 0.4);
   }
   .btn-reset:active{ transform: scale(0.95); }
 
@@ -196,12 +197,13 @@
     color: var(--text-mid); text-transform: uppercase; letter-spacing: .06em;
     margin-bottom: 10px;
   }
+  .section-num{ color: var(--a); font-weight: 800; margin-right: 2px; }
 
   .info-icon {
     display: inline-flex; align-items: center; justify-content: center;
     width: 18px; height: 18px; border-radius: 50%;
-    background: rgba(255,255,255,0.12); border: 1px solid var(--glass-border-soft);
-    color: var(--text-mid); font-size: 11px; font-weight: 700;
+    background: rgba(255,209,102,0.12); border: 1px solid rgba(255,209,102,0.3);
+    color: var(--a); font-size: 11px; font-weight: 700;
     cursor: help; position: relative; text-transform: none; letter-spacing: normal;
   }
   
@@ -215,7 +217,7 @@
     white-space: normal;
     word-wrap: break-word;
     background: rgba(18, 10, 32, 0.96); 
-    border: 1px solid rgba(199, 125, 255, 0.3);
+    border: 1px solid rgba(255, 209, 102, 0.4);
     color: #fff; 
     padding: 8px 12px; 
     border-radius: var(--radius-sm);
@@ -228,13 +230,13 @@
     text-align: left;
   }
 
-  /* Explication PEDT avec touche de Jaune */
+  /* Explication PEDT */
   .pedt-info-note {
     font-size: 11.5px;
     color: var(--text-mid);
-    background: rgba(255, 209, 102, 0.05);
-    border: 1px solid rgba(255, 209, 102, 0.2);
-    border-left: 3px solid var(--a); /* Ligne d'accentuation jaune */
+    background: rgba(255, 209, 102, 0.06);
+    border: 1px solid rgba(255, 209, 102, 0.25);
+    border-left: 3px solid var(--a);
     border-radius: var(--radius-sm);
     padding: 10px 12px;
     margin-top: 8px;
@@ -263,19 +265,19 @@
   
   .regime-card:hover{
     background: var(--glass-fill-hover);
-    border-color: rgba(255,255,255,0.25);
+    border-color: rgba(255, 209, 102, 0.3);
     transform: translateY(-1px);
   }
   .regime-card:active{ transform: scale(0.97); }
 
   .regime-card.active{
     background: linear-gradient(135deg, rgba(123, 44, 191, 0.35), rgba(199, 125, 255, 0.25));
-    border-color: rgba(199, 125, 255, 0.6);
+    border-color: rgba(255, 209, 102, 0.6);
     box-shadow: 0 6px 20px -4px rgba(123, 44, 191, 0.3);
     color: #fff;
   }
   .regime-card.active .r-title{ color: #fff; }
-  .regime-card.active .r-sub{ opacity: 0.95; color: var(--violet-bright); }
+  .regime-card.active .r-sub{ opacity: 0.95; color: var(--a); }
 
   /* ---------- Inputs & Stepper ---------- */
   .field{ margin-bottom: 14px; }
@@ -291,8 +293,8 @@
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   }
   .stepper:focus-within{
-    border-color: rgba(199, 125, 255, 0.5);
-    box-shadow: 0 0 12px rgba(199, 125, 255, 0.2);
+    border-color: rgba(255, 209, 102, 0.5);
+    box-shadow: 0 0 12px rgba(255, 209, 102, 0.2);
   }
 
   .stepper input{
@@ -304,25 +306,26 @@
   .stepper input::-webkit-outer-spin-button,
   .stepper input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
 
+  /* Boutons Stepper réhaussés en Jaune */
   .stepbtn{
     width:38px; height:38px; flex-shrink:0; border-radius: var(--radius-sm);
-    border: 1px solid var(--glass-border-soft);
-    background: var(--glass-fill-strong);
-    color: var(--text-hi); font-size:18px; font-weight:600;
+    border: 1px solid rgba(255, 209, 102, 0.3);
+    background: rgba(255, 209, 102, 0.06);
+    color: var(--a); font-size:18px; font-weight:700;
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
-    transition: transform var(--transition-fast), background var(--transition-fast);
+    transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
     user-select: none;
   }
-  .stepbtn:hover{ background: rgba(255,255,255,0.25); }
+  .stepbtn:hover{ background: rgba(255, 209, 102, 0.2); border-color: var(--a); }
   .stepbtn:active{ transform: scale(0.88); }
 
-  /* Compteur d'enfants révisé avec mise en valeur Jaune */
+  /* Compteur d'enfants */
   .total-kids-indicator{
     text-align: center; font-size: 13px; color: var(--text-mid);
     margin-top: 12px; margin-bottom: 6px; padding: 9px 12px;
-    background: rgba(255, 209, 102, 0.04); border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 209, 102, 0.18);
+    background: rgba(255, 209, 102, 0.06); border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 209, 102, 0.25);
     font-variant-numeric: tabular-nums;
   }
   .total-kids-indicator strong{ color: var(--a); font-weight: 800; font-size: 1.05em; }
@@ -356,11 +359,11 @@
   .mutual-btn:hover{ background: rgba(255,255,255,0.08); }
   .mutual-btn.active{
     background: linear-gradient(135deg, rgba(123, 44, 191, 0.35), rgba(199, 125, 255, 0.25));
-    border-color: rgba(199, 125, 255, 0.5);
+    border-color: rgba(255, 209, 102, 0.5);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
   .mutual-btn.active strong{ color: #fff; }
-  .mutual-btn.active small{ color: var(--violet-bright); opacity: 1; }
+  .mutual-btn.active small{ color: var(--a); opacity: 1; }
 
   /* ---------- Toggle Row ---------- */
   .toggle-group{
@@ -387,7 +390,7 @@
     transition: transform 0.3s var(--ease-spring);
   }
   .toggle-row input:checked + .switch{
-    background: linear-gradient(135deg, var(--b), var(--violet-bright));
+    background: linear-gradient(135deg, var(--b), var(--a));
     border-color: rgba(255,255,255,0.4);
   }
   .toggle-row input:checked + .switch::after{ transform: translateX(20px); }
@@ -400,12 +403,11 @@
   }
   .pool-label{ font-size:11.5px; font-weight:700; color: var(--text-mid); letter-spacing: .05em; text-transform: uppercase; }
   
-  /* Badge mutualisé avec touche jaune */
   .badge-mutualized{
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 10px; border-radius: 999px;
-    background: rgba(255, 209, 102, 0.12);
-    border: 1px solid rgba(255, 209, 102, 0.35);
+    background: rgba(255, 209, 102, 0.15);
+    border: 1px solid rgba(255, 209, 102, 0.4);
     color: var(--a); font-size: 11px; font-weight: 700;
     opacity: 0; transform: scale(0.85);
     transition: all 0.3s var(--ease-spring);
@@ -430,7 +432,6 @@
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
 
-  /* Remplissage : Jaune pastel chaleureux (-6ans) et Violet lumineux (+6ans) */
   .segment .fillA, .segment .fillB{
     height:100%; width: 0%;
     transition: width 0.4s var(--ease-out);
@@ -474,11 +475,11 @@
   /* ---------- Display Total ---------- */
   .headline{ display:flex; align-items:baseline; gap:12px; margin-top:20px; flex-wrap:wrap; }
   
-  /* Grand Chiffre avec dégradé subtil Blanc -> Jaune chaleureux */
+  /* Grand Chiffre : Jaune Solide et Lumineux sans dégradé */
   .big{
     font-size: 56px; font-weight:800; letter-spacing:-0.03em; line-height:1;
-    background: linear-gradient(135deg, #FFFFFF 40%, var(--a) 100%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
+    color: var(--a);
+    text-shadow: 0 0 25px rgba(255, 209, 102, 0.3);
     font-variant-numeric: tabular-nums;
     display: inline-block;
   }
@@ -505,26 +506,31 @@
   .qlabel small{ color: var(--text-low); font-weight:500; font-size: 10px; }
   .qmin .qnum{ color: #8FE3B4; text-shadow: 0 0 12px rgba(143, 227, 180, 0.25); }
   .qmax .qnum{ color: #FFB199; text-shadow: 0 0 12px rgba(255, 177, 153, 0.25); }
-  .qflex .qnum{ color: #D8B4FE; text-shadow: 0 0 12px rgba(216, 180, 254, 0.25); }
+  .qflex .qnum{ color: var(--a); text-shadow: 0 0 12px rgba(255, 209, 102, 0.25); }
 
-  /* ---------- Action Share Button ---------- */
+  /* Bouton d'action principal mis en valeur en Jaune */
   .btn-share{
     width: 100%; margin-top: 16px; padding: 13px;
-    border-radius: var(--radius-md); border: 1px solid var(--glass-border);
-    background: var(--glass-fill-strong); color: #fff;
+    border-radius: var(--radius-md); 
+    border: 1px solid rgba(255, 209, 102, 0.4);
+    background: rgba(255, 209, 102, 0.08); 
+    color: var(--a);
     font-size: 13px; font-weight: 700; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 8px;
     transition: all var(--transition-fast);
   }
   .btn-share:hover{
-    background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.35);
+    background: rgba(255, 209, 102, 0.18); 
+    border-color: var(--a);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 209, 102, 0.2);
   }
   .btn-share:active{ transform: scale(0.98); }
 
   .btn-share.copied{
     background: linear-gradient(135deg, rgba(82, 229, 150, 0.3), rgba(46, 204, 113, 0.3));
     border-color: var(--success); color: #fff;
+    box-shadow: none;
   }
 
   /* ---------- Sticky Mini Bar ---------- */
@@ -532,8 +538,8 @@
     position: fixed; bottom: 16px; left: 50%;
     transform: translateX(-50%) translateY(120px);
     width: calc(100% - 32px); max-width: 440px;
-    background: rgba(18, 10, 32, 0.92);
-    border: 1px solid rgba(199, 125, 255, 0.4);
+    background: rgba(18, 10, 32, 0.94);
+    border: 1px solid rgba(255, 209, 102, 0.4);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border-radius: 999px;
@@ -552,13 +558,13 @@
   .mini-info{ display: flex; align-items: center; gap: 10px; }
   .mini-count{ font-size: 22px; font-weight: 800; color: var(--a); font-variant-numeric: tabular-nums; }
   .mini-label{ font-size: 12px; font-weight: 700; color: #fff; }
-  .mini-arrow{ font-size: 12px; color: var(--text-mid); background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 999px; }
+  .mini-arrow{ font-size: 12px; color: var(--a); background: rgba(255, 209, 102, 0.12); padding: 4px 10px; border-radius: 999px; font-weight: 600; }
 
   /* ---------- Toast Notification ---------- */
   .toast{
     position: fixed; bottom: 24px; left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: rgba(18, 10, 32, 0.95); border: 1px solid var(--glass-border);
+    background: rgba(18, 10, 32, 0.95); border: 1px solid rgba(255, 209, 102, 0.4);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     color: #fff; padding: 10px 20px; border-radius: 999px;
     font-size: 12.5px; font-weight: 600;
@@ -610,7 +616,7 @@
 
     <section class="glass panel inputs">
       <div class="section-label">
-        <span>1. Régime d'accueil</span>
+        <span><span class="section-num">1.</span> Régime d'accueil</span>
         <span class="info-icon" tabindex="0" data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
       </div>
       <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
@@ -632,13 +638,13 @@
         </button>
       </div>
 
-      <!-- Explication PEDT avec accents Jaunes -->
+      <!-- Explication PEDT -->
       <div class="pedt-info-note">
         <strong>💡 C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> est une démarche portée par la commune réunissant tous les acteurs éducatifs locaux (écoles, associations, CAF). Il permet de bénéficier de taux d'encadrement adaptés.
       </div>
 
       <div class="section-label">
-        <span>2. Effectifs enregistrés</span>
+        <span><span class="section-num">2.</span> Effectifs enregistrés</span>
       </div>
       <div class="field">
         <label for="n36">Enfants de - de 6 ans</label>
@@ -657,7 +663,7 @@
         </div>
       </div>
 
-      <!-- Compteur total d'enfants avec valeur Jaune -->
+      <!-- Compteur total d'enfants -->
       <div class="total-kids-indicator" id="totalKidsIndicator" aria-live="polite">
         Effectif total : <strong>0</strong> enfant
       </div>
@@ -668,7 +674,7 @@
 
       <div class="field">
         <div class="section-label" style="margin-top: 14px;">
-          <span>3. Mode de calcul</span>
+          <span><span class="section-num">3.</span> Mode de calcul</span>
           <span class="info-icon" tabindex="0" data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire.">ⓘ</span>
         </div>
         <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
