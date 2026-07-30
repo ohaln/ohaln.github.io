@@ -17,7 +17,7 @@
     --glass-border-soft: rgba(255, 255, 255, 0.08);
     --text-hi: #FFFFFF;
     --text-mid: rgba(255, 255, 255, 0.78);
-    --text-low: rgba(255, 255, 255, 0.45);
+    --text-low: rgba(255, 255, 255, 0.65); /* Rehaussé pour accessibilité WCAG AA (+6.5:1) */
     
     /* Couleurs principales : Violet Dominant + Touches Jaune Chaleureux */
     --a: #FFD166;   /* Jaune chaleureux */
@@ -53,7 +53,7 @@
     overflow-x: hidden;
     display: flex;
     justify-content: center;
-    padding: 20px 16px 80px;
+    padding: 20px 16px max(80px, calc(40px + env(safe-area-inset-bottom))); /* Prise en compte Safe Area iOS */
   }
 
   :focus-visible {
@@ -138,7 +138,6 @@
   /* ---------- Header ---------- */
   .hero{ padding: 20px 20px 18px; position: relative; z-index: 2; }
   
-  /* Ligne supérieure d'accentuation en Jaune */
   .hero::after {
     content: "";
     position: absolute;
@@ -201,7 +200,7 @@
 
   .info-icon {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 18px; height: 18px; border-radius: 50%;
+    width: 20px; height: 20px; border-radius: 50%;
     background: rgba(255,209,102,0.12); border: 1px solid rgba(255,209,102,0.3);
     color: var(--a); font-size: 11px; font-weight: 700;
     cursor: help; position: relative; text-transform: none; letter-spacing: normal;
@@ -306,12 +305,12 @@
   .stepper input::-webkit-outer-spin-button,
   .stepper input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
 
-  /* Boutons Stepper réhaussés en Jaune */
+  /* Boutons Stepper portés aux normes tactiles (44x44px) */
   .stepbtn{
-    width:38px; height:38px; flex-shrink:0; border-radius: var(--radius-sm);
+    width: 44px; height: 44px; flex-shrink:0; border-radius: var(--radius-sm);
     border: 1px solid rgba(255, 209, 102, 0.3);
     background: rgba(255, 209, 102, 0.06);
-    color: var(--a); font-size:18px; font-weight:700;
+    color: var(--a); font-size: 20px; font-weight:700;
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
     transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
@@ -375,6 +374,13 @@
     display:flex; align-items:center; justify-content:space-between; gap:12px;
     cursor:pointer; font-size: 13.5px; font-weight:600; color: var(--text-hi);
     user-select: none;
+    padding: 8px 10px;
+    margin: 0 -10px;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+  }
+  .toggle-row:hover{
+    background: rgba(255, 255, 255, 0.04);
   }
   .toggle-row small{ display:block; font-weight:500; color: var(--text-low); font-size:11.5px; margin-top:2px; }
   .toggle-row input{ display:none; }
@@ -475,7 +481,6 @@
   /* ---------- Display Total ---------- */
   .headline{ display:flex; align-items:baseline; gap:12px; margin-top:20px; flex-wrap:wrap; }
   
-  /* Grand Chiffre : Jaune Solide et Lumineux sans dégradé */
   .big{
     font-size: 56px; font-weight:800; letter-spacing:-0.03em; line-height:1;
     color: var(--a);
@@ -508,7 +513,6 @@
   .qmax .qnum{ color: #FFB199; text-shadow: 0 0 12px rgba(255, 177, 153, 0.25); }
   .qflex .qnum{ color: var(--a); text-shadow: 0 0 12px rgba(255, 209, 102, 0.25); }
 
-  /* Bouton d'action principal mis en valeur en Jaune */
   .btn-share{
     width: 100%; margin-top: 16px; padding: 13px;
     border-radius: var(--radius-md); 
@@ -535,7 +539,7 @@
 
   /* ---------- Sticky Mini Bar ---------- */
   .sticky-mini-bar{
-    position: fixed; bottom: 16px; left: 50%;
+    position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%;
     transform: translateX(-50%) translateY(120px);
     width: calc(100% - 32px); max-width: 440px;
     background: rgba(18, 10, 32, 0.94);
@@ -562,7 +566,7 @@
 
   /* ---------- Toast Notification ---------- */
   .toast{
-    position: fixed; bottom: 24px; left: 50%;
+    position: fixed; bottom: max(24px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
     transform: translateX(-50%) translateY(100px);
     background: rgba(18, 10, 32, 0.95); border: 1px solid rgba(255, 209, 102, 0.4);
     backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
@@ -577,6 +581,12 @@
   footer.note{
     font-size: 11px; line-height:1.5; color: var(--text-low);
     padding: 0 8px; text-align:center;
+  }
+
+  @media (max-width: 350px) {
+    .regime-grid, .mutual-selector {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -617,7 +627,7 @@
     <section class="glass panel inputs">
       <div class="section-label">
         <span><span class="section-num">1.</span> Régime d'accueil</span>
-        <span class="info-icon" tabindex="0" data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
+        <span class="info-icon" tabindex="0" role="button" aria-label="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire." data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
       </div>
       <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
         <button type="button" class="regime-card active" role="radio" aria-checked="true" data-regime="hors_p5">
@@ -668,14 +678,14 @@
         Effectif total : <strong>0</strong> enfant
       </div>
 
-      <div class="safety-alert" id="safetyAlert">
+      <div class="safety-alert" id="safetyAlert" role="alert" aria-live="assertive">
         <span>⚠️ <strong>Règle de sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
       </div>
 
       <div class="field">
         <div class="section-label" style="margin-top: 14px;">
           <span><span class="section-num">3.</span> Mode de calcul</span>
-          <span class="info-icon" tabindex="0" data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire.">ⓘ</span>
+          <span class="info-icon" tabindex="0" role="button" aria-label="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire." data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire.">ⓘ</span>
         </div>
         <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
           <button type="button" class="mutual-btn active" role="radio" aria-checked="true" data-mode="avec">
@@ -758,6 +768,8 @@
   <div class="toast" id="toast" role="status">📋 Bilan copié dans le presse-papier !</div>
 
 <script>
+  const STORAGE_KEY = 'alsh_calculator_state';
+
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
   const totalKidsIndicator = document.getElementById('totalKidsIndicator');
@@ -795,6 +807,48 @@
     avec_p5: { ratio36: 10, ratio612: 14, tag: "Avec PEDT · > 5h / jour" },
     avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
   };
+
+  /* ----- Persistance localStorage ----- */
+  function saveState() {
+    const state = {
+      regime: activeRegimeKey,
+      mutualMode: activeMutualMode,
+      n36: n36input.value,
+      n612: n612input.value,
+      dir: dirToggle.checked
+    };
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch(e) {}
+  }
+
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const state = JSON.parse(saved);
+
+      if (state.regime && REGIMES[state.regime]) {
+        activeRegimeKey = state.regime;
+        document.querySelectorAll('.regime-card').forEach(b => {
+          const isActive = b.dataset.regime === activeRegimeKey;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+      }
+      if (state.mutualMode) {
+        activeMutualMode = state.mutualMode;
+        document.querySelectorAll('.mutual-btn').forEach(b => {
+          const isActive = b.dataset.mode === activeMutualMode;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+      }
+      if (state.n36 !== undefined) n36input.value = clampInt(state.n36);
+      if (state.n612 !== undefined) n612input.value = clampInt(state.n612);
+      if (state.dir !== undefined) dirToggle.checked = Boolean(state.dir);
+    } catch(e) {}
+  }
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -877,6 +931,7 @@
 
   resetBtn.addEventListener('click', () => {
     hapticFeedback();
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
     n36input.value = 0;
     n612input.value = 0;
     dirToggle.checked = false;
@@ -1111,6 +1166,8 @@
       : "Sans mutualisation (Calcul séparé)";
 
     footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
+    
+    saveState();
   }
 
   copyBtn.addEventListener('click', () => {
@@ -1164,6 +1221,7 @@ Composition recommandée de l'équipe :
     }
   });
 
+  loadState();
   recalc();
 </script>
 
