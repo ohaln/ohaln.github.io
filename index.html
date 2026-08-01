@@ -1,1229 +1,478 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
-<meta name="theme-color" content="#0F081D">
-<title>Calculateur Taux d'encadrement ALSH — Outil SDJES</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
-
-<style>
-  :root{
-    --glass-fill: rgba(255, 255, 255, 0.04);
-    --glass-fill-hover: rgba(255, 255, 255, 0.08);
-    --glass-fill-strong: rgba(255, 255, 255, 0.12);
-    --glass-border: rgba(255, 255, 255, 0.16);
-    --glass-border-soft: rgba(255, 255, 255, 0.08);
-    --text-hi: #FFFFFF;
-    --text-mid: rgba(255, 255, 255, 0.78);
-    --text-low: rgba(255, 255, 255, 0.65); /* Rehaussé pour accessibilité WCAG AA (+6.5:1) */
-    
-    /* Couleurs principales : Violet Dominant + Touches Jaune Chaleureux */
-    --a: #FFD166;   /* Jaune chaleureux */
-    --b: #C77DFF;   /* Violet Néon */
-    --violet-bright: #E0AAFF;
-    --accent: #FF9F5A;
-    --success: #52E596;
-    --radius-xl: 26px;
-    --radius-lg: 20px;
-    --radius-md: 14px;
-    --radius-sm: 10px;
-
-    /* Curves */
-    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-fast: 0.18s var(--ease-out);
-    --transition-smooth: 0.35s var(--ease-out);
-  }
-
-  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  html, body{
-    height: 100%;
-    margin: 0;
-  }
-
-  body{
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-                 "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: var(--text-hi);
-    background: #0F081D;
-    min-height: 100vh;
-    overflow-x: hidden;
-    display: flex;
-    justify-content: center;
-    padding: 20px 16px max(80px, calc(40px + env(safe-area-inset-bottom))); /* Prise en compte Safe Area iOS */
-  }
-
-  :focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px #0F081D, 0 0 0 4px var(--a);
-    border-radius: inherit;
-  }
-
-  /* ---------- Background Noise & Blobs ---------- */
-  .backdrop{
-    position: fixed; inset: 0; z-index: -1; overflow: hidden;
-    background:
-      radial-gradient(circle at 75% 15%, #230B3B 0%, transparent 55%),
-      radial-gradient(circle at 15% 85%, #18092B 0%, transparent 60%),
-      #0F081D;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALSH Flow - Liquid Glass</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js CDN -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  .backdrop::before {
-    content: "";
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .blob{
-    position: absolute; border-radius: 50%; filter: blur(100px); opacity: .45;
-    will-change: transform;
-  }
-  .b1{ width:520px; height:520px; right:-100px; top:-100px;
-       background: radial-gradient(circle, #7B2CBF 0%, transparent 70%);
-       animation: drift1 28s ease-in-out infinite; }
-  .b2{ width:480px; height:480px; left:-120px; top:220px;
-       background: radial-gradient(circle, #5A189A 0%, transparent 70%);
-       animation: drift2 32s ease-in-out infinite; }
-  .b3{ width:450px; height:450px; right:10%; bottom:-100px;
-       background: radial-gradient(circle, #FFD166 0%, transparent 70%);
-       opacity:.28;
-       animation: drift3 30s ease-in-out infinite; }
-
-  @keyframes drift1{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(-40px,50px) } }
-  @keyframes drift2{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(50px,-30px) } }
-  @keyframes drift3{ 0%,100%{ transform: translate(0,0) } 50%{ transform: translate(-30px,-40px) } }
-
-  /* ---------- Layout ---------- */
-  main{ width:100%; max-width: 480px; display:flex; flex-direction:column; gap:16px; }
-
-  .glass{
-    background: var(--glass-fill);
-    border: 1px solid var(--glass-border-soft);
-    border-radius: var(--radius-xl);
-    backdrop-filter: blur(28px) saturate(160%);
-    -webkit-backdrop-filter: blur(28px) saturate(160%);
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.15) inset,
-      0 20px 40px -15px rgba(0,0,0,0.6);
-    position: relative;
-    opacity: 0;
-    animation: cardIn .6s var(--ease-out) forwards;
-    transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
-  }
-
-  main > *:nth-child(1){ animation-delay: .02s; }
-  main > *:nth-child(2){ animation-delay: .08s; }
-  main > *:nth-child(3){ animation-delay: .14s; }
-  main > *:nth-child(4){ animation-delay: .20s; }
-
-  .glass::before{
-    content:""; position:absolute; inset:0; border-radius:inherit;
-    background: linear-gradient(155deg, rgba(255,255,255,0.07), rgba(255,255,255,0) 35%);
-    pointer-events:none;
-    z-index: 1;
-  }
-
-  @keyframes cardIn{
-    from{ opacity:0; transform: translateY(18px) scale(.97); }
-    to{ opacity:1; transform: translateY(0) scale(1); }
-  }
-
-  .panel{ padding: 22px; position: relative; z-index: 2; }
-
-  /* ---------- Header ---------- */
-  .hero{ padding: 20px 20px 18px; position: relative; z-index: 2; }
-  
-  .hero::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 15%; right: 15%; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--a), transparent);
-    opacity: 0.85;
-  }
-
-  .header-top{ 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    gap: 8px; 
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-  }
-  
-  .eyebrow-badge{
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 10px; border-radius: 999px;
-    background: rgba(255, 209, 102, 0.1); border: 1px solid rgba(255, 209, 102, 0.3);
-    font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-    color: var(--a);
-    transition: all var(--transition-smooth);
-  }
-
-  .btn-reset{
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--glass-border-soft);
-    color: var(--text-mid);
-    padding: 5px 12px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    flex-shrink: 0;
-  }
-  .btn-reset:hover{
-    background: rgba(255, 209, 102, 0.15);
-    color: var(--a);
-    border-color: rgba(255, 209, 102, 0.4);
-  }
-  .btn-reset:active{ transform: scale(0.95); }
-
-  h1{ margin:0; font-size: 24px; font-weight:800; letter-spacing:-0.02em; }
-  .sub{ margin: 4px 0 0; color: var(--text-mid); font-size:13px; }
-
-  /* ---------- Section Labels & Tooltips ---------- */
-  .section-label{
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 11.5px; font-weight: 700;
-    color: var(--text-mid); text-transform: uppercase; letter-spacing: .06em;
-    margin-bottom: 10px;
-  }
-  .section-num{ color: var(--a); font-weight: 800; margin-right: 2px; }
-
-  .info-icon {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 20px; height: 20px; border-radius: 50%;
-    background: rgba(255,209,102,0.12); border: 1px solid rgba(255,209,102,0.3);
-    color: var(--a); font-size: 11px; font-weight: 700;
-    cursor: help; position: relative; text-transform: none; letter-spacing: normal;
-  }
-  
-  .info-icon:hover::after, .info-icon:focus::after {
-    content: attr(data-tooltip);
-    position: absolute; 
-    bottom: 130%; 
-    right: 0;
-    width: 230px;
-    max-width: 75vw;
-    white-space: normal;
-    word-wrap: break-word;
-    background: rgba(18, 10, 32, 0.96); 
-    border: 1px solid rgba(255, 209, 102, 0.4);
-    color: #fff; 
-    padding: 8px 12px; 
-    border-radius: var(--radius-sm);
-    font-size: 11.5px; 
-    font-weight: 500; 
-    line-height: 1.4;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
-    z-index: 100; 
-    pointer-events: none;
-    text-align: left;
-  }
-
-  /* Explication PEDT */
-  .pedt-info-note {
-    font-size: 11.5px;
-    color: var(--text-mid);
-    background: rgba(255, 209, 102, 0.06);
-    border: 1px solid rgba(255, 209, 102, 0.25);
-    border-left: 3px solid var(--a);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    margin-top: 8px;
-    margin-bottom: 18px;
-    line-height: 1.45;
-  }
-  .pedt-info-note strong { color: var(--a); font-weight: 700; }
-
-  /* ---------- Regime Selector ---------- */
-  .regime-grid{
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-  }
-  .regime-card{
-    background: rgba(0,0,0,0.22);
-    border: 1px solid var(--glass-border-soft);
-    border-radius: var(--radius-md);
-    padding: 11px 12px;
-    text-align: left;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    color: var(--text-mid);
-    position: relative;
-  }
-  .regime-card .r-title{ display: block; font-size: 13px; font-weight: 700; color: var(--text-hi); }
-  .regime-card .r-sub{ display: block; font-size: 11px; opacity: 0.75; margin-top: 2px; }
-  
-  .regime-card:hover{
-    background: var(--glass-fill-hover);
-    border-color: rgba(255, 209, 102, 0.3);
-    transform: translateY(-1px);
-  }
-  .regime-card:active{ transform: scale(0.97); }
-
-  .regime-card.active{
-    background: linear-gradient(135deg, rgba(123, 44, 191, 0.35), rgba(199, 125, 255, 0.25));
-    border-color: rgba(255, 209, 102, 0.6);
-    box-shadow: 0 6px 20px -4px rgba(123, 44, 191, 0.3);
-    color: #fff;
-  }
-  .regime-card.active .r-title{ color: #fff; }
-  .regime-card.active .r-sub{ opacity: 0.95; color: var(--a); }
-
-  /* ---------- Inputs & Stepper ---------- */
-  .field{ margin-bottom: 14px; }
-  .field:last-of-type{ margin-bottom: 0; }
-  .field label{ display:block; font-size:13.5px; font-weight:600; color: var(--text-hi); margin-bottom:8px; }
-
-  .stepper{
-    display:flex; align-items:center; gap:8px;
-    background: rgba(0,0,0,0.28);
-    border: 1px solid var(--glass-border-soft);
-    border-radius: var(--radius-md);
-    padding: 5px;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-  }
-  .stepper:focus-within{
-    border-color: rgba(255, 209, 102, 0.5);
-    box-shadow: 0 0 12px rgba(255, 209, 102, 0.2);
-  }
-
-  .stepper input{
-    flex: 1; min-width: 0; width: 100%;
-    text-align:center; border:none; background:transparent; color:var(--text-hi);
-    font-size: 20px; font-weight:700; font-variant-numeric: tabular-nums;
-    outline:none;
-  }
-  .stepper input::-webkit-outer-spin-button,
-  .stepper input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
-
-  /* Boutons Stepper portés aux normes tactiles (44x44px) */
-  .stepbtn{
-    width: 44px; height: 44px; flex-shrink:0; border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 209, 102, 0.3);
-    background: rgba(255, 209, 102, 0.06);
-    color: var(--a); font-size: 20px; font-weight:700;
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
-    transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
-    user-select: none;
-  }
-  .stepbtn:hover{ background: rgba(255, 209, 102, 0.2); border-color: var(--a); }
-  .stepbtn:active{ transform: scale(0.88); }
-
-  /* Compteur d'enfants */
-  .total-kids-indicator{
-    text-align: center; font-size: 13px; color: var(--text-mid);
-    margin-top: 12px; margin-bottom: 6px; padding: 9px 12px;
-    background: rgba(255, 209, 102, 0.06); border-radius: var(--radius-sm);
-    border: 1px solid rgba(255, 209, 102, 0.25);
-    font-variant-numeric: tabular-nums;
-  }
-  .total-kids-indicator strong{ color: var(--a); font-weight: 800; font-size: 1.05em; }
-
-  .safety-alert{
-    display: none; align-items: center; gap: 8px;
-    background: rgba(255, 159, 90, 0.12); border: 1px solid rgba(255, 159, 90, 0.3);
-    padding: 8px 12px; border-radius: var(--radius-sm);
-    font-size: 11.5px; color: var(--accent); margin-top: 8px; font-weight: 600;
-  }
-  .safety-alert.visible{ display: flex; }
-
-  /* ---------- Mode Selector ---------- */
-  .mutual-selector{
-    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-    background: rgba(0, 0, 0, 0.28); padding: 4px;
-    border-radius: var(--radius-md); border: 1px solid var(--glass-border-soft);
-    margin-top: 6px; margin-bottom: 14px;
-  }
-
-  .mutual-btn{
-    background: transparent; border: 1px solid transparent;
-    border-radius: var(--radius-sm); padding: 8px 6px;
-    color: var(--text-mid); cursor: pointer;
-    transition: all var(--transition-fast);
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-  }
-  .mutual-btn strong{ font-size: 12px; font-weight: 700; color: var(--text-hi); }
-  .mutual-btn small{ font-size: 10.5px; opacity: 0.75; margin-top: 3px; }
-
-  .mutual-btn:hover{ background: rgba(255,255,255,0.08); }
-  .mutual-btn.active{
-    background: linear-gradient(135deg, rgba(123, 44, 191, 0.35), rgba(199, 125, 255, 0.25));
-    border-color: rgba(255, 209, 102, 0.5);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  }
-  .mutual-btn.active strong{ color: #fff; }
-  .mutual-btn.active small{ color: var(--a); opacity: 1; }
-
-  /* ---------- Toggle Row ---------- */
-  .toggle-group{
-    margin-top: 12px; padding-top: 12px;
-    border-top: 1px solid var(--glass-border-soft);
-  }
-
-  .toggle-row{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    cursor:pointer; font-size: 13.5px; font-weight:600; color: var(--text-hi);
-    user-select: none;
-    padding: 8px 10px;
-    margin: 0 -10px;
-    border-radius: var(--radius-sm);
-    transition: background var(--transition-fast);
-  }
-  .toggle-row:hover{
-    background: rgba(255, 255, 255, 0.04);
-  }
-  .toggle-row small{ display:block; font-weight:500; color: var(--text-low); font-size:11.5px; margin-top:2px; }
-  .toggle-row input{ display:none; }
-  
-  .switch{
-    width:46px; height:26px; border-radius:999px; background: rgba(0,0,0,0.4);
-    border:1px solid var(--glass-border-soft); position:relative; flex-shrink:0;
-    transition: background .25s var(--ease-out);
-  }
-  .switch::after{
-    content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%;
-    background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    transition: transform 0.3s var(--ease-spring);
-  }
-  .toggle-row input:checked + .switch{
-    background: linear-gradient(135deg, var(--b), var(--a));
-    border-color: rgba(255,255,255,0.4);
-  }
-  .toggle-row input:checked + .switch::after{ transform: translateX(20px); }
-  .toggle-row.disabled{ opacity:.35; pointer-events:none; }
-
-  /* ---------- Visual Pool & Gauges ---------- */
-  .pool-header{
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .pool-label{ font-size:11.5px; font-weight:700; color: var(--text-mid); letter-spacing: .05em; text-transform: uppercase; }
-  
-  .badge-mutualized{
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 10px; border-radius: 999px;
-    background: rgba(255, 209, 102, 0.15);
-    border: 1px solid rgba(255, 209, 102, 0.4);
-    color: var(--a); font-size: 11px; font-weight: 700;
-    opacity: 0; transform: scale(0.85);
-    transition: all 0.3s var(--ease-spring);
-  }
-  .badge-mutualized.visible{ opacity: 1; transform: scale(1); }
-
-  .pool-track{ display:flex; gap:6px; flex-wrap: wrap; }
-  
-  .segment{
-    flex:1; min-width: 44px; height:38px; border-radius: 10px; overflow:hidden; position:relative;
-    background: rgba(0,0,0,0.35); border: 1px solid var(--glass-border-soft);
-    display:flex; 
-    transition: transform 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
-  }
-
-  .segment.new-seg{
-    animation: segPop 0.35s var(--ease-spring) forwards;
-  }
-
-  @keyframes segPop {
-    from { opacity: 0; transform: scale(0.85) translateY(4px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
-  .segment .fillA, .segment .fillB{
-    height:100%; width: 0%;
-    transition: width 0.4s var(--ease-out);
-    position: relative;
-  }
-
-  .fillA{ 
-    background: linear-gradient(135deg, #FFC107, #FFD166);
-    box-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
-  }
-  .fillB{ 
-    background: linear-gradient(135deg, #7B2CBF, #C77DFF);
-    box-shadow: 0 0 12px rgba(199, 125, 255, 0.35);
-  }
-
-  .gauge-label{
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-size: 11.5px; font-weight: 700; color: #FFFFFF;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.9); pointer-events: none;
-    font-variant-numeric: tabular-nums; z-index: 2;
-  }
-
-  .segment.ghost{ opacity:.35; width: 100%; animation: none; }
-  .segment.ghost::after{
-    content:"–"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    color: var(--text-low); font-size:16px;
-  }
-
-  .pool-split-container{ display: flex; flex-direction: column; gap: 12px; width: 100%; }
-  .pool-subgroup{ display: flex; flex-direction: column; gap: 6px; }
-  .subgroup-label{ font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-  .subgroup-label.lbl-a{ color: var(--a); }
-  .subgroup-label.lbl-b{ color: var(--b); }
-
-  .pool-legend{ display:flex; gap:16px; margin-top:12px; }
-  .pool-legend span{ display:flex; align-items:center; gap:6px; font-size:12px; color: var(--text-mid); font-weight: 500; }
-  .dot{ width:8px; height:8px; border-radius:50%; display:inline-block; }
-  .dot-a{ background: var(--a); box-shadow: 0 0 6px var(--a); }
-  .dot-b{ background: var(--b); box-shadow: 0 0 8px var(--b); }
-
-  /* ---------- Display Total ---------- */
-  .headline{ display:flex; align-items:baseline; gap:12px; margin-top:20px; flex-wrap:wrap; }
-  
-  .big{
-    font-size: 56px; font-weight:800; letter-spacing:-0.03em; line-height:1;
-    color: var(--a);
-    text-shadow: 0 0 25px rgba(255, 209, 102, 0.3);
-    font-variant-numeric: tabular-nums;
-    display: inline-block;
-  }
-  .biglabel{ font-size:14px; color: var(--text-mid); font-weight:600; max-width: 230px; line-height: 1.35; }
-
-  @keyframes numPulse{
-    0%{ transform: scale(1); }
-    40%{ transform: scale(1.15); }
-    100%{ transform: scale(1); }
-  }
-  .num-pulse{ animation: numPulse .35s var(--ease-spring); }
-
-  /* ---------- Qualifications Grid ---------- */
-  .quali h2{ margin:0 0 12px; font-size:12px; font-weight:700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-mid); }
-  .qgrid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
-  .qcard{
-    border-radius: var(--radius-md); padding: 12px 6px; text-align:center;
-    border: 1px solid var(--glass-border-soft); background: rgba(255,255,255,0.03);
-    transition: transform var(--transition-fast);
-  }
-  .qcard:hover{ transform: translateY(-2px); }
-  .qnum{ display:block; font-size: 24px; font-weight:800; font-variant-numeric: tabular-nums; }
-  .qlabel{ display:block; margin-top:4px; font-size:11px; line-height:1.3; color: var(--text-mid); font-weight:600; }
-  .qlabel small{ color: var(--text-low); font-weight:500; font-size: 10px; }
-  .qmin .qnum{ color: #8FE3B4; text-shadow: 0 0 12px rgba(143, 227, 180, 0.25); }
-  .qmax .qnum{ color: #FFB199; text-shadow: 0 0 12px rgba(255, 177, 153, 0.25); }
-  .qflex .qnum{ color: var(--a); text-shadow: 0 0 12px rgba(255, 209, 102, 0.25); }
-
-  .btn-share{
-    width: 100%; margin-top: 16px; padding: 13px;
-    border-radius: var(--radius-md); 
-    border: 1px solid rgba(255, 209, 102, 0.4);
-    background: rgba(255, 209, 102, 0.08); 
-    color: var(--a);
-    font-size: 13px; font-weight: 700; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: all var(--transition-fast);
-  }
-  .btn-share:hover{
-    background: rgba(255, 209, 102, 0.18); 
-    border-color: var(--a);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 209, 102, 0.2);
-  }
-  .btn-share:active{ transform: scale(0.98); }
-
-  .btn-share.copied{
-    background: linear-gradient(135deg, rgba(82, 229, 150, 0.3), rgba(46, 204, 113, 0.3));
-    border-color: var(--success); color: #fff;
-    box-shadow: none;
-  }
-
-  /* ---------- Sticky Mini Bar ---------- */
-  .sticky-mini-bar{
-    position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%;
-    transform: translateX(-50%) translateY(120px);
-    width: calc(100% - 32px); max-width: 440px;
-    background: rgba(18, 10, 32, 0.94);
-    border: 1px solid rgba(255, 209, 102, 0.4);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border-radius: 999px;
-    padding: 10px 18px;
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.6);
-    z-index: 100;
-    cursor: pointer;
-    opacity: 0;
-    transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
-  }
-  .sticky-mini-bar.visible{
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-  .mini-info{ display: flex; align-items: center; gap: 10px; }
-  .mini-count{ font-size: 22px; font-weight: 800; color: var(--a); font-variant-numeric: tabular-nums; }
-  .mini-label{ font-size: 12px; font-weight: 700; color: #fff; }
-  .mini-arrow{ font-size: 12px; color: var(--a); background: rgba(255, 209, 102, 0.12); padding: 4px 10px; border-radius: 999px; font-weight: 600; }
-
-  /* ---------- Toast Notification ---------- */
-  .toast{
-    position: fixed; bottom: max(24px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: rgba(18, 10, 32, 0.95); border: 1px solid rgba(255, 209, 102, 0.4);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    color: #fff; padding: 10px 20px; border-radius: 999px;
-    font-size: 12.5px; font-weight: 600;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.6); opacity: 0;
-    transition: all 0.35s var(--ease-spring); z-index: 9999;
-    pointer-events: none;
-  }
-  .toast.show{ transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  footer.note{
-    font-size: 11px; line-height:1.5; color: var(--text-low);
-    padding: 0 8px; text-align:center;
-  }
-
-  @media (max-width: 350px) {
-    .regime-grid, .mutual-selector {
-      grid-template-columns: 1fr;
+  <style>
+    /* Effet Liquid Glass / Glassmorphism */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    .blob, .glass, .num-pulse, .btn-share, .regime-card, .stepbtn, .segment{ animation: none !important; transition: none !important; }
-    .segment .fillA, .segment .fillB{ transition: none !important; }
-  }
-
-  @media print {
-    body { background: #fff !important; color: #000 !important; padding: 0 !important; }
-    .backdrop, .btn-reset, .btn-share, .stepper button, .toast, .sticky-mini-bar { display: none !important; }
-    .glass { background: #fff !important; border: 1px solid #ccc !important; box-shadow: none !important; backdrop-filter: none !important; opacity: 1 !important; color: #000 !important; }
-    h1, .big, .qnum, label, span { color: #000 !important; background: none !important; -webkit-text-fill-color: initial !important; }
-  }
-</style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .glass-input {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: white;
+    }
+    .glass-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .glass-nav {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-t: 1px solid rgba(255, 255, 255, 0.15);
+    }
+  </style>
 </head>
-<body>
+<body class="bg-gradient-to-tr from-indigo-950 via-purple-900 to-slate-900 min-h-screen text-white font-sans antialiased pb-24 select-none" x-data="alshApp()">
 
-  <div class="backdrop">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
+  <!-- HEADER GLASSMORPHISM -->
+  <header class="sticky top-0 z-40 glass-panel px-4 py-3 mx-2 mt-2 rounded-2xl flex items-center justify-between shadow-lg">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-lg shadow-cyan-500/30 shadow-lg">
+        ⚡
+      </div>
+      <div>
+        <h1 class="font-extrabold text-base tracking-wide leading-tight">ALSH Flow</h1>
+        <p class="text-xs text-cyan-200 opacity-80" x-text="'Connecté : ' + userRole"></p>
+      </div>
+    </div>
+    <button @click="toggleRole()" class="glass-card px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-white/20 transition-all flex items-center space-x-1">
+      <i class="fa-solid fa-arrows-rotate"></i>
+      <span x-text="userRole === 'Animateur' ? 'Switch Direction' : 'Switch Animateur'"></span>
+    </button>
+  </header>
+
+  <!-- NOTIFICATION TOAST -->
+  <div x-show="toast.show" x-transition 
+       class="fixed top-20 right-4 left-4 z-50 glass-panel border-cyan-400/50 p-4 rounded-2xl flex items-center justify-between shadow-2xl bg-cyan-950/80">
+    <div class="flex items-center space-x-3">
+      <i class="fa-solid fa-circle-check text-cyan-400 text-xl"></i>
+      <span class="text-sm font-medium" x-text="toast.message"></span>
+    </div>
+    <button @click="toast.show = false" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
   </div>
 
-  <main>
+  <main class="max-w-md mx-auto px-4 mt-4 space-y-4">
 
-    <!-- Header -->
-    <header class="glass hero">
-      <div class="header-top">
-        <div class="eyebrow-badge" id="eyebrowBadge">Hors PEDT · > 5h / jour</div>
-        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser les effectifs à zéro">
-          ↺ Réinitialiser
-        </button>
-      </div>
-      <h1>Taux d'encadrement</h1>
-      <p class="sub">Calculateur ALSH conforme réglementation SDJES</p>
-    </header>
-
-    <section class="glass panel inputs">
-      <div class="section-label">
-        <span><span class="section-num">1.</span> Régime d'accueil</span>
-        <span class="info-icon" tabindex="0" role="button" aria-label="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire." data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
-      </div>
-      <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
-        <button type="button" class="regime-card active" role="radio" aria-checked="true" data-regime="hors_p5">
-          <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">+5h par jour</span>
-        </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="hors_m5">
-          <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">≤ 5h par jour</span>
-        </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_p5">
-          <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">+5h par jour</span>
-        </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_m5">
-          <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">≤ 5h par jour</span>
-        </button>
-      </div>
-
-      <!-- Explication PEDT -->
-      <div class="pedt-info-note">
-        <strong>💡 C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> est une démarche portée par la commune réunissant tous les acteurs éducatifs locaux (écoles, associations, CAF). Il permet de bénéficier de taux d'encadrement adaptés.
-      </div>
-
-      <div class="section-label">
-        <span><span class="section-num">2.</span> Effectifs enregistrés</span>
-      </div>
-      <div class="field">
-        <label for="n36">Enfants de - de 6 ans</label>
-        <div class="stepper">
-          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant de - de 6 ans">–</button>
-          <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant de - de 6 ans">+</button>
+    <!-- 1. ONGLET : FICHE D'ACTIVITÉ & DEMANDE MATÉRIEL -->
+    <div x-show="currentTab === 'fiche'" class="space-y-4">
+      <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Fiche d'Activité Express
+          </h2>
+          <span class="text-xs bg-cyan-500/20 text-cyan-300 px-2.5 py-1 rounded-full font-medium">Anim'</span>
         </div>
-      </div>
-      <div class="field">
-        <label for="n612">Enfants de + de 6 ans</label>
-        <div class="stepper">
-          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant de + de 6 ans">–</button>
-          <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant de + de 6 ans">+</button>
-        </div>
-      </div>
 
-      <!-- Compteur total d'enfants -->
-      <div class="total-kids-indicator" id="totalKidsIndicator" aria-live="polite">
-        Effectif total : <strong>0</strong> enfant
-      </div>
+        <form @submit.prevent="submitFiche()" class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-cyan-200 mb-1">Nom de l'activité</label>
+            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu Harry Potter" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-sm focus:ring-2 focus:ring-cyan-400 focus:outline-none" required>
+          </div>
 
-      <div class="safety-alert" id="safetyAlert" role="alert" aria-live="assertive">
-        <span>⚠️ <strong>Règle de sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
-      </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-medium text-cyan-200 mb-1">Tranche d'âge</label>
+              <select x-model="fiche.age" class="w-full glass-input px-3 py-2.5 rounded-xl text-sm focus:ring-2 focus:ring-cyan-400 focus:outline-none bg-slate-900/80">
+                <option value="3-5 ans">3-5 ans (Maternelles)</option>
+                <option value="6-8 ans">6-8 ans (Élémentaires)</option>
+                <option value="9-11 ans">9-11 ans (Grands)</option>
+                <option value="Tous publics">Inter-tranches</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-cyan-200 mb-1">Lieu</label>
+              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc / Gymnase" class="w-full glass-input px-3 py-2.5 rounded-xl text-sm focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+            </div>
+          </div>
 
-      <div class="field">
-        <div class="section-label" style="margin-top: 14px;">
-          <span><span class="section-num">3.</span> Mode de calcul</span>
-          <span class="info-icon" tabindex="0" role="button" aria-label="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire." data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire.">ⓘ</span>
-        </div>
-        <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
-          <button type="button" class="mutual-btn active" role="radio" aria-checked="true" data-mode="avec">
-            <strong>Avec mutualisation</strong>
-            <small>Règle SDJES</small>
+          <div>
+            <label class="block text-xs font-medium text-cyan-200 mb-1">Objectif Pédagogique</label>
+            <input type="text" x-model="fiche.objectif" placeholder="ex: Développer la coopération" class="w-full glass-input px-3 py-2.5 rounded-xl text-sm focus:ring-2 focus:ring-cyan-400 focus:outline-none">
+          </div>
+
+          <!-- Section Demande Matériel Directe -->
+          <div class="glass-card p-3.5 rounded-2xl space-y-2 border-l-4 border-l-cyan-400">
+            <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-box-open"></i> Demande de Matériel (Envoyée au Dir')
+            </span>
+            <div class="flex gap-2">
+              <input type="text" x-model="newMatos" placeholder="ex: 3 bidons peinture rouge" class="flex-1 glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+              <button type="button" @click="addMatos()" class="bg-cyan-500 hover:bg-cyan-400 px-3 py-2 rounded-xl text-xs font-bold transition-all">+</button>
+            </div>
+            <ul class="space-y-1">
+              <template x-for="(item, index) in fiche.materiel" :key="index">
+                <li class="flex items-center justify-between text-xs glass-card px-2.5 py-1 rounded-lg">
+                  <span x-text="item"></span>
+                  <button type="button" @click="removeMatos(index)" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-xmark"></i></button>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <button type="submit" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 font-bold rounded-xl text-sm shadow-lg shadow-cyan-500/25 transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> Enregistrer & Envoyer la Fiche
           </button>
-          <button type="button" class="mutual-btn" role="radio" aria-checked="false" data-mode="sans">
-            <strong>Sans mutualisation</strong>
-            <small>Calcul séparé</small>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. ONGLET : CAHIER DE SOINS NUMÉRIQUE -->
+    <div x-show="currentTab === 'soins'" class="space-y-4">
+      <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            <i class="fa-solid fa-kit-medical text-rose-400"></i> Cahier de Soins
+          </h2>
+          <span class="text-xs bg-rose-500/20 text-rose-300 px-2.5 py-1 rounded-full font-medium">Santé</span>
+        </div>
+
+        <form @submit.prevent="submitSoin()" class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-rose-200 mb-1">Enfant</label>
+            <input type="text" x-model="soin.enfant" placeholder="Prénom et Nom de l'enfant" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-sm focus:ring-2 focus:ring-rose-400 focus:outline-none" required>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-rose-200 mb-1">Type d'incident / Symptôme</label>
+            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure au genou droit" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-sm focus:ring-2 focus:ring-rose-400 focus:outline-none" required>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-rose-200 mb-1">Soin apporté</label>
+            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + compresse désinfectante" class="w-full glass-input px-3.5 py-2 rounded-xl text-sm focus:ring-2 focus:ring-rose-400 focus:outline-none h-20"></textarea>
+          </div>
+
+          <div class="flex items-center space-x-2 glass-card p-3 rounded-xl">
+            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-rose-500 rounded">
+            <label for="famille" class="text-xs font-medium cursor-pointer">Avertir la famille au départ du soir</label>
+          </div>
+
+          <button type="submit" class="w-full py-3 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 font-bold rounded-xl text-sm shadow-lg shadow-rose-500/25 transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-pen-nib"></i> Enregistrer le soin
+          </button>
+        </form>
+
+        <hr class="border-white/10 my-2">
+
+        <!-- Liste des derniers soins -->
+        <h3 class="text-xs font-bold text-white/70 uppercase tracking-wider">Derniers soins enregistrés</h3>
+        <div class="space-y-2">
+          <template x-for="item in registreSoins" :key="item.id">
+            <div class="glass-card p-3 rounded-2xl flex items-start justify-between">
+              <div>
+                <p class="font-bold text-sm" x-text="item.enfant"></p>
+                <p class="text-xs text-rose-200" x-text="item.incident"></p>
+                <p class="text-[10px] text-white/50 mt-1" x-text="item.heure + ' • Par ' + item.anim"></p>
+              </div>
+              <span x-show="item.prevenirFamille" class="px-2 py-0.5 bg-amber-500/20 text-amber-300 text-[10px] font-semibold rounded-full border border-amber-500/30">
+                🔔 Prévenir parents
+              </span>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ONGLET : CHEAT-SHEET RÉGLEMENTATION -->
+    <div x-show="currentTab === 'regles'" class="space-y-4">
+      <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            <i class="fa-solid fa-scale-balanced text-amber-400"></i> Repères Réglementation SDJES
+          </h2>
+          <span class="text-xs bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-full font-medium">Aide-mémoire</span>
+        </div>
+
+        <div class="space-y-3">
+          <!-- Carte Taux encadrement -->
+          <div class="glass-card p-4 rounded-2xl space-y-2">
+            <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+              <i class="fa-solid fa-users"></i> Taux d'encadrement ALSH
+            </h3>
+            <div class="text-xs space-y-1.5 opacity-90">
+              <div class="flex justify-between border-b border-white/10 pb-1">
+                <span>Moins de 6 ans :</span>
+                <span class="font-bold text-white">1 anim pour 10 enfants</span>
+              </div>
+              <div class="flex justify-between">
+                <span>6 ans et plus :</span>
+                <span class="font-bold text-white">1 anim pour 12 enfants</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carte Baignade -->
+          <div class="glass-card p-4 rounded-2xl space-y-2">
+            <h3 class="text-sm font-bold text-blue-300 flex items-center gap-2">
+              <i class="fa-solid fa-water-ladder"></i> Sortie Baignade
+            </h3>
+            <ul class="text-xs list-disc list-inside space-y-1 opacity-90">
+              <li>Test d'aisance aquatique obligatoire pour les zones non surveillées.</li>
+              <li>1 animateur dans l'eau obligatoire.</li>
+              <li>Périmètre de baignade matérialisé par des bouées.</li>
+            </ul>
+          </div>
+
+          <!-- Carte Transport -->
+          <div class="glass-card p-4 rounded-2xl space-y-2">
+            <h3 class="text-sm font-bold text-emerald-300 flex items-center gap-2">
+              <i class="fa-solid fa-bus"></i> Transports & Car
+            </h3>
+            <ul class="text-xs list-disc list-inside space-y-1 opacity-90">
+              <li>Comptage avant le départ, pendant le trajet et à l'arrivée.</li>
+              <li>Trousse de secours + fiches sanitaires embarquées dans le car.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. ONGLET : ESPACE DIRECTION (TRAMES & MATÉRIEL) -->
+    <div x-show="currentTab === 'direction'" class="space-y-4">
+      <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            <i class="fa-solid fa-folder-open text-purple-400"></i> Espace Direction
+          </h2>
+          <span class="text-xs bg-purple-500/20 text-purple-300 px-2.5 py-1 rounded-full font-medium">Admin</span>
+        </div>
+
+        <!-- Demandes de matériel reçues -->
+        <div class="space-y-2">
+          <h3 class="text-xs font-bold text-white/70 uppercase tracking-wider">Demandes matériel des anims</h3>
+          <template x-for="demande in demandesMateriel" :key="demande.id">
+            <div class="glass-card p-3 rounded-2xl flex items-center justify-between">
+              <div>
+                <p class="font-bold text-xs" x-text="demande.activite"></p>
+                <p class="text-[11px] text-cyan-200" x-text="demande.items.join(', ')"></p>
+                <p class="text-[9px] text-white/50" x-text="'Par ' + demande.anim"></p>
+              </div>
+              <button @click="validerCommande(demande.id)" class="px-2.5 py-1 bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-200 text-xs rounded-xl border border-emerald-400/30 transition-all">
+                <i class="fa-solid fa-check"></i> Valider
+              </button>
+            </div>
+          </template>
+        </div>
+
+        <hr class="border-white/10">
+
+        <!-- Générateur de trames -->
+        <h3 class="text-xs font-bold text-white/70 uppercase tracking-wider">Générateur de Trames SDJES</h3>
+        <div class="grid grid-cols-1 gap-2">
+          <button @click="generateDoc('Déclaration d\'Accident')" class="glass-card p-3.5 rounded-2xl text-left hover:bg-white/15 transition-all flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-file-triangle text-amber-400 text-lg"></i>
+              <div>
+                <p class="text-xs font-bold">Déclaration d'Accident Grave</p>
+                <p class="text-[10px] text-white/60">Trame officielle pour préfecture / SDJES</p>
+              </div>
+            </div>
+            <i class="fa-solid fa-download text-xs text-white/40"></i>
+          </button>
+
+          <button @click="generateDoc('Bilan de Séjour')" class="glass-card p-3.5 rounded-2xl text-left hover:bg-white/15 transition-all flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <i class="fa-solid fa-file-chart-column text-cyan-400 text-lg"></i>
+              <div>
+                <p class="text-xs font-bold">Bilan de Fin de Session</p>
+                <p class="text-[10px] text-white/60">Modèle de REX pour l'équipe pédagogique</p>
+              </div>
+            </div>
+            <i class="fa-solid fa-download text-xs text-white/40"></i>
           </button>
         </div>
       </div>
+    </div>
 
-      <div class="toggle-group">
-        <label class="toggle-row" id="dirRow" for="dirToggle">
-          <span>Directeur inclus dans l'encadrement<small>Possible si effectif total ≤ 50 enfants</small></span>
-          <input type="checkbox" id="dirToggle">
-          <span class="switch"></span>
-        </label>
-      </div>
-    </section>
+    <!-- 5. ONGLET : PLANNING D'ÉQUIPE -->
+    <div x-show="currentTab === 'planning'" class="space-y-4">
+      <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            <i class="fa-solid fa-calendar-days text-emerald-400"></i> Planning du Jour
+          </h2>
+          <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-full font-medium">Aujourd'hui</span>
+        </div>
 
-    <!-- Carte Résultat -->
-    <section class="glass panel result" id="resultCard" aria-live="polite">
-      <div class="pool">
-        <div class="pool-header">
-          <span class="pool-label">Postes d'encadrement</span>
-          <span class="badge-mutualized" id="mutualBadge">⚡ Mutualisé</span>
-        </div>
-        <div class="pool-track" id="poolTrack"></div>
-        <div class="pool-legend">
-          <span><i class="dot dot-a"></i>- de 6 ans</span>
-          <span><i class="dot dot-b"></i>+ de 6 ans</span>
-        </div>
-      </div>
-
-      <div class="headline">
-        <span class="big" id="totalAnim">0</span>
-        <span class="biglabel" id="totalAnimLabel">Anim' sur le terrain</span>
-      </div>
-    </section>
-
-    <section class="glass panel quali">
-      <h2>Composition de l'équipe</h2>
-      <div class="qgrid">
-        <div class="qcard qmin">
-          <span class="qnum" id="qDiplomes">0</span>
-          <span class="qlabel">Diplômé·e·s<br><small>Min. 50%</small></span>
-        </div>
-        <div class="qcard qmax">
-          <span class="qnum" id="qNonDiplomes">0</span>
-          <span class="qlabel">Non-diplômé·e·s<br><small>Max. 20%</small></span>
-        </div>
-        <div class="qcard qflex">
-          <span class="qnum" id="qStagiaires">0</span>
-          <span class="qlabel">Stagiaires BAFA<br><small>Ajustement</small></span>
+        <div class="space-y-3">
+          <template x-for="p in planning" :key="p.anim">
+            <div class="glass-card p-3.5 rounded-2xl space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-sm text-cyan-200" x-text="p.anim"></span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                      :class="p.statut === 'En poste' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'"
+                      x-text="p.statut"></span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5 text-[11px] text-center">
+                <div class="glass-card p-1.5 rounded-xl">
+                  <p class="text-[9px] text-white/50">Matin</p>
+                  <p class="font-medium truncate" x-text="p.matin"></p>
+                </div>
+                <div class="glass-card p-1.5 rounded-xl">
+                  <p class="text-[9px] text-white/50">Midi</p>
+                  <p class="font-medium truncate" x-text="p.midi"></p>
+                </div>
+                <div class="glass-card p-1.5 rounded-xl">
+                  <p class="text-[9px] text-white/50">Après-midi</p>
+                  <p class="font-medium truncate" x-text="p.aprem"></p>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
-
-      <button type="button" class="btn-share" id="copyBtn">
-        <span id="copyBtnIcon">📋</span> <span id="copyBtnText">Copier le bilan de calcul</span>
-      </button>
-    </section>
-
-    <footer class="note" id="footerNote">
-      Outil indicatif SDJES — Conforme à la législation ALSH en vigueur.
-    </footer>
+    </div>
 
   </main>
 
-  <!-- Sticky Mini Bar -->
-  <div class="sticky-mini-bar" id="stickyMiniBar">
-    <div class="mini-info">
-      <span class="mini-count" id="miniAnimCount">0</span>
-      <span class="mini-label" id="miniAnimLabel">Anim' requis</span>
-    </div>
-    <span class="mini-arrow">Voir détails ➔</span>
-  </div>
+  <!-- NAVIGATION BAR (FLOATING GLASS NAVBAR) -->
+  <nav class="fixed bottom-3 left-3 right-3 z-50 glass-nav rounded-3xl p-2 flex justify-around items-center shadow-2xl">
+    <button @click="currentTab = 'fiche'" :class="currentTab === 'fiche' ? 'text-cyan-400 bg-white/10' : 'text-white/60'" class="flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all">
+      <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+      <span class="text-[10px] font-medium mt-1">Fiches</span>
+    </button>
+    <button @click="currentTab = 'soins'" :class="currentTab === 'soins' ? 'text-rose-400 bg-white/10' : 'text-white/60'" class="flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all">
+      <i class="fa-solid fa-kit-medical text-lg"></i>
+      <span class="text-[10px] font-medium mt-1">Soins</span>
+    </button>
+    <button @click="currentTab = 'regles'" :class="currentTab === 'regles' ? 'text-amber-400 bg-white/10' : 'text-white/60'" class="flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all">
+      <i class="fa-solid fa-scale-balanced text-lg"></i>
+      <span class="text-[10px] font-medium mt-1">Règles</span>
+    </button>
+    <button @click="currentTab = 'direction'" :class="currentTab === 'direction' ? 'text-purple-400 bg-white/10' : 'text-white/60'" class="flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all">
+      <i class="fa-solid fa-folder-open text-lg"></i>
+      <span class="text-[10px] font-medium mt-1">Dir'</span>
+    </button>
+    <button @click="currentTab = 'planning'" :class="currentTab === 'planning' ? 'text-emerald-400 bg-white/10' : 'text-white/60'" class="flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all">
+      <i class="fa-solid fa-calendar-days text-lg"></i>
+      <span class="text-[10px] font-medium mt-1">Planning</span>
+    </button>
+  </nav>
 
-  <div class="toast" id="toast" role="status">📋 Bilan copié dans le presse-papier !</div>
+  <!-- APP LOGIC (ALPINE JS) -->
+  <script>
+    function alshApp() {
+      return {
+        userRole: 'Animateur',
+        currentTab: 'fiche',
+        newMatos: '',
+        toast: { show: false, message: '' },
+        
+        fiche: {
+          titre: '',
+          age: '6-8 ans',
+          lieu: '',
+          objectif: '',
+          materiel: ['Gouache rouge & bleue (2 bidons)', 'Pinceaux brosses (x10)']
+        },
 
-<script>
-  const STORAGE_KEY = 'alsh_calculator_state';
+        soin: {
+          enfant: '',
+          incident: '',
+          action: '',
+          prevenirFamille: false
+        },
 
-  const n36input = document.getElementById('n36');
-  const n612input = document.getElementById('n612');
-  const totalKidsIndicator = document.getElementById('totalKidsIndicator');
-  const safetyAlert = document.getElementById('safetyAlert');
-  const dirToggle = document.getElementById('dirToggle');
-  const dirRow = document.getElementById('dirRow');
-  const eyebrowBadge = document.getElementById('eyebrowBadge');
-  const footerNote = document.getElementById('footerNote');
-  const mutualBadge = document.getElementById('mutualBadge');
-  const resetBtn = document.getElementById('resetBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const copyBtnIcon = document.getElementById('copyBtnIcon');
-  const copyBtnText = document.getElementById('copyBtnText');
-  const toast = document.getElementById('toast');
+        registreSoins: [
+          { id: 1, enfant: 'Yanis M.', incident: 'Écorchure genou droit', heure: '14:30', anim: 'Thomas', prevenirFamille: true },
+          { id: 2, enfant: 'Inès B.', incident: 'Petit saignement de nez', heure: '11:15', anim: 'Sarah', prevenirFamille: false }
+        ],
 
-  const resultCard = document.getElementById('resultCard');
-  const stickyMiniBar = document.getElementById('stickyMiniBar');
-  const miniAnimCount = document.getElementById('miniAnimCount');
-  const miniAnimLabel = document.getElementById('miniAnimLabel');
+        demandesMateriel: [
+          { id: 1, anim: 'Sarah', activite: 'Grand Jeu Harry Potter', items: ['Papier Kraft', 'Peinture acrylique'] }
+        ],
 
-  const poolTrack = document.getElementById('poolTrack');
-  const totalAnimEl = document.getElementById('totalAnim');
-  const totalAnimLabelEl = document.getElementById('totalAnimLabel');
+        planning: [
+          { anim: 'Sarah', statut: 'En poste', matin: 'Gr. Jeu 6-8a', midi: 'Cantine', aprem: 'Atelier Arts' },
+          { anim: 'Léo', statut: 'En pause', matin: 'Accueil 3-5a', midi: 'Pause', aprem: 'Sport 9-11a' },
+          { anim: 'Julie', statut: 'En poste', matin: 'Prépa Projets', midi: 'Cantine', aprem: 'Théâtre' }
+        ],
 
-  const qDiplomes = document.getElementById('qDiplomes');
-  const qNonDiplomes = document.getElementById('qNonDiplomes');
-  const qStagiaires = document.getElementById('qStagiaires');
+        toggleRole() {
+          this.userRole = this.userRole === 'Animateur' ? 'Directeur' : 'Animateur';
+          this.showToast(`Mode basculé en : ${this.userRole}`);
+        },
 
-  let activeRegimeKey = 'hors_p5';
-  let activeMutualMode = 'avec';
+        addMatos() {
+          if (this.newMatos.trim() !== '') {
+            this.fiche.materiel.push(this.newMatos.trim());
+            this.newMatos = '';
+          }
+        },
 
-  const REGIMES = {
-    hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
-    hors_m5: { ratio36: 10, ratio612: 14, tag: "Hors PEDT · ≤ 5h / jour" },
-    avec_p5: { ratio36: 10, ratio612: 14, tag: "Avec PEDT · > 5h / jour" },
-    avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
-  };
+        removeMatos(index) {
+          this.fiche.materiel.splice(index, 1);
+        },
 
-  /* ----- Persistance localStorage ----- */
-  function saveState() {
-    const state = {
-      regime: activeRegimeKey,
-      mutualMode: activeMutualMode,
-      n36: n36input.value,
-      n612: n612input.value,
-      dir: dirToggle.checked
-    };
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch(e) {}
-  }
+        submitFiche() {
+          if (this.fiche.materiel.length > 0) {
+            this.demandesMateriel.push({
+              id: Date.now(),
+              anim: 'Anim Instantané',
+              activite: this.fiche.titre,
+              items: [...this.fiche.materiel]
+            });
+          }
+          this.showToast('Fiche créée & demande matériel transmise au Directeur !');
+          this.fiche.titre = '';
+          this.fiche.objectif = '';
+        },
 
-  function loadState() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return;
-      const state = JSON.parse(saved);
+        submitSoin() {
+          const now = new Date();
+          const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+          
+          this.registreSoins.unshift({
+            id: Date.now(),
+            enfant: this.soin.enfant,
+            incident: this.soin.incident,
+            heure: timeStr,
+            anim: 'Anim',
+            prevenirFamille: this.soin.prevenirFamille
+          });
 
-      if (state.regime && REGIMES[state.regime]) {
-        activeRegimeKey = state.regime;
-        document.querySelectorAll('.regime-card').forEach(b => {
-          const isActive = b.dataset.regime === activeRegimeKey;
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
-        });
-      }
-      if (state.mutualMode) {
-        activeMutualMode = state.mutualMode;
-        document.querySelectorAll('.mutual-btn').forEach(b => {
-          const isActive = b.dataset.mode === activeMutualMode;
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
-        });
-      }
-      if (state.n36 !== undefined) n36input.value = clampInt(state.n36);
-      if (state.n612 !== undefined) n612input.value = clampInt(state.n612);
-      if (state.dir !== undefined) dirToggle.checked = Boolean(state.dir);
-    } catch(e) {}
-  }
+          this.showToast('Soin enregistré au registre numérique !');
+          this.soin.enfant = '';
+          this.soin.incident = '';
+          this.soin.action = '';
+          this.soin.prevenirFamille = false;
+        },
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) {
-        stickyMiniBar.classList.add('visible');
-      } else {
-        stickyMiniBar.classList.remove('visible');
-      }
-    });
-  }, { threshold: 0.15 });
+        validerCommande(id) {
+          this.demandesMateriel = this.demandesMateriel.filter(d => d.id !== id);
+          this.showToast('Commande validée et ajoutée au bon global !');
+        },
 
-  observer.observe(resultCard);
+        generateDoc(typeDoc) {
+          this.showToast(`Document SDJES "${typeDoc}" généré en PDF !`);
+        },
 
-  stickyMiniBar.addEventListener('click', () => {
-    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  function hapticFeedback() {
-    if ('vibrate' in navigator) {
-      try { navigator.vibrate(8); } catch(e){}
-    }
-  }
-
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 2600);
-  }
-
-  document.querySelectorAll('.regime-card').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      document.querySelectorAll('.regime-card').forEach(c => {
-        c.classList.remove('active');
-        c.setAttribute('aria-checked', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-checked', 'true');
-      activeRegimeKey = btn.dataset.regime;
-      recalc();
-    });
-  });
-
-  document.querySelectorAll('.mutual-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      document.querySelectorAll('.mutual-btn').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-checked', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-checked', 'true');
-      activeMutualMode = btn.dataset.mode;
-      recalc();
-    });
-  });
-
-  function clampInt(v){
-    v = parseInt(v, 10);
-    if (isNaN(v) || v < 0) return 0;
-    return v;
-  }
-
-  document.querySelectorAll('.stepbtn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      const target = document.getElementById(btn.dataset.target);
-      const delta = parseInt(btn.dataset.delta, 10);
-      target.value = clampInt(clampInt(target.value) + delta);
-      recalc();
-    });
-  });
-
-  [n36input, n612input].forEach(inp => {
-    inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^0-9]/g,''); recalc(); });
-    inp.addEventListener('blur', () => { inp.value = clampInt(inp.value); recalc(); });
-  });
-
-  dirToggle.addEventListener('change', () => { hapticFeedback(); recalc(); });
-
-  resetBtn.addEventListener('click', () => {
-    hapticFeedback();
-    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
-    n36input.value = 0;
-    n612input.value = 0;
-    dirToggle.checked = false;
-    recalc();
-    showToast("🔄 Effectifs réinitialisés");
-  });
-
-  function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
-    const currentModeKey = isSplitMode ? 'split' : 'normal';
-    if (poolTrack.dataset.mode !== currentModeKey) {
-      poolTrack.innerHTML = '';
-      poolTrack.dataset.mode = currentModeKey;
-    }
-
-    if (totalNeeded === 0){
-      poolTrack.innerHTML = '<div class="segment ghost"></div>';
-      return;
-    }
-
-    const ghost = poolTrack.querySelector('.ghost');
-    if (ghost) ghost.remove();
-
-    if (isSplitMode) {
-      let container = poolTrack.querySelector('.pool-split-container');
-      if (!container) {
-        poolTrack.innerHTML = '';
-        container = document.createElement('div');
-        container.className = 'pool-split-container';
-        poolTrack.appendChild(container);
-      }
-
-      const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
-      const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
-
-      function syncTrack(groupId, labelText, count, maxRatio, currentKids, fillClass, labelColorClass) {
-        let group = container.querySelector('.' + groupId);
-        if (count === 0) {
-          if (group) group.remove();
-          return;
+        showToast(msg) {
+          this.toast.message = msg;
+          this.toast.show = true;
+          setTimeout(() => { this.toast.show = false; }, 3500);
         }
-        if (!group) {
-          group = document.createElement('div');
-          group.className = `pool-subgroup ${groupId}`;
-          group.innerHTML = `<span class="subgroup-label ${labelColorClass}"></span><div class="pool-track"></div>`;
-          container.appendChild(group);
-        }
-
-        group.querySelector('.subgroup-label').textContent = labelText;
-        const track = group.querySelector('.pool-track');
-        let segs = Array.from(track.querySelectorAll('.segment'));
-
-        while (segs.length < count) {
-          const seg = document.createElement('div');
-          seg.className = 'segment new-seg';
-          seg.innerHTML = `<div class="${fillClass}"></div><span class="gauge-label"></span>`;
-          track.appendChild(seg);
-          segs.push(seg);
-        }
-        while (segs.length > count) {
-          const segToRemove = segs.pop();
-          segToRemove.remove();
-        }
-
-        segs.forEach((seg, i) => {
-          const kidsForAnim = Math.min(maxRatio, currentKids - (i * maxRatio));
-          const fillPct = (kidsForAnim / maxRatio) * 100;
-          const fillEl = seg.querySelector('.' + fillClass);
-          const labelEl = seg.querySelector('.gauge-label');
-
-          fillEl.style.width = fillPct + '%';
-          labelEl.textContent = `${kidsForAnim}/${maxRatio}`;
-        });
       }
-
-      syncTrack('group-a', `- de 6 ans (${count36} Anim' / ${n36} enf.)`, count36, r1, n36, 'fillA', 'lbl-a');
-      syncTrack('group-b', `+ de 6 ans (${count612} Anim' / ${n612} enf.)`, count612, r2, n612, 'fillB', 'lbl-b');
-
-    } else {
-      let existingSegs = Array.from(poolTrack.querySelectorAll(':scope > .segment'));
-
-      while (existingSegs.length < totalNeeded) {
-        const seg = document.createElement('div');
-        seg.className = 'segment new-seg';
-        const fillA = document.createElement('div');
-        fillA.className = 'fillA';
-        const fillB = document.createElement('div');
-        fillB.className = 'fillB';
-        seg.appendChild(fillA);
-        seg.appendChild(fillB);
-        poolTrack.appendChild(seg);
-        existingSegs.push(seg);
-      }
-
-      while (existingSegs.length > totalNeeded) {
-        const segToRemove = existingSegs.pop();
-        segToRemove.remove();
-      }
-
-      const total36Anims = n36 / r1;
-      const total612Anims = n612 / r2;
-
-      existingSegs.forEach((seg, i) => {
-        let fillAPct = 0;
-        let fillBPct = 0;
-
-        if (total36Anims + total612Anims > 0) {
-          const segStart = i;
-          const segEnd = i + 1;
-          const aEnd = Math.min(segEnd, total36Anims);
-          const aStart = Math.max(segStart, 0);
-          fillAPct = Math.max(0, aEnd - aStart) * 100;
-
-          const bStart = Math.max(segStart, total36Anims);
-          const bEnd = Math.min(segEnd, total36Anims + total612Anims);
-          fillBPct = Math.max(0, bEnd - bStart) * 100;
-        }
-
-        const fillA = seg.querySelector('.fillA');
-        const fillB = seg.querySelector('.fillB');
-
-        fillA.style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
-        fillB.style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
-      });
     }
-  }
-
-  function animateNumber(el, to){
-    const from = parseInt(el.textContent, 10) || 0;
-    if (from === to){ return; }
-    const duration = 280;
-    const start = performance.now();
-    const ease = t => 1 - Math.pow(1 - t, 3);
-
-    function step(now){
-      const t = Math.min(1, (now - start) / duration);
-      const val = Math.round(from + (to - from) * ease(t));
-      el.textContent = val;
-      if (t < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-
-    el.classList.remove('num-pulse');
-    void el.offsetWidth;
-    el.classList.add('num-pulse');
-  }
-
-  function recalc(){
-    const currentRegime = REGIMES[activeRegimeKey];
-    eyebrowBadge.textContent = currentRegime.tag;
-
-    const n36 = clampInt(n36input.value);
-    const n612 = clampInt(n612input.value);
-    const effectif = n36 + n612;
-
-    totalKidsIndicator.innerHTML = `Effectif total : <strong>${effectif}</strong> enfant${effectif > 1 ? 's' : ''}`;
-
-    const r1 = currentRegime.ratio36;
-    const r2 = currentRegime.ratio612;
-
-    const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
-    const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
-    const naiveSum = naive36 + naive612;
-
-    let totalNeeded = 0;
-
-    if (effectif > 0) {
-      if (activeMutualMode === 'avec') {
-        const fullGroups = Math.floor(n36 / r1) + Math.floor(n612 / r2);
-        const rem36 = n36 % r1;
-        const rem612 = n612 % r2;
-        const remTotal = rem36 + rem612;
-
-        if (remTotal === 0) {
-          totalNeeded = fullGroups;
-        } else if (remTotal <= r1) {
-          totalNeeded = fullGroups + 1;
-        } else {
-          totalNeeded = fullGroups + 2;
-        }
-      } else {
-        totalNeeded = naiveSum;
-      }
-
-      if (totalNeeded < 2) {
-        totalNeeded = 2;
-        safetyAlert.classList.add('visible');
-      } else {
-        safetyAlert.classList.remove('visible');
-      }
-    } else {
-      safetyAlert.classList.remove('visible');
-    }
-
-    const isSplitMode = (activeMutualMode === 'sans');
-    renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode);
-
-    const directorEligible = effectif > 0 && effectif <= 50;
-    dirRow.classList.toggle('disabled', !directorEligible);
-    if (!directorEligible) dirToggle.checked = false;
-
-    let displayed = totalNeeded;
-    if (dirToggle.checked && directorEligible){
-      displayed = Math.max(totalNeeded - 1, 0);
-      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ le directeur)";
-    } else {
-      totalAnimLabelEl.textContent = "Anim' sur le terrain";
-    }
-    
-    animateNumber(totalAnimEl, displayed);
-    miniAnimCount.textContent = displayed;
-    miniAnimLabel.textContent = "Anim' requis";
-
-    const saved = naiveSum - totalNeeded;
-    if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
-      mutualBadge.textContent = `⚡ -${saved} Anim' mutualisé${saved > 1 ? 's' : ''}`;
-      mutualBadge.classList.add('visible');
-    } else {
-      mutualBadge.classList.remove('visible');
-    }
-
-    const base = displayed;
-    const diplomesMin = Math.ceil(base * 0.5);
-    const nonDiplomesMax = Math.floor(base * 0.2);
-    const stagiaires = Math.max(base - diplomesMin - nonDiplomesMax, 0);
-
-    animateNumber(qDiplomes, diplomesMin);
-    animateNumber(qNonDiplomes, nonDiplomesMax);
-    animateNumber(qStagiaires, stagiaires);
-
-    let modeText = activeMutualMode === 'avec' 
-      ? "Avec mutualisation (Règle SDJES)" 
-      : "Sans mutualisation (Calcul séparé)";
-
-    footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
-    
-    saveState();
-  }
-
-  copyBtn.addEventListener('click', () => {
-    hapticFeedback();
-    const currentRegime = REGIMES[activeRegimeKey];
-    const n36 = clampInt(n36input.value);
-    const n612 = clampInt(n612input.value);
-    const totalKids = n36 + n612;
-    const totalAnim = totalAnimEl.textContent;
-    const mode = activeMutualMode === 'avec' ? "Avec mutualisation" : "Sans mutualisation";
-    const dirInclus = dirToggle.checked ? "Oui" : "Non";
-
-    const textSummary = 
-`📋 BILAN TAUX D'ENCADREMENT ALSH
------------------------------------
-- Régime : ${currentRegime.tag}
-- Effectifs : ${totalKids} enfants (-6ans: ${n36} | +6ans: ${n612})
-- Mode de calcul : ${mode}
-- Directeur inclus sur le terrain : ${dirInclus}
------------------------------------
-> ANIM' REQUIS : ${totalAnim}
-
-Composition recommandée de l'équipe :
-• Diplômé·e·s (Min. 50%) : ${qDiplomes.textContent}
-• Non-diplômé·e·s (Max. 20%) : ${qNonDiplomes.textContent}
-• Stagiaires BAFA : ${qStagiaires.textContent}
-`;
-
-    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
-      navigator.share({
-        title: "Bilan ALSH",
-        text: textSummary
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(textSummary).then(() => {
-        copyBtn.classList.add('copied');
-        copyBtnIcon.textContent = "✓";
-        copyBtnText.textContent = "Bilan copié !";
-
-        showToast("📋 Bilan copié dans le presse-papier !");
-
-        setTimeout(() => {
-          copyBtn.classList.remove('copied');
-          copyBtnIcon.textContent = "📋";
-          copyBtnText.textContent = "Copier le bilan de calcul";
-        }, 2200);
-
-      }).catch(() => {
-        showToast("Impossible de copier automatiquement.");
-      });
-    }
-  });
-
-  loadState();
-  recalc();
-</script>
-
+  </script>
 </body>
 </html>
