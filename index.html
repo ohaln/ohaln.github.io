@@ -40,6 +40,9 @@
       -webkit-backdrop-filter: blur(25px);
       border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
   </style>
 </head>
 <body class="bg-gradient-to-tr from-indigo-950 via-purple-900 to-slate-900 min-h-screen text-white font-sans antialiased pt-4 pb-24 select-none" x-data="alshApp()">
@@ -76,9 +79,8 @@
             <div>
               <label class="block text-xs font-medium text-cyan-200 mb-1">Tranche d'âge</label>
               <select x-model="fiche.age" class="w-full glass-input px-3 py-2.5 rounded-xl text-sm focus:outline-none bg-slate-900/90">
-                <option value="3-5 ans">3-5 ans (Maternelles)</option>
-                <option value="6-8 ans">6-8 ans (Élémentaires)</option>
-                <option value="9-11 ans">9-11 ans (Grands)</option>
+                <option value="-6 ans">-6 ans</option>
+                <option value="+6 ans">+6 ans</option>
                 <option value="Inter-tranches">Inter-tranches</option>
               </select>
             </div>
@@ -105,7 +107,7 @@
             </span>
             <div class="grid grid-cols-5 gap-1.5">
               <input type="text" x-model="newMatosNom" placeholder="Article (ex: Kraft)" class="col-span-3 glass-input px-2.5 py-1.5 rounded-xl text-xs focus:outline-none">
-              <input type="text" x-model="newMatosQte" placeholder="Qté (ex: 2 rouleaux)" class="col-span-1 glass-input px-2 py-1.5 rounded-xl text-xs focus:outline-none">
+              <input type="text" x-model="newMatosQte" placeholder="Qté (ex: 2)" class="col-span-1 glass-input px-2 py-1.5 rounded-xl text-xs focus:outline-none">
               <button type="button" @click="addMatos()" class="col-span-1 bg-cyan-500 hover:bg-cyan-400 rounded-xl text-xs font-bold text-center">+</button>
             </div>
             <ul class="space-y-1 pt-1">
@@ -214,8 +216,6 @@
                   🔔 Prévenir les parents
                 </span>
               </div>
-              
-              <!-- Bouton de suppression du soin -->
               <button @click="deleteSoin(item.id)" class="text-red-400 hover:text-red-300 text-xs px-2 py-1" title="Supprimer ce soin">
                 <i class="fa-solid fa-trash"></i>
               </button>
@@ -262,7 +262,7 @@
       </div>
     </div>
 
-    <!-- 4. ONGLET : PLANNING D'ÉQUIPE (AVEC DATE ET SEMAINE MODIFIABLE) -->
+    <!-- 4. ONGLET : PLANNING D'ÉQUIPE (AVEC SELECTION DE DATE EXACTE) -->
     <div x-show="currentTab === 'planning'" class="space-y-4">
       <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
         <div class="flex items-center justify-between">
@@ -273,12 +273,12 @@
             <p class="text-[11px] text-emerald-300 font-semibold" x-text="'Aujourd\'hui : ' + getAujourdhuiTexte()"></p>
           </div>
           <button @click="showAddAnimModal = true" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-xs font-bold rounded-xl transition-all shadow-md">
-            + Ajouter / Éditer
+            + Créneau
           </button>
         </div>
 
         <h3 class="text-xs font-bold text-white/70 uppercase">Vue Globale Aujourd'hui</h3>
-        <p class="text-[10px] text-white/50">Clique sur un prénom pour voir sa semaine entière.</p>
+        <p class="text-[10px] text-white/50">Clique sur un prénom pour voir l'ensemble de ses dates enregistrées.</p>
 
         <div class="space-y-3">
           <template x-for="p in planningGlobal" :key="p.id">
@@ -297,15 +297,15 @@
                 </div>
               </div>
 
-              <!-- Créneaux Matin / Aprem seulement -->
+              <!-- Planning d'aujourd'hui uniquement -->
               <div class="grid grid-cols-2 gap-2 text-[11px] text-center">
                 <div class="glass-card p-2 rounded-xl">
                   <p class="text-[9px] text-white/50">Matin</p>
-                  <p class="font-medium truncate" x-text="getPlanningDuJour(p, getJourNom()).matin"></p>
+                  <p class="font-medium truncate" x-text="getPlanningDuJour(p, getTodayISO()).matin"></p>
                 </div>
                 <div class="glass-card p-2 rounded-xl">
                   <p class="text-[9px] text-white/50">Après-midi</p>
-                  <p class="font-medium truncate" x-text="getPlanningDuJour(p, getJourNom()).aprem"></p>
+                  <p class="font-medium truncate" x-text="getPlanningDuJour(p, getTodayISO()).aprem"></p>
                 </div>
               </div>
             </div>
@@ -314,40 +314,49 @@
       </div>
     </div>
 
-    <!-- MODAL : PLANNING INDIVIDUEL SUR LA SEMAINE ENTIÈRE -->
+    <!-- MODAL : PLANNING PAR DATE INDIVIDUELLE -->
     <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
       <div class="glass-panel p-5 rounded-3xl max-w-sm w-full space-y-4 max-h-[85vh] overflow-y-auto">
         <div class="flex justify-between items-center border-b border-white/10 pb-3">
           <div>
             <h3 class="font-bold text-base text-cyan-300" x-text="animSelectionne?.nom"></h3>
-            <p class="text-xs text-white/60" x-text="'Planning de la Semaine'"></p>
+            <p class="text-xs text-white/60">Toutes les dates planifiées</p>
           </div>
           <button @click="animSelectionne = null" class="text-white/60 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="space-y-2">
-          <template x-for="j in joursSemaine" :key="j">
-            <div class="glass-card p-2.5 rounded-2xl space-y-1" :class="j === getJourNom() ? 'border border-amber-400/50 bg-amber-500/10' : ''">
-              <span class="text-xs font-bold text-amber-300" x-text="j + (j === getJourNom() ? ' (Aujourd\'hui)' : '')"></span>
+          <template x-for="(planningDate, dateKey) in animSelectionne?.dates" :key="dateKey">
+            <div class="glass-card p-2.5 rounded-2xl space-y-1" :class="dateKey === getTodayISO() ? 'border border-amber-400/50 bg-amber-500/10' : ''">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-amber-300" x-text="formatDateLisible(dateKey) + (dateKey === getTodayISO() ? ' (Aujourd\'hui)' : '')"></span>
+                <button @click="supprimerDateAnim(animSelectionne, dateKey)" class="text-red-400 hover:text-red-300 text-[10px]">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
               <div class="grid grid-cols-2 gap-1 text-[11px] text-center mt-1">
                 <div class="bg-white/5 p-1 rounded-lg">
                   <span class="text-white/40 block text-[9px]">Matin</span>
-                  <span x-text="animSelectionne?.semaine[j]?.matin || 'Repos'"></span>
+                  <span x-text="planningDate.matin || 'Repos'"></span>
                 </div>
                 <div class="bg-white/5 p-1 rounded-lg">
                   <span class="text-white/40 block text-[9px]">Aprem</span>
-                  <span x-text="animSelectionne?.semaine[j]?.aprem || 'Repos'"></span>
+                  <span x-text="planningDate.aprem || 'Repos'"></span>
                 </div>
               </div>
             </div>
           </template>
+          
+          <div x-show="!animSelectionne || Object.keys(animSelectionne.dates || {}).length === 0" class="text-center py-4 text-white/40 text-xs">
+            Aucun créneau enregistré pour cet animateur.
+          </div>
         </div>
 
         <button @click="animSelectionne = null" class="w-full py-2.5 bg-white/10 font-bold rounded-xl text-xs">Fermer</button>
       </div>
     </div>
 
-    <!-- MODAL : AJOUTER OU MODIFIER UN CRÉNEAU DU PLANNING -->
+    <!-- MODAL : AJOUTER OU MODIFIER UN CRÉNEAU AVEC SÉLECTION DE DATE PRÉCISE -->
     <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
       <div class="glass-panel p-5 rounded-3xl max-w-sm w-full space-y-3">
         <h3 class="font-bold text-sm text-emerald-300">Ajouter / Modifier un Créneau</h3>
@@ -358,18 +367,14 @@
         </div>
 
         <div>
-          <label class="block text-[10px] text-white/60 mb-1">Jour à modifier</label>
-          <select x-model="saisiePlanning.jour" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none bg-slate-900/90">
-            <template x-for="j in joursSemaine" :key="j">
-              <option :value="j" x-text="j"></option>
-            </template>
-          </select>
+          <label class="block text-[10px] text-white/60 mb-1">Date précise</label>
+          <input type="date" x-model="saisiePlanning.date" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none bg-slate-900/90">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[10px] text-white/60 mb-1">Créneau Matin</label>
-            <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu 6-8a" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+            <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu +6a" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
           </div>
           <div>
             <label class="block text-[10px] text-white/60 mb-1">Créneau Après-midi</label>
@@ -409,6 +414,8 @@
   <!-- LOGIQUE ALPINE JS -->
   <script>
     function alshApp() {
+      const todayISO = new Date().toISOString().split('T')[0];
+
       return {
         currentTab: 'fiche',
         newMatosNom: '',
@@ -419,11 +426,9 @@
         animSelectionne: null,
         toast: { show: false, message: '' },
 
-        joursSemaine: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
-
         fiche: {
           titre: '',
-          age: '6-8 ans',
+          age: '-6 ans',
           lieu: '',
           objectif: '',
           deroulement: '',
@@ -444,55 +449,56 @@
           { id: 2, nom: 'Papier kraft', qte: '1 rouleau', activite: 'Fresque géante', achete: true }
         ],
 
-        saisiePlanning: { nom: '', jour: 'Lundi', matin: '', aprem: '' },
+        saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
 
         planningGlobal: [
           {
             id: 1,
             nom: 'Sarah Martin',
             role: 'Animateur',
-            semaine: {
-              'Lundi': { matin: 'Grand Jeu 6-8a', aprem: 'Atelier Arts' },
-              'Mardi': { matin: 'Sortie Parc', aprem: 'Jeux d\'eau' },
-              'Mercredi': { matin: 'Chasse aux trésors', aprem: 'Temps calme' },
-              'Jeudi': { matin: 'Atelier Théâtre', aprem: 'Olympiades' },
-              'Vendredi': { matin: 'Prépa Boum', aprem: 'Boum de fin' },
-              'Samedi': { matin: 'Repos', aprem: 'Repos' },
-              'Dimanche': { matin: 'Repos', aprem: 'Repos' }
+            dates: {
+              [todayISO]: { matin: 'Grand Jeu -6a', aprem: 'Atelier Peinture' }
             }
           },
           {
             id: 2,
             nom: 'Léo Dubois',
             role: 'Animateur',
-            semaine: {
-              'Lundi': { matin: 'Accueil 9-11a', aprem: 'Tournoi Foot' },
-              'Mardi': { matin: 'Création BD', aprem: 'Piscine' },
-              'Mercredi': { matin: 'Théâtre', aprem: 'Grand Jeu' },
-              'Jeudi': { matin: 'Sortie VTT', aprem: 'Bricolage' },
-              'Vendredi': { matin: 'Prépa Fête', aprem: 'Boum' },
-              'Samedi': { matin: 'Repos', aprem: 'Repos' },
-              'Dimanche': { matin: 'Repos', aprem: 'Repos' }
+            dates: {
+              [todayISO]: { matin: 'Sortie Parc +6a', aprem: 'Tournoi Sport' }
             }
           }
         ],
 
-        getJourNom() {
-          const jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-          return jours[new Date().getDay()];
+        getTodayISO() {
+          const d = new Date();
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
         },
 
         getAujourdhuiTexte() {
-          const options = { weekday: 'long', day: 'numeric', month: 'long' };
+          const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
           const txt = new Date().toLocaleDateString('fr-FR', options);
           return txt.charAt(0).toUpperCase() + txt.slice(1);
         },
 
-        getPlanningDuJour(anim, jour) {
-          if (anim.semaine && anim.semaine[jour]) {
-            return anim.semaine[jour];
+        formatDateLisible(dateStr) {
+          if(!dateStr) return '';
+          const parts = dateStr.split('-');
+          if(parts.length !== 3) return dateStr;
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          const options = { weekday: 'short', day: 'numeric', month: 'short' };
+          const txt = d.toLocaleDateString('fr-FR', options);
+          return txt.charAt(0).toUpperCase() + txt.slice(1);
+        },
+
+        getPlanningDuJour(anim, dateKey) {
+          if (anim.dates && anim.dates[dateKey]) {
+            return anim.dates[dateKey];
           }
-          return { matin: 'Non défini', aprem: 'Non défini' };
+          return { matin: 'Repos / Non attribué', aprem: 'Repos / Non attribué' };
         },
 
         addMatos() {
@@ -608,7 +614,7 @@
         },
 
         validerPlanning() {
-          if(this.saisiePlanning.nom.trim() !== '') {
+          if(this.saisiePlanning.nom.trim() !== '' && this.saisiePlanning.date) {
             let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
             
             if (!anim) {
@@ -616,19 +622,29 @@
                 id: Date.now(),
                 nom: this.saisiePlanning.nom.trim(),
                 role: 'Animateur',
-                semaine: {}
+                dates: {}
               };
               this.planningGlobal.push(anim);
             }
 
-            anim.semaine[this.saisiePlanning.jour] = {
+            if(!anim.dates) anim.dates = {};
+
+            anim.dates[this.saisiePlanning.date] = {
               matin: this.saisiePlanning.matin || 'Repos / Non renseigné',
               aprem: this.saisiePlanning.aprem || 'Repos / Non renseigné'
             };
 
             this.showAddAnimModal = false;
-            this.saisiePlanning = { nom: '', jour: 'Lundi', matin: '', aprem: '' };
-            this.showToast('Planning mis à jour !');
+            const savedDate = this.saisiePlanning.date;
+            this.saisiePlanning = { nom: '', date: savedDate, matin: '', aprem: '' };
+            this.showToast('Créneau enregistré !');
+          }
+        },
+
+        supprimerDateAnim(anim, dateKey) {
+          if(anim && anim.dates && anim.dates[dateKey]) {
+            delete anim.dates[dateKey];
+            this.showToast('Créneau supprimé.');
           }
         },
 
