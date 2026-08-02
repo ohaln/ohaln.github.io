@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALSH Flow - Web App</title>
+  <title>ALSH Flow</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Alpine.js -->
@@ -35,35 +35,18 @@
       color: rgba(255, 255, 255, 0.5);
     }
     .glass-nav {
-      background: rgba(15, 23, 42, 0.75);
+      background: rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(25px);
       -webkit-backdrop-filter: blur(25px);
       border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
   </style>
 </head>
-<body class="bg-gradient-to-tr from-indigo-950 via-purple-900 to-slate-900 min-h-screen text-white font-sans antialiased pb-24 select-none" x-data="alshApp()">
-
-  <!-- HEADER GLASSMORPHISM -->
-  <header class="sticky top-0 z-40 glass-panel px-4 py-3 mx-2 mt-2 rounded-2xl flex items-center justify-between shadow-lg">
-    <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center font-bold text-lg shadow-cyan-500/30 shadow-lg">
-        ⚡
-      </div>
-      <div>
-        <h1 class="font-extrabold text-base tracking-wide leading-tight">ALSH Flow</h1>
-        <p class="text-xs text-cyan-200 opacity-80" x-text="'Rôle actuel : ' + userRole"></p>
-      </div>
-    </div>
-    <button @click="toggleRole()" class="glass-card px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-white/20 transition-all flex items-center space-x-1">
-      <i class="fa-solid fa-arrows-rotate"></i>
-      <span x-text="userRole === 'Animateur' ? 'Mode Directeur' : 'Mode Animateur'"></span>
-    </button>
-  </header>
+<body class="bg-gradient-to-tr from-indigo-950 via-purple-900 to-slate-900 min-h-screen text-white font-sans antialiased pt-4 pb-24 select-none" x-data="alshApp()">
 
   <!-- TOAST NOTIFICATION -->
   <div x-show="toast.show" x-transition 
-       class="fixed top-20 right-4 left-4 z-50 glass-panel border-cyan-400/50 p-4 rounded-2xl flex items-center justify-between shadow-2xl bg-cyan-950/90">
+       class="fixed top-4 right-4 left-4 z-50 glass-panel border-cyan-400/50 p-4 rounded-2xl flex items-center justify-between shadow-2xl bg-cyan-950/90">
     <div class="flex items-center space-x-3">
       <i class="fa-solid fa-circle-check text-cyan-400 text-xl"></i>
       <span class="text-sm font-medium" x-text="toast.message"></span>
@@ -71,16 +54,16 @@
     <button @click="toast.show = false" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
   </div>
 
-  <main class="max-w-md mx-auto px-4 mt-4 space-y-4">
+  <main class="max-w-md mx-auto px-4 space-y-4">
 
-    <!-- 1. ONGLET : FICHE D'ACTIVITÉ & EXPORT PDF -->
+    <!-- 1. ONGLET : FICHE D'ACTIVITÉ -->
     <div x-show="currentTab === 'fiche'" class="space-y-4">
       <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
         <div class="flex items-center justify-between">
           <h2 class="text-lg font-bold flex items-center gap-2">
-            <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Fiche d'Activité Express
+            <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Fiche d'Activité
           </h2>
-          <span class="text-xs bg-cyan-500/20 text-cyan-300 px-2.5 py-1 rounded-full font-medium">Anim'</span>
+          <span class="text-xs bg-cyan-500/20 text-cyan-300 px-2.5 py-1 rounded-full font-medium">Express</span>
         </div>
 
         <form @submit.prevent="submitFiche()" class="space-y-3">
@@ -101,7 +84,7 @@
             </div>
             <div>
               <label class="block text-xs font-medium text-cyan-200 mb-1">Lieu</label>
-              <input type="text" x-model="fiche.lieu" placeholder="ex: Grand Parc" class="w-full glass-input px-3 py-2.5 rounded-xl text-sm focus:outline-none">
+              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="w-full glass-input px-3 py-2.5 rounded-xl text-sm focus:outline-none">
             </div>
           </div>
 
@@ -115,44 +98,45 @@
             <textarea x-model="fiche.deroulement" placeholder="Explication rapide des étapes du jeu..." class="w-full glass-input px-3 py-2 rounded-xl text-sm focus:outline-none h-16"></textarea>
           </div>
 
-          <!-- Section Demande Matériel Directe -->
+          <!-- Section Matériel avec Quantités -->
           <div class="glass-card p-3.5 rounded-2xl space-y-2 border-l-4 border-l-cyan-400">
             <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
-              <i class="fa-solid fa-cart-plus"></i> Matériel nécessaire (Envoyé au Directeur)
+              <i class="fa-solid fa-cart-plus"></i> Matériel & Quantités
             </span>
-            <div class="flex gap-2">
-              <input type="text" x-model="newMatos" placeholder="ex: 2 rouleaux de kraft" class="flex-1 glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
-              <button type="button" @click="addMatos()" class="bg-cyan-500 hover:bg-cyan-400 px-3 py-2 rounded-xl text-xs font-bold">+</button>
+            <div class="grid grid-cols-5 gap-1.5">
+              <input type="text" x-model="newMatosNom" placeholder="Article (ex: Kraft)" class="col-span-3 glass-input px-2.5 py-1.5 rounded-xl text-xs focus:outline-none">
+              <input type="text" x-model="newMatosQte" placeholder="Qté (ex: 2 rouleaux)" class="col-span-1 glass-input px-2 py-1.5 rounded-xl text-xs focus:outline-none">
+              <button type="button" @click="addMatos()" class="col-span-1 bg-cyan-500 hover:bg-cyan-400 rounded-xl text-xs font-bold text-center">+</button>
             </div>
-            <ul class="space-y-1">
+            <ul class="space-y-1 pt-1">
               <template x-for="(item, index) in fiche.materiel" :key="index">
                 <li class="flex items-center justify-between text-xs glass-card px-2.5 py-1 rounded-lg">
-                  <span x-text="item"></span>
-                  <button type="button" @click="removeMatos(index)" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-xmark"></i></button>
+                  <span x-text="item.nom + ' — Quantité : ' + item.qte"></span>
+                  <button type="button" @click="removeMatos(index)" class="text-red-400 hover:text-red-300 ml-2"><i class="fa-solid fa-xmark"></i></button>
                 </li>
               </template>
             </ul>
           </div>
 
           <div class="grid grid-cols-2 gap-2 pt-2">
-            <button type="button" @click="exportPDF()" class="py-3 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+            <button type="button" @click="exportPDF()" class="py-3 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-lg">
               <i class="fa-solid fa-file-pdf"></i> Générer PDF Propre
             </button>
-            <button type="submit" class="py-3 bg-gradient-to-r from-cyan-500 to-blue-600 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-paper-plane"></i> Transmettre Fiche
+            <button type="submit" class="py-3 bg-gradient-to-r from-cyan-500 to-blue-600 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-lg">
+              <i class="fa-solid fa-paper-plane"></i> Envoyer en Courses
             </button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF DES FICHES -->
+    <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF -->
     <div id="pdf-template" class="hidden">
       <div style="padding: 30px; font-family: Arial, sans-serif; color: #1e293b; background: #ffffff;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0284c7; padding-bottom: 12px; margin-bottom: 20px;">
           <div>
             <h1 style="margin: 0; font-size: 22px; color: #0f172a;" id="pdf-titre">Fiche d'Activité</h1>
-            <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">Accueil de Loisirs (ALSH) — Document Animation</p>
+            <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">Accueil de Loisirs Sans Hébergement (ALSH)</p>
           </div>
           <span style="background: #e0f2fe; color: #0369a1; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 12px;" id="pdf-age">Age</span>
         </div>
@@ -169,12 +153,12 @@
         </table>
 
         <div style="margin-bottom: 20px;">
-          <h3 style="color: #0284c7; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; font-size: 14px;">📜 Déroulement & Consignes</h3>
+          <h3 style="color: #0284c7; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; font-size: 14px;">📜 Déroulement</h3>
           <p style="font-size: 12px; line-height: 1.5; white-space: pre-line;" id="pdf-deroulement">-</p>
         </div>
 
         <div>
-          <h3 style="color: #0284c7; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; font-size: 14px;">📦 Matériel requis</h3>
+          <h3 style="color: #0284c7; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; font-size: 14px;">📦 Matériel & Quantités</h3>
           <ul style="font-size: 12px; padding-left: 20px;" id="pdf-materiel"></ul>
         </div>
       </div>
@@ -187,7 +171,7 @@
           <h2 class="text-lg font-bold flex items-center gap-2">
             <i class="fa-solid fa-kit-medical text-rose-400"></i> Cahier de Soins
           </h2>
-          <span class="text-xs bg-rose-500/20 text-rose-300 px-2.5 py-1 rounded-full font-medium">Infirmerie</span>
+          <span class="text-xs bg-rose-500/20 text-rose-300 px-2.5 py-1 rounded-full font-medium">Santé</span>
         </div>
 
         <form @submit.prevent="submitSoin()" class="space-y-3">
@@ -198,12 +182,12 @@
 
           <div>
             <label class="block text-xs font-medium text-rose-200 mb-1">Type d'incident / Symptôme</label>
-            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure coude droit" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-sm focus:outline-none" required>
+            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure genou droit" class="w-full glass-input px-3.5 py-2.5 rounded-xl text-sm focus:outline-none" required>
           </div>
 
           <div>
             <label class="block text-xs font-medium text-rose-200 mb-1">Soin apporté</label>
-            <textarea x-model="soin.action" placeholder="ex: Eau, compresse et sérum phy." class="w-full glass-input px-3.5 py-2 rounded-xl text-sm focus:outline-none h-16"></textarea>
+            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant" class="w-full glass-input px-3.5 py-2 rounded-xl text-sm focus:outline-none h-16"></textarea>
           </div>
 
           <div class="flex items-center space-x-2 glass-card p-3 rounded-xl">
@@ -218,51 +202,53 @@
 
         <hr class="border-white/10 my-2">
 
-        <h3 class="text-xs font-bold text-white/70 uppercase">Registre du jour</h3>
+        <h3 class="text-xs font-bold text-white/70 uppercase">Registre des soins enregistrés</h3>
         <div class="space-y-2">
           <template x-for="item in registreSoins" :key="item.id">
             <div class="glass-card p-3 rounded-2xl flex items-start justify-between">
-              <div>
+              <div class="space-y-1">
                 <p class="font-bold text-sm" x-text="item.enfant"></p>
                 <p class="text-xs text-rose-200" x-text="item.incident"></p>
-                <p class="text-[10px] text-white/50 mt-1" x-text="item.heure + ' • Anim: ' + item.anim"></p>
+                <p class="text-[10px] text-white/50" x-text="item.heure + ' • Care: ' + item.action"></p>
+                <span x-show="item.prevenirFamille" class="inline-block px-2 py-0.5 bg-amber-500/20 text-amber-300 text-[9px] font-semibold rounded-full border border-amber-500/30">
+                  🔔 Prévenir les parents
+                </span>
               </div>
-              <span x-show="item.prevenirFamille" class="px-2 py-0.5 bg-amber-500/20 text-amber-300 text-[10px] font-semibold rounded-full border border-amber-500/30">
-                🔔 Prévenir parents
-              </span>
+              
+              <!-- Bouton de suppression du soin -->
+              <button @click="deleteSoin(item.id)" class="text-red-400 hover:text-red-300 text-xs px-2 py-1" title="Supprimer ce soin">
+                <i class="fa-solid fa-trash"></i>
+              </button>
             </div>
           </template>
         </div>
       </div>
     </div>
 
-    <!-- 3. ONGLET : ESPACE COURSES / BON DE COMMANDE MATÉRIEL (POUR LE DIR) -->
+    <!-- 3. ONGLET : LISTE DE COURSES MATÉRIEL -->
     <div x-show="currentTab === 'courses'" class="space-y-4">
       <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
         <div class="flex items-center justify-between">
           <h2 class="text-lg font-bold flex items-center gap-2">
-            <i class="fa-solid fa-cart-shopping text-purple-400"></i> Liste de Courses Matériel
+            <i class="fa-solid fa-cart-shopping text-purple-400"></i> Liste de Courses
           </h2>
-          <span class="text-xs bg-purple-500/20 text-purple-300 px-2.5 py-1 rounded-full font-medium">Directeur</span>
+          <span class="text-xs bg-purple-500/20 text-purple-300 px-2.5 py-1 rounded-full font-medium">Matériel</span>
         </div>
 
-        <p class="text-xs text-white/70">Toutes les demandes de matériel envoyées depuis les fiches d'activités des anims sont regroupées ici :</p>
-
-        <!-- Ajouter manuellement une course -->
-        <div class="flex gap-2">
-          <input type="text" x-model="nouvelleCourse" placeholder="Ajouter un achat (ex: 5 ballons de foot)" class="flex-1 glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
-          <button @click="addCourseDirecte()" class="bg-purple-600 hover:bg-purple-500 px-3 py-2 rounded-xl text-xs font-bold">+</button>
+        <div class="grid grid-cols-4 gap-1.5">
+          <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-2 glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+          <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 glass-input px-2 py-2 rounded-xl text-xs focus:outline-none">
+          <button @click="addCourseDirecte()" class="col-span-1 bg-purple-600 hover:bg-purple-500 px-3 py-2 rounded-xl text-xs font-bold">+</button>
         </div>
 
-        <!-- Liste centralisée des articles -->
         <div class="space-y-2">
           <template x-for="item in listeCourses" :key="item.id">
             <div class="glass-card p-3 rounded-2xl flex items-center justify-between" :class="item.achete ? 'opacity-40 line-through' : ''">
               <div class="flex items-center space-x-3">
                 <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-purple-500 rounded cursor-pointer">
                 <div>
-                  <p class="text-xs font-bold" x-text="item.nom"></p>
-                  <p class="text-[10px] text-purple-200" x-text="'Demandé par : ' + item.demandeur + ' (' + item.activite + ')'"></p>
+                  <p class="text-xs font-bold" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
+                  <p class="text-[10px] text-purple-200" x-text="'Pour : ' + item.activite"></p>
                 </div>
               </div>
               <button @click="deleteCourse(item.id)" class="text-red-400 hover:text-red-300 text-xs px-2 py-1"><i class="fa-solid fa-trash"></i></button>
@@ -271,60 +257,55 @@
         </div>
 
         <button @click="viderAchetes()" class="w-full py-2 bg-white/10 hover:bg-white/20 text-xs text-white/70 rounded-xl transition-all">
-          🧹 Supprimer les articles cochés
+          🧹 Nettoyer les articles achetés
         </button>
       </div>
     </div>
 
-    <!-- 4. ONGLET : PLANNING D'ÉQUIPE INTERACTIF -->
+    <!-- 4. ONGLET : PLANNING D'ÉQUIPE (AVEC DATE ET SEMAINE MODIFIABLE) -->
     <div x-show="currentTab === 'planning'" class="space-y-4">
       <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
         <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold flex items-center gap-2">
-            <i class="fa-solid fa-calendar-days text-emerald-400"></i> Planning de l'Équipe
-          </h2>
-          <!-- Bouton réservé au Directeur -->
-          <button x-show="userRole === 'Directeur'" @click="showAddAnimModal = true" class="px-2.5 py-1 bg-emerald-500 hover:bg-emerald-400 text-xs font-bold rounded-xl transition-all">
-            + Ajouter Anim
+          <div>
+            <h2 class="text-lg font-bold flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days text-emerald-400"></i> Planning Équipe
+            </h2>
+            <p class="text-[11px] text-emerald-300 font-semibold" x-text="'Aujourd\'hui : ' + getAujourdhuiTexte()"></p>
+          </div>
+          <button @click="showAddAnimModal = true" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-xs font-bold rounded-xl transition-all shadow-md">
+            + Ajouter / Éditer
           </button>
         </div>
 
-        <!-- LISTE GLOBALE DU JOUR AUJOURD'HUI -->
-        <h3 class="text-xs font-bold text-white/70 uppercase">Aujourd'hui (Vue Globale)</h3>
-        <p class="text-[11px] text-white/50">Clique sur un anim' pour voir son planning complet de la semaine/vacances.</p>
+        <h3 class="text-xs font-bold text-white/70 uppercase">Vue Globale Aujourd'hui</h3>
+        <p class="text-[10px] text-white/50">Clique sur un prénom pour voir sa semaine entière.</p>
 
         <div class="space-y-3">
           <template x-for="p in planningGlobal" :key="p.id">
-            <div class="glass-card p-3.5 rounded-2xl space-y-2 relative">
+            <div class="glass-card p-3.5 rounded-2xl space-y-2">
               <div class="flex justify-between items-center">
-                <!-- Clic sur le nom pour ouvrir le détail individuel -->
-                <button @click="ouvrirDetailAnim(p)" class="font-bold text-sm text-cyan-200 underline decoration-cyan-400/50 hover:text-cyan-100 flex items-center gap-2">
+                <button @click="ouvrirDetailAnim(p)" class="font-bold text-sm text-cyan-200 underline decoration-cyan-400/50 hover:text-cyan-100 flex items-center gap-1.5">
                   <span x-text="p.nom"></span>
                   <i class="fa-solid fa-chevron-right text-[10px] opacity-60"></i>
                 </button>
 
                 <div class="flex items-center space-x-2">
                   <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" x-text="p.role"></span>
-                  <!-- Bouton de suppression réservé au Directeur -->
-                  <button x-show="userRole === 'Directeur'" @click="supprimerAnim(p.id)" class="text-red-400 hover:text-red-300 text-xs pl-1">
+                  <button @click="supprimerAnim(p.id)" class="text-red-400 hover:text-red-300 text-xs pl-1">
                     <i class="fa-solid fa-xmark"></i>
                   </button>
                 </div>
               </div>
 
-              <!-- Créneaux d'aujourd'hui -->
-              <div class="grid grid-cols-3 gap-1.5 text-[11px] text-center">
-                <div class="glass-card p-1.5 rounded-xl">
+              <!-- Créneaux Matin / Aprem seulement -->
+              <div class="grid grid-cols-2 gap-2 text-[11px] text-center">
+                <div class="glass-card p-2 rounded-xl">
                   <p class="text-[9px] text-white/50">Matin</p>
-                  <p class="font-medium truncate" x-text="p.aujourdhui.matin"></p>
+                  <p class="font-medium truncate" x-text="getPlanningDuJour(p, getJourNom()).matin"></p>
                 </div>
-                <div class="glass-card p-1.5 rounded-xl">
-                  <p class="text-[9px] text-white/50">Midi</p>
-                  <p class="font-medium truncate" x-text="p.aujourdhui.midi"></p>
-                </div>
-                <div class="glass-card p-1.5 rounded-xl">
-                  <p class="text-[9px] text-white/50">Aprem</p>
-                  <p class="font-medium truncate" x-text="p.aujourdhui.aprem"></p>
+                <div class="glass-card p-2 rounded-xl">
+                  <p class="text-[9px] text-white/50">Après-midi</p>
+                  <p class="font-medium truncate" x-text="getPlanningDuJour(p, getJourNom()).aprem"></p>
                 </div>
               </div>
             </div>
@@ -333,33 +314,29 @@
       </div>
     </div>
 
-    <!-- MODAL : PLANNING INDIVIDUEL SUR LA SEMAINE / VACANCES -->
+    <!-- MODAL : PLANNING INDIVIDUEL SUR LA SEMAINE ENTIÈRE -->
     <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
       <div class="glass-panel p-5 rounded-3xl max-w-sm w-full space-y-4 max-h-[85vh] overflow-y-auto">
         <div class="flex justify-between items-center border-b border-white/10 pb-3">
           <div>
             <h3 class="font-bold text-base text-cyan-300" x-text="animSelectionne?.nom"></h3>
-            <p class="text-xs text-white/60" x-text="'Planning complet (Semaine / Séjour)'"></p>
+            <p class="text-xs text-white/60" x-text="'Planning de la Semaine'"></p>
           </div>
           <button @click="animSelectionne = null" class="text-white/60 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <div class="space-y-2.5">
-          <template x-for="j in animSelectionne?.semaine" :key="j.jour">
-            <div class="glass-card p-3 rounded-2xl space-y-1">
-              <span class="text-xs font-bold text-amber-300" x-text="j.jour"></span>
-              <div class="grid grid-cols-3 gap-1 text-[10px] text-center mt-1">
+        <div class="space-y-2">
+          <template x-for="j in joursSemaine" :key="j">
+            <div class="glass-card p-2.5 rounded-2xl space-y-1" :class="j === getJourNom() ? 'border border-amber-400/50 bg-amber-500/10' : ''">
+              <span class="text-xs font-bold text-amber-300" x-text="j + (j === getJourNom() ? ' (Aujourd\'hui)' : '')"></span>
+              <div class="grid grid-cols-2 gap-1 text-[11px] text-center mt-1">
                 <div class="bg-white/5 p-1 rounded-lg">
-                  <span class="text-white/40 block">Matin</span>
-                  <span x-text="j.matin"></span>
+                  <span class="text-white/40 block text-[9px]">Matin</span>
+                  <span x-text="animSelectionne?.semaine[j]?.matin || 'Repos'"></span>
                 </div>
                 <div class="bg-white/5 p-1 rounded-lg">
-                  <span class="text-white/40 block">Midi</span>
-                  <span x-text="j.midi"></span>
-                </div>
-                <div class="bg-white/5 p-1 rounded-lg">
-                  <span class="text-white/40 block">Aprem</span>
-                  <span x-text="j.aprem"></span>
+                  <span class="text-white/40 block text-[9px]">Aprem</span>
+                  <span x-text="animSelectionne?.semaine[j]?.aprem || 'Repos'"></span>
                 </div>
               </div>
             </div>
@@ -370,17 +347,39 @@
       </div>
     </div>
 
-    <!-- MODAL : AJOUTER UN ANIMATEUR (MODE DIR) -->
+    <!-- MODAL : AJOUTER OU MODIFIER UN CRÉNEAU DU PLANNING -->
     <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
       <div class="glass-panel p-5 rounded-3xl max-w-sm w-full space-y-3">
-        <h3 class="font-bold text-sm text-emerald-300">Ajouter un animateur au planning</h3>
-        <input type="text" x-model="nouvelAnim.nom" placeholder="Prénom Nom" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
-        <input type="text" x-model="nouvelAnim.role" placeholder="Rôle (ex: Anim 3-5 ans)" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
-        <input type="text" x-model="nouvelAnim.matin" placeholder="Matin (ex: Jeux extérieurs)" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
-        <input type="text" x-model="nouvelAnim.aprem" placeholder="Après-midi (ex: Grand Jeu)" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+        <h3 class="font-bold text-sm text-emerald-300">Ajouter / Modifier un Créneau</h3>
+        
+        <div>
+          <label class="block text-[10px] text-white/60 mb-1">Nom de l'animateur</label>
+          <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-[10px] text-white/60 mb-1">Jour à modifier</label>
+          <select x-model="saisiePlanning.jour" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none bg-slate-900/90">
+            <template x-for="j in joursSemaine" :key="j">
+              <option :value="j" x-text="j"></option>
+            </template>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-white/60 mb-1">Créneau Matin</label>
+            <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu 6-8a" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] text-white/60 mb-1">Créneau Après-midi</label>
+            <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+          </div>
+        </div>
+
         <div class="flex gap-2 pt-2">
           <button @click="showAddAnimModal = false" class="flex-1 py-2 bg-white/10 rounded-xl text-xs">Annuler</button>
-          <button @click="validerAjoutAnim()" class="flex-1 py-2 bg-emerald-500 font-bold rounded-xl text-xs">Ajouter</button>
+          <button @click="validerPlanning()" class="flex-1 py-2 bg-emerald-500 font-bold rounded-xl text-xs">Enregistrer</button>
         </div>
       </div>
     </div>
@@ -407,17 +406,20 @@
     </button>
   </nav>
 
-  <!-- SCRIPT LOGIQUE ALPINE JS -->
+  <!-- LOGIQUE ALPINE JS -->
   <script>
     function alshApp() {
       return {
-        userRole: 'Animateur',
         currentTab: 'fiche',
-        newMatos: '',
-        nouvelleCourse: '',
+        newMatosNom: '',
+        newMatosQte: '',
+        nouvelleCourseNom: '',
+        nouvelleCourseQte: '',
         showAddAnimModal: false,
         animSelectionne: null,
         toast: { show: false, message: '' },
+
+        joursSemaine: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'],
 
         fiche: {
           titre: '',
@@ -425,57 +427,82 @@
           lieu: '',
           objectif: '',
           deroulement: '',
-          materiel: ['Peinture acrylique', 'Pinceaux brosses']
+          materiel: [
+            { nom: 'Peinture acrylique', qte: '2 bidons' },
+            { nom: 'Pinceaux brosses', qte: '10' }
+          ]
         },
 
         soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
 
         registreSoins: [
-          { id: 1, enfant: 'Yanis M.', incident: 'Écorchure genou droit', heure: '14:30', anim: 'Thomas', prevenirFamille: true }
+          { id: 1, enfant: 'Yanis M.', incident: 'Écorchure genou droit', action: 'Désinfectant + pansement', heure: '14:30', prevenirFamille: true }
         ],
 
         listeCourses: [
-          { id: 1, nom: '2 bidons peinture rouge', demandeur: 'Sarah', activite: 'Grand Jeu Harry Potter', achete: false },
-          { id: 2, nom: '1 rouleau papier kraft', demandeur: 'Léo', activite: 'Fresque géante', achete: true }
+          { id: 1, nom: 'Peinture acrylique', qte: '2 bidons', activite: 'Grand Jeu Harry Potter', achete: false },
+          { id: 2, nom: 'Papier kraft', qte: '1 rouleau', activite: 'Fresque géante', achete: true }
         ],
 
-        nouvelAnim: { nom: '', role: '', matin: '', aprem: '' },
+        saisiePlanning: { nom: '', jour: 'Lundi', matin: '', aprem: '' },
 
         planningGlobal: [
           {
             id: 1,
             nom: 'Sarah Martin',
-            role: 'Anim 6-8 ans',
-            aujourdhui: { matin: 'Grand Jeu 6-8a', midi: 'Cantine', aprem: 'Atelier Arts' },
-            semaine: [
-              { jour: 'Lundi', matin: 'Grand Jeu 6-8a', midi: 'Cantine', aprem: 'Atelier Arts' },
-              { jour: 'Mardi', matin: 'Sortie Parc', midi: 'Pique-nique', aprem: 'Jeux d\'eau' },
-              { jour: 'Mercredi', matin: 'Chasse aux trésors', midi: 'Cantine', aprem: 'Temps calme' },
-              { jour: 'Jeudi', matin: 'Atelier Théâtre', midi: 'Cantine', aprem: 'Olympiades' },
-              { jour: 'Vendredi', matin: 'Prépa Boum', midi: 'Cantine', aprem: 'Boum de fin de centre' }
-            ]
+            role: 'Animateur',
+            semaine: {
+              'Lundi': { matin: 'Grand Jeu 6-8a', aprem: 'Atelier Arts' },
+              'Mardi': { matin: 'Sortie Parc', aprem: 'Jeux d\'eau' },
+              'Mercredi': { matin: 'Chasse aux trésors', aprem: 'Temps calme' },
+              'Jeudi': { matin: 'Atelier Théâtre', aprem: 'Olympiades' },
+              'Vendredi': { matin: 'Prépa Boum', aprem: 'Boum de fin' },
+              'Samedi': { matin: 'Repos', aprem: 'Repos' },
+              'Dimanche': { matin: 'Repos', aprem: 'Repos' }
+            }
           },
           {
             id: 2,
             nom: 'Léo Dubois',
-            role: 'Anim 9-11 ans',
-            aujourdhui: { matin: 'Accueil 9-11a', midi: 'Pause', aprem: 'Tournoi Foot' },
-            semaine: [
-              { jour: 'Lundi', matin: 'Accueil 9-11a', midi: 'Pause', aprem: 'Tournoi Foot' },
-              { jour: 'Mardi', matin: 'Création BD', midi: 'Cantine', aprem: 'Piscine' }
-            ]
+            role: 'Animateur',
+            semaine: {
+              'Lundi': { matin: 'Accueil 9-11a', aprem: 'Tournoi Foot' },
+              'Mardi': { matin: 'Création BD', aprem: 'Piscine' },
+              'Mercredi': { matin: 'Théâtre', aprem: 'Grand Jeu' },
+              'Jeudi': { matin: 'Sortie VTT', aprem: 'Bricolage' },
+              'Vendredi': { matin: 'Prépa Fête', aprem: 'Boum' },
+              'Samedi': { matin: 'Repos', aprem: 'Repos' },
+              'Dimanche': { matin: 'Repos', aprem: 'Repos' }
+            }
           }
         ],
 
-        toggleRole() {
-          this.userRole = this.userRole === 'Animateur' ? 'Directeur' : 'Animateur';
-          this.showToast(`Passage en mode : ${this.userRole}`);
+        getJourNom() {
+          const jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+          return jours[new Date().getDay()];
+        },
+
+        getAujourdhuiTexte() {
+          const options = { weekday: 'long', day: 'numeric', month: 'long' };
+          const txt = new Date().toLocaleDateString('fr-FR', options);
+          return txt.charAt(0).toUpperCase() + txt.slice(1);
+        },
+
+        getPlanningDuJour(anim, jour) {
+          if (anim.semaine && anim.semaine[jour]) {
+            return anim.semaine[jour];
+          }
+          return { matin: 'Non défini', aprem: 'Non défini' };
         },
 
         addMatos() {
-          if (this.newMatos.trim() !== '') {
-            this.fiche.materiel.push(this.newMatos.trim());
-            this.newMatos = '';
+          if (this.newMatosNom.trim() !== '') {
+            this.fiche.materiel.push({
+              nom: this.newMatosNom.trim(),
+              qte: this.newMatosQte.trim() || '1'
+            });
+            this.newMatosNom = '';
+            this.newMatosQte = '';
           }
         },
 
@@ -487,13 +514,13 @@
           this.fiche.materiel.forEach(item => {
             this.listeCourses.push({
               id: Date.now() + Math.random(),
-              nom: item,
-              demandeur: 'Anim',
+              nom: item.nom,
+              qte: item.qte,
               activite: this.fiche.titre || 'Activité',
               achete: false
             });
           });
-          this.showToast('Fiche créée & Matériel ajouté à la liste de courses !');
+          this.showToast('Fiche validée & matériel ajouté à la liste de courses !');
         },
 
         exportPDF() {
@@ -510,7 +537,7 @@
           } else {
             this.fiche.materiel.forEach(item => {
               const li = document.createElement('li');
-              li.innerText = item;
+              li.innerText = `${item.nom} — Quantité : ${item.qte}`;
               listEl.appendChild(li);
             });
           }
@@ -520,7 +547,7 @@
 
           const opt = {
             margin:       0.5,
-            filename:     `fiche_activite_${this.fiche.titre || 'sans_titre'}.pdf`,
+            filename:     `fiche_${this.fiche.titre || 'activite'}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2 },
             jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -530,7 +557,7 @@
             element.classList.add('hidden');
           });
 
-          this.showToast('Téléchargement du PDF propre en cours...');
+          this.showToast('Génération du PDF propre...');
         },
 
         submitSoin() {
@@ -540,24 +567,30 @@
             id: Date.now(),
             enfant: this.soin.enfant,
             incident: this.soin.incident,
+            action: this.soin.action || 'Soin standard',
             heure: timeStr,
-            anim: 'Thomas',
             prevenirFamille: this.soin.prevenirFamille
           });
-          this.showToast('Soin enregistré au registre !');
-          this.soin.enfant = ''; this.soin.incident = '';
+          this.showToast('Soin ajouté au registre !');
+          this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = '';
+        },
+
+        deleteSoin(id) {
+          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
+          this.showToast('Soin retiré du registre.');
         },
 
         addCourseDirecte() {
-          if(this.nouvelleCourse.trim() !== '') {
+          if(this.nouvelleCourseNom.trim() !== '') {
             this.listeCourses.unshift({
               id: Date.now(),
-              nom: this.nouvelleCourse.trim(),
-              demandeur: 'Directeur',
+              nom: this.nouvelleCourseNom.trim(),
+              qte: this.nouvelleCourseQte.trim() || '1',
               activite: 'Achat direct',
               achete: false
             });
-            this.nouvelleCourse = '';
+            this.nouvelleCourseNom = '';
+            this.nouvelleCourseQte = '';
           }
         },
 
@@ -567,27 +600,35 @@
 
         viderAchetes() {
           this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.showToast('Articles achetés nettoyés !');
+          this.showToast('Liste nettoyée !');
         },
 
         ouvrirDetailAnim(p) {
           this.animSelectionne = p;
         },
 
-        validerAjoutAnim() {
-          if(this.nouvelAnim.nom !== '') {
-            this.planningGlobal.push({
-              id: Date.now(),
-              nom: this.nouvelAnim.nom,
-              role: this.nouvelAnim.role || 'Animateur',
-              aujourdhui: { matin: this.nouvelAnim.matin || 'Accueil', midi: 'Cantine', aprem: this.nouvelAnim.aprem || 'Activité' },
-              semaine: [
-                { jour: 'Aujourd\'hui', matin: this.nouvelAnim.matin || 'Accueil', midi: 'Cantine', aprem: this.nouvelAnim.aprem || 'Activité' }
-              ]
-            });
+        validerPlanning() {
+          if(this.saisiePlanning.nom.trim() !== '') {
+            let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
+            
+            if (!anim) {
+              anim = {
+                id: Date.now(),
+                nom: this.saisiePlanning.nom.trim(),
+                role: 'Animateur',
+                semaine: {}
+              };
+              this.planningGlobal.push(anim);
+            }
+
+            anim.semaine[this.saisiePlanning.jour] = {
+              matin: this.saisiePlanning.matin || 'Repos / Non renseigné',
+              aprem: this.saisiePlanning.aprem || 'Repos / Non renseigné'
+            };
+
             this.showAddAnimModal = false;
-            this.nouvelAnim = { nom: '', role: '', matin: '', aprem: '' };
-            this.showToast('Animateur ajouté au planning !');
+            this.saisiePlanning = { nom: '', jour: 'Lundi', matin: '', aprem: '' };
+            this.showToast('Planning mis à jour !');
           }
         },
 
