@@ -35,7 +35,7 @@
       color: rgba(255, 255, 255, 0.5);
     }
     .glass-nav {
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(25px);
       -webkit-backdrop-filter: blur(25px);
       border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -107,7 +107,7 @@
             </span>
             <div class="grid grid-cols-5 gap-1.5">
               <input type="text" x-model="newMatosNom" placeholder="Article (ex: Kraft)" class="col-span-3 glass-input px-2.5 py-1.5 rounded-xl text-xs focus:outline-none">
-              <input type="text" x-model="newMatosQte" placeholder="Qté (ex: 2)" class="col-span-1 glass-input px-2 py-1.5 rounded-xl text-xs focus:outline-none">
+              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 glass-input px-2 py-1.5 rounded-xl text-xs focus:outline-none">
               <button type="button" @click="addMatos()" class="col-span-1 bg-cyan-500 hover:bg-cyan-400 rounded-xl text-xs font-bold text-center">+</button>
             </div>
             <ul class="space-y-1 pt-1">
@@ -193,7 +193,7 @@
           </div>
 
           <div class="flex items-center space-x-2 glass-card p-3 rounded-xl">
-            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-rose-500 rounded">
+            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-rose-500 rounded cursor-pointer">
             <label for="famille" class="text-xs font-medium cursor-pointer">Avertir la famille au départ ce soir</label>
           </div>
 
@@ -209,9 +209,10 @@
           <template x-for="item in registreSoins" :key="item.id">
             <div class="glass-card p-3 rounded-2xl flex items-start justify-between">
               <div class="space-y-1">
-                <p class="font-bold text-sm" x-text="item.enfant"></p>
+                <p class="font-bold text-sm text-rose-100" x-text="item.enfant"></p>
                 <p class="text-xs text-rose-200" x-text="item.incident"></p>
-                <p class="text-[10px] text-white/50" x-text="item.heure + ' • Care: ' + item.action"></p>
+                <!-- Remplacé "Care:" par "Soin :" ici -->
+                <p class="text-[10px] text-white/60" x-text="item.heure + ' • Soin : ' + item.action"></p>
                 <span x-show="item.prevenirFamille" class="inline-block px-2 py-0.5 bg-amber-500/20 text-amber-300 text-[9px] font-semibold rounded-full border border-amber-500/30">
                   🔔 Prévenir les parents
                 </span>
@@ -262,101 +263,205 @@
       </div>
     </div>
 
-    <!-- 4. ONGLET : PLANNING D'ÉQUIPE (AVEC SELECTION DE DATE EXACTE) -->
+    <!-- 4. ONGLET : PLANNING & ORGANISATION (REFONTE TOTALE LISIBILITÉ + SORTIES) -->
     <div x-show="currentTab === 'planning'" class="space-y-4">
       <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        <div class="flex items-center justify-between">
-          <div>
+        
+        <!-- En-tête avec navigation par date -->
+        <div class="space-y-2 border-b border-white/10 pb-3">
+          <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold flex items-center gap-2">
               <i class="fa-solid fa-calendar-days text-emerald-400"></i> Planning Équipe
             </h2>
-            <p class="text-[11px] text-emerald-300 font-semibold" x-text="'Aujourd\'hui : ' + getAujourdhuiTexte()"></p>
+            <div class="flex gap-1.5">
+              <button @click="ouvrirModalOrg()" class="px-2.5 py-1.5 bg-amber-500/30 hover:bg-amber-500/50 text-amber-200 border border-amber-500/40 text-xs font-bold rounded-xl transition-all">
+                🚌 Sortie / Groupes
+              </button>
+              <button @click="showAddAnimModal = true" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-xs font-bold rounded-xl transition-all">
+                + Créneau
+              </button>
+            </div>
           </div>
-          <button @click="showAddAnimModal = true" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-xs font-bold rounded-xl transition-all shadow-md">
-            + Créneau
-          </button>
+
+          <!-- Selecteur de date dynamique avec flèches -->
+          <div class="flex items-center justify-between glass-card px-3 py-2 rounded-2xl">
+            <button @click="changerJour(-1)" class="p-1 text-emerald-300 hover:text-white"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="text-center">
+              <p class="text-xs font-bold text-emerald-300" x-text="formatDateLisible(dateAffichee)"></p>
+              <p class="text-[9px] text-white/50" x-text="dateAffichee === getTodayISO() ? 'Aujourd\'hui' : ''"></p>
+            </div>
+            <button @click="changerJour(1)" class="p-1 text-emerald-300 hover:text-white"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
         </div>
 
-        <h3 class="text-xs font-bold text-white/70 uppercase">Vue Globale Aujourd'hui</h3>
-        <p class="text-[10px] text-white/50">Clique sur un prénom pour voir l'ensemble de ses dates enregistrées.</p>
+        <!-- ENCADRÉ : ORGANISATION DE LA JOURNÉE / SORTIES / GROUPES D'ENFANTS -->
+        <template x-if="getOrgDuJour()">
+          <div class="bg-gradient-to-r from-amber-950/80 to-amber-900/60 border-2 border-amber-500/50 rounded-2xl p-3.5 space-y-2 shadow-lg">
+            <div class="flex justify-between items-start">
+              <span class="text-xs font-extrabold uppercase bg-amber-500 text-slate-950 px-2 py-0.5 rounded-md flex items-center gap-1">
+                <i class="fa-solid fa-bus"></i> <span x-text="getOrgDuJour().isSortie ? 'Sortie Extérieure' : 'Organisation Spéciale'"></span>
+              </span>
+              <button @click="effacerOrgDuJour()" class="text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>
+            </div>
 
-        <div class="space-y-3">
+            <h3 class="text-sm font-bold text-amber-200" x-text="getOrgDuJour().titre"></h3>
+            <p class="text-xs text-white/80" x-text="'📍 Lieu / Horaires : ' + (getOrgDuJour().lieu || 'Sur le centre') + ' • ' + (getOrgDuJour().horaires || 'Toute la journée')"></p>
+            
+            <template x-if="getOrgDuJour().consignes">
+              <p class="text-[11px] text-amber-100/70 italic bg-black/20 p-2 rounded-lg" x-text="getOrgDuJour().consignes"></p>
+            </template>
+
+            <!-- Groupes d'enfants attribués -->
+            <div class="space-y-1.5 pt-1">
+              <p class="text-[10px] font-bold uppercase text-amber-300">Groupes & Animateurs :</p>
+              <template x-for="(g, idx) in getOrgDuJour().groupes" :key="idx">
+                <div class="glass-card p-2 rounded-xl text-xs flex justify-between items-center bg-amber-900/20 border-amber-500/20">
+                  <div>
+                    <span class="font-bold text-amber-200" x-text="g.nom"></span>
+                    <span class="text-[10px] text-white/60 block" x-text="'Anim: ' + g.anim"></span>
+                  </div>
+                  <span class="text-[10px] bg-white/10 px-2 py-0.5 rounded-full font-semibold" x-text="g.nbEnfants + ' enfants'"></span>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+
+        <!-- LISTE DES ANIMATEURS ET LEUR PLANNING POUR LA DATE SÉLECTIONNÉE -->
+        <div class="space-y-2.5">
+          <h3 class="text-xs font-bold text-white/70 uppercase tracking-wider">Planning des Animateurs</h3>
+
           <template x-for="p in planningGlobal" :key="p.id">
-            <div class="glass-card p-3.5 rounded-2xl space-y-2">
+            <div class="glass-card p-3 rounded-2xl space-y-2 border-l-4" :class="aUnCreneau(p, dateAffichee) ? 'border-l-emerald-400' : 'border-l-slate-600 opacity-60'">
+              
               <div class="flex justify-between items-center">
-                <button @click="ouvrirDetailAnim(p)" class="font-bold text-sm text-cyan-200 underline decoration-cyan-400/50 hover:text-cyan-100 flex items-center gap-1.5">
+                <button @click="ouvrirDetailAnim(p)" class="font-bold text-sm text-cyan-200 hover:text-cyan-100 flex items-center gap-1.5">
                   <span x-text="p.nom"></span>
                   <i class="fa-solid fa-chevron-right text-[10px] opacity-60"></i>
                 </button>
+                <button @click="supprimerAnim(p.id)" class="text-red-400 hover:text-red-300 text-xs">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
 
-                <div class="flex items-center space-x-2">
-                  <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" x-text="p.role"></span>
-                  <button @click="supprimerAnim(p.id)" class="text-red-400 hover:text-red-300 text-xs pl-1">
-                    <i class="fa-solid fa-xmark"></i>
-                  </button>
+              <!-- Bloc Créneaux Matin / Après-midi plus lisibles -->
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <!-- MATIN -->
+                <div class="bg-indigo-950/60 p-2 rounded-xl border border-indigo-500/30">
+                  <span class="text-[9px] font-bold uppercase text-indigo-300 block mb-0.5">☀️ Matin</span>
+                  <p class="font-semibold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
+                </div>
+                <!-- APREM -->
+                <div class="bg-purple-950/60 p-2 rounded-xl border border-purple-500/30">
+                  <span class="text-[9px] font-bold uppercase text-purple-300 block mb-0.5">🌆 Après-midi</span>
+                  <p class="font-semibold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
                 </div>
               </div>
 
-              <!-- Planning d'aujourd'hui uniquement -->
-              <div class="grid grid-cols-2 gap-2 text-[11px] text-center">
-                <div class="glass-card p-2 rounded-xl">
-                  <p class="text-[9px] text-white/50">Matin</p>
-                  <p class="font-medium truncate" x-text="getPlanningDuJour(p, getTodayISO()).matin"></p>
-                </div>
-                <div class="glass-card p-2 rounded-xl">
-                  <p class="text-[9px] text-white/50">Après-midi</p>
-                  <p class="font-medium truncate" x-text="getPlanningDuJour(p, getTodayISO()).aprem"></p>
-                </div>
-              </div>
             </div>
           </template>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL : ORGANISATION DU JOUR / SORTIE & GROUPES D'ENFANTS -->
+    <div x-show="showOrgModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
+      <div class="glass-panel p-5 rounded-3xl max-w-sm w-full space-y-3 max-h-[90vh] overflow-y-auto">
+        <h3 class="font-bold text-sm text-amber-300 flex items-center gap-2">
+          <i class="fa-solid fa-bus"></i> Organisation du jour / Sortie
+        </h3>
+
+        <div>
+          <label class="block text-[10px] text-white/60 mb-1">Titre de la journée / Sortie</label>
+          <input type="text" x-model="saisieOrg.titre" placeholder="ex: Sortie Grand Parc ou Journée Koh-Lanta" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] text-white/60 mb-1">Lieu</label>
+            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Parc Animalier" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] text-white/60 mb-1">Horaires</label>
+            <input type="text" x-model="saisieOrg.horaires" placeholder="ex: 09h00 - 16h30" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] text-white/60 mb-1">Consignes / Remarques</label>
+          <input type="text" x-model="saisieOrg.consignes" placeholder="ex: Casquette + Sac à dos léger" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+        </div>
+
+        <!-- Section Groupes d'enfants -->
+        <div class="border-t border-white/10 pt-2 space-y-2">
+          <span class="text-xs font-bold text-amber-200">Groupes d'enfants & Animateurs</span>
+          
+          <div class="grid grid-cols-3 gap-1">
+            <input type="text" x-model="tempGroupe.nom" placeholder="Groupe (ex: 3-5 ans)" class="glass-input px-2 py-1.5 rounded-lg text-[11px]">
+            <input type="text" x-model="tempGroupe.anim" placeholder="Anim (ex: Sarah)" class="glass-input px-2 py-1.5 rounded-lg text-[11px]">
+            <div class="flex gap-1">
+              <input type="text" x-model="tempGroupe.nbEnfants" placeholder="Nb enf." class="w-full glass-input px-2 py-1.5 rounded-lg text-[11px]">
+              <button @click="ajouterGroupeAOrg()" class="bg-amber-500 font-bold px-2.5 rounded-lg text-xs text-slate-900">+</button>
+            </div>
+          </div>
+
+          <div class="space-y-1 pt-1">
+            <template x-for="(g, i) in saisieOrg.groupes" :key="i">
+              <div class="flex justify-between items-center glass-card px-2.5 py-1 rounded-lg text-xs">
+                <span x-text="g.nom + ' (' + g.anim + ') - ' + g.nbEnfants + ' enf.'"></span>
+                <button @click="saisieOrg.groupes.splice(i, 1)" class="text-red-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button @click="showOrgModal = false" class="flex-1 py-2 bg-white/10 rounded-xl text-xs">Annuler</button>
+          <button @click="sauvegarderOrg()" class="flex-1 py-2 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs">Enregistrer</button>
         </div>
       </div>
     </div>
 
-    <!-- MODAL : PLANNING PAR DATE INDIVIDUELLE -->
+    <!-- MODAL : TOUTES LES DATES D'UN ANIMATEUR -->
     <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
       <div class="glass-panel p-5 rounded-3xl max-w-sm w-full space-y-4 max-h-[85vh] overflow-y-auto">
         <div class="flex justify-between items-center border-b border-white/10 pb-3">
           <div>
             <h3 class="font-bold text-base text-cyan-300" x-text="animSelectionne?.nom"></h3>
-            <p class="text-xs text-white/60">Toutes les dates planifiées</p>
+            <p class="text-xs text-white/60">Toutes ses dates planifiées</p>
           </div>
           <button @click="animSelectionne = null" class="text-white/60 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="space-y-2">
           <template x-for="(planningDate, dateKey) in animSelectionne?.dates" :key="dateKey">
-            <div class="glass-card p-2.5 rounded-2xl space-y-1" :class="dateKey === getTodayISO() ? 'border border-amber-400/50 bg-amber-500/10' : ''">
+            <div class="glass-card p-2.5 rounded-2xl space-y-1" :class="dateKey === dateAffichee ? 'border border-emerald-400/50 bg-emerald-500/10' : ''">
               <div class="flex justify-between items-center">
-                <span class="text-xs font-bold text-amber-300" x-text="formatDateLisible(dateKey) + (dateKey === getTodayISO() ? ' (Aujourd\'hui)' : '')"></span>
+                <span class="text-xs font-bold text-emerald-300" x-text="formatDateLisible(dateKey)"></span>
                 <button @click="supprimerDateAnim(animSelectionne, dateKey)" class="text-red-400 hover:text-red-300 text-[10px]">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
               <div class="grid grid-cols-2 gap-1 text-[11px] text-center mt-1">
                 <div class="bg-white/5 p-1 rounded-lg">
-                  <span class="text-white/40 block text-[9px]">Matin</span>
+                  <span class="text-indigo-300 block text-[9px] font-bold">Matin</span>
                   <span x-text="planningDate.matin || 'Repos'"></span>
                 </div>
                 <div class="bg-white/5 p-1 rounded-lg">
-                  <span class="text-white/40 block text-[9px]">Aprem</span>
+                  <span class="text-purple-300 block text-[9px] font-bold">Aprem</span>
                   <span x-text="planningDate.aprem || 'Repos'"></span>
                 </div>
               </div>
             </div>
           </template>
-          
-          <div x-show="!animSelectionne || Object.keys(animSelectionne.dates || {}).length === 0" class="text-center py-4 text-white/40 text-xs">
-            Aucun créneau enregistré pour cet animateur.
-          </div>
         </div>
 
         <button @click="animSelectionne = null" class="w-full py-2.5 bg-white/10 font-bold rounded-xl text-xs">Fermer</button>
       </div>
     </div>
 
-    <!-- MODAL : AJOUTER OU MODIFIER UN CRÉNEAU AVEC SÉLECTION DE DATE PRÉCISE -->
+    <!-- MODAL : AJOUTER OU MODIFIER UN CRÉNEAU -->
     <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
       <div class="glass-panel p-5 rounded-3xl max-w-sm w-full space-y-3">
         <h3 class="font-bold text-sm text-emerald-300">Ajouter / Modifier un Créneau</h3>
@@ -367,14 +472,14 @@
         </div>
 
         <div>
-          <label class="block text-[10px] text-white/60 mb-1">Date précise</label>
+          <label class="block text-[10px] text-white/60 mb-1">Date</label>
           <input type="date" x-model="saisiePlanning.date" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none bg-slate-900/90">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[10px] text-white/60 mb-1">Créneau Matin</label>
-            <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu +6a" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+            <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu -6a" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
           </div>
           <div>
             <label class="block text-[10px] text-white/60 mb-1">Créneau Après-midi</label>
@@ -418,11 +523,13 @@
 
       return {
         currentTab: 'fiche',
+        dateAffichee: todayISO,
         newMatosNom: '',
         newMatosQte: '',
         nouvelleCourseNom: '',
         nouvelleCourseQte: '',
         showAddAnimModal: false,
+        showOrgModal: false,
         animSelectionne: null,
         toast: { show: false, message: '' },
 
@@ -451,13 +558,31 @@
 
         saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
 
+        // Dictionnaire des organisations / sorties du jour
+        organisations: {
+          [todayISO]: {
+            isSortie: true,
+            titre: 'Sortie au Zoo de Beauval',
+            lieu: 'Zoo de Beauval',
+            horaires: '08h30 - 17h00',
+            consignes: 'Prévoir casquette, sac à dos léger et gourde.',
+            groupes: [
+              { nom: 'Les Ouistitis (-6 ans)', anim: 'Sarah', nbEnfants: '12' },
+              { nom: 'Les Lions (+6 ans)', anim: 'Léo', nbEnfants: '16' }
+            ]
+          }
+        },
+
+        saisieOrg: { isSortie: true, titre: '', lieu: '', horaires: '', consignes: '', groupes: [] },
+        tempGroupe: { nom: '', anim: '', nbEnfants: '' },
+
         planningGlobal: [
           {
             id: 1,
             nom: 'Sarah Martin',
             role: 'Animateur',
             dates: {
-              [todayISO]: { matin: 'Grand Jeu -6a', aprem: 'Atelier Peinture' }
+              [todayISO]: { matin: 'Encadrement Sortie Zoo (-6a)', aprem: 'Encadrement Sortie Zoo (-6a)' }
             }
           },
           {
@@ -465,23 +590,21 @@
             nom: 'Léo Dubois',
             role: 'Animateur',
             dates: {
-              [todayISO]: { matin: 'Sortie Parc +6a', aprem: 'Tournoi Sport' }
+              [todayISO]: { matin: 'Encadrement Sortie Zoo (+6a)', aprem: 'Encadrement Sortie Zoo (+6a)' }
             }
           }
         ],
 
         getTodayISO() {
           const d = new Date();
-          const year = d.getFullYear();
-          const month = String(d.getMonth() + 1).padStart(2, '0');
-          const day = String(d.getDate()).padStart(2, '0');
-          return `${year}-${month}-${day}`;
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         },
 
-        getAujourdhuiTexte() {
-          const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-          const txt = new Date().toLocaleDateString('fr-FR', options);
-          return txt.charAt(0).toUpperCase() + txt.slice(1);
+        changerJour(deltaDays) {
+          const parts = this.dateAffichee.split('-');
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          d.setDate(d.getDate() + deltaDays);
+          this.dateAffichee = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         },
 
         formatDateLisible(dateStr) {
@@ -489,7 +612,7 @@
           const parts = dateStr.split('-');
           if(parts.length !== 3) return dateStr;
           const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          const options = { weekday: 'short', day: 'numeric', month: 'short' };
+          const options = { weekday: 'long', day: 'numeric', month: 'long' };
           const txt = d.toLocaleDateString('fr-FR', options);
           return txt.charAt(0).toUpperCase() + txt.slice(1);
         },
@@ -498,7 +621,49 @@
           if (anim.dates && anim.dates[dateKey]) {
             return anim.dates[dateKey];
           }
-          return { matin: 'Repos / Non attribué', aprem: 'Repos / Non attribué' };
+          return { matin: 'Repos / Non programmé', aprem: 'Repos / Non programmé' };
+        },
+
+        aUnCreneau(anim, dateKey) {
+          return anim.dates && anim.dates[dateKey] && (anim.dates[dateKey].matin !== 'Repos / Non programmé' || anim.dates[dateKey].aprem !== 'Repos / Non programmé');
+        },
+
+        getOrgDuJour() {
+          return this.organisations[this.dateAffichee] || null;
+        },
+
+        ouvrirModalOrg() {
+          const orgCourante = this.getOrgDuJour();
+          if (orgCourante) {
+            this.saisieOrg = JSON.parse(JSON.stringify(orgCourante));
+          } else {
+            this.saisieOrg = { isSortie: true, titre: '', lieu: '', horaires: '', consignes: '', groupes: [] };
+          }
+          this.showOrgModal = true;
+        },
+
+        ajouterGroupeAOrg() {
+          if (this.tempGroupe.nom.trim() !== '') {
+            this.saisieOrg.groupes.push({
+              nom: this.tempGroupe.nom.trim(),
+              anim: this.tempGroupe.anim.trim() || 'Non assigné',
+              nbEnfants: this.tempGroupe.nbEnfants.trim() || '0'
+            });
+            this.tempGroupe = { nom: '', anim: '', nbEnfants: '' };
+          }
+        },
+
+        sauvegarderOrg() {
+          if (this.saisieOrg.titre.trim() !== '') {
+            this.organisations[this.dateAffichee] = JSON.parse(JSON.stringify(this.saisieOrg));
+            this.showOrgModal = false;
+            this.showToast('Organisation de la journée enregistrée !');
+          }
+        },
+
+        effacerOrgDuJour() {
+          delete this.organisations[this.dateAffichee];
+          this.showToast('Organisation effacée pour cette date.');
         },
 
         addMatos() {
@@ -630,13 +795,11 @@
             if(!anim.dates) anim.dates = {};
 
             anim.dates[this.saisiePlanning.date] = {
-              matin: this.saisiePlanning.matin || 'Repos / Non renseigné',
-              aprem: this.saisiePlanning.aprem || 'Repos / Non renseigné'
+              matin: this.saisiePlanning.matin || 'Repos / Non programmé',
+              aprem: this.saisiePlanning.aprem || 'Repos / Non programmé'
             };
 
             this.showAddAnimModal = false;
-            const savedDate = this.saisiePlanning.date;
-            this.saisiePlanning = { nom: '', date: savedDate, matin: '', aprem: '' };
             this.showToast('Créneau enregistré !');
           }
         },
