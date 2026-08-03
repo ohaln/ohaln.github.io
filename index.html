@@ -45,7 +45,6 @@
       -webkit-backdrop-filter: blur(25px);
       border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
-    /* Correctif du champ Date sur Mobile */
     input[type="date"] {
       color-scheme: dark;
       min-width: 0;
@@ -108,7 +107,6 @@
             <textarea x-model="fiche.deroulement" placeholder="Explication rapide des étapes du jeu..." class="w-full glass-input px-3 py-2 rounded-xl text-sm focus:outline-none h-16"></textarea>
           </div>
 
-          <!-- Section Matériel avec Quantités -->
           <div class="glass-card p-3.5 rounded-2xl space-y-2 border-l-4 border-l-cyan-400">
             <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
               <i class="fa-solid fa-cart-plus"></i> Matériel & Quantités
@@ -233,95 +231,191 @@
       </div>
     </div>
 
-    <!-- 3. ONGLET : GOÛTER & CALCULATEUR DE RECETTES -->
+    <!-- 3. ONGLET : GOÛTER & RECETTES PLANIFIÉES PAR SEMAINE -->
     <div x-show="currentTab === 'gouter'" class="space-y-4">
       <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold flex items-center gap-2">
-            <i class="fa-solid fa-cookie-bite text-amber-400"></i> Calculateur Goûter
-          </h2>
-          <span class="text-xs bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-full font-medium">Auto-Calcul</span>
-        </div>
-
-        <!-- Formulaire de calcul -->
-        <div class="space-y-3 bg-amber-950/30 p-3.5 rounded-2xl border border-amber-500/30">
-          <div>
-            <label class="block text-xs font-bold text-amber-200 mb-1">Choisir la recette</label>
-            <select x-model="gouterSelectedRecipeId" @change="recalculerGouter()" class="w-full glass-input px-3 py-2.5 rounded-xl text-xs focus:outline-none bg-slate-900/90 text-white font-semibold">
-              <template x-for="r in recettesGouter" :key="r.id">
-                <option :value="r.id" x-text="r.nom + ' (Base ' + r.pourEnfants + ' enfants)'"></option>
-              </template>
-            </select>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 items-center">
-            <div>
-              <label class="block text-xs font-bold text-amber-200 mb-1">Nombre d'enfants</label>
-              <input type="number" min="1" x-model.number="gouterNbEnfants" @input="recalculerGouter()" class="w-full glass-input px-3 py-2 rounded-xl text-sm font-bold focus:outline-none text-center">
-            </div>
-            <div class="bg-black/30 p-2.5 rounded-xl border border-amber-500/20 text-center">
-              <p class="text-[9px] uppercase font-bold text-amber-400">Quantité à préparer :</p>
-              <p class="text-sm font-extrabold text-white" x-text="gouterCalculResult.nbUnites + ' ' + (getRecetteCourante().typeUnite || 'gâteau(x)')"></p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Ingrédients calculés -->
+        
+        <!-- Navigation par Semaine -->
         <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold flex items-center gap-2">
+              <i class="fa-solid fa-cookie-bite text-amber-400"></i> Goûters & Recettes
+            </h2>
+            <div class="flex gap-1.5">
+              <button @click="showAddRecetteModal = !showAddRecetteModal" class="text-[11px] bg-amber-500/30 hover:bg-amber-500/50 text-amber-200 border border-amber-500/40 px-2.5 py-1 rounded-xl font-bold transition-all">
+                <i class="fa-solid fa-book"></i> Recettes
+              </button>
+              <button @click="showPlanifModal = true" class="text-[11px] bg-amber-500 hover:bg-amber-400 text-slate-950 px-2.5 py-1 rounded-xl font-bold shadow-lg transition-all">
+                + Planifier
+              </button>
+            </div>
+          </div>
+
+          <!-- Selecteur de semaine -->
+          <div class="flex items-center justify-between glass-card px-3 py-2 rounded-2xl border border-amber-500/30">
+            <button @click="changerSemaine(-1)" class="p-1 text-amber-300 hover:text-white"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="text-center">
+              <p class="text-xs font-extrabold text-amber-300" x-text="getLibelleSemaine()"></p>
+              <p class="text-[9px] text-white/50">Planning Hebdomadaire</p>
+            </div>
+            <button @click="changerSemaine(1)" class="p-1 text-amber-300 hover:text-white"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <!-- MODAL CRÉER UNE RECETTE SUR-MESURE (Base fixe 8 enfants) -->
+        <div x-show="showAddRecetteModal" x-transition class="glass-card p-4 rounded-2xl space-y-3 border-2 border-amber-500/40 bg-amber-950/50">
           <div class="flex justify-between items-center">
-            <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wide">Ingrédients ajustés à commander</h3>
-            <span class="text-[10px] text-white/60" x-text="'Pour ' + gouterNbEnfants + ' enfants (Arrondi sup.)'"></span>
+            <h3 class="text-xs font-extrabold text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
+              <i class="fa-solid fa-utensils"></i> Nouvelle Recette (Ingrédients pour 1 gâteau / 8 enfants)
+            </h3>
+            <button @click="showAddRecetteModal = false" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
           </div>
 
-          <div class="space-y-1.5">
-            <template x-for="(ing, idx) in gouterCalculResult.ingredients" :key="idx">
-              <div class="glass-card px-3 py-2 rounded-xl flex justify-between items-center text-xs">
-                <span class="font-medium text-amber-100" x-text="ing.nom"></span>
-                <span class="font-extrabold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-lg border border-amber-500/30" x-text="ing.qte + ' ' + ing.unite"></span>
-              </div>
-            </template>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-amber-200 mb-1">Nom de la recette</label>
+            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
           </div>
 
-          <button @click="envoyerGouterEnCourses()" class="w-full py-3 mt-2 bg-gradient-to-r from-amber-500 to-orange-500 font-bold text-slate-950 rounded-xl text-xs shadow-lg transition-all flex items-center justify-center gap-2">
-            <i class="fa-solid fa-cart-plus text-sm"></i> Ajouter à la Liste Goûter
+          <!-- Ingrédients pour 1 gâteau -->
+          <div class="space-y-1.5 pt-1">
+            <label class="block text-[10px] font-bold uppercase text-amber-300">Ingrédients pour 1 gâteau :</label>
+            
+            <div class="grid grid-cols-6 gap-1">
+              <input type="text" x-model="tempIng.nom" placeholder="Ingrédient (ex: Farine)" class="col-span-3 glass-input px-2 py-1.5 rounded-lg text-xs focus:outline-none">
+              <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté (200)" class="col-span-1.5 glass-input px-2 py-1.5 rounded-lg text-xs focus:outline-none text-center">
+              <input type="text" x-model="tempIng.unite" placeholder="Unité (g, cl)" class="col-span-1.5 glass-input px-2 py-1.5 rounded-lg text-xs focus:outline-none">
+            </div>
+            
+            <button @click="ajouterIngredierntRecette()" type="button" class="w-full py-1.5 bg-amber-500/20 hover:bg-amber-500/40 text-amber-200 text-xs font-bold rounded-lg border border-amber-500/30">
+              + Ajouter l'ingrédient
+            </button>
+
+            <div class="space-y-1 pt-1">
+              <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
+                <div class="flex justify-between items-center text-[11px] glass-card px-2.5 py-1 rounded-lg">
+                  <span x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
+                  <button @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <button @click="enregistrerNouvelleRecette()" type="button" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 font-extrabold text-slate-950 rounded-xl text-xs transition-all shadow-lg">
+            💾 Enregistrer la recette
           </button>
+        </div>
+
+        <!-- LISTE DES GOÛTERS PROGRAMMÉS DE LA SEMAINE -->
+        <div class="space-y-2">
+          <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wide flex justify-between items-center">
+            <span>Planning Goûters de la semaine</span>
+            <span class="text-[10px] text-white/50" x-text="getGoutersDeLaSemaine().length + ' goûter(s)'"></span>
+          </h3>
+
+          <template x-if="getGoutersDeLaSemaine().length === 0">
+            <div class="glass-card p-4 rounded-2xl text-center space-y-1 border border-white/10">
+              <p class="text-xs text-white/60">Aucun goûter planifié pour cette semaine.</p>
+              <button @click="showPlanifModal = true" class="text-xs text-amber-400 underline font-semibold">Clique ici pour en planifier un !</button>
+            </div>
+          </template>
+
+          <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
+            <div class="glass-card p-3 rounded-2xl border-l-4 border-l-amber-400 space-y-2">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] font-extrabold text-amber-400 uppercase" x-text="formatDateLisible(g.date)"></span>
+                  <h4 class="font-bold text-sm text-white" x-text="getNomRecette(g.recetteId)"></h4>
+                </div>
+                <button @click="supprimerGouterPlanifie(g.id)" class="text-red-400 hover:text-red-300 text-xs px-1">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-xs bg-black/20 p-2 rounded-xl border border-white/10">
+                <div>
+                  <span class="text-[9px] text-amber-200/70 block uppercase font-bold">👤 Animateur :</span>
+                  <span class="font-bold text-amber-100" x-text="g.anim || 'Non renseigné'"></span>
+                </div>
+                <div>
+                  <span class="text-[9px] text-amber-200/70 block uppercase font-bold">🍰 Quantité :</span>
+                  <span class="font-bold text-amber-100" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
 
         <hr class="border-white/10 my-3">
 
-        <!-- LISTE DE COURSES GOÛTER SÉPARÉE -->
+        <!-- LISTE DE COURSES GOÛTER DE LA SEMAINE (AGRÉGÉE AUTOMATIQUEMENT) -->
         <div class="space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-sm font-bold text-amber-300 flex items-center gap-1.5">
-              <i class="fa-solid fa-basket-shopping"></i> Liste de Courses GOÛTER
+              <i class="fa-solid fa-basket-shopping"></i> Courses Goûter de la Semaine
             </h3>
-            <span class="text-[10px] bg-amber-500/20 text-amber-200 px-2 py-0.5 rounded-full" x-text="listeCoursesGouter.length + ' articles'"></span>
+            <span class="text-[10px] bg-amber-500/20 text-amber-200 px-2 py-0.5 rounded-full border border-amber-500/30" x-text="getListeCoursesAgregeeSemaine().length + ' ingrédients'"></span>
           </div>
 
+          <p class="text-[10px] text-white/60 italic">Les ingrédients de tous les gâteaux de la semaine sont automatiquement multipliés et accumulés ci-dessous :</p>
+
           <div class="space-y-1.5">
-            <template x-if="listeCoursesGouter.length === 0">
-              <p class="text-xs text-white/40 italic text-center py-2">La liste de courses goûter est vide.</p>
+            <template x-if="getListeCoursesAgregeeSemaine().length === 0">
+              <p class="text-xs text-white/40 italic text-center py-3">Aucun ingrédient à acheter pour cette semaine.</p>
             </template>
 
-            <template x-for="item in listeCoursesGouter" :key="item.id">
-              <div class="glass-card p-2.5 rounded-xl flex items-center justify-between" :class="item.achete ? 'opacity-40 line-through' : ''">
+            <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
+              <div class="glass-card p-2.5 rounded-xl flex items-center justify-between" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 line-through' : ''">
                 <div class="flex items-center space-x-2.5">
-                  <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
-                  <div>
-                    <p class="text-xs font-bold text-amber-100" x-text="item.nom + ' : ' + item.qte + ' ' + item.unite"></p>
-                    <p class="text-[9px] text-amber-300/70" x-text="'Pour : ' + item.recetteNom"></p>
-                  </div>
+                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-4 h-4 accent-amber-500 rounded cursor-pointer">
+                  <span class="text-xs font-bold text-amber-100" x-text="item.nom"></span>
                 </div>
-                <button @click="deleteCourseGouter(item.id)" class="text-red-400 hover:text-red-300 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
+                <span class="font-extrabold text-xs text-amber-300 bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-500/30" x-text="item.qte + ' ' + item.unite"></span>
               </div>
             </template>
           </div>
-
-          <button x-show="listeCoursesGouter.length > 0" @click="viderGouterAchetes()" class="w-full py-2 bg-white/10 hover:bg-white/20 text-xs text-white/70 rounded-xl transition-all">
-            🧹 Nettoyer les ingrédients achetés
-          </button>
         </div>
 
+      </div>
+    </div>
+
+    <!-- MODAL : PLANIFIER UN GOÛTER POUR UN JOUR DÉFINI -->
+    <div x-show="showPlanifModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div class="glass-panel p-5 rounded-3xl max-w-sm w-full space-y-3 box-border border-amber-500/40">
+        <h3 class="font-bold text-sm text-amber-300 border-b border-white/10 pb-2 flex items-center gap-2">
+          <i class="fa-solid fa-calendar-plus"></i> Planifier un Goûter
+        </h3>
+
+        <div class="space-y-2">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-amber-200 mb-1">Date du goûter</label>
+            <input type="date" x-model="saisieGouter.date" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none bg-slate-900/90">
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-amber-200 mb-1">Choisir la recette</label>
+            <select x-model="saisieGouter.recetteId" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none bg-slate-900/90">
+              <template x-for="r in recettesGouter" :key="r.id">
+                <option :value="r.id" x-text="r.nom + ' (base 8 enfants)'"></option>
+              </template>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-amber-200 mb-1">Animateur(trice) responsable</label>
+            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="w-full glass-input px-3 py-2 rounded-xl text-xs focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-amber-200 mb-1">Nombre d'enfants prévus</label>
+            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="w-full glass-input px-3 py-2 rounded-xl text-xs font-bold text-center focus:outline-none">
+            <p class="text-[10px] text-amber-300/80 mt-1 italic text-center" x-show="saisieGouter.nbEnfants > 0" x-text="'= ' + Math.ceil((saisieGouter.nbEnfants || 0) / 8) + ' gâteau(x) à préparer'"></p>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t border-white/10">
+          <button @click="showPlanifModal = false" class="flex-1 py-2.5 bg-white/10 rounded-xl text-xs font-semibold">Annuler</button>
+          <button @click="enregistrerGouterPlanifie()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 font-bold text-slate-950 rounded-xl text-xs shadow-lg">Enregistrer</button>
+        </div>
       </div>
     </div>
 
@@ -366,7 +460,6 @@
     <div x-show="currentTab === 'planning'" class="space-y-4">
       <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
         
-        <!-- En-tête avec navigation par date -->
         <div class="space-y-2 border-b border-white/10 pb-3">
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold flex items-center gap-2">
@@ -382,7 +475,6 @@
             </div>
           </div>
 
-          <!-- Sélecteur de date dynamique avec flèches -->
           <div class="flex items-center justify-between glass-card px-3 py-2 rounded-2xl">
             <button @click="changerJour(-1)" class="p-1 text-emerald-300 hover:text-white"><i class="fa-solid fa-chevron-left"></i></button>
             <div class="text-center">
@@ -393,7 +485,6 @@
           </div>
         </div>
 
-        <!-- ENCADRÉ : SORTIE / BUS ET GROUPES D'ENFANTS DU JOUR -->
         <template x-if="getOrgDuJour()">
           <div class="bg-gradient-to-r from-amber-950/90 to-amber-900/70 border-2 border-amber-500/60 rounded-2xl p-4 space-y-3 shadow-xl">
             <div class="flex justify-between items-start">
@@ -407,7 +498,6 @@
 
             <p class="text-xs font-semibold text-amber-200" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
             
-            <!-- HORAIRES DU BUS DÉPARTS ET RETOURS -->
             <div class="grid grid-cols-2 gap-2 text-xs bg-black/30 p-2.5 rounded-xl border border-amber-500/20">
               <div class="space-y-0.5">
                 <span class="text-[9px] font-bold text-amber-400 uppercase block">🚌 Bus Départ ALSH :</span>
@@ -423,7 +513,6 @@
               <p class="text-[11px] text-amber-100/80 italic bg-amber-950/40 p-2 rounded-lg border border-amber-500/20" x-text="'💡 Consignes : ' + getOrgDuJour().consignes"></p>
             </template>
 
-            <!-- Groupes d'enfants par Animateur / Animatrice -->
             <div class="space-y-2 pt-1 border-t border-amber-500/20">
               <p class="text-[10px] font-bold uppercase text-amber-300 tracking-wider">Groupes d'enfants par Animateur :</p>
               
@@ -436,7 +525,6 @@
                     <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold border border-amber-500/30" x-text="g.enfants.length + ' enfants'"></span>
                   </div>
 
-                  <!-- Badges des prénoms des enfants -->
                   <div class="flex flex-wrap gap-1 pt-1">
                     <template x-for="(prenom, pIdx) in g.enfants" :key="pIdx">
                       <span class="bg-white/10 text-white/90 text-[10px] px-2 py-0.5 rounded-md font-medium" x-text="prenom"></span>
@@ -448,7 +536,6 @@
           </div>
         </template>
 
-        <!-- LISTE DES ANIMATEURS ET LEUR PLANNING -->
         <div class="space-y-2.5">
           <h3 class="text-xs font-bold text-white/70 uppercase tracking-wider">Planning des Animateurs</h3>
 
@@ -465,7 +552,6 @@
                 </button>
               </div>
 
-              <!-- Bloc Créneaux Matin / Après-midi -->
               <div class="grid grid-cols-2 gap-2 text-xs">
                 <div class="bg-indigo-950/60 p-2 rounded-xl border border-indigo-500/30">
                   <span class="text-[9px] font-bold uppercase text-indigo-300 block mb-0.5">☀️ Matin</span>
@@ -612,7 +698,7 @@
       </div>
     </div>
 
-    <!-- MODAL : AJOUTER OU MODIFIER UN CRÉNEAU (CHAMP DATE CORRIGÉ) -->
+    <!-- MODAL : AJOUTER OU MODIFIER UN CRÉNEAU -->
     <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
       <div class="glass-panel p-5 rounded-3xl max-w-sm w-full space-y-3 box-border overflow-hidden">
         <h3 class="font-bold text-sm text-emerald-300 border-b border-white/10 pb-2">Ajouter / Modifier un Créneau</h3>
@@ -625,7 +711,6 @@
 
           <div>
             <label class="block text-[10px] font-bold uppercase text-white/70 mb-1">Date du créneau</label>
-            <!-- CORRECTION RONGÉ / COUPÉ -->
             <input type="date" x-model="saisiePlanning.date" class="w-full glass-input px-2.5 py-2 rounded-xl text-xs focus:outline-none bg-slate-900/90 box-border border border-white/20">
           </div>
 
@@ -688,172 +773,229 @@
         nouvelleCourseQte: '',
         showAddAnimModal: false,
         showOrgModal: false,
+        showAddRecetteModal: false,
+        showPlanifModal: false,
         animSelectionne: null,
         toast: { show: false, message: '' },
 
-        // MODULE GOÛTER LOGIC
-        gouterNbEnfants: 20,
-        gouterSelectedRecipeId: 'choco',
-        gouterCalculResult: { nbUnites: 1, ingredients: [] },
-        listeCoursesGouter: [
-          { id: 101, nom: 'Farine de blé', qte: '600', unite: 'g', recetteNom: 'Gâteau Chocolat', achete: false },
-          { id: 102, nom: 'Œufs', qte: '12', unite: '', recetteNom: 'Gâteau Chocolat', achete: false }
-        ],
+        // NAVIGATION PAR SEMAINE POUR LES GOÛTERS
+        semaineActiveOffset: 0, // 0 = semaine courante, -1 = semaine dernière, 1 = semaine prochaine
 
+        // MODÈLE DE CRÉATION DE RECETTE (BASE FIXE DE 8 ENFANTS PAR GÂTEAU)
+        nouvelleRecette: { nom: '', ingredients: [] },
+        tempIng: { nom: '', qte: '', unite: '' },
+
+        // BASE DE DONNÉES RECETTES
         recettesGouter: [
           {
-            id: 'choco',
+            id: 'recette-chocolat',
             nom: 'Gâteau au Chocolat',
-            pourEnfants: 8,
-            typeUnite: 'gâteau(x)',
             ingredients: [
               { nom: 'Farine', qte: 100, unite: 'g' },
-              { nom: 'Chocolat à pâtisser', qte: 200, unite: 'g' },
+              { nom: 'Chocolat noir', qte: 200, unite: 'g' },
               { nom: 'Beurre', qte: 125, unite: 'g' },
               { nom: 'Sucre', qte: 100, unite: 'g' },
-              { nom: 'Œufs', qte: 4, unite: '' }
+              { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }
             ]
           },
           {
-            id: 'yaourt',
-            nom: 'Gâteau au Yaourt',
-            pourEnfants: 8,
-            typeUnite: 'gâteau(x)',
+            id: 'recette-pommes',
+            nom: 'Gâteau aux Pommes',
             ingredients: [
-              { nom: 'Yaourt nature', qte: 1, unite: 'pot(s)' },
-              { nom: 'Farine', qte: 3, unite: 'pot(s)' },
-              { nom: 'Sucre', qte: 2, unite: 'pot(s)' },
-              { nom: 'Huile', qte: 0.5, unite: 'pot(s)' },
-              { nom: 'Œufs', qte: 3, unite: '' },
-              { nom: 'Levure chimique', qte: 1, unite: 'sachet(s)' }
-            ]
-          },
-          {
-            id: 'crepes',
-            nom: 'Crêpes Party',
-            pourEnfants: 6,
-            typeUnite: 'tournée(s)',
-            ingredients: [
-              { nom: 'Farine', qte: 250, unite: 'g' },
-              { nom: 'Lait', qte: 0.5, unite: 'L' },
-              { nom: 'Œufs', qte: 4, unite: '' },
-              { nom: 'Beurre fondu', qte: 50, unite: 'g' },
-              { nom: 'Sucre vanillé', qte: 2, unite: 'sachet(s)' }
+              { nom: 'Farine', qte: 150, unite: 'g' },
+              { nom: 'Pommes', qte: 3, unite: 'pièce(s)' },
+              { nom: 'Sucre', qte: 80, unite: 'g' },
+              { nom: 'Beurre', qte: 80, unite: 'g' },
+              { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }
             ]
           }
         ],
+
+        // FORMULAIRE DE PLANIFICATION DE GOÛTER
+        saisieGouter: {
+          date: todayISO,
+          recetteId: 'recette-chocolat',
+          anim: '',
+          nbEnfants: 32
+        },
+
+        // LISTE DE TOUS LES GOÛTERS PLANIFIÉS
+        goutersPlanifies: [],
+
+        // EST-CE QUE L'ARTICLE EST COCHÉ ACHETÉ DANS LA SEMAINE ?
+        coursesAchetesGouter: {}, // structure: { "semaineKey_ingredientName_unite": true/false }
 
         init() {
-          this.recalculerGouter();
+          // Exemples par défaut pour illustrer
+          const lundi = this.getLundiDeLaSemaine(new Date());
+          const mardiStr = this.addDaysISO(lundi, 1);
+          const jeudiStr = this.addDaysISO(lundi, 3);
+
+          this.goutersPlanifies = [
+            { id: 'g1', date: mardiStr, recetteId: 'recette-chocolat', anim: 'Sarah', nbEnfants: 35 },
+            { id: 'g2', date: jeudiStr, recetteId: 'recette-pommes', anim: 'Thomas', nbEnfants: 24 }
+          ];
         },
 
-        getRecetteCourante() {
-          return this.recettesGouter.find(r => r.id === this.gouterSelectedRecipeId) || this.recettesGouter[0];
+        // UTILS DATES & SEMAINE
+        getLundiDeLaSemaine(d) {
+          const date = new Date(d);
+          const day = date.getDay();
+          const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+          return new Date(date.setDate(diff));
         },
 
-        recalculerGouter() {
-          const r = this.getRecetteCourante();
-          const nbE = Math.max(1, this.gouterNbEnfants || 1);
-          // Arrondi au supérieur Math.ceil
-          const multiplier = Math.ceil(nbE / r.pourEnfants);
-
-          const ingCalcul = r.ingredients.map(ing => ({
-            nom: ing.nom,
-            qte: ing.qte * multiplier,
-            unite: ing.unite
-          }));
-
-          this.gouterCalculResult = {
-            nbUnites: multiplier,
-            ingredients: ingCalcul
-          };
+        addDaysISO(dateObj, days) {
+          const res = new Date(dateObj);
+          res.setDate(res.getDate() + days);
+          return res.toISOString().split('T')[0];
         },
 
-        envoyerGouterEnCourses() {
-          const r = this.getRecetteCourante();
-          this.gouterCalculResult.ingredients.forEach(ing => {
-            this.listeCoursesGouter.unshift({
-              id: Date.now() + Math.random(),
-              nom: ing.nom,
-              qte: ing.qte,
-              unite: ing.unite,
-              recetteNom: r.nom,
-              achete: false
+        changerSemaine(delta) {
+          this.semaineActiveOffset += delta;
+        },
+
+        getDatesSemaineActive() {
+          const lundiCourant = this.getLundiDeLaSemaine(new Date());
+          lundiCourant.setDate(lundiCourant.getDate() + (this.semaineActiveOffset * 7));
+
+          const dates = [];
+          for (let i = 0; i < 7; i++) {
+            dates.push(this.addDaysISO(lundiCourant, i));
+          }
+          return dates;
+        },
+
+        getLibelleSemaine() {
+          const dates = this.getDatesSemaineActive();
+          const dDeb = new Date(dates[0]);
+          const dFin = new Date(dates[6]);
+          const options = { day: 'numeric', month: 'short' };
+          return `Semaine du ${dDeb.toLocaleDateString('fr-FR', options)} au ${dFin.toLocaleDateString('fr-FR', options)}`;
+        },
+
+        getGoutersDeLaSemaine() {
+          const datesSemaine = this.getDatesSemaineActive();
+          return this.goutersPlanifies.filter(g => datesSemaine.includes(g.date))
+                                     .sort((a,b) => a.date.localeCompare(b.date));
+        },
+
+        getNomRecette(id) {
+          const r = this.recettesGouter.find(item => item.id === id);
+          return r ? r.nom : 'Recette inconnue';
+        },
+
+        // GESTION RECETTES
+        ajouterIngredierntRecette() {
+          if (this.tempIng.nom.trim() !== '' && this.tempIng.qte > 0) {
+            this.nouvelleRecette.ingredients.push({
+              nom: this.tempIng.nom.trim(),
+              qte: this.tempIng.qte,
+              unite: this.tempIng.unite.trim() || 'u'
             });
-          });
-          this.showToast('Ingrédients ajoutés aux courses Goûter !');
-        },
-
-        deleteCourseGouter(id) {
-          this.listeCoursesGouter = this.listeCoursesGouter.filter(item => item.id !== id);
-        },
-
-        viderGouterAchetes() {
-          this.listeCoursesGouter = this.listeCoursesGouter.filter(item => !item.achete);
-          this.showToast('Liste goûter nettoyée !');
-        },
-
-        fiche: {
-          titre: '',
-          age: '-6 ans',
-          lieu: '',
-          objectif: '',
-          deroulement: '',
-          materiel: [
-            { nom: 'Peinture acrylique', qte: '2 bidons' },
-            { nom: 'Pinceaux brosses', qte: '10' }
-          ]
-        },
-
-        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
-
-        registreSoins: [
-          { id: 1, enfant: 'Yanis M.', incident: 'Écorchure genou droit', action: 'Désinfectant + pansement', heure: '14:30', prevenirFamille: true }
-        ],
-
-        listeCourses: [
-          { id: 1, nom: 'Peinture acrylique', qte: '2 bidons', activite: 'Grand Jeu Harry Potter', achete: false },
-          { id: 2, nom: 'Papier kraft', qte: '1 rouleau', activite: 'Fresque géante', achete: true }
-        ],
-
-        saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
-
-        organisations: {
-          [todayISO]: {
-            date: todayISO,
-            titre: 'Sortie au Zoo de Beauval',
-            lieu: 'Zoo de Beauval',
-            busAller: '08h30 (Centre)',
-            busRetour: '16h30 (Beauval)',
-            consignes: 'Casquette + sac à dos léger + pique-nique.',
-            groupes: [
-              { anim: 'Sarah Martin', enfants: ['Lucas B.', 'Yanis M.', 'Léa P.', 'Emma T.', 'Hugo D.'] },
-              { anim: 'Léo Dubois', enfants: ['Gabriel R.', 'Inès M.', 'Arthur S.', 'Chloé V.'] }
-            ]
+            this.tempIng = { nom: '', qte: '', unite: '' };
           }
         },
 
+        enregistrerNouvelleRecette() {
+          if (this.nouvelleRecette.nom.trim() === '') {
+            this.showToast('Donne un nom à la recette.');
+            return;
+          }
+          if (this.nouvelleRecette.ingredients.length === 0) {
+            this.showToast('Ajoute au moins 1 ingrédient.');
+            return;
+          }
+
+          const newId = 'recette-' + Date.now();
+          this.recettesGouter.push({
+            id: newId,
+            nom: this.nouvelleRecette.nom.trim(),
+            ingredients: JSON.parse(JSON.stringify(this.nouvelleRecette.ingredients))
+          });
+
+          this.saisieGouter.recetteId = newId;
+          this.nouvelleRecette = { nom: '', ingredients: [] };
+          this.showAddRecetteModal = false;
+          this.showToast('Nouvelle recette (base 8 enfants) créée !');
+        },
+
+        // PLANIFICATION DE GOÛTER
+        enregistrerGouterPlanifie() {
+          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) {
+            this.showToast('Choisis une date et une recette.');
+            return;
+          }
+
+          this.goutersPlanifies.push({
+            id: 'gouter-' + Date.now(),
+            date: this.saisieGouter.date,
+            recetteId: this.saisieGouter.recetteId,
+            anim: this.saisieGouter.anim.trim() || 'Animateur',
+            nbEnfants: this.saisieGouter.nbEnfants || 8
+          });
+
+          this.showPlanifModal = false;
+          this.showToast('Goûter planifié avec succès !');
+        },
+
+        supprimerGouterPlanifie(id) {
+          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
+          this.showToast('Goûter retiré de la planification.');
+        },
+
+        // LISTE AGRÉGÉE DE COURSES POUR LA SEMAINE ACTIVE
+        getListeCoursesAgregeeSemaine() {
+          const gouters = this.getGoutersDeLaSemaine();
+          const cumule = {};
+
+          gouters.forEach(g => {
+            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
+            if (recette) {
+              // Nombre de gâteaux = Arrondi supérieur d'enfants / 8
+              const nbGateaux = Math.ceil((g.nbEnfants || 8) / 8);
+
+              recette.ingredients.forEach(ing => {
+                const key = `${ing.nom.toLowerCase().trim()}_${ing.unite.toLowerCase().trim()}`;
+                if (!cumule[key]) {
+                  cumule[key] = {
+                    key: key,
+                    nom: ing.nom,
+                    qte: 0,
+                    unite: ing.unite
+                  };
+                }
+                cumule[key].qte += (ing.qte * nbGateaux);
+              });
+            }
+          });
+
+          return Object.values(cumule).map(item => ({
+            ...item,
+            qte: Number(item.qte.toFixed(2))
+          }));
+        },
+
+        estAcheteCourseGouter(key) {
+          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
+          return !!this.coursesAchetesGouter[semaineKey];
+        },
+
+        toggleAcheteCourseGouter(key) {
+          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
+          this.coursesAchetesGouter[semaineKey] = !this.coursesAchetesGouter[semaineKey];
+        },
+
+        // FICHE & SOINS & AUTRES
+        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
+        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
+        registreSoins: [],
+        listeCourses: [],
+        saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
+        organisations: {},
         saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] },
         tempGroupe: { anim: '', enfantsTxt: '' },
-
-        planningGlobal: [
-          {
-            id: 1,
-            nom: 'Sarah Martin',
-            role: 'Animateur',
-            dates: {
-              [todayISO]: { matin: 'Accompagnement Sortie Zoo', aprem: 'Accompagnement Sortie Zoo' }
-            }
-          },
-          {
-            id: 2,
-            nom: 'Léo Dubois',
-            role: 'Animateur',
-            dates: {
-              [todayISO]: { matin: 'Accompagnement Sortie Zoo', aprem: 'Accompagnement Sortie Zoo' }
-            }
-          }
-        ],
+        planningGlobal: [],
 
         getTodayISO() {
           const d = new Date();
