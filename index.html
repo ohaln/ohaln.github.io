@@ -1,1205 +1,177 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
-<meta name="theme-color" content="#120826">
-<title>Calculateur Taux d'encadrement ALSH — Outil SDJES</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
-
-<!-- Fonts Premium Style Cloudstudio -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
-
-<style>
-  :root {
-    --bg-dark: #120826;
-    --card-bg: #1B0F38;
-    --card-inner: #0C051B;
-    
-    /* Palette Violet & Jaune */
-    --yellow: #FFE600;
-    --yellow-hover: #FFF066;
-    --violet-neon: #C084FC;
-    --violet-glow: #A855F7;
-    --violet-light: #F3E8FF;
-    
-    --text-white: #FFFFFF;
-    --text-muted: #A79BCE;
-    --text-dark: #0F081D;
-
-    --border-subtle: rgba(255, 255, 255, 0.12);
-    --border-highlight: rgba(255, 230, 0, 0.4);
-
-    --radius-xl: 28px;
-    --radius-lg: 20px;
-    --radius-pill: 999px;
-
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    background-color: var(--bg-dark);
-    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    color: var(--text-white);
-    display: flex;
-    justify-content: center;
-  }
-
-  /* Structural Container (Pocket Size style) */
-  body {
-    padding: 16px;
-    padding-bottom: max(90px, calc(40px + env(safe-area-inset-bottom)));
-  }
-
-  main {
-    width: 100%;
-    max-width: 460px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  /* Micro-Header Monospace Label */
-  .mono-tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--yellow);
-  }
-
-  /* Base Card Styling */
-  .card-block {
-    background: var(--card-bg);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-xl);
-    padding: 22px;
-    position: relative;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-  }
-
-  /* Header Card */
-  .hero-card {
-    background: linear-gradient(145deg, #24144A, #160C30);
-    border: 1px solid rgba(192, 132, 252, 0.25);
-  }
-
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .eyebrow-badge {
-    background: var(--card-inner);
-    padding: 6px 14px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-subtle);
-  }
-
-  .btn-reset {
-    background: rgba(255, 255, 255, 0.08);
-    border: none;
-    color: var(--text-muted);
-    padding: 6px 14px;
-    border-radius: var(--radius-pill);
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .btn-reset:hover {
-    background: var(--yellow);
-    color: var(--text-dark);
-  }
-
-  h1 {
-    font-size: 32px;
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin: 8px 0 6px 0;
-  }
-
-  .sub {
-    color: var(--text-muted);
-    font-size: 13.5px;
-    margin: 0;
-    font-weight: 600;
-  }
-
-  /* Section Title */
-  .section-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    margin-top: 6px;
-  }
-
-  /* Regimes Grid (Cloudstudio options style) */
-  .regime-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .regime-card {
-    background: var(--card-inner);
-    border: 2px solid transparent;
-    border-radius: var(--radius-lg);
-    padding: 14px 12px;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.2s var(--ease-out);
-    color: var(--text-white);
-  }
-
-  .regime-card .r-title {
-    display: block;
-    font-size: 14px;
-    font-weight: 800;
-  }
-
-  .regime-card .r-sub {
-    display: block;
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 3px;
-    font-weight: 600;
-  }
-
-  .regime-card:hover {
-    border-color: rgba(255, 230, 0, 0.4);
-    transform: translateY(-2px);
-  }
-
-  .regime-card.active {
-    background: var(--yellow);
-    color: var(--text-dark);
-    border-color: var(--yellow);
-  }
-
-  .regime-card.active .r-sub {
-    color: rgba(15, 8, 29, 0.75);
-  }
-
-  /* Note PEDT Info */
-  .pedt-info-note {
-    background: var(--card-inner);
-    border-left: 4px solid var(--violet-neon);
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.4;
-    margin-bottom: 18px;
-  }
-  .pedt-info-note strong { color: var(--text-white); }
-
-  /* Info Tooltip Icon */
-  .info-icon {
-    background: var(--card-inner);
-    border: 1px solid var(--border-subtle);
-    color: var(--yellow);
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    cursor: help;
-    position: relative;
-  }
-  .info-icon:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 130%;
-    right: 0;
-    width: 220px;
-    background: var(--card-inner);
-    border: 1px solid var(--yellow);
-    color: #fff;
-    padding: 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    z-index: 99;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  }
-
-  /* Fields & Steppers */
-  .field { margin-bottom: 14px; }
-  .field label {
-    display: block;
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: var(--text-white);
-  }
-
-  .stepper {
-    display: flex;
-    align-items: center;
-    background: var(--card-inner);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-pill);
-    padding: 5px;
-  }
-
-  .stepper input {
-    width: 100%;
-    border: none;
-    background: transparent;
-    color: var(--yellow);
-    font-size: 24px;
-    font-weight: 900;
-    text-align: center;
-    outline: none;
-  }
-
-  .stepbtn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: none;
-    background: var(--violet-neon);
-    color: var(--text-dark);
-    font-size: 22px;
-    font-weight: 900;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.15s ease, background 0.15s ease;
-    flex-shrink: 0;
-  }
-
-  .stepbtn:hover { background: var(--yellow); }
-  .stepbtn:active { transform: scale(0.9); }
-
-  /* Total Kids Indicator */
-  .total-kids-indicator {
-    background: var(--card-inner);
-    border-radius: var(--radius-pill);
-    padding: 8px 16px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 700;
-    margin: 12px 0;
-  }
-  .total-kids-indicator strong { color: var(--yellow); font-size: 14px; }
-
-  .safety-alert {
-    display: none;
-    background: rgba(255, 77, 77, 0.15);
-    border: 1px solid #FF4D4D;
-    color: #FF7070;
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 12px;
-    font-weight: 700;
-    margin-top: 8px;
-  }
-  .safety-alert.visible { display: block; }
-
-  /* Mutual Selector Switch */
-  .mutual-selector {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    background: var(--card-inner);
-    padding: 5px;
-    border-radius: var(--radius-pill);
-    margin-top: 6px;
-  }
-
-  .mutual-btn {
-    background: transparent;
-    border: none;
-    padding: 10px;
-    border-radius: var(--radius-pill);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: center;
-  }
-
-  .mutual-btn strong { display: block; font-size: 12px; font-weight: 800; color: #fff; }
-  .mutual-btn small { font-size: 10px; opacity: 0.7; }
-
-  .mutual-btn.active {
-    background: var(--violet-neon);
-    color: var(--text-dark);
-  }
-  .mutual-btn.active strong { color: var(--text-dark); }
-  .mutual-btn.active small { color: rgba(15, 8, 29, 0.8); }
-
-  /* Toggle Switches */
-  .toggle-group {
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border-subtle);
-  }
-
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-  }
-
-  .toggle-row small { display: block; color: var(--text-muted); font-size: 11px; font-weight: 500; }
-  .toggle-row input { display: none; }
-
-  .switch {
-    width: 50px;
-    height: 28px;
-    background: var(--card-inner);
-    border-radius: var(--radius-pill);
-    position: relative;
-    border: 1px solid var(--border-subtle);
-    transition: background 0.3s ease;
-    flex-shrink: 0;
-  }
-  .switch::after {
-    content: "";
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #fff;
-    transition: transform 0.25s var(--ease-bounce);
-  }
-  .toggle-row input:checked + .switch {
-    background: var(--yellow);
-  }
-  .toggle-row input:checked + .switch::after {
-    transform: translateX(22px);
-    background: var(--text-dark);
-  }
-  .toggle-row.disabled { opacity: 0.4; pointer-events: none; }
-
-  /* Visual Pool / Gauge display */
-  .pool-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-  .badge-mutualized {
-    background: var(--yellow);
-    color: var(--text-dark);
-    font-size: 10px;
-    font-weight: 900;
-    padding: 3px 10px;
-    border-radius: var(--radius-pill);
-    opacity: 0;
-    transform: scale(0.85);
-    transition: all 0.3s var(--ease-bounce);
-  }
-  .badge-mutualized.visible { opacity: 1; transform: scale(1); }
-
-  .pool-track { display: flex; gap: 6px; flex-wrap: wrap; }
-  .segment {
-    flex: 1;
-    min-width: 40px;
-    height: 34px;
-    background: var(--card-inner);
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-    display: flex;
-  }
-  .segment .fillA { background: var(--yellow); height: 100%; transition: width 0.3s ease; }
-  .segment .fillB { background: var(--violet-neon); height: 100%; transition: width 0.3s ease; }
-  .segment.ghost { opacity: 0.3; width: 100%; border: 1px dashed var(--text-muted); }
-
-  .pool-split-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-  .pool-subgroup { display: flex; flex-direction: column; gap: 6px; }
-  .subgroup-label { font-size: 11px; font-weight: 800; text-transform: uppercase; }
-  .subgroup-label.lbl-a { color: var(--yellow); }
-  .subgroup-label.lbl-b { color: var(--violet-neon); }
-
-  .pool-legend { display: flex; gap: 14px; margin-top: 10px; }
-  .pool-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); font-weight: 700; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .dot-a { background: var(--yellow); }
-  .dot-b { background: var(--violet-neon); }
-
-  /* Main Result Display */
-  .result-card {
-    background: var(--card-inner);
-    border: 2px solid var(--yellow);
-    text-align: center;
-    padding: 24px;
-  }
-
-  .headline {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 14px;
-  }
-
-  .big {
-    font-size: 68px;
-    font-weight: 900;
-    line-height: 0.95;
-    color: var(--yellow);
-    letter-spacing: -0.04em;
-  }
-  .biglabel {
-    margin-top: 6px;
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--text-white);
-  }
-
-  /* Qualifications Grid */
-  .qgrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .qcard {
-    background: var(--card-inner);
-    border-radius: var(--radius-lg);
-    padding: 12px 6px;
-    text-align: center;
-    border: 1px solid var(--border-subtle);
-  }
-  .qnum { display: block; font-size: 24px; font-weight: 900; color: var(--text-white); }
-  .qlabel { display: block; font-size: 10.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
-  .qmin .qnum { color: var(--yellow); }
-  .qmax .qnum { color: var(--violet-neon); }
-  .qflex .qnum { color: #52E596; }
-
-  /* Main Pill Button (CTA Style) */
-  .btn-share {
-    width: 100%;
-    margin-top: 16px;
-    padding: 16px;
-    border-radius: var(--radius-pill);
-    border: none;
-    background: var(--yellow);
-    color: var(--text-dark);
-    font-size: 14px;
-    font-weight: 900;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s var(--ease-out);
-    box-shadow: 0 8px 20px rgba(255, 230, 0, 0.25);
-  }
-  .btn-share:hover {
-    background: var(--yellow-hover);
-    transform: translateY(-2px);
-  }
-  .btn-share.copied {
-    background: #52E596;
-    color: var(--text-dark);
-  }
-
-  /* Sticky Mini Bar */
-  .sticky-mini-bar {
-    position: fixed;
-    bottom: max(16px, env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%) translateY(120px);
-    width: calc(100% - 32px);
-    max-width: 420px;
-    background: var(--yellow);
-    color: var(--text-dark);
-    border-radius: var(--radius-pill);
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 16px 32px rgba(0,0,0,0.6);
-    z-index: 100;
-    cursor: pointer;
-    opacity: 0;
-    transition: all 0.35s var(--ease-bounce);
-  }
-  .sticky-mini-bar.visible {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-  .mini-count { font-size: 24px; font-weight: 900; }
-  .mini-label { font-size: 12px; font-weight: 800; }
-  .mini-arrow {
-    background: var(--text-dark);
-    color: var(--yellow);
-    padding: 6px 12px;
-    border-radius: var(--radius-pill);
-    font-size: 11px;
-    font-weight: 800;
-  }
-
-  /* Toast Notification */
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--violet-neon);
-    color: var(--text-dark);
-    padding: 10px 22px;
-    border-radius: var(--radius-pill);
-    font-size: 12px;
-    font-weight: 800;
-    opacity: 0;
-    transition: all 0.3s var(--ease-bounce);
-    z-index: 999;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  footer.note {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-align: center;
-    line-height: 1.4;
-    padding: 0 10px;
-  }
-
-  @media (max-width: 360px) {
-    .regime-grid { grid-template-columns: 1fr; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloudstudio Style UI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,800;0,900;1,800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F4F1EA;
+    }
+    .font-mono-custom {
+      font-family: 'Space Mono', monospace;
+    }
+  </style>
 </head>
-<body>
+<body class="p-6 md:p-12 flex flex-col items-center justify-center min-h-screen">
 
-  <main>
-    <!-- Header Hero -->
-    <header class="card-block hero-card">
-      <div class="header-top">
-        <div class="eyebrow-badge">
-          <span class="mono-tag" id="eyebrowBadge">( HORS PEDT · > 5H / JOUR )</span>
-        </div>
-        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser">
-          ↺ Reset
-        </button>
-      </div>
-      <h1>Taux d'encadrement.</h1>
-      <p class="sub">Calculateur ALSH conforme SDJES</p>
-    </header>
-
-    <!-- Inputs Section -->
-    <section class="card-block">
-      <div class="section-head">
-        <span class="mono-tag">( 1. RÉGIME D'ACCUEIL )</span>
-        <span class="info-icon" tabindex="0" role="button" aria-label="Aide PEDT" data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT.">ⓘ</span>
-      </div>
-
-      <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
-        <button type="button" class="regime-card active" role="radio" aria-checked="true" data-regime="hors_p5">
-          <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">+5h par jour</span>
-        </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="hors_m5">
-          <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">≤ 5h par jour</span>
-        </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_p5">
-          <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">+5h par jour</span>
-        </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_m5">
-          <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">≤ 5h par jour</span>
-        </button>
-      </div>
-
-      <div class="pedt-info-note">
-        💡 <strong>C'est quoi le PEDT ?</strong> Le Projet Éducatif de Territoire regroupe les acteurs locaux (écoles, mairie, CAF) et permet de bénéficier de taux d'encadrement aménagés.
-      </div>
-
-      <div class="section-head">
-        <span class="mono-tag">( 2. EFFECTIFS )</span>
-      </div>
-
-      <div class="field">
-        <label for="n36">Enfants de - de 6 ans</label>
-        <div class="stepper">
-          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1">–</button>
-          <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1">+</button>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="n612">Enfants de + de 6 ans</label>
-        <div class="stepper">
-          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1">–</button>
-          <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1">+</button>
-        </div>
-      </div>
-
-      <div class="total-kids-indicator" id="totalKidsIndicator" aria-live="polite">
-        Effectif total : <strong>0</strong> enfant
-      </div>
-
-      <div class="safety-alert" id="safetyAlert" role="alert" aria-live="assertive">
-        ⚠️ <strong>Sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.
-      </div>
-
-      <div class="field">
-        <div class="section-head" style="margin-top: 14px;">
-          <span class="mono-tag">( 3. MODE DE CALCUL )</span>
-          <span class="info-icon" tabindex="0" role="button" aria-label="Aide Mutualisation" data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour optimiser les besoins.">ⓘ</span>
-        </div>
-        <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
-          <button type="button" class="mutual-btn active" role="radio" aria-checked="true" data-mode="avec">
-            <strong>Avec mutualisation</strong>
-            <small>Règle SDJES</small>
-          </button>
-          <button type="button" class="mutual-btn" role="radio" aria-checked="false" data-mode="sans">
-            <strong>Sans mutualisation</strong>
-            <small>Calcul séparé</small>
-          </button>
-        </div>
-      </div>
-
-      <div class="toggle-group">
-        <label class="toggle-row" id="dirRow" for="dirToggle">
-          <span>Directeur inclus dans l'encadrement<small>Possible si effectif total ≤ 50 enfants</small></span>
-          <input type="checkbox" id="dirToggle">
-          <span class="switch"></span>
-        </label>
-      </div>
-    </section>
-
-    <!-- Visual Pool & Main Result Card -->
-    <section class="card-block result-card" id="resultCard" aria-live="polite">
-      <div class="pool">
-        <div class="pool-header">
-          <span class="mono-tag">( POSTES D'ENCADREMENT )</span>
-          <span class="badge-mutualized" id="mutualBadge">⚡ Mutualisé</span>
-        </div>
-        <div class="pool-track" id="poolTrack"></div>
-        <div class="pool-legend">
-          <span><i class="dot dot-a"></i>- de 6 ans</span>
-          <span><i class="dot dot-b"></i>+ de 6 ans</span>
-        </div>
-      </div>
-
-      <div class="headline">
-        <span class="big" id="totalAnim">0</span>
-        <span class="biglabel" id="totalAnimLabel">Anim' sur le terrain</span>
-      </div>
-    </section>
-
-    <!-- Qualifications Grid -->
-    <section class="card-block">
-      <div class="section-head">
-        <span class="mono-tag">( COMPOSITION DE L'ÉQUIPE )</span>
-      </div>
-      <div class="qgrid">
-        <div class="qcard qmin">
-          <span class="qnum" id="qDiplomes">0</span>
-          <span class="qlabel">Diplômé·e·s<br><small>Min. 50%</small></span>
-        </div>
-        <div class="qcard qmax">
-          <span class="qnum" id="qNonDiplomes">0</span>
-          <span class="qlabel">Non-diplômés<br><small>Max. 20%</small></span>
-        </div>
-        <div class="qcard qflex">
-          <span class="qnum" id="qStagiaires">0</span>
-          <span class="qlabel">Stagiaires<br><small>Ajustement</small></span>
-        </div>
-      </div>
-
-      <button type="button" class="btn-share" id="copyBtn">
-        <span id="copyBtnIcon">📋</span> <span id="copyBtnText">Copier le bilan de calcul</span>
-      </button>
-    </section>
-
-    <footer class="note" id="footerNote">
-      Outil indicatif SDJES — Conforme à la législation ALSH en vigueur.
-    </footer>
-  </main>
-
-  <!-- Sticky Mini Bar -->
-  <div class="sticky-mini-bar" id="stickyMiniBar">
-    <div>
-      <span class="mini-count" id="miniAnimCount">0</span>
-      <span class="mini-label" id="miniAnimLabel" style="margin-left:6px;">Anim' requis</span>
-    </div>
-    <span class="mini-arrow">Voir détails ➔</span>
+  <!-- En-tête globale du site -->
+  <div class="w-full max-w-6xl flex justify-between items-center mb-10 font-mono-custom text-xs tracking-widest uppercase text-black font-bold">
+    <span>( SAME SITE — POCKET SIZE )</span>
+    <span>CLOUDSTUDIO.ES</span>
   </div>
 
-  <div class="toast" id="toast" role="status">📋 Bilan copié !</div>
-
-<script>
-  const STORAGE_KEY = 'alsh_calculator_state';
-
-  const n36input = document.getElementById('n36');
-  const n612input = document.getElementById('n612');
-  const totalKidsIndicator = document.getElementById('totalKidsIndicator');
-  const safetyAlert = document.getElementById('safetyAlert');
-  const dirToggle = document.getElementById('dirToggle');
-  const dirRow = document.getElementById('dirRow');
-  const eyebrowBadge = document.getElementById('eyebrowBadge');
-  const footerNote = document.getElementById('footerNote');
-  const mutualBadge = document.getElementById('mutualBadge');
-  const resetBtn = document.getElementById('resetBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const copyBtnIcon = document.getElementById('copyBtnIcon');
-  const copyBtnText = document.getElementById('copyBtnText');
-  const toast = document.getElementById('toast');
-
-  const resultCard = document.getElementById('resultCard');
-  const stickyMiniBar = document.getElementById('stickyMiniBar');
-  const miniAnimCount = document.getElementById('miniAnimCount');
-  const miniAnimLabel = document.getElementById('miniAnimLabel');
-
-  const poolTrack = document.getElementById('poolTrack');
-  const totalAnimEl = document.getElementById('totalAnim');
-  const totalAnimLabelEl = document.getElementById('totalAnimLabel');
-
-  const qDiplomes = document.getElementById('qDiplomes');
-  const qNonDiplomes = document.getElementById('qNonDiplomes');
-  const qStagiaires = document.getElementById('qStagiaires');
-
-  let activeRegimeKey = 'hors_p5';
-  let activeMutualMode = 'avec';
-
-  const REGIMES = {
-    hors_p5: { ratio36: 8,  ratio612: 12, tag: "( HORS PEDT · > 5H / JOUR )" },
-    hors_m5: { ratio36: 10, ratio612: 14, tag: "( HORS PEDT · ≤ 5H / JOUR )" },
-    avec_p5: { ratio36: 10, ratio612: 14, tag: "( AVEC PEDT · > 5H / JOUR )" },
-    avec_m5: { ratio36: 14, ratio612: 18, tag: "( AVEC PEDT · ≤ 5H / JOUR )" }
-  };
-
-  function saveState() {
-    const state = {
-      regime: activeRegimeKey,
-      mutualMode: activeMutualMode,
-      n36: n36input.value,
-      n612: n612input.value,
-      dir: dirToggle.checked
-    };
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-  }
-
-  function loadState() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return;
-      const state = JSON.parse(saved);
-
-      if (state.regime && REGIMES[state.regime]) {
-        activeRegimeKey = state.regime;
-        document.querySelectorAll('.regime-card').forEach(b => {
-          const isActive = b.dataset.regime === activeRegimeKey;
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
-        });
-      }
-      if (state.mutualMode) {
-        activeMutualMode = state.mutualMode;
-        document.querySelectorAll('.mutual-btn').forEach(b => {
-          const isActive = b.dataset.mode === activeMutualMode;
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
-        });
-      }
-      if (state.n36 !== undefined) n36input.value = clampInt(state.n36);
-      if (state.n612 !== undefined) n612input.value = clampInt(state.n612);
-      if (state.dir !== undefined) dirToggle.checked = Boolean(state.dir);
-    } catch(e) {}
-  }
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) {
-        stickyMiniBar.classList.add('visible');
-      } else {
-        stickyMiniBar.classList.remove('visible');
-      }
-    });
-  }, { threshold: 0.15 });
-
-  observer.observe(resultCard);
-
-  stickyMiniBar.addEventListener('click', () => {
-    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  function hapticFeedback() {
-    if ('vibrate' in navigator) {
-      try { navigator.vibrate(8); } catch(e){}
-    }
-  }
-
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 2600);
-  }
-
-  document.querySelectorAll('.regime-card').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      document.querySelectorAll('.regime-card').forEach(c => {
-        c.classList.remove('active');
-        c.setAttribute('aria-checked', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-checked', 'true');
-      activeRegimeKey = btn.dataset.regime;
-      recalc();
-    });
-  });
-
-  document.querySelectorAll('.mutual-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      document.querySelectorAll('.mutual-btn').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-checked', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-checked', 'true');
-      activeMutualMode = btn.dataset.mode;
-      recalc();
-    });
-  });
-
-  function clampInt(v){
-    v = parseInt(v, 10);
-    if (isNaN(v) || v < 0) return 0;
-    return v;
-  }
-
-  document.querySelectorAll('.stepbtn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      const target = document.getElementById(btn.dataset.target);
-      const delta = parseInt(btn.dataset.delta, 10);
-      target.value = clampInt(clampInt(target.value) + delta);
-      recalc();
-    });
-  });
-
-  [n36input, n612input].forEach(inp => {
-    inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^0-9]/g,''); recalc(); });
-    inp.addEventListener('blur', () => { inp.value = clampInt(inp.value); recalc(); });
-  });
-
-  dirToggle.addEventListener('change', () => { hapticFeedback(); recalc(); });
-
-  resetBtn.addEventListener('click', () => {
-    hapticFeedback();
-    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
-    n36input.value = 0;
-    n612input.value = 0;
-    dirToggle.checked = false;
-    recalc();
-    showToast("🔄 Effectifs réinitialisés");
-  });
-
-  function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
-    const currentModeKey = isSplitMode ? 'split' : 'normal';
-    if (poolTrack.dataset.mode !== currentModeKey) {
-      poolTrack.innerHTML = '';
-      poolTrack.dataset.mode = currentModeKey;
-    }
-
-    if (totalNeeded === 0){
-      poolTrack.innerHTML = '<div class="segment ghost"></div>';
-      return;
-    }
-
-    const ghost = poolTrack.querySelector('.ghost');
-    if (ghost) ghost.remove();
-
-    if (isSplitMode) {
-      let container = poolTrack.querySelector('.pool-split-container');
-      if (!container) {
-        poolTrack.innerHTML = '';
-        container = document.createElement('div');
-        container.className = 'pool-split-container';
-        poolTrack.appendChild(container);
-      }
-
-      const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
-      const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
-
-      function syncTrack(groupId, labelText, count, maxRatio, currentKids, fillClass, labelColorClass) {
-        let group = container.querySelector('.' + groupId);
-        if (count === 0) {
-          if (group) group.remove();
-          return;
-        }
-        if (!group) {
-          group = document.createElement('div');
-          group.className = `pool-subgroup ${groupId}`;
-          group.innerHTML = `<span class="subgroup-label ${labelColorClass}"></span><div class="pool-track"></div>`;
-          container.appendChild(group);
-        }
-
-        group.querySelector('.subgroup-label').textContent = labelText;
-        const track = group.querySelector('.pool-track');
-        let segs = Array.from(track.querySelectorAll('.segment'));
-
-        while (segs.length < count) {
-          const seg = document.createElement('div');
-          seg.className = 'segment';
-          seg.innerHTML = `<div class="${fillClass}"></div>`;
-          track.appendChild(seg);
-          segs.push(seg);
-        }
-        while (segs.length > count) {
-          const segToRemove = segs.pop();
-          segToRemove.remove();
-        }
-
-        segs.forEach((seg, i) => {
-          const kidsForAnim = Math.min(maxRatio, currentKids - (i * maxRatio));
-          const fillPct = (kidsForAnim / maxRatio) * 100;
-          const fillEl = seg.querySelector('.' + fillClass);
-          fillEl.style.width = fillPct + '%';
-        });
-      }
-
-      syncTrack('group-a', `- de 6 ans (${count36} Anim' / ${n36} enf.)`, count36, r1, n36, 'fillA', 'lbl-a');
-      syncTrack('group-b', `+ de 6 ans (${count612} Anim' / ${n612} enf.)`, count612, r2, n612, 'fillB', 'lbl-b');
-
-    } else {
-      let existingSegs = Array.from(poolTrack.querySelectorAll(':scope > .segment'));
-
-      while (existingSegs.length < totalNeeded) {
-        const seg = document.createElement('div');
-        seg.className = 'segment';
-        const fillA = document.createElement('div');
-        fillA.className = 'fillA';
-        const fillB = document.createElement('div');
-        fillB.className = 'fillB';
-        seg.appendChild(fillA);
-        seg.appendChild(fillB);
-        poolTrack.appendChild(seg);
-        existingSegs.push(seg);
-      }
-
-      while (existingSegs.length > totalNeeded) {
-        const segToRemove = existingSegs.pop();
-        segToRemove.remove();
-      }
-
-      const total36Anims = n36 / r1;
-      const total612Anims = n612 / r2;
-
-      existingSegs.forEach((seg, i) => {
-        let fillAPct = 0;
-        let fillBPct = 0;
-
-        if (total36Anims + total612Anims > 0) {
-          const segStart = i;
-          const segEnd = i + 1;
-          const aEnd = Math.min(segEnd, total36Anims);
-          const aStart = Math.max(segStart, 0);
-          fillAPct = Math.max(0, aEnd - aStart) * 100;
-
-          const bStart = Math.max(segStart, total36Anims);
-          const bEnd = Math.min(segEnd, total36Anims + total612Anims);
-          fillBPct = Math.max(0, bEnd - bStart) * 100;
-        }
-
-        const fillA = seg.querySelector('.fillA');
-        const fillB = seg.querySelector('.fillB');
-
-        fillA.style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
-        fillB.style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
-      });
-    }
-  }
-
-  function animateNumber(el, to){
-    const from = parseInt(el.textContent, 10) || 0;
-    if (from === to){ return; }
-    const duration = 250;
-    const start = performance.now();
-    const ease = t => 1 - Math.pow(1 - t, 3);
-
-    function step(now){
-      const t = Math.min(1, (now - start) / duration);
-      const val = Math.round(from + (to - from) * ease(t));
-      el.textContent = val;
-      if (t < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
-  function recalc(){
-    const currentRegime = REGIMES[activeRegimeKey];
-    eyebrowBadge.textContent = currentRegime.tag;
-
-    const n36 = clampInt(n36input.value);
-    const n612 = clampInt(n612input.value);
-    const effectif = n36 + n612;
-
-    totalKidsIndicator.innerHTML = `Effectif total : <strong>${effectif}</strong> enfant${effectif > 1 ? 's' : ''}`;
-
-    const r1 = currentRegime.ratio36;
-    const r2 = currentRegime.ratio612;
-
-    const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
-    const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
-    const naiveSum = naive36 + naive612;
-
-    let totalNeeded = 0;
-
-    if (effectif > 0) {
-      if (activeMutualMode === 'avec') {
-        const fullGroups = Math.floor(n36 / r1) + Math.floor(n612 / r2);
-        const rem36 = n36 % r1;
-        const rem612 = n612 % r2;
-        const remTotal = rem36 + rem612;
-
-        if (remTotal === 0) {
-          totalNeeded = fullGroups;
-        } else if (remTotal <= r1) {
-          totalNeeded = fullGroups + 1;
-        } else {
-          totalNeeded = fullGroups + 2;
-        }
-      } else {
-        totalNeeded = naiveSum;
-      }
-
-      if (totalNeeded < 2) {
-        totalNeeded = 2;
-        safetyAlert.classList.add('visible');
-      } else {
-        safetyAlert.classList.remove('visible');
-      }
-    } else {
-      safetyAlert.classList.remove('visible');
-    }
-
-    const isSplitMode = (activeMutualMode === 'sans');
-    renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode);
-
-    const directorEligible = effectif > 0 && effectif <= 50;
-    dirRow.classList.toggle('disabled', !directorEligible);
-    if (!directorEligible) dirToggle.checked = false;
-
-    let displayed = totalNeeded;
-    if (dirToggle.checked && directorEligible){
-      displayed = Math.max(totalNeeded - 1, 0);
-      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ le directeur)";
-    } else {
-      totalAnimLabelEl.textContent = "Anim' sur le terrain";
-    }
-    
-    animateNumber(totalAnimEl, displayed);
-    miniAnimCount.textContent = displayed;
-    miniAnimLabel.textContent = "Anim' requis";
-
-    const saved = naiveSum - totalNeeded;
-    if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
-      mutualBadge.textContent = `⚡ -${saved} Anim' mutualisé${saved > 1 ? 's' : ''}`;
-      mutualBadge.classList.add('visible');
-    } else {
-      mutualBadge.classList.remove('visible');
-    }
-
-    const base = displayed;
-    const diplomesMin = Math.ceil(base * 0.5);
-    const nonDiplomesMax = Math.floor(base * 0.2);
-    const stagiaires = Math.max(base - diplomesMin - nonDiplomesMax, 0);
-
-    animateNumber(qDiplomes, diplomesMin);
-    animateNumber(qNonDiplomes, nonDiplomesMax);
-    animateNumber(qStagiaires, stagiaires);
-
-    let modeText = activeMutualMode === 'avec' 
-      ? "Avec mutualisation (Règle SDJES)" 
-      : "Sans mutualisation (Calcul séparé)";
-
-    footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
-    
-    saveState();
-  }
-
-  copyBtn.addEventListener('click', () => {
-    hapticFeedback();
-    const currentRegime = REGIMES[activeRegimeKey];
-    const n36 = clampInt(n36input.value);
-    const n612 = clampInt(n612input.value);
-    const totalKids = n36 + n612;
-    const totalAnim = totalAnimEl.textContent;
-    const mode = activeMutualMode === 'avec' ? "Avec mutualisation" : "Sans mutualisation";
-    const dirInclus = dirToggle.checked ? "Oui" : "Non";
-
-    const textSummary = 
-`📋 BILAN TAUX D'ENCADREMENT ALSH
------------------------------------
-- Régime : ${currentRegime.tag}
-- Effectifs : ${totalKids} enfants (-6ans: ${n36} | +6ans: ${n612})
-- Mode de calcul : ${mode}
-- Directeur inclus sur le terrain : ${dirInclus}
------------------------------------
-> ANIM' REQUIS : ${totalAnim}
-
-Composition recommandée :
-• Diplômés (Min. 50%) : ${qDiplomes.textContent}
-• Non-diplômés (Max. 20%) : ${qNonDiplomes.textContent}
-• Stagiaires BAFA : ${qStagiaires.textContent}
-`;
-
-    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
-      navigator.share({
-        title: "Bilan ALSH",
-        text: textSummary
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(textSummary).then(() => {
-        copyBtn.classList.add('copied');
-        copyBtnIcon.textContent = "✓";
-        copyBtnText.textContent = "Bilan copié !";
-
-        showToast("📋 Bilan copié !");
-
-        setTimeout(() => {
-          copyBtn.classList.remove('copied');
-          copyBtnIcon.textContent = "📋";
-          copyBtnText.textContent = "Copier le bilan de calcul";
-        }, 2200);
-
-      }).catch(() => {
-        showToast("Impossible de copier automatiquement.");
-      });
-    }
-  });
-
-  loadState();
-  recalc();
-</script>
+  <!-- Grille des 3 variations / écrans mobile -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
+
+    <!-- CARTE 1: THE GATE (Jaune) -->
+    <div class="flex flex-col items-center">
+      <div class="w-full bg-[#F8E981] border-[3px] border-black rounded-[2.5rem] p-6 h-[620px] flex flex-col justify-between shadow-2xl relative overflow-hidden">
+        
+        <!-- Header Mobile -->
+        <div class="flex justify-between items-center text-xs font-mono-custom font-bold">
+          <span>cloudstudio*</span>
+          <span class="opacity-60 text-[10px]">SOUND: OFF</span>
+        </div>
+
+        <!-- Hero Content -->
+        <div class="my-auto text-center flex flex-col items-center">
+          <p class="font-mono-custom text-[11px] tracking-widest uppercase mb-2">( CHOOSE YOUR DRIVER )</p>
+          <h1 class="text-4xl sm:text-5xl font-extrabold leading-none tracking-tight text-black mb-4">
+            This site<br>is awake.
+          </h1>
+          <p class="font-mono-custom text-xs tracking-tight text-gray-800 mb-6">
+            Pick one — it tours the site for you.
+          </p>
+
+          <!-- Avatar / Illustration centrale -->
+          <div class="w-20 h-20 rounded-full bg-black flex items-center justify-center relative my-2">
+            <div class="w-16 h-16 rounded-full bg-[#F8E981] border-2 border-black flex items-center justify-center gap-1">
+              <div class="w-2 h-2 bg-black rounded-full"></div>
+              <div class="w-2 h-2 bg-black rounded-full"></div>
+            </div>
+          </div>
+          <span class="font-mono-custom text-xs font-bold mt-2">D O T</span>
+          <span class="font-mono-custom text-[10px] opacity-70">the quick tour</span>
+        </div>
+
+        <!-- Controls Footer -->
+        <div class="bg-black text-white p-3 rounded-3xl flex flex-col gap-2">
+          <div class="flex items-center justify-between px-2 py-1">
+            <button class="w-6 h-6 rounded-full bg-yellow-400 text-black flex items-center justify-center font-bold text-xs">&lt;</button>
+            <div class="flex gap-2">
+              <div class="w-5 h-5 rounded-full bg-gray-700"></div>
+              <div class="w-5 h-5 rounded-full bg-yellow-400 border border-black"></div>
+              <div class="w-5 h-5 rounded-full bg-gray-700"></div>
+            </div>
+            <button class="w-6 h-6 rounded-full bg-yellow-400 text-black flex items-center justify-center font-bold text-xs">&gt;</button>
+          </div>
+          <button class="w-full bg-[#F8E981] text-black font-bold py-3 rounded-full text-xs hover:opacity-90 transition">
+            Let Dot drive &rarr;
+          </button>
+        </div>
+
+      </div>
+      <span class="font-mono-custom text-xs font-bold mt-4 tracking-widest">THE GATE</span>
+    </div>
+
+    <!-- CARTE 2: THE GUIDED TOUR (Bleu) -->
+    <div class="flex flex-col items-center">
+      <div class="w-full bg-[#BDDDF4] border-[3px] border-black rounded-[2.5rem] p-6 h-[620px] flex flex-col justify-between shadow-2xl relative overflow-hidden">
+        
+        <!-- Header Mobile -->
+        <div class="flex justify-between items-center text-xs font-mono-custom font-bold">
+          <span>cloudstudio*</span>
+        </div>
+
+        <!-- Subheader Tags -->
+        <div class="font-mono-custom text-[10px] font-bold tracking-tight uppercase leading-tight my-2">
+          • AI-NATIVE STUDIO - AGENTS - RAG<br>
+          CLAUDE - 18+ YRS
+        </div>
+
+        <!-- Floating Tooltip Card -->
+        <div class="bg-black text-white text-[11px] font-mono-custom p-3 rounded-xl max-w-[160px] self-end mb-2 shadow-lg">
+          That headline isn't a metaphor.
+        </div>
+
+        <!-- Typography Headline -->
+        <div class="my-auto">
+          <h1 class="text-5xl font-black leading-[0.88] tracking-tighter text-black">
+            AI that<br>actually<br>ships.
+          </h1>
+        </div>
+
+        <!-- Description Paragraph -->
+        <p class="text-xs font-semibold leading-snug text-black my-2">
+          AI agents, RAG pipelines and Claude systems for your real workflows — designed, built and run by us. Live in weeks, not quarters.
+        </p>
+
+        <!-- Navigation Pill Bar -->
+        <div class="bg-black text-white p-2 rounded-full flex items-center justify-between">
+          <button class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-xs">🔊</button>
+          <button class="bg-[#BDDDF4] text-black font-bold px-4 py-2 rounded-full text-xs flex items-center gap-1">
+            BOOK A CALL &rarr;
+          </button>
+          <span class="font-mono-custom text-[10px] pr-2">1:18</span>
+        </div>
+
+      </div>
+      <span class="font-mono-custom text-xs font-bold mt-4 tracking-widest">THE GUIDED TOUR</span>
+    </div>
+
+    <!-- CARTE 3: DOT SHOT (Rose) -->
+    <div class="flex flex-col items-center">
+      <div class="w-full bg-[#FFAA9E] border-[3px] border-black rounded-[2.5rem] p-6 h-[620px] flex flex-col justify-between shadow-2xl relative overflow-hidden">
+        
+        <!-- Header Mobile -->
+        <div class="flex justify-between items-center text-xs font-mono-custom font-bold">
+          <span>LEVEL <br><strong class="text-lg">1</strong></span>
+          <span class="text-sm">cloudstudio*</span>
+          <span class="text-right">SCORE <br><strong class="text-lg">0</strong></span>
+        </div>
+
+        <!-- Dark Game Modal Card -->
+        <div class="bg-black text-white rounded-3xl p-6 my-auto text-center flex flex-col items-center shadow-xl border border-gray-800">
+          <h2 class="text-2xl font-black tracking-tight mb-2 text-[#FFAA9E]">DOT SHOT</h2>
+          <p class="font-mono-custom text-[10px] text-gray-300 mb-4 leading-relaxed">
+            TAP / SPACE TO SHOOT DOTS INTO THE SPINNER.<br>
+            HIT ONE OF YOUR OWN DOTS = GAME OVER.
+          </p>
+          <div class="flex items-center gap-2 mb-4 font-mono-custom text-xs">
+            <span class="opacity-50">&lt;</span>
+            <span class="px-3 py-1 border border-gray-700 rounded-full text-[10px]">SPIKE</span>
+            <span class="opacity-50">&gt;</span>
+          </div>
+          <button class="w-full bg-[#FFAA9E] text-black font-extrabold py-3 rounded-full text-xs uppercase tracking-wider mb-2">
+            Tap to start
+          </button>
+          <span class="font-mono-custom text-[9px] opacity-60">sudden death - good luck</span>
+          <span class="font-mono-custom text-[9px] underline mt-1 cursor-pointer">EXIT GAME</span>
+        </div>
+
+        <!-- Bottom Return Pill -->
+        <div class="self-start">
+          <button class="bg-black text-white font-mono-custom text-xs px-4 py-2 rounded-full flex items-center gap-2">
+            &larr; Back to site
+          </button>
+        </div>
+
+      </div>
+      <span class="font-mono-custom text-xs font-bold mt-4 tracking-widest">DOT SHOT</span>
+    </div>
+
+  </div>
+
+  <!-- Footer Tag floating -->
+  <div class="mt-12 bg-black text-[#F8E981] font-mono-custom text-xs font-bold px-6 py-3 rounded-full tracking-wider border-2 border-black uppercase">
+    FULLY RESPONSIVE — TOUR, GAME & ALL
+  </div>
 
 </body>
 </html>
