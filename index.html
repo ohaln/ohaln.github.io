@@ -3,34 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
-<meta name="theme-color" content="#F5F3FF">
-<title>Calculateur Taux d'encadrement ALSH — Outil SDJES</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
+<title>CloudStudio ALSH — Calculator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;800;900&family=Space+Mono:ital,wght@0,700;1,700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800;900&display=swap');
 
   :root {
-    /* Theme Violet & Jaune Neo-Brutalist */
-    --bg-main: #F5F3FF;
-    --brand-violet: #7C3AED;
-    --brand-violet-light: #DDD6FE;
-    --brand-violet-dark: #5B21B6;
-    --brand-yellow: #FACC15;
-    --brand-yellow-bright: #FFE600;
-    
-    --card-bg: #FFFFFF;
-    --border-black: #0F172A;
-    --text-dark: #0F172A;
-    --text-muted: #64748B;
-    
-    /* Structural Rules */
-    --border-w: 3px;
-    --shadow-dist: 5px;
-    --radius-pill: 999px;
-    --radius-card: 22px;
-    --radius-btn: 14px;
+    /* Palette tirée de la référence visuelle */
+    --bg-violet: #D8B4F8;
+    --bg-yellow: #FDE047;
+    --card-dark: #0F0F11;
+    --card-dark-soft: #1A1A1E;
+    --text-light: #F4F4F6;
+    --text-muted: #8E8E93;
+    --text-dark: #0F0F11;
+    --accent-yellow: #FFE600;
+    --accent-purple: #A855F7;
+    --accent-coral: #FCA5A5;
+
+    --font-head: 'Syne', -apple-system, sans-serif;
+    --font-mono: 'Space Mono', monospace;
 
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -41,1191 +34,596 @@
   html, body {
     margin: 0;
     padding: 0;
-    background-color: var(--bg-main);
+    background-color: var(--bg-violet);
     color: var(--text-dark);
-    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    font-family: var(--font-mono);
     min-height: 100vh;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
+    transition: background-color 0.4s ease;
   }
 
   body {
-    padding: 24px 16px max(80px, calc(40px + env(safe-area-inset-bottom)));
+    padding: 20px 16px max(40px, env(safe-area-inset-bottom));
   }
 
   :focus-visible {
-    outline: 3px solid var(--border-black);
+    outline: 2px solid var(--text-dark);
     outline-offset: 3px;
   }
 
-  /* Main Container */
   main {
     width: 100%;
-    max-width: 440px;
+    max-width: 410px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
   }
 
-  /* Cards Base Style */
-  .neo-card {
-    background: var(--card-bg);
-    border: var(--border-w) solid var(--border-black);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-dist) var(--shadow-dist) 0px var(--border-black);
-    padding: 22px 20px;
-    position: relative;
-  }
-
-  /* Header Card */
-  .hero {
-    background: var(--brand-violet);
-    color: #FFFFFF;
-    text-align: center;
-    padding: 26px 20px 22px;
-  }
-
-  .header-top {
+  /* Micro-Header Style Reference ( SAME SITE - POCKET SIZE ) */
+  .top-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-
-  .eyebrow-badge {
-    font-family: 'Space Mono', monospace;
     font-size: 11px;
     font-weight: 700;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    background: var(--brand-yellow);
-    color: var(--border-black);
-    border: 2px solid var(--border-black);
-    padding: 4px 12px;
-    border-radius: var(--radius-pill);
-    box-shadow: 2px 2px 0px var(--border-black);
+    padding: 0 4px;
+    color: rgba(15, 15, 17, 0.7);
   }
 
-  .btn-reset {
-    background: #FFFFFF;
-    border: 2px solid var(--border-black);
-    color: var(--border-black);
-    padding: 4px 12px;
-    border-radius: var(--radius-pill);
+  .btn-mini-action {
+    background: transparent;
+    border: none;
+    font-family: var(--font-mono);
     font-size: 11px;
-    font-weight: 900;
+    font-weight: 700;
     cursor: pointer;
-    box-shadow: 2px 2px 0px var(--border-black);
-    transition: all 0.15s var(--ease-out);
-  }
-  .btn-reset:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0px var(--border-black);
-    background: var(--brand-yellow);
-  }
-  .btn-reset:active {
-    transform: translate(2px, 2px);
-    box-shadow: 0px 0px 0px var(--border-black);
-  }
-
-  h1 {
-    margin: 8px 0 2px;
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-    text-transform: uppercase;
-    color: #FFFFFF;
-  }
-
-  .sub {
-    margin: 0;
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--brand-violet-light);
-  }
-
-  /* Section Labels */
-  .section-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    letter-spacing: -0.02em;
-  }
-  .section-num {
-    background: var(--brand-violet);
-    color: #FFFFFF;
-    padding: 2px 8px;
-    border-radius: 6px;
-    border: 2px solid var(--border-black);
-    margin-right: 6px;
-  }
-
-  .info-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: var(--brand-yellow);
-    border: 2px solid var(--border-black);
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--border-black);
-    cursor: help;
-    position: relative;
-    box-shadow: 2px 2px 0px var(--border-black);
-  }
-  
-  .info-icon:hover::after, .info-icon:focus::after {
-    content: attr(data-tooltip);
-    position: absolute; 
-    bottom: 130%; 
-    right: 0;
-    width: 230px;
-    max-width: 75vw;
-    white-space: normal;
-    background: var(--border-black);
-    color: #FFFFFF;
-    border: 2px solid var(--border-black);
-    padding: 10px 12px; 
-    border-radius: 12px;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 11.5px; 
-    font-weight: 600; 
-    line-height: 1.35;
-    box-shadow: 4px 4px 0px var(--brand-yellow); 
-    z-index: 100; 
-    pointer-events: none;
-    text-transform: none;
-  }
-
-  /* Info Note PEDT */
-  .pedt-info-note {
-    font-size: 11.5px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
     color: var(--text-dark);
-    background: var(--brand-violet-light);
-    border: var(--border-w) solid var(--border-black);
-    border-radius: 12px;
-    padding: 10px 12px;
-    margin: 8px 0 18px;
-    line-height: 1.4;
-    box-shadow: 3px 3px 0px var(--border-black);
-  }
-  .pedt-info-note strong { font-weight: 900; }
-
-  /* Regime Grid */
-  .regime-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
+    padding: 0;
   }
 
-  .regime-card {
-    background: #FFFFFF;
-    border: var(--border-w) solid var(--border-black);
-    border-radius: var(--radius-btn);
-    padding: 12px 12px;
-    text-align: left;
-    cursor: pointer;
-    box-shadow: 3px 3px 0px var(--border-black);
-    transition: all 0.15s var(--ease-out);
-    font-family: inherit;
-  }
-  .regime-card .r-title {
-    display: block;
-    font-size: 13px;
+  /* Title Display Large Reference */
+  .hero-title {
+    font-family: var(--font-head);
     font-weight: 900;
+    font-size: 42px;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    text-transform: lowercase;
+    margin: 8px 0 0;
+    color: var(--text-dark);
   }
-  .regime-card .r-sub {
-    display: block;
-    font-family: 'Space Mono', monospace;
-    font-size: 10.5px;
+
+  .hero-sub {
+    font-size: 11.5px;
+    color: rgba(15, 15, 17, 0.7);
+    margin: 8px 0 0;
+    line-height: 1.35;
+  }
+
+  /* Selector Carousel/Dock (Inspire de la pilule noire de selection) */
+  .selector-dock {
+    background: var(--card-dark);
+    border-radius: 28px;
+    padding: 6px;
+    display: flex;
+    gap: 4px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  }
+
+  .dock-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
     color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 10px 6px;
+    border-radius: 22px;
+    cursor: pointer;
+    transition: all 0.25s var(--ease-out);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .dock-btn.active {
+    background: var(--text-light);
+    color: var(--card-dark);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+
+  /* Blocs Sombre Floating Dark Card */
+  .dark-card {
+    background: var(--card-dark);
+    color: var(--text-light);
+    border-radius: 32px;
+    padding: 24px 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: relative;
+  }
+
+  .card-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  /* Steppers Modern minimal */
+  .stepper-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .stepper-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-light);
+  }
+  .stepper-label small {
+    display: block;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 400;
     margin-top: 2px;
   }
-  .regime-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 5px 5px 0px var(--border-black);
-    background: var(--brand-violet-light);
-  }
-  .regime-card.active {
-    background: var(--brand-yellow);
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0px var(--border-black);
-  }
 
-  /* Stepper Fields */
-  .field { margin-bottom: 14px; }
-  .field label {
-    display: block;
-    font-size: 13px;
-    font-weight: 800;
-    margin-bottom: 6px;
-  }
-
-  .stepper {
+  .stepper-controls {
     display: flex;
     align-items: center;
-    background: #FFFFFF;
-    border: var(--border-w) solid var(--border-black);
-    border-radius: var(--radius-btn);
-    padding: 4px;
-    box-shadow: 3px 3px 0px var(--border-black);
+    background: var(--card-dark-soft);
+    border-radius: 20px;
+    padding: 3px;
   }
 
-  .stepper input {
-    flex: 1;
-    min-width: 0;
-    width: 100%;
-    text-align: center;
+  .step-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 16px;
     border: none;
     background: transparent;
-    color: var(--text-dark);
-    font-family: 'Space Mono', monospace;
-    font-size: 22px;
+    color: var(--text-light);
+    font-family: var(--font-mono);
+    font-size: 18px;
     font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+  }
+  .step-btn:active { background: rgba(255,255,255,0.1); }
+
+  .stepper-val {
+    width: 36px;
+    border: none;
+    background: transparent;
+    color: var(--accent-yellow);
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
     outline: none;
   }
-  .stepper input::-webkit-outer-spin-button,
-  .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-  .stepbtn {
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
-    border-radius: 10px;
-    border: var(--border-w) solid var(--border-black);
-    background: var(--brand-violet);
-    color: #FFFFFF;
-    font-family: 'Space Mono', monospace;
-    font-size: 22px;
-    font-weight: 700;
+  /* Pill Buttons Primary (Inspire du bouton "Let Dot drive ->") */
+  .btn-pill-primary {
+    background: var(--accent-yellow);
+    color: var(--card-dark);
+    border: none;
+    padding: 16px 20px;
+    border-radius: 999px;
+    font-family: var(--font-head);
+    font-weight: 900;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    box-shadow: 2px 2px 0px var(--border-black);
-    transition: all 0.1s var(--ease-out);
-    user-select: none;
+    gap: 8px;
+    box-shadow: 0 8px 20px rgba(253, 224, 71, 0.3);
+    transition: transform 0.2s var(--ease-spring), background-color 0.2s ease;
+    width: 100%;
+    text-transform: lowercase;
   }
-  .stepbtn:hover {
-    background: var(--brand-violet-dark);
-    transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0px var(--border-black);
-  }
-  .stepbtn:active {
-    transform: translate(2px, 2px);
-    box-shadow: 0px 0px 0px var(--border-black);
+  .btn-pill-primary:active {
+    transform: scale(0.97);
   }
 
-  .total-kids-indicator {
+  /* Results Display */
+  .hero-result {
     text-align: center;
-    font-family: 'Space Mono', monospace;
+    padding: 10px 0 6px;
+  }
+
+  .huge-number {
+    font-family: var(--font-head);
+    font-weight: 900;
+    font-size: 88px;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    color: var(--text-light);
+    margin: 4px 0;
+  }
+
+  .huge-label {
     font-size: 12px;
     font-weight: 700;
-    margin: 16px 0 12px;
-    padding: 10px 14px;
-    background: var(--brand-yellow);
-    border: var(--border-w) solid var(--border-black);
-    border-radius: var(--radius-pill);
-    box-shadow: 3px 3px 0px var(--border-black);
-  }
-
-  .safety-alert {
-    display: none;
-    align-items: center;
-    gap: 8px;
-    background: #FCA5A5;
-    border: var(--border-w) solid var(--border-black);
-    padding: 10px 12px;
-    border-radius: var(--radius-btn);
-    font-size: 11.5px;
-    font-weight: 800;
-    margin-top: 10px;
-    box-shadow: 3px 3px 0px var(--border-black);
-  }
-  .safety-alert.visible { display: flex; }
-
-  /* Mutualization Mode Selector */
-  .mutual-selector {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 6px;
-    margin-bottom: 14px;
-  }
-
-  .mutual-btn {
-    background: #FFFFFF;
-    border: var(--border-w) solid var(--border-black);
-    border-radius: var(--radius-btn);
-    padding: 10px;
-    color: var(--text-dark);
-    cursor: pointer;
-    box-shadow: 3px 3px 0px var(--border-black);
-    transition: all 0.15s var(--ease-out);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    font-family: inherit;
-  }
-  .mutual-btn strong { font-size: 12px; font-weight: 900; }
-  .mutual-btn small { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
-
-  .mutual-btn.active {
-    background: var(--brand-violet-light);
-    border-color: var(--border-black);
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0px var(--border-black);
-  }
-
-  /* Toggle Switch */
-  .toggle-group {
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: var(--border-w) solid var(--border-black);
-  }
-
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 800;
-    user-select: none;
-  }
-  .toggle-row small { display: block; font-family: 'Space Mono', monospace; font-weight: 400; color: var(--text-muted); font-size: 10.5px; margin-top: 2px; }
-  .toggle-row input { display: none; }
-  
-  .switch {
-    width: 48px;
-    height: 28px;
-    border-radius: var(--radius-pill);
-    background: #FFFFFF;
-    border: var(--border-w) solid var(--border-black);
-    position: relative;
-    flex-shrink: 0;
-    box-shadow: 2px 2px 0px var(--border-black);
-    transition: background 0.2s var(--ease-out);
-  }
-  .switch::after {
-    content: "";
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--border-black);
-    transition: transform 0.25s var(--ease-spring);
-  }
-  .toggle-row input:checked + .switch {
-    background: var(--brand-yellow);
-  }
-  .toggle-row input:checked + .switch::after {
-    transform: translateX(20px);
-  }
-  .toggle-row.disabled { opacity: 0.4; pointer-events: none; }
-
-  /* Result Card & Visual Pool */
-  .result {
-    background: var(--brand-yellow);
-    border-color: var(--border-black);
-  }
-
-  .pool-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .pool-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent-yellow);
   }
-  
-  .badge-mutualized {
-    display: inline-flex;
+
+  /* Segmented Visual Indicator */
+  .anim-track {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+
+  .anim-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--card-dark-soft);
+    border: 2px solid rgba(255,255,255,0.1);
+    display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: var(--radius-pill);
-    background: var(--brand-violet);
-    color: #FFFFFF;
-    border: 2px solid var(--border-black);
-    font-family: 'Space Mono', monospace;
-    font-size: 10.5px;
+    justify-content: center;
+    font-size: 9px;
     font-weight: 700;
-    box-shadow: 2px 2px 0px var(--border-black);
-    opacity: 0;
-    transform: scale(0.85);
+    color: var(--card-dark);
     transition: all 0.3s var(--ease-spring);
   }
-  .badge-mutualized.visible { opacity: 1; transform: scale(1); }
+  .anim-dot.fill-a { background: var(--accent-yellow); border-color: var(--accent-yellow); }
+  .anim-dot.fill-b { background: var(--bg-violet); border-color: var(--bg-violet); }
 
-  .pool-track { display: flex; gap: 8px; flex-wrap: wrap; }
-  
-  .segment {
-    flex: 1;
-    min-width: 44px;
-    height: 40px;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-    background: #FFFFFF;
-    border: var(--border-w) solid var(--border-black);
-    box-shadow: 3px 3px 0px var(--border-black);
-    display: flex; 
-  }
-
-  .segment.new-seg {
-    animation: segPop 0.3s var(--ease-spring) forwards;
-  }
-
-  @keyframes segPop {
-    from { opacity: 0; transform: scale(0.85); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .segment .fillA, .segment .fillB {
-    height: 100%;
-    width: 0%;
-    transition: width 0.4s var(--ease-out);
-    position: relative;
-  }
-
-  .fillA { background: var(--brand-violet); }
-  .fillB { background: var(--brand-violet-light); }
-
-  .gauge-label {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--border-black);
-    z-index: 2;
-  }
-
-  .segment.ghost { opacity: 0.4; width: 100%; animation: none; }
-  .segment.ghost::after {
-    content: "–";
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-  }
-
-  .pool-split-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-  .pool-subgroup { display: flex; flex-direction: column; gap: 6px; }
-  .subgroup-label { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-  
-  .pool-legend { display: flex; gap: 16px; margin-top: 12px; }
-  .pool-legend span { display: flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; }
-  .dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--border-black); display: inline-block; }
-  .dot-a { background: var(--brand-violet); }
-  .dot-b { background: var(--brand-violet-light); }
-
-  /* Total Display */
-  .headline {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin-top: 18px;
-    flex-wrap: wrap;
-  }
-  
-  .big {
-    font-family: 'Space Mono', monospace;
-    font-size: 68px;
-    font-weight: 700;
-    line-height: 0.85;
-    color: var(--border-black);
-    display: inline-block;
-  }
-  .biglabel { font-size: 15px; font-weight: 900; max-width: 200px; line-height: 1.2; text-transform: uppercase; }
-
-  @keyframes numPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.18); }
-    100% { transform: scale(1); }
-  }
-  .num-pulse { animation: numPulse 0.3s var(--ease-spring); }
-
-  /* Qualifications Grid */
-  .quali h2 {
-    margin: 0 0 12px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  
-  .qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .qcard {
-    background: #FFFFFF;
-    border: var(--border-w) solid var(--border-black);
-    border-radius: var(--radius-btn);
-    padding: 12px 4px;
-    text-align: center;
-    box-shadow: 3px 3px 0px var(--border-black);
-  }
-  .qnum { display: block; font-family: 'Space Mono', monospace; font-size: 26px; font-weight: 700; color: var(--brand-violet); }
-  .qlabel { display: block; margin-top: 2px; font-size: 11px; line-height: 1.2; font-weight: 800; }
-  .qlabel small { color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: 9.5px; font-weight: 400; }
-
-  .btn-share {
-    width: 100%;
-    margin-top: 18px;
-    padding: 14px;
-    border-radius: var(--radius-pill);
-    border: var(--border-w) solid var(--border-black);
-    background: var(--brand-violet);
-    color: #FFFFFF;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 900;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 4px 4px 0px var(--border-black);
-    transition: all 0.15s var(--ease-out);
-  }
-  .btn-share:hover {
-    background: var(--brand-violet-dark);
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px var(--border-black);
-  }
-  .btn-share:active {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0px var(--border-black);
-  }
-
-  .btn-share.copied {
-    background: var(--brand-yellow);
-    color: var(--border-black);
-  }
-
-  /* Sticky Mini Bar */
-  .sticky-mini-bar {
-    position: fixed;
-    bottom: max(16px, env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%) translateY(120px);
-    width: calc(100% - 32px);
-    max-width: 400px;
-    background: var(--brand-yellow);
-    border: var(--border-w) solid var(--border-black);
-    border-radius: var(--radius-pill);
-    padding: 8px 18px;
+  /* Toggles & Options */
+  .option-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 5px 5px 0px var(--border-black);
-    z-index: 100;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.08);
     cursor: pointer;
-    opacity: 0;
-    transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
   }
-  .sticky-mini-bar.visible {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-  .mini-info { display: flex; align-items: center; gap: 10px; }
-  .mini-count { font-family: 'Space Mono', monospace; font-size: 24px; font-weight: 700; color: var(--border-black); }
-  .mini-label { font-size: 12px; font-weight: 900; text-transform: uppercase; }
-  .mini-arrow {
-    font-family: 'Space Mono', monospace;
+
+  .option-text {
     font-size: 11px;
-    background: var(--brand-violet);
-    color: #FFFFFF;
-    border: 2px solid var(--border-black);
-    padding: 4px 12px;
-    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+  }
+  .option-text strong {
+    display: block;
+    color: var(--text-light);
+    font-size: 12px;
+  }
+
+  .custom-switch {
+    width: 42px;
+    height: 24px;
+    background: var(--card-dark-soft);
+    border-radius: 999px;
+    position: relative;
+    transition: background 0.2s ease;
+  }
+  .custom-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background: var(--text-light);
+    border-radius: 50%;
+    transition: transform 0.2s var(--ease-spring);
+  }
+  input:checked + .custom-switch {
+    background: var(--accent-yellow);
+  }
+  input:checked + .custom-switch::after {
+    transform: translateX(18px);
+    background: var(--card-dark);
+  }
+
+  /* Grid Qualifications */
+  .qual-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    background: var(--card-dark-soft);
+    padding: 10px;
+    border-radius: 20px;
+  }
+
+  .qual-item {
+    text-align: center;
+  }
+  .qual-val {
+    font-family: var(--font-head);
+    font-weight: 900;
+    font-size: 20px;
+    color: var(--text-light);
+  }
+  .qual-lbl {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* Safety alert */
+  .alert-banner {
+    background: rgba(252, 165, 165, 0.15);
+    border: 1px solid var(--accent-coral);
+    color: var(--accent-coral);
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 11px;
+    line-height: 1.3;
+    display: none;
+  }
+  .alert-banner.visible { display: block; }
+
+  /* Footer Tag Reference */
+  .bottom-tag {
+    text-align: center;
+    padding: 12px 0;
+  }
+  .tag-pill {
+    display: inline-block;
+    background: var(--card-dark);
+    color: var(--accent-yellow);
+    font-size: 10.5px;
     font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
   }
 
   /* Toast */
   .toast {
     position: fixed;
-    bottom: max(24px, calc(10px + env(safe-area-inset-bottom)));
+    bottom: 20px;
     left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--border-black);
-    color: #FFFFFF;
-    border: var(--border-w) solid var(--border-black);
-    padding: 12px 22px;
-    border-radius: var(--radius-pill);
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--card-dark);
+    color: var(--text-light);
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-size: 11px;
     font-weight: 700;
-    box-shadow: 4px 4px 0px var(--brand-yellow);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     opacity: 0;
-    transition: all 0.35s var(--ease-spring);
-    z-index: 9999;
+    transition: all 0.3s var(--ease-spring);
     pointer-events: none;
+    z-index: 1000;
   }
-  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  footer.note {
-    font-family: 'Space Mono', monospace;
-    font-size: 10.5px;
-    line-height: 1.4;
-    color: var(--text-muted);
-    padding: 0 8px;
-    text-align: center;
-  }
-
-  @media (max-width: 350px) {
-    .regime-grid, .mutual-selector { grid-template-columns: 1fr; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .neo-card, .num-pulse, .btn-share, .regime-card, .stepbtn, .segment { animation: none !important; transition: none !important; }
-    .segment .fillA, .segment .fillB { transition: none !important; }
-  }
-
-  @media print {
-    body { background: #fff !important; color: #000 !important; padding: 0 !important; }
-    .btn-reset, .btn-share, .stepper button, .toast, .sticky-mini-bar { display: none !important; }
-    .neo-card { background: #fff !important; border: 1px solid #000 !important; box-shadow: none !important; opacity: 1 !important; }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
   }
 </style>
 </head>
 <body>
 
   <main>
+    <!-- Header Meta ( SAME SITE - POCKET SIZE ) -->
+    <div class="top-meta">
+      <span>( ALSH — SDJES )</span>
+      <button class="btn-mini-action" id="resetBtn">RESET</button>
+    </div>
 
-    <!-- Header -->
-    <header class="neo-card hero">
-      <div class="header-top">
-        <div class="eyebrow-badge" id="eyebrowBadge">( HORS PEDT · > 5H )</div>
-        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser les effectifs à zéro">
-          ↺ RESET
-        </button>
-      </div>
-      <h1>Taux d'encadrement</h1>
-      <p class="sub">Calculateur ALSH · SDJES</p>
-    </header>
+    <!-- Title Large ( This site is awake. ) -->
+    <div>
+      <h1 class="hero-title">anim’s needed.</h1>
+      <p class="hero-sub">Calculateur instantané du taux d’encadrement réglementaire en accueil de loisirs.</p>
+    </div>
 
-    <!-- Panel Inputs -->
-    <section class="neo-card panel inputs">
-      <div class="section-label">
-        <span><span class="section-num">1</span> Régime d'accueil</span>
-        <span class="info-icon" tabindex="0" role="button" aria-label="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire." data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
-      </div>
-      <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
-        <button type="button" class="regime-card active" role="radio" aria-checked="true" data-regime="hors_p5">
-          <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">+5h / jour</span>
-        </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="hors_m5">
-          <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">≤ 5h / jour</span>
-        </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_p5">
-          <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">+5h / jour</span>
-        </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_m5">
-          <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">≤ 5h / jour</span>
-        </button>
-      </div>
+    <!-- Mode Dock Switcher ( The Guided Tour ) -->
+    <div class="selector-dock" role="radiogroup" aria-label="Régime ALSH">
+      <button class="dock-btn active" data-regime="hors_p5">Hors PEDT<br>&gt; 5h</button>
+      <button class="dock-btn" data-regime="hors_m5">Hors PEDT<br>≤ 5h</button>
+      <button class="dock-btn" data-regime="avec_p5">Avec PEDT<br>&gt; 5h</button>
+      <button class="dock-btn" data-regime="avec_m5">Avec PEDT<br>≤ 5h</button>
+    </div>
 
-      <!-- Explication PEDT -->
-      <div class="pedt-info-note">
-        <strong>💡 C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> réunit les acteurs locaux (écoles, associations, CAF) et permet de bénéficier de taux d'encadrement adaptés.
-      </div>
+    <!-- Floating Dark Card ( Standard CloudStudio UI ) -->
+    <div class="dark-card">
+      <div class="card-tag">( 01 . EFFECTIFS )</div>
 
-      <div class="section-label">
-        <span><span class="section-num">2</span> Effectifs enregistrés</span>
-      </div>
-      <div class="field">
-        <label for="n36">Enfants de - de 6 ans</label>
-        <div class="stepper">
-          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant de - de 6 ans">–</button>
-          <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant de - de 6 ans">+</button>
+      <div class="stepper-row">
+        <div class="stepper-label">
+          Moins de 6 ans
+          <small id="ratioLabel36">Ratio 1 / 8</small>
         </div>
-      </div>
-      <div class="field">
-        <label for="n612">Enfants de + de 6 ans</label>
-        <div class="stepper">
-          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant de + de 6 ans">–</button>
-          <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant de + de 6 ans">+</button>
+        <div class="stepper-controls">
+          <button class="step-btn" data-target="n36" data-delta="-1">–</button>
+          <input type="text" id="n36" class="stepper-val" value="0" readonly>
+          <button class="step-btn" data-target="n36" data-delta="1">+</button>
         </div>
       </div>
 
-      <!-- Compteur total d'enfants -->
-      <div class="total-kids-indicator" id="totalKidsIndicator" aria-live="polite">
-        ( EFFECTIF TOTAL : 0 ENFANT )
-      </div>
-
-      <div class="safety-alert" id="safetyAlert" role="alert" aria-live="assertive">
-        <span>⚠️ <strong>Règle de sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
-      </div>
-
-      <div class="field">
-        <div class="section-label" style="margin-top: 14px;">
-          <span><span class="section-num">3</span> Mode de calcul</span>
-          <span class="info-icon" tabindex="0" role="button" aria-label="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire." data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire.">ⓘ</span>
+      <div class="stepper-row">
+        <div class="stepper-label">
+          6 ans et plus
+          <small id="ratioLabel612">Ratio 1 / 12</small>
         </div>
-        <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
-          <button type="button" class="mutual-btn active" role="radio" aria-checked="true" data-mode="avec">
-            <strong>Avec mutualisation</strong>
-            <small>Règle SDJES</small>
-          </button>
-          <button type="button" class="mutual-btn" role="radio" aria-checked="false" data-mode="sans">
-            <strong>Sans mutualisation</strong>
-            <small>Calcul séparé</small>
-          </button>
+        <div class="stepper-controls">
+          <button class="step-btn" data-target="n612" data-delta="-1">–</button>
+          <input type="text" id="n612" class="stepper-val" value="0" readonly>
+          <button class="step-btn" data-target="n612" data-delta="1">+</button>
         </div>
       </div>
 
-      <div class="toggle-group">
-        <label class="toggle-row" id="dirRow" for="dirToggle">
-          <span>Directeur inclus dans l'encadrement<small>(Possible si total ≤ 50 enfants)</small></span>
-          <input type="checkbox" id="dirToggle">
-          <span class="switch"></span>
-        </label>
-      </div>
-    </section>
-
-    <!-- Carte Résultat -->
-    <section class="neo-card result" id="resultCard" aria-live="polite">
-      <div class="pool">
-        <div class="pool-header">
-          <span class="pool-label">Postes d'encadrement</span>
-          <span class="badge-mutualized" id="mutualBadge">⚡ MUTUALISÉ</span>
-        </div>
-        <div class="pool-track" id="poolTrack"></div>
-        <div class="pool-legend">
-          <span><i class="dot dot-a"></i>- de 6 ans</span>
-          <span><i class="dot dot-b"></i>+ de 6 ans</span>
-        </div>
+      <div class="alert-banner" id="safetyAlert">
+        ⚠️ Minimum 2 animateurs requis en activité.
       </div>
 
-      <div class="headline">
-        <span class="big" id="totalAnim">0</span>
-        <span class="biglabel" id="totalAnimLabel">Anim' sur le terrain</span>
-      </div>
-    </section>
+      <!-- Toggles Options -->
+      <label class="option-row">
+        <span class="option-text">
+          <strong>Mutualisation des restes</strong>
+          Optimisation du nombre total d'anim’s
+        </span>
+        <input type="checkbox" id="mutualToggle" checked style="display:none;">
+        <span class="custom-switch"></span>
+      </label>
 
-    <!-- Qualifications -->
-    <section class="neo-card quali">
-      <h2>( COMPOSITION DE L'ÉQUIPE )</h2>
-      <div class="qgrid">
-        <div class="qcard qmin">
-          <span class="qnum" id="qDiplomes">0</span>
-          <span class="qlabel">Diplômé·e·s<br><small>Min. 50%</small></span>
+      <label class="option-row" id="dirRow">
+        <span class="option-text">
+          <strong>Inclure le directeur</strong>
+          Éligible si effectif total ≤ 50
+        </span>
+        <input type="checkbox" id="dirToggle" style="display:none;">
+        <span class="custom-switch"></span>
+      </label>
+    </div>
+
+    <!-- Result Floating Card -->
+    <div class="dark-card" style="background: #141417;">
+      <div class="card-tag">( 02 . RÉSULTAT )</div>
+
+      <div class="hero-result">
+        <div class="huge-number" id="totalAnim">0</div>
+        <div class="huge-label" id="totalAnimLabel">Animateurs requis</div>
+      </div>
+
+      <!-- Visuel des pastilles d'anim's -->
+      <div class="anim-track" id="animTrack"></div>
+
+      <!-- Qualifications -->
+      <div class="qual-grid">
+        <div class="qual-item">
+          <div class="qual-val" id="qDiplomes">0</div>
+          <div class="qual-lbl">Diplômés</div>
         </div>
-        <div class="qcard qmax">
-          <span class="qnum" id="qNonDiplomes">0</span>
-          <span class="qlabel">Non-diplômé·e·s<br><small>Max. 20%</small></span>
+        <div class="qual-item">
+          <div class="qual-val" id="qStagiaires">0</div>
+          <div class="qual-lbl">Stagiaires</div>
         </div>
-        <div class="qcard qflex">
-          <span class="qnum" id="qStagiaires">0</span>
-          <span class="qlabel">Stagiaires BAFA<br><small>Ajustement</small></span>
+        <div class="qual-item">
+          <div class="qual-val" id="qNonDiplomes">0</div>
+          <div class="qual-lbl">Non-dip.</div>
         </div>
       </div>
 
-      <button type="button" class="btn-share" id="copyBtn">
-        <span id="copyBtnIcon">📋</span> <span id="copyBtnText">COPIER LE BILAN DE CALCUL</span>
+      <!-- Main Action Pill -->
+      <button class="btn-pill-primary" id="copyBtn">
+        copier le bilan ➔
       </button>
-    </section>
+    </div>
 
-    <footer class="note" id="footerNote">
-      Outil indicatif SDJES — Conforme à la législation ALSH en vigueur.
-    </footer>
-
+    <!-- Bottom Tag ( FULLY RESPONSIVE - TOUR, GAME & ALL ) -->
+    <div class="bottom-tag">
+      <span class="tag-pill" id="footerPill">REGIME: HORS PEDT ( > 5H )</span>
+    </div>
   </main>
 
-  <!-- Sticky Mini Bar -->
-  <div class="sticky-mini-bar" id="stickyMiniBar">
-    <div class="mini-info">
-      <span class="mini-count" id="miniAnimCount">0</span>
-      <span class="mini-label" id="miniAnimLabel">Anim' requis</span>
-    </div>
-    <span class="mini-arrow">DÉTAILS ➔</span>
-  </div>
-
-  <div class="toast" id="toast" role="status">📋 Bilan copié dans le presse-papier !</div>
+  <div class="toast" id="toast">Bilan copié dans le presse-papier !</div>
 
 <script>
-  const STORAGE_KEY = 'alsh_calculator_state';
+  const REGIMES = {
+    hors_p5: { ratio36: 8,  ratio612: 12, label: "HORS PEDT ( > 5H )", bg: "#D8B4F8" },
+    hors_m5: { ratio36: 10, ratio612: 14, label: "HORS PEDT ( ≤ 5H )", bg: "#FDE047" },
+    avec_p5: { ratio36: 10, ratio612: 14, label: "AVEC PEDT ( > 5H )", bg: "#93C5FD" },
+    avec_m5: { ratio36: 14, ratio612: 18, label: "AVEC PEDT ( ≤ 5H )", bg: "#FCA5A5" }
+  };
+
+  let activeRegimeKey = 'hors_p5';
 
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
-  const totalKidsIndicator = document.getElementById('totalKidsIndicator');
-  const safetyAlert = document.getElementById('safetyAlert');
+  const mutualToggle = document.getElementById('mutualToggle');
   const dirToggle = document.getElementById('dirToggle');
   const dirRow = document.getElementById('dirRow');
-  const eyebrowBadge = document.getElementById('eyebrowBadge');
-  const footerNote = document.getElementById('footerNote');
-  const mutualBadge = document.getElementById('mutualBadge');
-  const resetBtn = document.getElementById('resetBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const copyBtnIcon = document.getElementById('copyBtnIcon');
-  const copyBtnText = document.getElementById('copyBtnText');
-  const toast = document.getElementById('toast');
-
-  const resultCard = document.getElementById('resultCard');
-  const stickyMiniBar = document.getElementById('stickyMiniBar');
-  const miniAnimCount = document.getElementById('miniAnimCount');
-  const miniAnimLabel = document.getElementById('miniAnimLabel');
-
-  const poolTrack = document.getElementById('poolTrack');
   const totalAnimEl = document.getElementById('totalAnim');
   const totalAnimLabelEl = document.getElementById('totalAnimLabel');
+  const animTrack = document.getElementById('animTrack');
+  const safetyAlert = document.getElementById('safetyAlert');
+  const ratioLabel36 = document.getElementById('ratioLabel36');
+  const ratioLabel612 = document.getElementById('ratioLabel612');
+  const footerPill = document.getElementById('footerPill');
+  const toast = document.getElementById('toast');
 
   const qDiplomes = document.getElementById('qDiplomes');
   const qNonDiplomes = document.getElementById('qNonDiplomes');
   const qStagiaires = document.getElementById('qStagiaires');
 
-  let activeRegimeKey = 'hors_p5';
-  let activeMutualMode = 'avec';
-
-  const REGIMES = {
-    hors_p5: { ratio36: 8,  ratio612: 12, tag: "( HORS PEDT · > 5H )" },
-    hors_m5: { ratio36: 10, ratio612: 14, tag: "( HORS PEDT · ≤ 5H )" },
-    avec_p5: { ratio36: 10, ratio612: 14, tag: "( AVEC PEDT · > 5H )" },
-    avec_m5: { ratio36: 14, ratio612: 18, tag: "( AVEC PEDT · ≤ 5H )" }
-  };
-
-  /* ----- Persistance localStorage ----- */
-  function saveState() {
-    const state = {
-      regime: activeRegimeKey,
-      mutualMode: activeMutualMode,
-      n36: n36input.value,
-      n612: n612input.value,
-      dir: dirToggle.checked
-    };
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch(e) {}
-  }
-
-  function loadState() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return;
-      const state = JSON.parse(saved);
-
-      if (state.regime && REGIMES[state.regime]) {
-        activeRegimeKey = state.regime;
-        document.querySelectorAll('.regime-card').forEach(b => {
-          const isActive = b.dataset.regime === activeRegimeKey;
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
-        });
-      }
-      if (state.mutualMode) {
-        activeMutualMode = state.mutualMode;
-        document.querySelectorAll('.mutual-btn').forEach(b => {
-          const isActive = b.dataset.mode === activeMutualMode;
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
-        });
-      }
-      if (state.n36 !== undefined) n36input.value = clampInt(state.n36);
-      if (state.n612 !== undefined) n612input.value = clampInt(state.n612);
-      if (state.dir !== undefined) dirToggle.checked = Boolean(state.dir);
-    } catch(e) {}
-  }
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) {
-        stickyMiniBar.classList.add('visible');
-      } else {
-        stickyMiniBar.classList.remove('visible');
-      }
-    });
-  }, { threshold: 0.15 });
-
-  observer.observe(resultCard);
-
-  stickyMiniBar.addEventListener('click', () => {
-    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  function hapticFeedback() {
-    if ('vibrate' in navigator) {
-      try { navigator.vibrate(8); } catch(e){}
-    }
-  }
-
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 2600);
-  }
-
-  document.querySelectorAll('.regime-card').forEach(btn => {
+  // Regime Dock Selector
+  document.querySelectorAll('.dock-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      hapticFeedback();
-      document.querySelectorAll('.regime-card').forEach(c => {
-        c.classList.remove('active');
-        c.setAttribute('aria-checked', 'false');
-      });
+      document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      btn.setAttribute('aria-checked', 'true');
       activeRegimeKey = btn.dataset.regime;
+      
+      // Adaptation du fond dynamique selon le mode (comme sur l'image)
+      document.body.style.backgroundColor = REGIMES[activeRegimeKey].bg;
       recalc();
     });
   });
 
-  document.querySelectorAll('.mutual-btn').forEach(btn => {
+  // Stepper Handlers
+  document.querySelectorAll('.step-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      hapticFeedback();
-      document.querySelectorAll('.mutual-btn').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-checked', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-checked', 'true');
-      activeMutualMode = btn.dataset.mode;
+      const inp = document.getElementById(btn.dataset.target);
+      let val = parseInt(inp.value, 10) + parseInt(btn.dataset.delta, 10);
+      if (val < 0) val = 0;
+      inp.value = val;
       recalc();
     });
   });
 
-  function clampInt(v){
-    v = parseInt(v, 10);
-    if (isNaN(v) || v < 0) return 0;
-    return v;
-  }
+  mutualToggle.addEventListener('change', recalc);
+  dirToggle.addEventListener('change', recalc);
 
-  document.querySelectorAll('.stepbtn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      const target = document.getElementById(btn.dataset.target);
-      const delta = parseInt(btn.dataset.delta, 10);
-      target.value = clampInt(clampInt(target.value) + delta);
-      recalc();
-    });
-  });
-
-  [n36input, n612input].forEach(inp => {
-    inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^0-9]/g,''); recalc(); });
-    inp.addEventListener('blur', () => { inp.value = clampInt(inp.value); recalc(); });
-  });
-
-  dirToggle.addEventListener('change', () => { hapticFeedback(); recalc(); });
-
-  resetBtn.addEventListener('click', () => {
-    hapticFeedback();
-    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  document.getElementById('resetBtn').addEventListener('click', () => {
     n36input.value = 0;
     n612input.value = 0;
     dirToggle.checked = false;
+    mutualToggle.checked = true;
     recalc();
-    showToast("🔄 Effectifs réinitialisés");
   });
 
-  function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
-    const currentModeKey = isSplitMode ? 'split' : 'normal';
-    if (poolTrack.dataset.mode !== currentModeKey) {
-      poolTrack.innerHTML = '';
-      poolTrack.dataset.mode = currentModeKey;
-    }
+  function recalc() {
+    const reg = REGIMES[activeRegimeKey];
+    const n36 = parseInt(n36input.value, 10) || 0;
+    const n612 = parseInt(n612input.value, 10) || 0;
+    const totalKids = n36 + n612;
 
-    if (totalNeeded === 0){
-      poolTrack.innerHTML = '<div class="segment ghost"></div>';
-      return;
-    }
+    ratioLabel36.textContent = `Ratio 1 / ${reg.ratio36}`;
+    ratioLabel612.textContent = `Ratio 1 / ${reg.ratio612}`;
+    footerPill.textContent = `REGIME: ${reg.label}`;
 
-    const ghost = poolTrack.querySelector('.ghost');
-    if (ghost) ghost.remove();
+    let needed = 0;
 
-    if (isSplitMode) {
-      let container = poolTrack.querySelector('.pool-split-container');
-      if (!container) {
-        poolTrack.innerHTML = '';
-        container = document.createElement('div');
-        container.className = 'pool-split-container';
-        poolTrack.appendChild(container);
-      }
-
-      const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
-      const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
-
-      function syncTrack(groupId, labelText, count, maxRatio, currentKids, fillClass) {
-        let group = container.querySelector('.' + groupId);
-        if (count === 0) {
-          if (group) group.remove();
-          return;
-        }
-        if (!group) {
-          group = document.createElement('div');
-          group.className = `pool-subgroup ${groupId}`;
-          group.innerHTML = `<span class="subgroup-label"></span><div class="pool-track"></div>`;
-          container.appendChild(group);
-        }
-
-        group.querySelector('.subgroup-label').textContent = labelText;
-        const track = group.querySelector('.pool-track');
-        let segs = Array.from(track.querySelectorAll('.segment'));
-
-        while (segs.length < count) {
-          const seg = document.createElement('div');
-          seg.className = 'segment new-seg';
-          seg.innerHTML = `<div class="${fillClass}"></div><span class="gauge-label"></span>`;
-          track.appendChild(seg);
-          segs.push(seg);
-        }
-        while (segs.length > count) {
-          const segToRemove = segs.pop();
-          segToRemove.remove();
-        }
-
-        segs.forEach((seg, i) => {
-          const kidsForAnim = Math.min(maxRatio, currentKids - (i * maxRatio));
-          const fillPct = (kidsForAnim / maxRatio) * 100;
-          const fillEl = seg.querySelector('.' + fillClass);
-          const labelEl = seg.querySelector('.gauge-label');
-
-          fillEl.style.width = fillPct + '%';
-          labelEl.textContent = `${kidsForAnim}/${maxRatio}`;
-        });
-      }
-
-      syncTrack('group-a', `- de 6 ans (${count36} Anim' / ${n36} enf.)`, count36, r1, n36, 'fillA');
-      syncTrack('group-b', `+ de 6 ans (${count612} Anim' / ${n612} enf.)`, count612, r2, n612, 'fillB');
-
-    } else {
-      let existingSegs = Array.from(poolTrack.querySelectorAll(':scope > .segment'));
-
-      while (existingSegs.length < totalNeeded) {
-        const seg = document.createElement('div');
-        seg.className = 'segment new-seg';
-        const fillA = document.createElement('div');
-        fillA.className = 'fillA';
-        const fillB = document.createElement('div');
-        fillB.className = 'fillB';
-        seg.appendChild(fillA);
-        seg.appendChild(fillB);
-        poolTrack.appendChild(seg);
-        existingSegs.push(seg);
-      }
-
-      while (existingSegs.length > totalNeeded) {
-        const segToRemove = existingSegs.pop();
-        segToRemove.remove();
-      }
-
-      const total36Anims = n36 / r1;
-      const total612Anims = n612 / r2;
-
-      existingSegs.forEach((seg, i) => {
-        let fillAPct = 0;
-        let fillBPct = 0;
-
-        if (total36Anims + total612Anims > 0) {
-          const segStart = i;
-          const segEnd = i + 1;
-          const aEnd = Math.min(segEnd, total36Anims);
-          const aStart = Math.max(segStart, 0);
-          fillAPct = Math.max(0, aEnd - aStart) * 100;
-
-          const bStart = Math.max(segStart, total36Anims);
-          const bEnd = Math.min(segEnd, total36Anims + total612Anims);
-          fillBPct = Math.max(0, bEnd - bStart) * 100;
-        }
-
-        const fillA = seg.querySelector('.fillA');
-        const fillB = seg.querySelector('.fillB');
-
-        fillA.style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
-        fillB.style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
-      });
-    }
-  }
-
-  function animateNumber(el, to){
-    const from = parseInt(el.textContent, 10) || 0;
-    if (from === to){ return; }
-    const duration = 280;
-    const start = performance.now();
-    const ease = t => 1 - Math.pow(1 - t, 3);
-
-    function step(now){
-      const t = Math.min(1, (now - start) / duration);
-      const val = Math.round(from + (to - from) * ease(t));
-      el.textContent = val;
-      if (t < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-
-    el.classList.remove('num-pulse');
-    void el.offsetWidth;
-    el.classList.add('num-pulse');
-  }
-
-  function recalc(){
-    const currentRegime = REGIMES[activeRegimeKey];
-    eyebrowBadge.textContent = currentRegime.tag;
-
-    const n36 = clampInt(n36input.value);
-    const n612 = clampInt(n612input.value);
-    const effectif = n36 + n612;
-
-    totalKidsIndicator.innerHTML = `( EFFECTIF TOTAL : <strong>${effectif}</strong> ENFANT${effectif > 1 ? 'S' : ''} )`;
-
-    const r1 = currentRegime.ratio36;
-    const r2 = currentRegime.ratio612;
-
-    const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
-    const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
-    const naiveSum = naive36 + naive612;
-
-    let totalNeeded = 0;
-
-    if (effectif > 0) {
-      if (activeMutualMode === 'avec') {
-        const fullGroups = Math.floor(n36 / r1) + Math.floor(n612 / r2);
-        const rem36 = n36 % r1;
-        const rem612 = n612 % r2;
-        const remTotal = rem36 + rem612;
-
-        if (remTotal === 0) {
-          totalNeeded = fullGroups;
-        } else if (remTotal <= r1) {
-          totalNeeded = fullGroups + 1;
-        } else {
-          totalNeeded = fullGroups + 2;
-        }
+    if (totalKids > 0) {
+      if (mutualToggle.checked) {
+        const full = Math.floor(n36 / reg.ratio36) + Math.floor(n612 / reg.ratio612);
+        const rem = (n36 % reg.ratio36) + (n612 % reg.ratio612);
+        if (rem === 0) needed = full;
+        else if (rem <= reg.ratio36) needed = full + 1;
+        else needed = full + 2;
       } else {
-        totalNeeded = naiveSum;
+        needed = (n36 > 0 ? Math.ceil(n36 / reg.ratio36) : 0) + (n612 > 0 ? Math.ceil(n612 / reg.ratio612) : 0);
       }
 
-      if (totalNeeded < 2) {
-        totalNeeded = 2;
+      if (needed < 2) {
+        needed = 2;
         safetyAlert.classList.add('visible');
       } else {
         safetyAlert.classList.remove('visible');
@@ -1234,103 +632,57 @@
       safetyAlert.classList.remove('visible');
     }
 
-    const isSplitMode = (activeMutualMode === 'sans');
-    renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode);
+    // Directeur
+    const dirEligible = totalKids > 0 && totalKids <= 50;
+    dirRow.style.opacity = dirEligible ? '1' : '0.4';
+    dirRow.style.pointerEvents = dirEligible ? 'auto' : 'none';
+    if (!dirEligible) dirToggle.checked = false;
 
-    const directorEligible = effectif > 0 && effectif <= 50;
-    dirRow.classList.toggle('disabled', !directorEligible);
-    if (!directorEligible) dirToggle.checked = false;
-
-    let displayed = totalNeeded;
-    if (dirToggle.checked && directorEligible){
-      displayed = Math.max(totalNeeded - 1, 0);
-      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ le directeur)";
+    let finalAnim = needed;
+    if (dirToggle.checked && dirEligible) {
+      finalAnim = Math.max(needed - 1, 0);
+      totalAnimLabelEl.textContent = "Animateurs (+ Directeur)";
     } else {
-      totalAnimLabelEl.textContent = "Anim' sur le terrain";
-    }
-    
-    animateNumber(totalAnimEl, displayed);
-    miniAnimCount.textContent = displayed;
-    miniAnimLabel.textContent = "Anim' requis";
-
-    const saved = naiveSum - totalNeeded;
-    if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
-      mutualBadge.textContent = `⚡ -${saved} ANIM' MUTUALISÉ${saved > 1 ? 'S' : ''}`;
-      mutualBadge.classList.add('visible');
-    } else {
-      mutualBadge.classList.remove('visible');
+      totalAnimLabelEl.textContent = "Animateurs requis";
     }
 
-    const base = displayed;
-    const diplomesMin = Math.ceil(base * 0.5);
-    const nonDiplomesMax = Math.floor(base * 0.2);
-    const stagiaires = Math.max(base - diplomesMin - nonDiplomesMax, 0);
+    totalAnimEl.textContent = finalAnim;
 
-    animateNumber(qDiplomes, diplomesMin);
-    animateNumber(qNonDiplomes, nonDiplomesMax);
-    animateNumber(qStagiaires, stagiaires);
+    // Qualifications
+    const diplomes = Math.ceil(finalAnim * 0.5);
+    const nonDiplomes = Math.floor(finalAnim * 0.2);
+    const stagiaires = Math.max(finalAnim - diplomes - nonDiplomes, 0);
 
-    let modeText = activeMutualMode === 'avec' 
-      ? "Avec mutualisation (SDJES)" 
-      : "Sans mutualisation";
+    qDiplomes.textContent = diplomes;
+    qNonDiplomes.textContent = nonDiplomes;
+    qStagiaires.textContent = stagiaires;
 
-    footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
-    
-    saveState();
+    // Pastilles visuelles
+    animTrack.innerHTML = '';
+    for (let i = 0; i < finalAnim; i++) {
+      const dot = document.createElement('div');
+      dot.className = `anim-dot ${i % 2 === 0 ? 'fill-a' : 'fill-b'}`;
+      dot.textContent = i + 1;
+      animTrack.appendChild(dot);
+    }
   }
 
-  copyBtn.addEventListener('click', () => {
-    hapticFeedback();
-    const currentRegime = REGIMES[activeRegimeKey];
-    const n36 = clampInt(n36input.value);
-    const n612 = clampInt(n612input.value);
-    const totalKids = n36 + n612;
-    const totalAnim = totalAnimEl.textContent;
-    const mode = activeMutualMode === 'avec' ? "Avec mutualisation" : "Sans mutualisation";
-    const dirInclus = dirToggle.checked ? "Oui" : "Non";
+  // Copie Bilan
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const text = `⚡ ALSH CALCULATION BILAN
+Régime: ${REGIMES[activeRegimeKey].label}
+Enfants: ${parseInt(n36input.value) + parseInt(n612input.value)} (-6ans: ${n36input.value} | +6ans: ${n612input.value})
+-----------------------------
+ANIMATEURS REQUIS: ${totalAnimEl.textContent}
+• Diplômés: ${qDiplomes.textContent}
+• Stagiaires: ${qStagiaires.textContent}
+• Non-diplômés: ${qNonDiplomes.textContent}`;
 
-    const textSummary = 
-`📋 BILAN TAUX D'ENCADREMENT ALSH
------------------------------------
-- Régime : ${currentRegime.tag}
-- Effectifs : ${totalKids} enfants (-6ans: ${n36} | +6ans: ${n612})
-- Mode de calcul : ${mode}
-- Directeur inclus sur le terrain : ${dirInclus}
------------------------------------
-> ANIM' REQUIS : ${totalAnim}
-
-Composition recommandée de l'équipe :
-• Diplômé·e·s (Min. 50%) : ${qDiplomes.textContent}
-• Non-diplômé·e·s (Max. 20%) : ${qNonDiplomes.textContent}
-• Stagiaires BAFA : ${qStagiaires.textContent}
-`;
-
-    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
-      navigator.share({
-        title: "Bilan ALSH",
-        text: textSummary
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(textSummary).then(() => {
-        copyBtn.classList.add('copied');
-        copyBtnIcon.textContent = "✓";
-        copyBtnText.textContent = "BILAN COPIÉ !";
-
-        showToast("📋 Bilan copié dans le presse-papier !");
-
-        setTimeout(() => {
-          copyBtn.classList.remove('copied');
-          copyBtnIcon.textContent = "📋";
-          copyBtnText.textContent = "COPIER LE BILAN DE CALCUL";
-        }, 2200);
-
-      }).catch(() => {
-        showToast("Impossible de copier automatiquement.");
-      });
-    }
+    navigator.clipboard.writeText(text);
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
   });
 
-  loadState();
   recalc();
 </script>
 
