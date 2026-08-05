@@ -1,1302 +1,1326 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALSH Flow</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Alpine.js -->
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- html2pdf.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
+<meta name="theme-color" content="#F9F6EE">
+<title>Calculateur Taux d'encadrement ALSH — Outil SDJES</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    /* Palette Neo-Brutalist Playful */
+    --bg-cream: #F9F6EE;
+    --card-yellow: #FFF275;
+    --card-blue: #C3E8FD;
+    --card-pink: #FFC0CB;
+    --card-dark: #121212;
+    --border-black: #121212;
+    --text-dark: #121212;
+    --text-muted: #555555;
+    --white: #FFFFFF;
+    
+    /* Variables de design */
+    --border-width: 2.5px;
+    --shadow-distance: 4px;
+    --radius-pill: 999px;
+    --radius-card: 20px;
+    --radius-btn: 14px;
+
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-cream);
+    color: var(--text-dark);
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  body {
+    padding: 24px 16px max(80px, calc(40px + env(safe-area-inset-bottom)));
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--border-black);
+    outline-offset: 2px;
+  }
+
+  /* Layout principal */
+  main {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Structural Cards */
+  .neo-card {
+    background: var(--white);
+    border: var(--border-width) solid var(--border-black);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-distance) var(--shadow-distance) 0px var(--border-black);
+    padding: 22px 20px;
+    position: relative;
+    transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+  }
+
+  /* Header Card (Yellow Theme) */
+  .hero {
+    background: var(--card-yellow);
+    text-align: center;
+    padding: 24px 20px;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .eyebrow-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: var(--white);
+    border: 2px solid var(--border-black);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    box-shadow: 2px 2px 0px var(--border-black);
+  }
+
+  .btn-reset {
+    background: var(--white);
+    border: 2px solid var(--border-black);
+    color: var(--text-dark);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--border-black);
+    transition: all 0.15s var(--ease-out);
+  }
+  .btn-reset:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--border-black);
+    background: #FFF;
+  }
+  .btn-reset:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px var(--border-black);
+  }
+
+  h1 {
+    margin: 8px 0 4px;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .sub {
+    margin: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  /* Section Labels */
+  .section-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .section-num {
+    background: var(--border-black);
+    color: var(--white);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+
+  .info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--border-black);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: help;
+    position: relative;
+    box-shadow: 1.5px 1.5px 0px var(--border-black);
+  }
   
-  <style>
-    *, ::before, ::after { box-sizing: border-box; }
-    
-    .card-panel {
-      background-color: rgba(30, 41, 59, 0.95);
-      border: 1px solid rgba(51, 65, 85, 0.8);
-    }
-    .card-item {
-      background-color: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(51, 65, 85, 0.6);
-    }
-    .input-ui {
-      background-color: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(71, 85, 105, 0.8);
-      color: #f8fafc;
-      width: 100% !important;
-      text-align: left; /* Sécurité alignment */
-      transition: all 0.15s ease-in-out;
-    }
-    .input-ui:focus {
-      border-color: #6366f1;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-    }
-    .input-ui::placeholder { color: #64748b; }
-    
-    /* VRAI LIQUID GLASSMORPHISM APPLE */
-    .glass-nav-apple {
-      background: rgba(15, 23, 42, 0.45) !important;
-      backdrop-filter: blur(20px) saturate(190%) !important;
-      -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
-      border: 1px solid rgba(255, 255, 255, 0.12) !important;
-      box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.3) !important;
-    }
+  .info-icon:hover::after, .info-icon:focus::after {
+    content: attr(data-tooltip);
+    position: absolute; 
+    bottom: 130%; 
+    right: 0;
+    width: 230px;
+    max-width: 75vw;
+    white-space: normal;
+    word-wrap: break-word;
+    background: var(--card-dark);
+    color: var(--white);
+    border: 2px solid var(--border-black);
+    padding: 10px 12px; 
+    border-radius: 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11.5px; 
+    font-weight: 600; 
+    line-height: 1.35;
+    box-shadow: 4px 4px 0px var(--border-black); 
+    z-index: 100; 
+    pointer-events: none;
+    text-transform: none;
+  }
 
-    input[type="date"] {
-      color-scheme: dark;
-      width: 100% !important;
-      display: block;
-      -webkit-appearance: none;
-      appearance: none;
-      text-align: left;
-    }
-  </style>
+  /* Note explicative PEDT */
+  .pedt-info-note {
+    font-size: 11.5px;
+    color: var(--text-dark);
+    background: var(--bg-cream);
+    border: var(--border-width) solid var(--border-black);
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin: 10px 0 18px;
+    line-height: 1.4;
+    box-shadow: 2px 2px 0px var(--border-black);
+  }
+  .pedt-info-note strong { font-weight: 800; }
+
+  /* Regime Selector Grid */
+  .regime-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .regime-card {
+    background: var(--white);
+    border: var(--border-width) solid var(--border-black);
+    border-radius: var(--radius-btn);
+    padding: 10px 12px;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--border-black);
+    transition: all 0.15s var(--ease-out);
+    font-family: inherit;
+  }
+  .regime-card .r-title {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .regime-card .r-sub {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .regime-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--border-black);
+    background: var(--bg-cream);
+  }
+  .regime-card.active {
+    background: var(--card-blue);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--border-black);
+  }
+
+  /* Fields & Stepper */
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: var(--border-width) solid var(--border-black);
+    border-radius: var(--radius-btn);
+    padding: 4px;
+    box-shadow: 3px 3px 0px var(--border-black);
+  }
+
+  .stepper input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    text-align: center;
+    border: none;
+    background: transparent;
+    color: var(--text-dark);
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    outline: none;
+  }
+  .stepper input::-webkit-outer-spin-button,
+  .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .stepbtn {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: var(--border-width) solid var(--border-black);
+    background: var(--card-yellow);
+    color: var(--text-dark);
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--border-black);
+    transition: all 0.1s var(--ease-out);
+    user-select: none;
+  }
+  .stepbtn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--border-black);
+  }
+  .stepbtn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 0px 0px 0px var(--border-black);
+  }
+
+  .total-kids-indicator {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    margin: 14px 0 10px;
+    padding: 8px 12px;
+    background: var(--card-yellow);
+    border: var(--border-width) solid var(--border-black);
+    border-radius: var(--radius-pill);
+    box-shadow: 2px 2px 0px var(--border-black);
+  }
+
+  .safety-alert {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-pink);
+    border: var(--border-width) solid var(--border-black);
+    padding: 8px 12px;
+    border-radius: var(--radius-btn);
+    font-size: 11.5px;
+    font-weight: 700;
+    margin-top: 10px;
+    box-shadow: 2px 2px 0px var(--border-black);
+  }
+  .safety-alert.visible { display: flex; }
+
+  /* Mutualization Mode Selector */
+  .mutual-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 6px;
+    margin-bottom: 14px;
+  }
+
+  .mutual-btn {
+    background: var(--white);
+    border: var(--border-width) solid var(--border-black);
+    border-radius: var(--radius-btn);
+    padding: 8px;
+    color: var(--text-dark);
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--border-black);
+    transition: all 0.15s var(--ease-out);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-family: inherit;
+  }
+  .mutual-btn strong { font-size: 12px; font-weight: 800; }
+  .mutual-btn small { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  .mutual-btn.active {
+    background: var(--card-pink);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--border-black);
+  }
+
+  /* Toggle Switch */
+  .toggle-group {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: var(--border-width) solid var(--border-black);
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 800;
+    user-select: none;
+  }
+  .toggle-row small { display: block; font-family: 'Space Mono', monospace; font-weight: 400; color: var(--text-muted); font-size: 10.5px; margin-top: 2px; }
+  .toggle-row input { display: none; }
+  
+  .switch {
+    width: 46px;
+    height: 26px;
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    border: var(--border-width) solid var(--border-black);
+    position: relative;
+    flex-shrink: 0;
+    box-shadow: 2px 2px 0px var(--border-black);
+    transition: background 0.2s var(--ease-out);
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: var(--border-black);
+    transition: transform 0.25s var(--ease-spring);
+  }
+  .toggle-row input:checked + .switch {
+    background: var(--card-yellow);
+  }
+  .toggle-row input:checked + .switch::after {
+    transform: translateX(20px);
+  }
+  .toggle-row.disabled { opacity: 0.4; pointer-events: none; }
+
+  /* Result Card & Visual Pool */
+  .result {
+    background: var(--card-blue);
+  }
+
+  .pool-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .pool-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  
+  .badge-mutualized {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--card-yellow);
+    border: var(--border-width) solid var(--border-black);
+    font-family: 'Space Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    box-shadow: 2px 2px 0px var(--border-black);
+    opacity: 0;
+    transform: scale(0.85);
+    transition: all 0.3s var(--ease-spring);
+  }
+  .badge-mutualized.visible { opacity: 1; transform: scale(1); }
+
+  .pool-track { display: flex; gap: 8px; flex-wrap: wrap; }
+  
+  .segment {
+    flex: 1;
+    min-width: 44px;
+    height: 38px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    background: var(--white);
+    border: var(--border-width) solid var(--border-black);
+    box-shadow: 2px 2px 0px var(--border-black);
+    display: flex; 
+  }
+
+  .segment.new-seg {
+    animation: segPop 0.3s var(--ease-spring) forwards;
+  }
+
+  @keyframes segPop {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .segment .fillA, .segment .fillB {
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s var(--ease-out);
+    position: relative;
+  }
+
+  .fillA { background: var(--card-yellow); }
+  .fillB { background: var(--card-pink); }
+
+  .gauge-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dark);
+    z-index: 2;
+  }
+
+  .segment.ghost { opacity: 0.4; width: 100%; animation: none; }
+  .segment.ghost::after {
+    content: "–";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .pool-split-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .pool-subgroup { display: flex; flex-direction: column; gap: 6px; }
+  .subgroup-label { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  
+  .pool-legend { display: flex; gap: 16px; margin-top: 12px; }
+  .pool-legend span { display: flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--border-black); display: inline-block; }
+  .dot-a { background: var(--card-yellow); }
+  .dot-b { background: var(--card-pink); }
+
+  /* Total Display */
+  .headline {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  
+  .big {
+    font-family: 'Space Mono', monospace;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 0.9;
+    color: var(--text-dark);
+    display: inline-block;
+  }
+  .biglabel { font-size: 14px; font-weight: 800; max-width: 200px; line-height: 1.25; }
+
+  @keyframes numPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  .num-pulse { animation: numPulse 0.3s var(--ease-spring); }
+
+  /* Qualifications Grid */
+  .quali h2 {
+    margin: 0 0 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  
+  .qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .qcard {
+    background: var(--white);
+    border: var(--border-width) solid var(--border-black);
+    border-radius: var(--radius-btn);
+    padding: 10px 4px;
+    text-align: center;
+    box-shadow: 2px 2px 0px var(--border-black);
+  }
+  .qnum { display: block; font-family: 'Space Mono', monospace; font-size: 24px; font-weight: 700; }
+  .qlabel { display: block; margin-top: 2px; font-size: 10.5px; line-height: 1.2; font-weight: 800; }
+  .qlabel small { color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: 9.5px; font-weight: 400; }
+
+  .btn-share {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: var(--radius-pill);
+    border: var(--border-width) solid var(--border-black);
+    background: var(--card-pink);
+    color: var(--text-dark);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 3px 3px 0px var(--border-black);
+    transition: all 0.15s var(--ease-out);
+  }
+  .btn-share:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px var(--border-black);
+  }
+  .btn-share:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px var(--border-black);
+  }
+
+  .btn-share.copied {
+    background: var(--card-yellow);
+  }
+
+  /* Sticky Mini Bar */
+  .sticky-mini-bar {
+    position: fixed;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    width: calc(100% - 32px);
+    max-width: 400px;
+    background: var(--white);
+    border: var(--border-width) solid var(--border-black);
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 4px 4px 0px var(--border-black);
+    z-index: 100;
+    cursor: pointer;
+    opacity: 0;
+    transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
+  }
+  .sticky-mini-bar.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  .mini-info { display: flex; align-items: center; gap: 10px; }
+  .mini-count { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: var(--text-dark); }
+  .mini-label { font-size: 12px; font-weight: 800; }
+  .mini-arrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--card-yellow);
+    border: 1.5px solid var(--border-black);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: max(24px, calc(10px + env(safe-area-inset-bottom)));
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--card-dark);
+    color: var(--white);
+    border: var(--border-width) solid var(--border-black);
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 4px 4px 0px var(--border-black);
+    opacity: 0;
+    transition: all 0.35s var(--ease-spring);
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  footer.note {
+    font-family: 'Space Mono', monospace;
+    font-size: 10.5px;
+    line-height: 1.4;
+    color: var(--text-muted);
+    padding: 0 8px;
+    text-align: center;
+  }
+
+  @media (max-width: 350px) {
+    .regime-grid, .mutual-selector { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .neo-card, .num-pulse, .btn-share, .regime-card, .stepbtn, .segment { animation: none !important; transition: none !important; }
+    .segment .fillA, .segment .fillB { transition: none !important; }
+  }
+
+  @media print {
+    body { background: #fff !important; color: #000 !important; padding: 0 !important; }
+    .btn-reset, .btn-share, .stepper button, .toast, .sticky-mini-bar { display: none !important; }
+    .neo-card { background: #fff !important; border: 1px solid #000 !important; box-shadow: none !important; opacity: 1 !important; }
+  }
+</style>
 </head>
-<body class="bg-slate-950 min-h-screen text-slate-100 font-sans antialiased pt-4 pb-28 select-none" x-data="alshApp()">
+<body>
 
-  <!-- TOAST NOTIFICATION -->
-  <div x-show="toast.show" 
-       x-transition:enter="transition ease-out duration-200"
-       x-transition:enter-start="opacity-0 -translate-y-2"
-       x-transition:enter-end="opacity-100 translate-y-0"
-       x-transition:leave="transition ease-in duration-150"
-       x-transition:leave-start="opacity-100 translate-y-0"
-       x-transition:leave-end="opacity-0 -translate-y-2"
-       class="fixed top-4 right-4 left-4 z-50 card-panel border-indigo-500/50 p-4 rounded-2xl flex items-center justify-between shadow-2xl bg-slate-900/95"
-       style="display: none;">
-    <div class="flex items-center space-x-3">
-      <i class="fa-solid fa-circle-check text-indigo-400 text-lg"></i>
-      <span class="text-xs font-medium text-slate-200" x-text="toast.message"></span>
-    </div>
-    <button type="button" @click="toast.show = false" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-  </div>
+  <main>
 
-  <main class="max-w-md mx-auto px-4 space-y-4">
-
-    <!-- 1. ONGLET : FICHE D'ACTIVITÉ -->
-    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-98" x-transition:enter-end="opacity-100 scale-100" class="space-y-4">
-      <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-          <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
-            <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i> Fiche d'Activité
-          </h2>
-          <span class="text-xs bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">Express</span>
-        </div>
-
-        <form @submit.prevent="submitFiche()" class="space-y-3.5">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nom de l'activité</label>
-            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu La Chasse au Trésor" class="input-ui px-3.5 py-2.5 rounded-xl text-xs text-left" required>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tranche d'âge</label>
-              <select x-model="fiche.age" class="input-ui px-3 py-2.5 rounded-xl text-xs bg-slate-900">
-                <option value="-6 ans">-6 ans</option>
-                <option value="+6 ans">+6 ans</option>
-                <option value="Inter-tranches">Inter-tranches</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Lieu</label>
-              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="input-ui px-3 py-2.5 rounded-xl text-xs text-left">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Objectif Pédagogique</label>
-            <input type="text" x-model="fiche.objectif" placeholder="ex: Développer l'esprit d'équipe" class="input-ui px-3.5 py-2.5 rounded-xl text-xs text-left">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Déroulement / Consignes</label>
-            <textarea x-model="fiche.deroulement" placeholder="Explication rapide des étapes du jeu..." class="input-ui px-3.5 py-2.5 rounded-xl text-xs h-20 resize-none text-left"></textarea>
-          </div>
-
-          <div class="card-item p-3.5 rounded-2xl space-y-2 border-l-2 border-l-indigo-400">
-            <span class="text-xs font-semibold text-indigo-300 flex items-center gap-1.5">
-              <i class="fa-solid fa-cart-plus"></i> Matériel & Quantités
-            </span>
-            <div class="grid grid-cols-5 gap-1.5">
-              <input type="text" x-model="newMatosNom" placeholder="Article (ex: Papier Kraft)" class="col-span-3 input-ui px-2.5 py-2 rounded-lg text-xs text-left">
-              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-2 rounded-lg text-xs text-center">
-              <button type="button" @click="addMatos()" class="col-span-1 bg-indigo-600 hover:bg-indigo-500 active:scale-95 rounded-lg text-xs font-bold text-white transition-all">+</button>
-            </div>
-            <ul class="space-y-1.5 pt-1">
-              <template x-for="(item, index) in fiche.materiel" :key="index">
-                <li class="flex items-center justify-between text-xs card-item px-3 py-1.5 rounded-lg">
-                  <span class="text-slate-300" x-text="item.nom + ' — Quantité : ' + item.qte"></span>
-                  <button type="button" @click="removeMatos(index)" class="text-slate-500 hover:text-red-400 ml-2 transition-colors"><i class="fa-solid fa-xmark"></i></button>
-                </li>
-              </template>
-            </ul>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5 pt-2">
-            <button type="button" @click="exportPDF()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 active:scale-98">
-              <i class="fa-solid fa-file-pdf text-red-400"></i> Générer PDF
-            </button>
-            <button type="submit" class="py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 active:scale-98 shadow-md shadow-indigo-950/50">
-              <i class="fa-solid fa-paper-plane"></i> Envoyer en Courses
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF -->
-    <div id="pdf-template" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 700px;">
-      <div style="padding: 30px; font-family: Arial, sans-serif; color: #1e293b; background: #ffffff;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6366f1; padding-bottom: 12px; margin-bottom: 20px;">
-          <div>
-            <h1 style="margin: 0; font-size: 22px; color: #0f172a;" id="pdf-titre">Fiche d'Activité</h1>
-            <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">Accueil de Loisirs Sans Hébergement (ALSH)</p>
-          </div>
-          <span style="background: #e0e7ff; color: #4338ca; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 12px;" id="pdf-age">Age</span>
-        </div>
-
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-          <tr>
-            <td style="padding: 8px; background: #f8fafc; border: 1px solid #e2e8f0; font-weight: bold; width: 30%;">Lieu :</td>
-            <td style="padding: 8px; border: 1px solid #e2e8f0;" id="pdf-lieu">-</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; background: #f8fafc; border: 1px solid #e2e8f0; font-weight: bold;">Objectif Pédagogique :</td>
-            <td style="padding: 8px; border: 1px solid #e2e8f0;" id="pdf-objectif">-</td>
-          </tr>
-        </table>
-
-        <div style="margin-bottom: 20px;">
-          <h3 style="color: #4338ca; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; font-size: 14px;">📜 Déroulement</h3>
-          <p style="font-size: 12px; line-height: 1.5; white-space: pre-line;" id="pdf-deroulement">-</p>
-        </div>
-
-        <div>
-          <h3 style="color: #4338ca; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; font-size: 14px;">📦 Matériel & Quantités</h3>
-          <ul style="font-size: 12px; padding-left: 20px;" id="pdf-materiel"></ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. ONGLET : CAHIER DE SOINS NUMÉRIQUE -->
-    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-98" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-          <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
-            <i class="fa-solid fa-kit-medical text-indigo-400"></i> Cahier de Soins
-          </h2>
-          <span class="text-xs bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">Santé</span>
-        </div>
-
-        <form @submit.prevent="submitSoin()" class="space-y-3.5">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Prénom & Nom de l'enfant</label>
-            <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-ui px-3.5 py-2.5 rounded-xl text-xs text-left" required>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Type d'incident / Symptôme</label>
-            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure genou droit" class="input-ui px-3.5 py-2.5 rounded-xl text-xs text-left" required>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Soin apporté</label>
-            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant" class="input-ui px-3.5 py-2.5 rounded-xl text-xs h-20 resize-none text-left"></textarea>
-          </div>
-
-          <div class="flex items-center space-x-2.5 card-item p-3 rounded-xl border border-slate-800">
-            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-indigo-500 rounded cursor-pointer">
-            <label for="famille" class="text-xs font-medium text-slate-300 cursor-pointer">Avertir la famille au départ ce soir</label>
-          </div>
-
-          <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs shadow-md shadow-indigo-950/50 transition-all active:scale-98">
-            Enregistrer le soin
-          </button>
-        </form>
-
-        <hr class="border-slate-800 my-2">
-
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Registre des soins enregistrés</h3>
-        <div class="space-y-2">
-          <template x-for="item in registreSoins" :key="item.id">
-            <div class="card-item p-3.5 rounded-2xl flex items-start justify-between border-slate-800">
-              <div class="space-y-1">
-                <p class="font-semibold text-xs text-slate-100" x-text="item.enfant"></p>
-                <p class="text-xs text-slate-400" x-text="item.incident"></p>
-                <p class="text-[11px] text-slate-500" x-text="item.heure + ' • Soin : ' + item.action"></p>
-                <span x-show="item.prevenirFamille" class="inline-block px-2 py-0.5 bg-amber-500/10 text-amber-400 text-[10px] font-medium rounded-full border border-amber-500/20 mt-1">
-                  <i class="fa-solid fa-bell text-[9px] mr-1"></i> Prévenir les parents
-                </span>
-              </div>
-              <button type="button" @click="deleteSoin(item.id)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors" title="Supprimer ce soin">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
-          </template>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. ONGLET : GOÛTER & RECETTES -->
-    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-98" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        
-        <div class="space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
-              <i class="fa-solid fa-cookie-bite text-indigo-400"></i> Goûters & Recettes
-            </h2>
-            <div class="flex gap-1.5">
-              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-xl font-medium transition-all">
-                <i class="fa-solid fa-book text-indigo-400 mr-1"></i> Recettes
-              </button>
-              <button type="button" @click="showPlanifModal = true" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded-xl font-semibold shadow-md transition-all">
-                + Planifier
-              </button>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between card-item px-3 py-2 rounded-2xl">
-            <button type="button" @click="changerSemaine(-1)" class="p-1 text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-            <div class="text-center">
-              <p class="text-xs font-semibold text-indigo-300" x-text="getLibelleSemaine()"></p>
-              <p class="text-[10px] text-slate-500">Planning Hebdomadaire</p>
-            </div>
-            <button type="button" @click="changerSemaine(1)" class="p-1 text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-          </div>
-        </div>
-
-        <!-- MODAL CRÉER UNE RECETTE SUR-MESURE -->
-        <div x-show="showAddRecetteModal" x-transition class="card-item p-4 rounded-2xl space-y-3 border border-indigo-500/30 bg-slate-900" style="display: none;">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-            <h3 class="text-xs font-semibold text-indigo-300 flex items-center gap-1.5">
-              <i class="fa-solid fa-utensils"></i> Nouvelle Recette (Base 8 enfants)
-            </h3>
-            <button type="button" @click="showAddRecetteModal = false" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nom de la recette</label>
-            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-          </div>
-
-          <div class="space-y-2 pt-1">
-            <label class="block text-[11px] font-semibold text-slate-300">Ingrédients pour 1 gâteau :</label>
-            
-            <div class="grid grid-cols-6 gap-1.5">
-              <input type="text" x-model="tempIng.nom" placeholder="Ingrédient" class="col-span-3 input-ui px-2 py-1.5 rounded-lg text-xs text-left">
-              <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-ui px-2 py-1.5 rounded-lg text-xs text-center">
-              <input type="text" x-model="tempIng.unite" placeholder="Unité" class="col-span-1.5 input-ui px-2 py-1.5 rounded-lg text-xs text-left">
-            </div>
-            
-            <button type="button" @click="ajouterIngredierntRecette()" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition-all">
-              + Ajouter l'ingrédient
-            </button>
-
-            <div class="space-y-1 pt-1">
-              <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
-                <div class="flex justify-between items-center text-xs card-item px-2.5 py-1 rounded-lg">
-                  <span class="text-slate-300" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
-                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-slate-500 hover:text-red-400"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-              </template>
-            </div>
-          </div>
-
-          <button type="button" @click="enregistrerNouvelleRecette()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs transition-all shadow-md">
-            Enregistrer la recette
-          </button>
-        </div>
-
-        <!-- LISTE DES GOÛTERS PROGRAMMÉS -->
-        <div class="space-y-2">
-          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
-            <span>Planning Goûters</span>
-            <span class="text-slate-500 font-normal" x-text="getGoutersDeLaSemaine().length + ' planifié(s)'"></span>
-          </h3>
-
-          <template x-if="getGoutersDeLaSemaine().length === 0">
-            <div class="card-item p-4 rounded-2xl text-center space-y-1 border-dashed border-slate-800">
-              <p class="text-xs text-slate-400">Aucun goûter planifié pour cette semaine.</p>
-              <button type="button" @click="showPlanifModal = true" class="text-xs text-indigo-400 hover:underline font-semibold">Cliquez ici pour planifier</button>
-            </div>
-          </template>
-
-          <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
-            <div class="card-item p-3.5 rounded-2xl border-l-2 border-l-indigo-400 space-y-2">
-              <div class="flex justify-between items-start">
-                <div>
-                  <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider" x-text="formatDateLisible(g.date)"></span>
-                  <h4 class="font-semibold text-xs text-slate-100" x-text="getNomRecette(g.recetteId)"></h4>
-                </div>
-                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors">
-                  <i class="fa-solid fa-trash"></i>
-                </button>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 text-xs bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                <div>
-                  <span class="text-[10px] text-slate-400 block font-semibold">Animateur</span>
-                  <span class="font-medium text-slate-200" x-text="g.anim || 'Non renseigné'"></span>
-                </div>
-                <div>
-                  <span class="text-[10px] text-slate-400 block font-semibold">Quantité</span>
-                  <span class="font-medium text-slate-200" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-
-        <hr class="border-slate-800 my-3">
-
-        <!-- LISTE DE COURSES GOÛTER -->
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-basket-shopping text-indigo-400"></i> Courses Goûter de la Semaine
-            </h3>
-            <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded-full" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
-          </div>
-
-          <div class="space-y-1.5">
-            <template x-if="getListeCoursesAgregeeSemaine().length === 0">
-              <p class="text-xs text-slate-500 italic text-center py-3">Aucun ingrédient à acheter pour cette semaine.</p>
-            </template>
-
-            <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
-              <div class="card-item p-2.5 rounded-xl flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 line-through' : ''">
-                <div class="flex items-center space-x-2.5">
-                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-4 h-4 accent-indigo-500 rounded cursor-pointer">
-                  <span class="text-xs font-medium text-slate-200" x-text="item.nom"></span>
-                </div>
-                <span class="font-semibold text-xs text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-lg border border-indigo-500/20" x-text="item.qte + ' ' + item.unite"></span>
-              </div>
-            </template>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- MODAL : PLANIFIER UN GOÛTER -->
-    <div x-show="showPlanifModal" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-3 border-slate-700 shadow-2xl">
-        <h3 class="font-bold text-xs text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
-          <i class="fa-solid fa-calendar-plus text-indigo-400"></i> Planifier un Goûter
-        </h3>
-
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Date du goûter</label>
-            <input type="date" x-model="saisieGouter.date" class="input-ui px-3 py-2 rounded-xl text-xs bg-slate-900 text-left">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Choisir la recette</label>
-            <select x-model="saisieGouter.recetteId" class="input-ui px-3 py-2 rounded-xl text-xs bg-slate-900">
-              <template x-for="r in recettesGouter" :key="r.id">
-                <option :value="r.id" x-text="r.nom + ' (base 8 enfants)'"></option>
-              </template>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Animateur(trice) responsable</label>
-            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nombre d'enfants prévus</label>
-            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-ui px-3 py-2 rounded-xl text-xs font-semibold text-center">
-            <p class="text-[11px] text-indigo-300 mt-1 text-center" x-show="saisieGouter.nbEnfants > 0" x-text="'= ' + Math.ceil((saisieGouter.nbEnfants || 0) / 8) + ' gâteau(x) à préparer'"></p>
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-slate-800">
-          <button type="button" @click="showPlanifModal = false" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-300 transition-colors">Annuler</button>
-          <button type="button" @click="enregistrerGouterPlanifie()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs shadow-md transition-all">Enregistrer</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. ONGLET : COURSES MATÉRIEL -->
-    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-98" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-          <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
-            <i class="fa-solid fa-cart-shopping text-indigo-400"></i> Courses Matériel
-          </h2>
-          <span class="text-xs bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">Activités</span>
-        </div>
-
-        <div class="grid grid-cols-5 gap-1.5">
-          <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-ui px-3 py-2 rounded-xl text-xs text-left">
-          <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-2 rounded-xl text-xs text-center">
-          <button type="button" @click="addCourseDirecte()" class="col-span-1 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-bold text-white transition-all active:scale-95">+</button>
-        </div>
-
-        <div class="space-y-2">
-          <template x-for="item in listeCourses" :key="item.id">
-            <div class="card-item p-3 rounded-2xl flex items-center justify-between border-slate-800 transition-opacity" :class="item.achete ? 'opacity-40 line-through' : ''">
-              <div class="flex items-center space-x-3">
-                <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-indigo-500 rounded cursor-pointer">
-                <div>
-                  <p class="text-xs font-semibold text-slate-200" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
-                  <p class="text-[11px] text-slate-500" x-text="'Pour : ' + item.activite"></p>
-                </div>
-              </div>
-              <button type="button" @click="deleteCourse(item.id)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </template>
-        </div>
-
-        <button type="button" @click="viderAchetes()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-400 hover:text-slate-200 rounded-xl transition-all border border-slate-700">
-          Nettoyer les articles achetés
+    <!-- Header -->
+    <header class="neo-card hero">
+      <div class="header-top">
+        <div class="eyebrow-badge" id="eyebrowBadge">( HORS PEDT · > 5H )</div>
+        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser les effectifs à zéro">
+          ↺ RESET
         </button>
       </div>
-    </div>
+      <h1>Taux d'encadrement</h1>
+      <p class="sub">Calculateur ALSH · SDJES</p>
+    </header>
 
-    <!-- 5. ONGLET : PLANNING & ORGANISATION -->
-    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-98" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        
-        <div class="space-y-3 border-b border-slate-800 pb-3">
-          <div class="flex items-center justify-between">
-            <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
-              <i class="fa-solid fa-calendar-days text-indigo-400"></i> Planning Équipe
-            </h2>
-            <div class="flex gap-1.5">
-              <button type="button" @click="ouvrirModalOrg()" class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium rounded-xl transition-all flex items-center gap-1.5">
-                <i class="fa-solid fa-bus text-amber-400"></i> Sortie
-              </button>
-              <button type="button" @click="nouveauCreneauVierge()" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white rounded-xl transition-all shadow-md">
-                + Créneau
-              </button>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between card-item px-3 py-2 rounded-2xl">
-            <button type="button" @click="changerJour(-1)" class="p-1 text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-            <div class="text-center">
-              <p class="text-xs font-semibold text-indigo-300" x-text="formatDateLisible(dateAffichee)"></p>
-              <p class="text-[10px] text-slate-500" x-text="dateAffichee === getTodayISO() ? 'Aujourd\'hui' : ''"></p>
-            </div>
-            <button type="button" @click="changerJour(1)" class="p-1 text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-          </div>
-        </div>
-
-        <!-- ENCADRÉ SORTIES : MISE EN VALEUR OPTIMISÉE POUR LE MODE SOMBRE -->
-        <template x-if="getOrgDuJour()">
-          <div class="card-item p-4 rounded-2xl space-y-3 border-l-4 border-l-amber-400 bg-gradient-to-r from-amber-500/10 via-slate-900 to-orange-500/10 border-t border-r border-b border-amber-500/30 shadow-lg shadow-amber-950/20 relative overflow-hidden">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/30 text-[10px] font-bold tracking-wider mb-1">
-                  <i class="fa-solid fa-triangle-exclamation animate-pulse"></i> SORTIE SPÉCIALE
-                </span>
-                <h3 class="text-sm font-bold text-amber-200 flex items-center gap-2">
-                  <i class="fa-solid fa-bus text-amber-400"></i> <span x-text="getOrgDuJour().titre"></span>
-                </h3>
-              </div>
-              <button type="button" @click="effacerOrgDuJour()" class="text-slate-400 hover:text-red-400 text-xs p-1 transition-colors" title="Supprimer la sortie">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
-
-            <p class="text-xs font-medium text-slate-200" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
-            
-            <div class="grid grid-cols-2 gap-2 text-xs bg-slate-950/80 p-2.5 rounded-xl border border-amber-500/20">
-              <div>
-                <span class="text-[10px] text-amber-300/80 block font-semibold">Bus Départ ALSH</span>
-                <span class="font-medium text-slate-100" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
-              </div>
-              <div class="border-l border-slate-800 pl-2">
-                <span class="text-[10px] text-amber-300/80 block font-semibold">Bus Retour</span>
-                <span class="font-medium text-slate-100" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
-              </div>
-            </div>
-
-            <template x-if="getOrgDuJour().consignes">
-              <p class="text-xs text-amber-200/90 italic bg-amber-950/30 p-2 rounded-lg border border-amber-500/20" x-text="'💡 Consignes : ' + getOrgDuJour().consignes"></p>
-            </template>
-
-            <div class="space-y-2 pt-1 border-t border-slate-800/80">
-              <p class="text-[10px] font-bold text-amber-400/90 uppercase tracking-wider">Groupes d'enfants :</p>
-              
-              <template x-for="(g, idx) in getOrgDuJour().groupes" :key="idx">
-                <div class="card-item p-2.5 rounded-xl text-xs space-y-1 bg-slate-950/60 border-slate-800">
-                  <div class="flex justify-between items-center">
-                    <span class="font-semibold text-slate-300 flex items-center gap-1.5">
-                      <!-- CORRECTION ICÔNE : fa-user-group à la place de fa-user-gear -->
-                      <i class="fa-solid fa-user-group text-indigo-400"></i> <span class="text-slate-200" x-text="g.anim"></span>
-                    </span>
-                    <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded-full" x-text="g.enfants.length + ' enfants'"></span>
-                  </div>
-
-                  <div class="flex flex-wrap gap-1 pt-1">
-                    <template x-for="(prenom, pIdx) in g.enfants" :key="pIdx">
-                      <span class="bg-slate-800/90 text-slate-300 text-[10px] px-2 py-0.5 rounded-md font-medium border border-slate-700/50" x-text="prenom"></span>
-                    </template>
-                  </div>
-                </div>
-              </template>
-            </div>
-          </div>
-        </template>
-
-        <div class="space-y-2.5">
-          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Planning des Animateurs</h3>
-
-          <template x-for="p in planningGlobal" :key="p.id">
-            <div class="card-item p-3.5 rounded-2xl space-y-2.5 border-l-2" :class="aUnCreneau(p, dateAffichee) ? 'border-l-indigo-400' : 'border-l-slate-700 opacity-60'">
-              
-              <div class="flex justify-between items-center">
-                <button type="button" @click="ouvrirDetailAnim(p)" class="font-semibold text-xs text-slate-200 hover:text-indigo-300 flex items-center gap-1.5 transition-colors">
-                  <span x-text="p.nom"></span>
-                  <i class="fa-solid fa-circle-info text-slate-500 text-[11px]"></i>
-                </button>
-                
-                <div class="flex items-center space-x-1">
-                  <button type="button" @click="editerPlanningDuJour(p)" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[10px] font-medium rounded-lg transition-all">
-                    Modifier
-                  </button>
-                  <button type="button" @click="supprimerAnim(p.id)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors">
-                    <i class="fa-solid fa-xmark"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
-                  <span class="text-[10px] font-semibold text-slate-400 block mb-0.5">☀️ Matin</span>
-                  <p class="font-medium text-slate-200 truncate text-left" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
-                </div>
-                <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
-                  <span class="text-[10px] font-semibold text-slate-400 block mb-0.5">🌆 Après-midi</span>
-                  <p class="font-medium text-slate-200 truncate text-left" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
-                </div>
-              </div>
-
-            </div>
-          </template>
-        </div>
-
+    <!-- Panel Inputs -->
+    <section class="neo-card panel inputs">
+      <div class="section-label">
+        <span><span class="section-num">1</span> Régime d'accueil</span>
+        <span class="info-icon" tabindex="0" role="button" aria-label="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire." data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
       </div>
-    </div>
+      <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
+        <button type="button" class="regime-card active" role="radio" aria-checked="true" data-regime="hors_p5">
+          <span class="r-title">Hors PEDT</span>
+          <span class="r-sub">+5h / jour</span>
+        </button>
+        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="hors_m5">
+          <span class="r-title">Hors PEDT</span>
+          <span class="r-sub">≤ 5h / jour</span>
+        </button>
+        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_p5">
+          <span class="r-title">Avec PEDT</span>
+          <span class="r-sub">+5h / jour</span>
+        </button>
+        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_m5">
+          <span class="r-title">Avec PEDT</span>
+          <span class="r-sub">≤ 5h / jour</span>
+        </button>
+      </div>
 
-    <!-- MODAL : ORGANISATION / SORTIES -->
-    <div x-show="showOrgModal" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-3 max-h-[90vh] overflow-y-auto border-slate-700 shadow-2xl">
-        <h3 class="font-bold text-xs text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
-          <i class="fa-solid fa-bus text-amber-400"></i> Programmation d'une Sortie
-        </h3>
+      <!-- Explication PEDT -->
+      <div class="pedt-info-note">
+        <strong>💡 C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> réunit les acteurs locaux (écoles, associations, CAF) et permet de bénéficier de taux d'encadrement adaptés.
+      </div>
 
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Date de la sortie</label>
-            <input type="date" x-model="saisieOrg.date" class="input-ui px-3 py-2 rounded-xl text-xs bg-slate-900 text-left">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nom / Titre de la sortie</label>
-            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Lieu de destination</label>
-            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo de Beauval" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Bus Départ</label>
-              <!-- CORRECTION ALIGNEMENT CURSEUR : text-left explicite -->
-              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Bus Retour</label>
-              <!-- CORRECTION ALIGNEMENT CURSEUR : text-left explicite -->
-              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Consignes à prévoir</label>
-            <input type="text" x-model="saisieOrg.consignes" placeholder="ex: Casquette, sac à dos" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-          </div>
-        </div>
-
-        <div class="border-t border-slate-800 pt-3 space-y-2">
-          <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Ajouter un Animateur & ses enfants</span>
-          
-          <div class="space-y-2 card-item p-3 rounded-2xl border-slate-800">
-            <input type="text" x-model="tempGroupe.anim" placeholder="Animateur / Animatrice (ex: Sarah)" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-            <textarea x-model="tempGroupe.enfantsTxt" placeholder="Enfants séparés par une virgule (ex: Lucas, Yanis, Léa)" class="input-ui px-3 py-2 rounded-xl text-xs h-16 resize-none text-left"></textarea>
-            
-            <button type="button" @click="ajouterGroupeAOrg()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 font-semibold rounded-xl text-xs text-slate-200 border border-slate-700 transition-all">
-              + Ajouter ce groupe
-            </button>
-          </div>
-
-          <div class="space-y-1.5 pt-1">
-            <template x-for="(g, i) in saisieOrg.groupes" :key="i">
-              <div class="card-item p-2.5 rounded-xl text-xs space-y-1 border-slate-800">
-                <div class="flex justify-between items-center">
-                  <span class="font-semibold text-indigo-300" x-text="'Anim : ' + g.anim"></span>
-                  <button type="button" @click="saisieOrg.groupes.splice(i, 1)" class="text-slate-500 hover:text-red-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <p class="text-[11px] text-slate-400" x-text="g.enfants.join(', ')"></p>
-              </div>
-            </template>
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-slate-800">
-          <button type="button" @click="showOrgModal = false" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-300 transition-colors">Annuler</button>
-          <button type="button" @click="sauvegarderOrg()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs shadow-md transition-all">Enregistrer</button>
+      <div class="section-label">
+        <span><span class="section-num">2</span> Effectifs enregistrés</span>
+      </div>
+      <div class="field">
+        <label for="n36">Enfants de - de 6 ans</label>
+        <div class="stepper">
+          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant de - de 6 ans">–</button>
+          <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
+          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant de - de 6 ans">+</button>
         </div>
       </div>
-    </div>
-
-    <!-- MODAL : DATES D'UN ANIMATEUR -->
-    <div x-show="animSelectionne !== null" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-4 max-h-[85vh] overflow-y-auto border-slate-700 shadow-2xl">
-        
-        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-          <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm">
-              <span x-text="animSelectionne?.nom ? animSelectionne.nom.charAt(0) : 'A'"></span>
-            </div>
-            <div>
-              <h3 class="font-bold text-sm text-slate-100" x-text="animSelectionne?.nom"></h3>
-              <p class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Planning individuel</p>
-            </div>
-          </div>
-          <button type="button" @click="animSelectionne = null" class="text-slate-500 hover:text-white text-base p-1"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-
-        <div class="space-y-2.5">
-          <template x-if="animSelectionne && Object.keys(animSelectionne.dates || {}).length === 0">
-            <p class="text-xs text-slate-500 text-center py-4">Aucun créneau enregistré pour cet animateur.</p>
-          </template>
-
-          <template x-for="(planningDate, dateKey) in animSelectionne?.dates" :key="dateKey">
-            <div class="card-item p-3 rounded-2xl space-y-2 border-l-2" :class="dateKey === dateAffichee ? 'border-l-indigo-400 bg-slate-900' : 'border-l-slate-700'">
-              
-              <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
-                <span class="text-xs font-semibold text-slate-200" x-text="formatDateLisible(dateKey)"></span>
-                <div class="flex items-center space-x-2">
-                  <button type="button" @click="allerADate(dateKey)" class="px-2 py-0.5 bg-indigo-500/10 text-indigo-300 text-[10px] font-semibold rounded-lg border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors">
-                    Voir la journée
-                  </button>
-                  <button type="button" @click="supprimerDateAnim(animSelectionne, dateKey)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
-                  <span class="text-[10px] font-semibold text-slate-400 block">☀️ Matin</span>
-                  <p class="font-medium text-slate-300 text-left" x-text="planningDate.matin || 'Repos'"></p>
-                </div>
-                <div class="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
-                  <span class="text-[10px] font-semibold text-slate-400 block">🌆 Après-midi</span>
-                  <p class="font-medium text-slate-300 text-left" x-text="planningDate.aprem || 'Repos'"></p>
-                </div>
-              </div>
-
-            </div>
-          </template>
-        </div>
-
-        <button type="button" @click="animSelectionne = null" class="w-full py-2 bg-slate-800 hover:bg-slate-700 font-semibold rounded-xl text-xs text-slate-300 transition-colors">Fermer</button>
-      </div>
-    </div>
-
-    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
-    <div x-show="showAddAnimModal" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-3 border-slate-700 shadow-2xl">
-        <h3 class="font-bold text-xs text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
-          <i class="fa-solid fa-user-pen text-indigo-400"></i> Modifier / Créer un Créneau
-        </h3>
-        
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nom de l'animateur</label>
-            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Date du créneau</label>
-            <input type="date" x-model="saisiePlanning.date" class="input-ui px-3 py-2 rounded-xl text-xs bg-slate-900 text-left">
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Créneau Matin</label>
-              <!-- CORRECTION ALIGNEMENT CURSEUR : text-left explicite -->
-              <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu -6a" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-            </div>
-            <div>
-              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Créneau Après-midi</label>
-              <!-- CORRECTION ALIGNEMENT CURSEUR : text-left explicite -->
-              <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
-            </div>
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-slate-800">
-          <button type="button" @click="showAddAnimModal = false" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-300 transition-colors">Annuler</button>
-          <button type="button" @click="validerPlanning()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs shadow-md transition-all">Enregistrer</button>
+      <div class="field">
+        <label for="n612">Enfants de + de 6 ans</label>
+        <div class="stepper">
+          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant de + de 6 ans">–</button>
+          <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
+          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant de + de 6 ans">+</button>
         </div>
       </div>
-    </div>
+
+      <!-- Compteur total d'enfants -->
+      <div class="total-kids-indicator" id="totalKidsIndicator" aria-live="polite">
+        ( EFFECTIF TOTAL : 0 ENFANT )
+      </div>
+
+      <div class="safety-alert" id="safetyAlert" role="alert" aria-live="assertive">
+        <span>⚠️ <strong>Règle de sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
+      </div>
+
+      <div class="field">
+        <div class="section-label" style="margin-top: 14px;">
+          <span><span class="section-num">3</span> Mode de calcul</span>
+          <span class="info-icon" tabindex="0" role="button" aria-label="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire." data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif nécessaire.">ⓘ</span>
+        </div>
+        <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
+          <button type="button" class="mutual-btn active" role="radio" aria-checked="true" data-mode="avec">
+            <strong>Avec mutualisation</strong>
+            <small>Règle SDJES</small>
+          </button>
+          <button type="button" class="mutual-btn" role="radio" aria-checked="false" data-mode="sans">
+            <strong>Sans mutualisation</strong>
+            <small>Calcul séparé</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-row" id="dirRow" for="dirToggle">
+          <span>Directeur inclus dans l'encadrement<small>(Possible si total ≤ 50 enfants)</small></span>
+          <input type="checkbox" id="dirToggle">
+          <span class="switch"></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Carte Résultat -->
+    <section class="neo-card result" id="resultCard" aria-live="polite">
+      <div class="pool">
+        <div class="pool-header">
+          <span class="pool-label">Postes d'encadrement</span>
+          <span class="badge-mutualized" id="mutualBadge">⚡ MUTUALISÉ</span>
+        </div>
+        <div class="pool-track" id="poolTrack"></div>
+        <div class="pool-legend">
+          <span><i class="dot dot-a"></i>- de 6 ans</span>
+          <span><i class="dot dot-b"></i>+ de 6 ans</span>
+        </div>
+      </div>
+
+      <div class="headline">
+        <span class="big" id="totalAnim">0</span>
+        <span class="biglabel" id="totalAnimLabel">Anim' sur le terrain</span>
+      </div>
+    </section>
+
+    <!-- Qualifications -->
+    <section class="neo-card quali">
+      <h2>( COMPOSITION DE L'ÉQUIPE )</h2>
+      <div class="qgrid">
+        <div class="qcard qmin">
+          <span class="qnum" id="qDiplomes">0</span>
+          <span class="qlabel">Diplômé·e·s<br><small>Min. 50%</small></span>
+        </div>
+        <div class="qcard qmax">
+          <span class="qnum" id="qNonDiplomes">0</span>
+          <span class="qlabel">Non-diplômé·e·s<br><small>Max. 20%</small></span>
+        </div>
+        <div class="qcard qflex">
+          <span class="qnum" id="qStagiaires">0</span>
+          <span class="qlabel">Stagiaires BAFA<br><small>Ajustement</small></span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-share" id="copyBtn">
+        <span id="copyBtnIcon">📋</span> <span id="copyBtnText">COPIER LE BILAN DE CALCUL</span>
+      </button>
+    </section>
+
+    <footer class="note" id="footerNote">
+      Outil indicatif SDJES — Conforme à la législation ALSH en vigueur.
+    </footer>
 
   </main>
 
-  <!-- NAVBAR FLOATING LIQUID GLASSMORPHISM APPLE (ROUNDED-FULL) -->
-  <nav class="fixed bottom-5 left-4 right-4 max-w-md mx-auto z-40 glass-nav-apple rounded-full p-2 flex justify-around items-center">
-    <button type="button" @click="currentTab = 'fiche'" :class="currentTab === 'fiche' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
-      <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
-      <span class="text-[9px] font-semibold mt-1 tracking-tight">Fiches</span>
-    </button>
-    <button type="button" @click="currentTab = 'soins'" :class="currentTab === 'soins' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
-      <i class="fa-solid fa-kit-medical text-sm"></i>
-      <span class="text-[9px] font-semibold mt-1 tracking-tight">Soins</span>
-    </button>
-    <button type="button" @click="currentTab = 'gouter'" :class="currentTab === 'gouter' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
-      <i class="fa-solid fa-cookie-bite text-sm"></i>
-      <span class="text-[9px] font-semibold mt-1 tracking-tight">Goûter</span>
-    </button>
-    <button type="button" @click="currentTab = 'courses'" :class="currentTab === 'courses' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
-      <i class="fa-solid fa-cart-shopping text-sm"></i>
-      <span class="text-[9px] font-semibold mt-1 tracking-tight">Matériel</span>
-    </button>
-    <button type="button" @click="currentTab = 'planning'" :class="currentTab === 'planning' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
-      <i class="fa-solid fa-calendar-days text-sm"></i>
-      <span class="text-[9px] font-semibold mt-1 tracking-tight">Planning</span>
-    </button>
-  </nav>
-
-  <!-- LOGIQUE ALPINE JS -->
-  <script>
-    function alshApp() {
-      const today = new Date();
-      const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-      return {
-        currentTab: 'fiche',
-        dateAffichee: todayISO,
-        newMatosNom: '',
-        newMatosQte: '',
-        nouvelleCourseNom: '',
-        nouvelleCourseQte: '',
-        showAddAnimModal: false,
-        showOrgModal: false,
-        showAddRecetteModal: false,
-        showPlanifModal: false,
-        animSelectionne: null,
-        toast: { show: false, message: '' },
-
-        semaineActiveOffset: 0,
-
-        nouvelleRecette: { nom: '', ingredients: [] },
-        tempIng: { nom: '', qte: '', unite: '' },
-
-        recettesGouter: [
-          {
-            id: 'recette-chocolat',
-            nom: 'Gâteau au Chocolat',
-            ingredients: [
-              { nom: 'Farine', qte: 100, unite: 'g' },
-              { nom: 'Chocolat noir', qte: 200, unite: 'g' },
-              { nom: 'Beurre', qte: 125, unite: 'g' },
-              { nom: 'Sucre', qte: 100, unite: 'g' },
-              { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }
-            ]
-          },
-          {
-            id: 'recette-pommes',
-            nom: 'Gâteau aux Pommes',
-            ingredients: [
-              { nom: 'Farine', qte: 150, unite: 'g' },
-              { nom: 'Pommes', qte: 3, unite: 'pièce(s)' },
-              { nom: 'Sucre', qte: 80, unite: 'g' },
-              { nom: 'Beurre', qte: 80, unite: 'g' },
-              { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }
-            ]
-          }
-        ],
-
-        saisieGouter: {
-          date: todayISO,
-          recetteId: 'recette-chocolat',
-          anim: '',
-          nbEnfants: 32
-        },
-
-        goutersPlanifies: [],
-        coursesAchetesGouter: {},
-
-        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
-        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
-        registreSoins: [],
-        listeCourses: [],
-        saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
-        organisations: {},
-        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] },
-        tempGroupe: { anim: '', enfantsTxt: '' },
-        planningGlobal: [],
-
-        init() {
-          const lundi = this.getLundiDeLaSemaine(new Date());
-          const mardiStr = this.addDaysISO(lundi, 1);
-          const jeudiStr = this.addDaysISO(lundi, 3);
-
-          this.goutersPlanifies = [
-            { id: 'g1', date: mardiStr, recetteId: 'recette-chocolat', anim: 'Sarah', nbEnfants: 35 },
-            { id: 'g2', date: jeudiStr, recetteId: 'recette-pommes', anim: 'Thomas', nbEnfants: 24 }
-          ];
-
-          this.planningGlobal = [
-            {
-              id: 101,
-              nom: 'Sarah',
-              dates: {
-                [todayISO]: { matin: 'Jeux d\'expression (-6a)', aprem: 'Atelier Pâtisserie' }
-              }
-            },
-            {
-              id: 102,
-              nom: 'Thomas',
-              dates: {
-                [todayISO]: { matin: 'Sport Co (+6a)', aprem: 'Grand Jeu Forêt' }
-              }
-            }
-          ];
-        },
-
-        getLundiDeLaSemaine(d) {
-          const date = new Date(d);
-          const day = date.getDay();
-          const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-          return new Date(date.setDate(diff));
-        },
-
-        addDaysISO(dateObj, days) {
-          const res = new Date(dateObj);
-          res.setDate(res.getDate() + days);
-          return `${res.getFullYear()}-${String(res.getMonth() + 1).padStart(2, '0')}-${String(res.getDate()).padStart(2, '0')}`;
-        },
-
-        changerSemaine(delta) {
-          this.semaineActiveOffset += delta;
-        },
-
-        getDatesSemaineActive() {
-          const lundiCourant = this.getLundiDeLaSemaine(new Date());
-          lundiCourant.setDate(lundiCourant.getDate() + (this.semaineActiveOffset * 7));
-
-          const dates = [];
-          for (let i = 0; i < 7; i++) {
-            dates.push(this.addDaysISO(lundiCourant, i));
-          }
-          return dates;
-        },
-
-        getLibelleSemaine() {
-          const dates = this.getDatesSemaineActive();
-          const dDeb = new Date(dates[0]);
-          const dFin = new Date(dates[6]);
-          const options = { day: 'numeric', month: 'short' };
-          return `Semaine du ${dDeb.toLocaleDateString('fr-FR', options)} au ${dFin.toLocaleDateString('fr-FR', options)}`;
-        },
-
-        getGoutersDeLaSemaine() {
-          const datesSemaine = this.getDatesSemaineActive();
-          return this.goutersPlanifies.filter(g => datesSemaine.includes(g.date))
-                                     .sort((a,b) => a.date.localeCompare(b.date));
-        },
-
-        getNomRecette(id) {
-          const r = this.recettesGouter.find(item => item.id === id);
-          return r ? r.nom : 'Recette inconnue';
-        },
-
-        ajouterIngredierntRecette() {
-          if (this.tempIng.nom.trim() !== '' && this.tempIng.qte > 0) {
-            this.nouvelleRecette.ingredients.push({
-              nom: this.tempIng.nom.trim(),
-              qte: this.tempIng.qte,
-              unite: this.tempIng.unite.trim() || 'u'
-            });
-            this.tempIng = { nom: '', qte: '', unite: '' };
-          }
-        },
-
-        enregistrerNouvelleRecette() {
-          if (this.nouvelleRecette.nom.trim() === '') {
-            this.showToast('Donne un nom à la recette.');
-            return;
-          }
-          if (this.nouvelleRecette.ingredients.length === 0) {
-            this.showToast('Ajoute au moins 1 ingrédient.');
-            return;
-          }
-
-          const newId = 'recette-' + Date.now();
-          this.recettesGouter.push({
-            id: newId,
-            nom: this.nouvelleRecette.nom.trim(),
-            ingredients: JSON.parse(JSON.stringify(this.nouvelleRecette.ingredients))
-          });
-
-          this.saisieGouter.recetteId = newId;
-          this.nouvelleRecette = { nom: '', ingredients: [] };
-          this.showAddRecetteModal = false;
-          this.showToast('Nouvelle recette créée !');
-        },
-
-        enregistrerGouterPlanifie() {
-          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) {
-            this.showToast('Choisis une date et une recette.');
-            return;
-          }
-
-          this.goutersPlanifies.push({
-            id: 'gouter-' + Date.now(),
-            date: this.saisieGouter.date,
-            recetteId: this.saisieGouter.recetteId,
-            anim: this.saisieGouter.anim.trim() || 'Animateur',
-            nbEnfants: this.saisieGouter.nbEnfants || 8
-          });
-
-          this.showPlanifModal = false;
-          this.showToast('Goûter planifié avec succès !');
-        },
-
-        supprimerGouterPlanifie(id) {
-          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
-          this.showToast('Goûter retiré.');
-        },
-
-        getListeCoursesAgregeeSemaine() {
-          const gouters = this.getGoutersDeLaSemaine();
-          const cumule = {};
-
-          gouters.forEach(g => {
-            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
-            if (recette) {
-              const nbGateaux = Math.ceil((g.nbEnfants || 8) / 8);
-
-              recette.ingredients.forEach(ing => {
-                const key = `${ing.nom.toLowerCase().trim()}_${ing.unite.toLowerCase().trim()}`;
-                if (!cumule[key]) {
-                  cumule[key] = {
-                    key: key,
-                    nom: ing.nom,
-                    qte: 0,
-                    unite: ing.unite
-                  };
-                }
-                cumule[key].qte += (ing.qte * nbGateaux);
-              });
-            }
-          });
-
-          return Object.values(cumule).map(item => ({
-            ...item,
-            qte: Number(item.qte.toFixed(2))
-          }));
-        },
-
-        estAcheteCourseGouter(key) {
-          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
-          return !!this.coursesAchetesGouter[semaineKey];
-        },
-
-        toggleAcheteCourseGouter(key) {
-          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
-          this.coursesAchetesGouter[semaineKey] = !this.coursesAchetesGouter[semaineKey];
-        },
-
-        getTodayISO() {
-          const d = new Date();
-          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        },
-
-        changerJour(deltaDays) {
-          const parts = this.dateAffichee.split('-');
-          const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          d.setDate(d.getDate() + deltaDays);
-          this.dateAffichee = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        },
-
-        formatDateLisible(dateStr) {
-          if(!dateStr) return '';
-          const parts = dateStr.split('-');
-          if(parts.length !== 3) return dateStr;
-          const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          const options = { weekday: 'long', day: 'numeric', month: 'long' };
-          const txt = d.toLocaleDateString('fr-FR', options);
-          return txt.charAt(0).toUpperCase() + txt.slice(1);
-        },
-
-        getPlanningDuJour(anim, dateKey) {
-          if (anim && anim.dates && anim.dates[dateKey]) {
-            return anim.dates[dateKey];
-          }
-          return { matin: 'Repos / Non programmé', aprem: 'Repos / Non programmé' };
-        },
-
-        aUnCreneau(anim, dateKey) {
-          return anim && anim.dates && anim.dates[dateKey] && 
-            (anim.dates[dateKey].matin !== 'Repos / Non programmé' || anim.dates[dateKey].aprem !== 'Repos / Non programmé');
-        },
-
-        editerPlanningDuJour(anim) {
-          const pJour = this.getPlanningDuJour(anim, this.dateAffichee);
-          this.saisiePlanning = {
-            nom: anim.nom,
-            date: this.dateAffichee,
-            matin: pJour.matin === 'Repos / Non programmé' ? '' : pJour.matin,
-            aprem: pJour.aprem === 'Repos / Non programmé' ? '' : pJour.aprem
-          };
-          this.showAddAnimModal = true;
-        },
-
-        nouveauCreneauVierge() {
-          this.saisiePlanning = {
-            nom: '',
-            date: this.dateAffichee,
-            matin: '',
-            aprem: ''
-          };
-          this.showAddAnimModal = true;
-        },
-
-        getOrgDuJour() {
-          return this.organisations[this.dateAffichee] || null;
-        },
-
-        ouvrirModalOrg() {
-          const orgCourante = this.getOrgDuJour();
-          if (orgCourante) {
-            this.saisieOrg = JSON.parse(JSON.stringify(orgCourante));
-          } else {
-            this.saisieOrg = { date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] };
-          }
-          this.showOrgModal = true;
-        },
-
-        ajouterGroupeAOrg() {
-          if (this.tempGroupe.anim.trim() !== '') {
-            const listeEnfants = this.tempGroupe.enfantsTxt
-              .split(',')
-              .map(e => e.trim())
-              .filter(e => e.length > 0);
-
-            this.saisieOrg.groupes.push({
-              anim: this.tempGroupe.anim.trim(),
-              enfants: listeEnfants.length > 0 ? listeEnfants : ['Aucun enfant renseigné']
-            });
-            this.tempGroupe = { anim: '', enfantsTxt: '' };
-          }
-        },
-
-        sauvegarderOrg() {
-          if (this.saisieOrg.titre.trim() !== '' && this.saisieOrg.date) {
-            this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
-            this.dateAffichee = this.saisieOrg.date;
-            this.showOrgModal = false;
-            this.showToast('Sortie / Organisation enregistrée !');
-          }
-        },
-
-        effacerOrgDuJour() {
-          delete this.organisations[this.dateAffichee];
-          this.showToast('Organisation effacée pour cette date.');
-        },
-
-        addMatos() {
-          if (this.newMatosNom.trim() !== '') {
-            this.fiche.materiel.push({
-              nom: this.newMatosNom.trim(),
-              qte: this.newMatosQte.trim() || '1'
-            });
-            this.newMatosNom = '';
-            this.newMatosQte = '';
-          }
-        },
-
-        removeMatos(index) {
-          this.fiche.materiel.splice(index, 1);
-        },
-
-        submitFiche() {
-          this.fiche.materiel.forEach(item => {
-            this.listeCourses.push({
-              id: Date.now() + Math.random(),
-              nom: item.nom,
-              qte: item.qte,
-              activite: this.fiche.titre || 'Activité',
-              achete: false
-            });
-          });
-          this.showToast('Fiche validée & matériel ajouté !');
-        },
-
-        exportPDF() {
-          document.getElementById('pdf-titre').innerText = this.fiche.titre || 'Fiche d\'Activité Sans Titre';
-          document.getElementById('pdf-age').innerText = this.fiche.age;
-          document.getElementById('pdf-lieu').innerText = this.fiche.lieu || 'Non spécifié';
-          document.getElementById('pdf-objectif').innerText = this.fiche.objectif || 'Non spécifié';
-          document.getElementById('pdf-deroulement').innerText = this.fiche.deroulement || 'Aucun déroulement renseigné.';
-
-          const listEl = document.getElementById('pdf-materiel');
-          listEl.innerHTML = '';
-          if(this.fiche.materiel.length === 0) {
-            listEl.innerHTML = '<li>Aucun matériel particulier</li>';
-          } else {
-            this.fiche.materiel.forEach(item => {
-              const li = document.createElement('li');
-              li.innerText = `${item.nom} — Quantité : ${item.qte}`;
-              listEl.appendChild(li);
-            });
-          }
-
-          const element = document.getElementById('pdf-template');
-          element.style.display = 'block';
-
-          const opt = {
-            margin:       0.5,
-            filename:     `fiche_${(this.fiche.titre || 'activite').replace(/\s+/g, '_')}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, logging: false },
-            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-          };
-
-          html2pdf().set(opt).from(element).save().then(() => {
-            element.style.display = 'none';
-          }).catch(err => {
-            element.style.display = 'none';
-            console.error(err);
-          });
-
-          this.showToast('Génération du PDF...');
-        },
-
-        submitSoin() {
-          const now = new Date();
-          const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-          this.registreSoins.unshift({
-            id: Date.now(),
-            enfant: this.soin.enfant,
-            incident: this.soin.incident,
-            action: this.soin.action || 'Soin standard',
-            heure: timeStr,
-            prevenirFamille: this.soin.prevenirFamille
-          });
-          this.showToast('Soin ajouté au registre !');
-          this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = ''; this.soin.prevenirFamille = false;
-        },
-
-        deleteSoin(id) {
-          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-          this.showToast('Soin retiré.');
-        },
-
-        addCourseDirecte() {
-          if(this.nouvelleCourseNom.trim() !== '') {
-            this.listeCourses.unshift({
-              id: Date.now(),
-              nom: this.nouvelleCourseNom.trim(),
-              qte: this.nouvelleCourseQte.trim() || '1',
-              activite: 'Achat direct',
-              achete: false
-            });
-            this.nouvelleCourseNom = '';
-            this.nouvelleCourseQte = '';
-          }
-        },
-
-        deleteCourse(id) {
-          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
-        },
-
-        viderAchetes() {
-          this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.showToast('Liste nettoyée !');
-        },
-
-        ouvrirDetailAnim(p) {
-          this.animSelectionne = p;
-        },
-
-        allerADate(dateKey) {
-          this.dateAffichee = dateKey;
-          this.animSelectionne = null;
-        },
-
-        validerPlanning() {
-          if(this.saisiePlanning.nom.trim() !== '' && this.saisiePlanning.date) {
-            let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
-            
-            if (!anim) {
-              anim = {
-                id: Date.now(),
-                nom: this.saisiePlanning.nom.trim(),
-                role: 'Animateur',
-                dates: {}
-              };
-              this.planningGlobal.push(anim);
-            }
-
-            if(!anim.dates) anim.dates = {};
-
-            anim.dates[this.saisiePlanning.date] = {
-              matin: this.saisiePlanning.matin.trim() || 'Repos / Non programmé',
-              aprem: this.saisiePlanning.aprem.trim() || 'Repos / Non programmé'
-            };
-
-            this.showAddAnimModal = false;
-            this.showToast(`Créneau de ${anim.nom} mis à jour !`);
-          }
-        },
-
-        supprimerDateAnim(anim, dateKey) {
-          if(anim && anim.dates && anim.dates[dateKey]) {
-            delete anim.dates[dateKey];
-            this.showToast('Créneau supprimé.');
-          }
-        },
-
-        supprimerAnim(id) {
-          this.planningGlobal = this.planningGlobal.filter(p => p.id !== id);
-          if (this.animSelectionne && this.animSelectionne.id === id) {
-            this.animSelectionne = null;
-          }
-          this.showToast('Animateur retiré.');
-        },
-
-        showToast(msg) {
-          this.toast.message = msg;
-          this.toast.show = true;
-          setTimeout(() => { this.toast.show = false; }, 3000);
-        }
+  <!-- Sticky Mini Bar -->
+  <div class="sticky-mini-bar" id="stickyMiniBar">
+    <div class="mini-info">
+      <span class="mini-count" id="miniAnimCount">0</span>
+      <span class="mini-label" id="miniAnimLabel">Anim' requis</span>
+    </div>
+    <span class="mini-arrow">DÉTAILS ➔</span>
+  </div>
+
+  <div class="toast" id="toast" role="status">📋 Bilan copié dans le presse-papier !</div>
+
+<script>
+  const STORAGE_KEY = 'alsh_calculator_state';
+
+  const n36input = document.getElementById('n36');
+  const n612input = document.getElementById('n612');
+  const totalKidsIndicator = document.getElementById('totalKidsIndicator');
+  const safetyAlert = document.getElementById('safetyAlert');
+  const dirToggle = document.getElementById('dirToggle');
+  const dirRow = document.getElementById('dirRow');
+  const eyebrowBadge = document.getElementById('eyebrowBadge');
+  const footerNote = document.getElementById('footerNote');
+  const mutualBadge = document.getElementById('mutualBadge');
+  const resetBtn = document.getElementById('resetBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const copyBtnIcon = document.getElementById('copyBtnIcon');
+  const copyBtnText = document.getElementById('copyBtnText');
+  const toast = document.getElementById('toast');
+
+  const resultCard = document.getElementById('resultCard');
+  const stickyMiniBar = document.getElementById('stickyMiniBar');
+  const miniAnimCount = document.getElementById('miniAnimCount');
+  const miniAnimLabel = document.getElementById('miniAnimLabel');
+
+  const poolTrack = document.getElementById('poolTrack');
+  const totalAnimEl = document.getElementById('totalAnim');
+  const totalAnimLabelEl = document.getElementById('totalAnimLabel');
+
+  const qDiplomes = document.getElementById('qDiplomes');
+  const qNonDiplomes = document.getElementById('qNonDiplomes');
+  const qStagiaires = document.getElementById('qStagiaires');
+
+  let activeRegimeKey = 'hors_p5';
+  let activeMutualMode = 'avec';
+
+  const REGIMES = {
+    hors_p5: { ratio36: 8,  ratio612: 12, tag: "( HORS PEDT · > 5H )" },
+    hors_m5: { ratio36: 10, ratio612: 14, tag: "( HORS PEDT · ≤ 5H )" },
+    avec_p5: { ratio36: 10, ratio612: 14, tag: "( AVEC PEDT · > 5H )" },
+    avec_m5: { ratio36: 14, ratio612: 18, tag: "( AVEC PEDT · ≤ 5H )" }
+  };
+
+  /* ----- Persistance localStorage ----- */
+  function saveState() {
+    const state = {
+      regime: activeRegimeKey,
+      mutualMode: activeMutualMode,
+      n36: n36input.value,
+      n612: n612input.value,
+      dir: dirToggle.checked
+    };
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch(e) {}
+  }
+
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const state = JSON.parse(saved);
+
+      if (state.regime && REGIMES[state.regime]) {
+        activeRegimeKey = state.regime;
+        document.querySelectorAll('.regime-card').forEach(b => {
+          const isActive = b.dataset.regime === activeRegimeKey;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
       }
+      if (state.mutualMode) {
+        activeMutualMode = state.mutualMode;
+        document.querySelectorAll('.mutual-btn').forEach(b => {
+          const isActive = b.dataset.mode === activeMutualMode;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+      }
+      if (state.n36 !== undefined) n36input.value = clampInt(state.n36);
+      if (state.n612 !== undefined) n612input.value = clampInt(state.n612);
+      if (state.dir !== undefined) dirToggle.checked = Boolean(state.dir);
+    } catch(e) {}
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) {
+        stickyMiniBar.classList.add('visible');
+      } else {
+        stickyMiniBar.classList.remove('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  observer.observe(resultCard);
+
+  stickyMiniBar.addEventListener('click', () => {
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  function hapticFeedback() {
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate(8); } catch(e){}
     }
-  </script>
+  }
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, 2600);
+  }
+
+  document.querySelectorAll('.regime-card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      hapticFeedback();
+      document.querySelectorAll('.regime-card').forEach(c => {
+        c.classList.remove('active');
+        c.setAttribute('aria-checked', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-checked', 'true');
+      activeRegimeKey = btn.dataset.regime;
+      recalc();
+    });
+  });
+
+  document.querySelectorAll('.mutual-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      hapticFeedback();
+      document.querySelectorAll('.mutual-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-checked', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-checked', 'true');
+      activeMutualMode = btn.dataset.mode;
+      recalc();
+    });
+  });
+
+  function clampInt(v){
+    v = parseInt(v, 10);
+    if (isNaN(v) || v < 0) return 0;
+    return v;
+  }
+
+  document.querySelectorAll('.stepbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      hapticFeedback();
+      const target = document.getElementById(btn.dataset.target);
+      const delta = parseInt(btn.dataset.delta, 10);
+      target.value = clampInt(clampInt(target.value) + delta);
+      recalc();
+    });
+  });
+
+  [n36input, n612input].forEach(inp => {
+    inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^0-9]/g,''); recalc(); });
+    inp.addEventListener('blur', () => { inp.value = clampInt(inp.value); recalc(); });
+  });
+
+  dirToggle.addEventListener('change', () => { hapticFeedback(); recalc(); });
+
+  resetBtn.addEventListener('click', () => {
+    hapticFeedback();
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+    n36input.value = 0;
+    n612input.value = 0;
+    dirToggle.checked = false;
+    recalc();
+    showToast("🔄 Effectifs réinitialisés");
+  });
+
+  function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
+    const currentModeKey = isSplitMode ? 'split' : 'normal';
+    if (poolTrack.dataset.mode !== currentModeKey) {
+      poolTrack.innerHTML = '';
+      poolTrack.dataset.mode = currentModeKey;
+    }
+
+    if (totalNeeded === 0){
+      poolTrack.innerHTML = '<div class="segment ghost"></div>';
+      return;
+    }
+
+    const ghost = poolTrack.querySelector('.ghost');
+    if (ghost) ghost.remove();
+
+    if (isSplitMode) {
+      let container = poolTrack.querySelector('.pool-split-container');
+      if (!container) {
+        poolTrack.innerHTML = '';
+        container = document.createElement('div');
+        container.className = 'pool-split-container';
+        poolTrack.appendChild(container);
+      }
+
+      const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
+      const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
+
+      function syncTrack(groupId, labelText, count, maxRatio, currentKids, fillClass) {
+        let group = container.querySelector('.' + groupId);
+        if (count === 0) {
+          if (group) group.remove();
+          return;
+        }
+        if (!group) {
+          group = document.createElement('div');
+          group.className = `pool-subgroup ${groupId}`;
+          group.innerHTML = `<span class="subgroup-label"></span><div class="pool-track"></div>`;
+          container.appendChild(group);
+        }
+
+        group.querySelector('.subgroup-label').textContent = labelText;
+        const track = group.querySelector('.pool-track');
+        let segs = Array.from(track.querySelectorAll('.segment'));
+
+        while (segs.length < count) {
+          const seg = document.createElement('div');
+          seg.className = 'segment new-seg';
+          seg.innerHTML = `<div class="${fillClass}"></div><span class="gauge-label"></span>`;
+          track.appendChild(seg);
+          segs.push(seg);
+        }
+        while (segs.length > count) {
+          const segToRemove = segs.pop();
+          segToRemove.remove();
+        }
+
+        segs.forEach((seg, i) => {
+          const kidsForAnim = Math.min(maxRatio, currentKids - (i * maxRatio));
+          const fillPct = (kidsForAnim / maxRatio) * 100;
+          const fillEl = seg.querySelector('.' + fillClass);
+          const labelEl = seg.querySelector('.gauge-label');
+
+          fillEl.style.width = fillPct + '%';
+          labelEl.textContent = `${kidsForAnim}/${maxRatio}`;
+        });
+      }
+
+      syncTrack('group-a', `- de 6 ans (${count36} Anim' / ${n36} enf.)`, count36, r1, n36, 'fillA');
+      syncTrack('group-b', `+ de 6 ans (${count612} Anim' / ${n612} enf.)`, count612, r2, n612, 'fillB');
+
+    } else {
+      let existingSegs = Array.from(poolTrack.querySelectorAll(':scope > .segment'));
+
+      while (existingSegs.length < totalNeeded) {
+        const seg = document.createElement('div');
+        seg.className = 'segment new-seg';
+        const fillA = document.createElement('div');
+        fillA.className = 'fillA';
+        const fillB = document.createElement('div');
+        fillB.className = 'fillB';
+        seg.appendChild(fillA);
+        seg.appendChild(fillB);
+        poolTrack.appendChild(seg);
+        existingSegs.push(seg);
+      }
+
+      while (existingSegs.length > totalNeeded) {
+        const segToRemove = existingSegs.pop();
+        segToRemove.remove();
+      }
+
+      const total36Anims = n36 / r1;
+      const total612Anims = n612 / r2;
+
+      existingSegs.forEach((seg, i) => {
+        let fillAPct = 0;
+        let fillBPct = 0;
+
+        if (total36Anims + total612Anims > 0) {
+          const segStart = i;
+          const segEnd = i + 1;
+          const aEnd = Math.min(segEnd, total36Anims);
+          const aStart = Math.max(segStart, 0);
+          fillAPct = Math.max(0, aEnd - aStart) * 100;
+
+          const bStart = Math.max(segStart, total36Anims);
+          const bEnd = Math.min(segEnd, total36Anims + total612Anims);
+          fillBPct = Math.max(0, bEnd - bStart) * 100;
+        }
+
+        const fillA = seg.querySelector('.fillA');
+        const fillB = seg.querySelector('.fillB');
+
+        fillA.style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
+        fillB.style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
+      });
+    }
+  }
+
+  function animateNumber(el, to){
+    const from = parseInt(el.textContent, 10) || 0;
+    if (from === to){ return; }
+    const duration = 280;
+    const start = performance.now();
+    const ease = t => 1 - Math.pow(1 - t, 3);
+
+    function step(now){
+      const t = Math.min(1, (now - start) / duration);
+      const val = Math.round(from + (to - from) * ease(t));
+      el.textContent = val;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+
+    el.classList.remove('num-pulse');
+    void el.offsetWidth;
+    el.classList.add('num-pulse');
+  }
+
+  function recalc(){
+    const currentRegime = REGIMES[activeRegimeKey];
+    eyebrowBadge.textContent = currentRegime.tag;
+
+    const n36 = clampInt(n36input.value);
+    const n612 = clampInt(n612input.value);
+    const effectif = n36 + n612;
+
+    totalKidsIndicator.innerHTML = `( EFFECTIF TOTAL : <strong>${effectif}</strong> ENFANT${effectif > 1 ? 'S' : ''} )`;
+
+    const r1 = currentRegime.ratio36;
+    const r2 = currentRegime.ratio612;
+
+    const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
+    const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
+    const naiveSum = naive36 + naive612;
+
+    let totalNeeded = 0;
+
+    if (effectif > 0) {
+      if (activeMutualMode === 'avec') {
+        const fullGroups = Math.floor(n36 / r1) + Math.floor(n612 / r2);
+        const rem36 = n36 % r1;
+        const rem612 = n612 % r2;
+        const remTotal = rem36 + rem612;
+
+        if (remTotal === 0) {
+          totalNeeded = fullGroups;
+        } else if (remTotal <= r1) {
+          totalNeeded = fullGroups + 1;
+        } else {
+          totalNeeded = fullGroups + 2;
+        }
+      } else {
+        totalNeeded = naiveSum;
+      }
+
+      if (totalNeeded < 2) {
+        totalNeeded = 2;
+        safetyAlert.classList.add('visible');
+      } else {
+        safetyAlert.classList.remove('visible');
+      }
+    } else {
+      safetyAlert.classList.remove('visible');
+    }
+
+    const isSplitMode = (activeMutualMode === 'sans');
+    renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode);
+
+    const directorEligible = effectif > 0 && effectif <= 50;
+    dirRow.classList.toggle('disabled', !directorEligible);
+    if (!directorEligible) dirToggle.checked = false;
+
+    let displayed = totalNeeded;
+    if (dirToggle.checked && directorEligible){
+      displayed = Math.max(totalNeeded - 1, 0);
+      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ le directeur)";
+    } else {
+      totalAnimLabelEl.textContent = "Anim' sur le terrain";
+    }
+    
+    animateNumber(totalAnimEl, displayed);
+    miniAnimCount.textContent = displayed;
+    miniAnimLabel.textContent = "Anim' requis";
+
+    const saved = naiveSum - totalNeeded;
+    if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
+      mutualBadge.textContent = `⚡ -${saved} ANIM' MUTUALISÉ${saved > 1 ? 'S' : ''}`;
+      mutualBadge.classList.add('visible');
+    } else {
+      mutualBadge.classList.remove('visible');
+    }
+
+    const base = displayed;
+    const diplomesMin = Math.ceil(base * 0.5);
+    const nonDiplomesMax = Math.floor(base * 0.2);
+    const stagiaires = Math.max(base - diplomesMin - nonDiplomesMax, 0);
+
+    animateNumber(qDiplomes, diplomesMin);
+    animateNumber(qNonDiplomes, nonDiplomesMax);
+    animateNumber(qStagiaires, stagiaires);
+
+    let modeText = activeMutualMode === 'avec' 
+      ? "Avec mutualisation (SDJES)" 
+      : "Sans mutualisation";
+
+    footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
+    
+    saveState();
+  }
+
+  copyBtn.addEventListener('click', () => {
+    hapticFeedback();
+    const currentRegime = REGIMES[activeRegimeKey];
+    const n36 = clampInt(n36input.value);
+    const n612 = clampInt(n612input.value);
+    const totalKids = n36 + n612;
+    const totalAnim = totalAnimEl.textContent;
+    const mode = activeMutualMode === 'avec' ? "Avec mutualisation" : "Sans mutualisation";
+    const dirInclus = dirToggle.checked ? "Oui" : "Non";
+
+    const textSummary = 
+`📋 BILAN TAUX D'ENCADREMENT ALSH
+-----------------------------------
+- Régime : ${currentRegime.tag}
+- Effectifs : ${totalKids} enfants (-6ans: ${n36} | +6ans: ${n612})
+- Mode de calcul : ${mode}
+- Directeur inclus sur le terrain : ${dirInclus}
+-----------------------------------
+> ANIM' REQUIS : ${totalAnim}
+
+Composition recommandée de l'équipe :
+• Diplômé·e·s (Min. 50%) : ${qDiplomes.textContent}
+• Non-diplômé·e·s (Max. 20%) : ${qNonDiplomes.textContent}
+• Stagiaires BAFA : ${qStagiaires.textContent}
+`;
+
+    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      navigator.share({
+        title: "Bilan ALSH",
+        text: textSummary
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(textSummary).then(() => {
+        copyBtn.classList.add('copied');
+        copyBtnIcon.textContent = "✓";
+        copyBtnText.textContent = "BILAN COPIÉ !";
+
+        showToast("📋 Bilan copié dans le presse-papier !");
+
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtnIcon.textContent = "📋";
+          copyBtnText.textContent = "COPIER LE BILAN DE CALCUL";
+        }, 2200);
+
+      }).catch(() => {
+        showToast("Impossible de copier automatiquement.");
+      });
+    }
+  });
+
+  loadState();
+  recalc();
+</script>
+
 </body>
 </html>
