@@ -1,18 +1,11 @@
 <!DOCTYPE html>
-<html lang="fr" x-data="alshApp()" :class="isDark ? 'dark' : ''">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALSH Flow</title>
-  
-  <!-- Tailwind CSS avec mode Dark par classe -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-    }
-  </script>
-  
   <!-- Alpine.js -->
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <!-- FontAwesome Icons -->
@@ -23,83 +16,52 @@
   <style>
     *, ::before, ::after { box-sizing: border-box; }
     
-    /* Composants UI unifiés et adaptés Light / Dark */
     .card-panel {
-      background-color: #ffffff;
-      border: 1px solid #e2e8f0;
-    }
-    .dark .card-panel {
       background-color: rgba(30, 41, 59, 0.95);
-      border-color: rgba(51, 65, 85, 0.8);
+      border: 1px solid rgba(51, 65, 85, 0.8);
     }
-
     .card-item {
-      background-color: #f8fafc;
-      border: 1px solid #e2e8f0;
-    }
-    .dark .card-item {
       background-color: rgba(15, 23, 42, 0.6);
-      border-color: rgba(51, 65, 85, 0.6);
+      border: 1px solid rgba(51, 65, 85, 0.6);
     }
-
     .input-ui {
-      background-color: #ffffff;
-      border: 1px solid #cbd5e1;
-      color: #0f172a;
-      width: 100% !important;
-      transition: all 0.15s ease-in-out;
-    }
-    .dark .input-ui {
       background-color: rgba(15, 23, 42, 0.8);
-      border-color: rgba(71, 85, 105, 0.8);
+      border: 1px solid rgba(71, 85, 105, 0.8);
       color: #f8fafc;
+      width: 100% !important;
+      text-align: left; /* Sécurité alignment */
+      transition: all 0.15s ease-in-out;
     }
     .input-ui:focus {
       border-color: #6366f1;
       outline: none;
       box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
     }
-    .input-ui::placeholder { color: #94a3b8; }
-    .dark .input-ui::placeholder { color: #64748b; }
+    .input-ui::placeholder { color: #64748b; }
     
-    .glass-nav {
-      background: rgba(ffffff, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid #e2e8f0;
-    }
-    .dark .glass-nav {
-      background: rgba(15, 23, 42, 0.92);
-      border-color: rgba(51, 65, 85, 0.8);
+    /* VRAI LIQUID GLASSMORPHISM APPLE */
+    .glass-nav-apple {
+      background: rgba(15, 23, 42, 0.45) !important;
+      backdrop-filter: blur(20px) saturate(190%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3) !important;
     }
 
     input[type="date"] {
-      color-scheme: light;
+      color-scheme: dark;
       width: 100% !important;
       display: block;
       -webkit-appearance: none;
       appearance: none;
-    }
-    .dark input[type="date"] {
-      color-scheme: dark;
+      text-align: left;
     }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 font-sans antialiased pt-4 pb-28 select-none transition-colors duration-200">
-
-  <!-- EN-TÊTE AVEC BOUTON DE THÈME -->
-  <header class="max-w-md mx-auto px-4 mb-3 flex justify-between items-center">
-    <div class="flex items-center space-x-2">
-      <i class="fa-solid fa-shapes text-indigo-600 dark:text-indigo-400 text-lg"></i>
-      <h1 class="font-black text-sm uppercase tracking-wider text-slate-900 dark:text-slate-100">ALSH Flow</h1>
-    </div>
-    
-    <!-- Bouton Toggle Mode Sombre / Clair -->
-    <button @click="toggleTheme()" class="px-3 py-1.5 rounded-xl card-panel text-xs font-semibold flex items-center gap-2 shadow-sm transition-all hover:scale-105 active:scale-95 text-slate-700 dark:text-slate-200">
-      <i class="fa-solid" :class="isDark ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-600'"></i>
-      <span x-text="isDark ? 'Clair' : 'Sombre'"></span>
-    </button>
-  </header>
+<body class="bg-slate-950 min-h-screen text-slate-100 font-sans antialiased pt-4 pb-28 select-none" x-data="alshApp()">
 
   <!-- TOAST NOTIFICATION -->
   <div x-show="toast.show" 
@@ -109,13 +71,13 @@
        x-transition:leave="transition ease-in duration-150"
        x-transition:leave-start="opacity-100 translate-y-0"
        x-transition:leave-end="opacity-0 -translate-y-2"
-       class="fixed top-4 right-4 left-4 z-50 card-panel border-indigo-500/50 p-4 rounded-2xl flex items-center justify-between shadow-2xl"
+       class="fixed top-4 right-4 left-4 z-50 card-panel border-indigo-500/50 p-4 rounded-2xl flex items-center justify-between shadow-2xl bg-slate-900/95"
        style="display: none;">
     <div class="flex items-center space-x-3">
-      <i class="fa-solid fa-circle-check text-indigo-600 dark:text-indigo-400 text-lg"></i>
-      <span class="text-xs font-medium text-slate-800 dark:text-slate-200" x-text="toast.message"></span>
+      <i class="fa-solid fa-circle-check text-indigo-400 text-lg"></i>
+      <span class="text-xs font-medium text-slate-200" x-text="toast.message"></span>
     </div>
-    <button @click="toast.show = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    <button type="button" @click="toast.show = false" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
   </div>
 
   <main class="max-w-md mx-auto px-4 space-y-4">
@@ -123,68 +85,68 @@
     <!-- 1. ONGLET : FICHE D'ACTIVITÉ -->
     <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-98" x-transition:enter-end="opacity-100 scale-100" class="space-y-4">
       <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-          <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
-            <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 dark:text-indigo-400"></i> Fiche d'Activité
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
+            <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i> Fiche d'Activité
           </h2>
-          <span class="text-xs bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">Express</span>
+          <span class="text-xs bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">Express</span>
         </div>
 
         <form @submit.prevent="submitFiche()" class="space-y-3.5">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nom de l'activité</label>
-            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu La Chasse au Trésor" class="input-ui px-3.5 py-2.5 rounded-xl text-xs" required>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Nom de l'activité</label>
+            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu La Chasse au Trésor" class="input-ui px-3.5 py-2.5 rounded-xl text-xs text-left" required>
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Tranche d'âge</label>
-              <select x-model="fiche.age" class="input-ui px-3 py-2.5 rounded-xl text-xs bg-white dark:bg-slate-900">
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tranche d'âge</label>
+              <select x-model="fiche.age" class="input-ui px-3 py-2.5 rounded-xl text-xs bg-slate-900">
                 <option value="-6 ans">-6 ans</option>
                 <option value="+6 ans">+6 ans</option>
                 <option value="Inter-tranches">Inter-tranches</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Lieu</label>
-              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="input-ui px-3 py-2.5 rounded-xl text-xs">
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Lieu</label>
+              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="input-ui px-3 py-2.5 rounded-xl text-xs text-left">
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Objectif Pédagogique</label>
-            <input type="text" x-model="fiche.objectif" placeholder="ex: Développer l'esprit d'équipe" class="input-ui px-3.5 py-2.5 rounded-xl text-xs">
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Objectif Pédagogique</label>
+            <input type="text" x-model="fiche.objectif" placeholder="ex: Développer l'esprit d'équipe" class="input-ui px-3.5 py-2.5 rounded-xl text-xs text-left">
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Déroulement / Consignes</label>
-            <textarea x-model="fiche.deroulement" placeholder="Explication rapide des étapes du jeu..." class="input-ui px-3.5 py-2.5 rounded-xl text-xs h-20 resize-none"></textarea>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Déroulement / Consignes</label>
+            <textarea x-model="fiche.deroulement" placeholder="Explication rapide des étapes du jeu..." class="input-ui px-3.5 py-2.5 rounded-xl text-xs h-20 resize-none text-left"></textarea>
           </div>
 
-          <div class="card-item p-3.5 rounded-2xl space-y-2 border-l-2 border-l-indigo-500">
-            <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-300 flex items-center gap-1.5">
+          <div class="card-item p-3.5 rounded-2xl space-y-2 border-l-2 border-l-indigo-400">
+            <span class="text-xs font-semibold text-indigo-300 flex items-center gap-1.5">
               <i class="fa-solid fa-cart-plus"></i> Matériel & Quantités
             </span>
             <div class="grid grid-cols-5 gap-1.5">
-              <input type="text" x-model="newMatosNom" placeholder="Article (ex: Papier Kraft)" class="col-span-3 input-ui px-2.5 py-2 rounded-lg text-xs">
+              <input type="text" x-model="newMatosNom" placeholder="Article (ex: Papier Kraft)" class="col-span-3 input-ui px-2.5 py-2 rounded-lg text-xs text-left">
               <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-2 rounded-lg text-xs text-center">
               <button type="button" @click="addMatos()" class="col-span-1 bg-indigo-600 hover:bg-indigo-500 active:scale-95 rounded-lg text-xs font-bold text-white transition-all">+</button>
             </div>
             <ul class="space-y-1.5 pt-1">
               <template x-for="(item, index) in fiche.materiel" :key="index">
                 <li class="flex items-center justify-between text-xs card-item px-3 py-1.5 rounded-lg">
-                  <span class="text-slate-700 dark:text-slate-300" x-text="item.nom + ' — Quantité : ' + item.qte"></span>
-                  <button type="button" @click="removeMatos(index)" class="text-slate-400 hover:text-red-500 ml-2 transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                  <span class="text-slate-300" x-text="item.nom + ' — Quantité : ' + item.qte"></span>
+                  <button type="button" @click="removeMatos(index)" class="text-slate-500 hover:text-red-400 ml-2 transition-colors"><i class="fa-solid fa-xmark"></i></button>
                 </li>
               </template>
             </ul>
           </div>
 
           <div class="grid grid-cols-2 gap-2.5 pt-2">
-            <button type="button" @click="exportPDF()" class="py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-semibold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 active:scale-98">
-              <i class="fa-solid fa-file-pdf text-red-500"></i> Générer PDF
+            <button type="button" @click="exportPDF()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 active:scale-98">
+              <i class="fa-solid fa-file-pdf text-red-400"></i> Générer PDF
             </button>
-            <button type="submit" class="py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 active:scale-98 shadow-md">
+            <button type="submit" class="py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 active:scale-98 shadow-md shadow-indigo-950/50">
               <i class="fa-solid fa-paper-plane"></i> Envoyer en Courses
             </button>
           </div>
@@ -193,7 +155,7 @@
     </div>
 
     <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF -->
-    <div id="pdf-template" class="hidden">
+    <div id="pdf-template" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 700px;">
       <div style="padding: 30px; font-family: Arial, sans-serif; color: #1e293b; background: #ffffff;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6366f1; padding-bottom: 12px; margin-bottom: 20px;">
           <div>
@@ -229,54 +191,54 @@
     <!-- 2. ONGLET : CAHIER DE SOINS NUMÉRIQUE -->
     <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-98" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-          <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
-            <i class="fa-solid fa-kit-medical text-indigo-600 dark:text-indigo-400"></i> Cahier de Soins
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
+            <i class="fa-solid fa-kit-medical text-indigo-400"></i> Cahier de Soins
           </h2>
-          <span class="text-xs bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">Santé</span>
+          <span class="text-xs bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">Santé</span>
         </div>
 
         <form @submit.prevent="submitSoin()" class="space-y-3.5">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Prénom & Nom de l'enfant</label>
-            <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-ui px-3.5 py-2.5 rounded-xl text-xs" required>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Prénom & Nom de l'enfant</label>
+            <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-ui px-3.5 py-2.5 rounded-xl text-xs text-left" required>
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Type d'incident / Symptôme</label>
-            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure genou droit" class="input-ui px-3.5 py-2.5 rounded-xl text-xs" required>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Type d'incident / Symptôme</label>
+            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure genou droit" class="input-ui px-3.5 py-2.5 rounded-xl text-xs text-left" required>
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Soin apporté</label>
-            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant" class="input-ui px-3.5 py-2.5 rounded-xl text-xs h-20 resize-none"></textarea>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Soin apporté</label>
+            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant" class="input-ui px-3.5 py-2.5 rounded-xl text-xs h-20 resize-none text-left"></textarea>
           </div>
 
-          <div class="flex items-center space-x-2.5 card-item p-3 rounded-xl">
-            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-indigo-600 dark:accent-indigo-500 rounded cursor-pointer">
-            <label for="famille" class="text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">Avertir la famille au départ ce soir</label>
+          <div class="flex items-center space-x-2.5 card-item p-3 rounded-xl border border-slate-800">
+            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-indigo-500 rounded cursor-pointer">
+            <label for="famille" class="text-xs font-medium text-slate-300 cursor-pointer">Avertir la famille au départ ce soir</label>
           </div>
 
-          <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs shadow-md transition-all active:scale-98">
+          <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs shadow-md shadow-indigo-950/50 transition-all active:scale-98">
             Enregistrer le soin
           </button>
         </form>
 
-        <hr class="border-slate-200 dark:border-slate-800 my-2">
+        <hr class="border-slate-800 my-2">
 
-        <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Registre des soins enregistrés</h3>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Registre des soins enregistrés</h3>
         <div class="space-y-2">
           <template x-for="item in registreSoins" :key="item.id">
-            <div class="card-item p-3.5 rounded-2xl flex items-start justify-between">
+            <div class="card-item p-3.5 rounded-2xl flex items-start justify-between border-slate-800">
               <div class="space-y-1">
-                <p class="font-semibold text-xs text-slate-900 dark:text-slate-100" x-text="item.enfant"></p>
-                <p class="text-xs text-slate-600 dark:text-slate-400" x-text="item.incident"></p>
+                <p class="font-semibold text-xs text-slate-100" x-text="item.enfant"></p>
+                <p class="text-xs text-slate-400" x-text="item.incident"></p>
                 <p class="text-[11px] text-slate-500" x-text="item.heure + ' • Soin : ' + item.action"></p>
-                <span x-show="item.prevenirFamille" class="inline-block px-2 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] font-medium rounded-full border border-amber-500/20 mt-1">
+                <span x-show="item.prevenirFamille" class="inline-block px-2 py-0.5 bg-amber-500/10 text-amber-400 text-[10px] font-medium rounded-full border border-amber-500/20 mt-1">
                   <i class="fa-solid fa-bell text-[9px] mr-1"></i> Prévenir les parents
                 </span>
               </div>
-              <button @click="deleteSoin(item.id)" class="text-slate-400 hover:text-red-500 text-xs p-1 transition-colors" title="Supprimer ce soin">
+              <button type="button" @click="deleteSoin(item.id)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors" title="Supprimer ce soin">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </div>
@@ -290,121 +252,121 @@
       <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
         
         <div class="space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-            <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
-              <i class="fa-solid fa-cookie-bite text-indigo-600 dark:text-indigo-400"></i> Goûters & Recettes
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
+              <i class="fa-solid fa-cookie-bite text-indigo-400"></i> Goûters & Recettes
             </h2>
             <div class="flex gap-1.5">
-              <button @click="showAddRecetteModal = !showAddRecetteModal" class="text-xs bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 px-2.5 py-1 rounded-xl font-medium transition-all">
-                <i class="fa-solid fa-book text-indigo-600 dark:text-indigo-400 mr-1"></i> Recettes
+              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-xl font-medium transition-all">
+                <i class="fa-solid fa-book text-indigo-400 mr-1"></i> Recettes
               </button>
-              <button @click="showPlanifModal = true" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded-xl font-semibold shadow-md transition-all">
+              <button type="button" @click="showPlanifModal = true" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded-xl font-semibold shadow-md transition-all">
                 + Planifier
               </button>
             </div>
           </div>
 
           <div class="flex items-center justify-between card-item px-3 py-2 rounded-2xl">
-            <button @click="changerSemaine(-1)" class="p-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+            <button type="button" @click="changerSemaine(-1)" class="p-1 text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-left text-xs"></i></button>
             <div class="text-center">
-              <p class="text-xs font-semibold text-indigo-600 dark:text-indigo-300" x-text="getLibelleSemaine()"></p>
+              <p class="text-xs font-semibold text-indigo-300" x-text="getLibelleSemaine()"></p>
               <p class="text-[10px] text-slate-500">Planning Hebdomadaire</p>
             </div>
-            <button @click="changerSemaine(1)" class="p-1 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+            <button type="button" @click="changerSemaine(1)" class="p-1 text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
           </div>
         </div>
 
         <!-- MODAL CRÉER UNE RECETTE SUR-MESURE -->
-        <div x-show="showAddRecetteModal" x-transition class="card-item p-4 rounded-2xl space-y-3 border border-indigo-500/30 bg-slate-100 dark:bg-slate-900" style="display: none;">
-          <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-2">
-            <h3 class="text-xs font-semibold text-indigo-600 dark:text-indigo-300 flex items-center gap-1.5">
+        <div x-show="showAddRecetteModal" x-transition class="card-item p-4 rounded-2xl space-y-3 border border-indigo-500/30 bg-slate-900" style="display: none;">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+            <h3 class="text-xs font-semibold text-indigo-300 flex items-center gap-1.5">
               <i class="fa-solid fa-utensils"></i> Nouvelle Recette (Base 8 enfants)
             </h3>
-            <button @click="showAddRecetteModal = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <button type="button" @click="showAddRecetteModal = false" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Nom de la recette</label>
-            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="input-ui px-3 py-2 rounded-xl text-xs">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nom de la recette</label>
+            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
           </div>
 
           <div class="space-y-2 pt-1">
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300">Ingrédients pour 1 gâteau :</label>
+            <label class="block text-[11px] font-semibold text-slate-300">Ingrédients pour 1 gâteau :</label>
             
             <div class="grid grid-cols-6 gap-1.5">
-              <input type="text" x-model="tempIng.nom" placeholder="Ingrédient" class="col-span-3 input-ui px-2 py-1.5 rounded-lg text-xs">
+              <input type="text" x-model="tempIng.nom" placeholder="Ingrédient" class="col-span-3 input-ui px-2 py-1.5 rounded-lg text-xs text-left">
               <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-ui px-2 py-1.5 rounded-lg text-xs text-center">
-              <input type="text" x-model="tempIng.unite" placeholder="Unité" class="col-span-1.5 input-ui px-2 py-1.5 rounded-lg text-xs">
+              <input type="text" x-model="tempIng.unite" placeholder="Unité" class="col-span-1.5 input-ui px-2 py-1.5 rounded-lg text-xs text-left">
             </div>
             
-            <button @click="ajouterIngredierntRecette()" type="button" class="w-full py-1.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 transition-all">
+            <button type="button" @click="ajouterIngredierntRecette()" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg border border-slate-700 transition-all">
               + Ajouter l'ingrédient
             </button>
 
             <div class="space-y-1 pt-1">
               <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
                 <div class="flex justify-between items-center text-xs card-item px-2.5 py-1 rounded-lg">
-                  <span class="text-slate-700 dark:text-slate-300" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
-                  <button @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+                  <span class="text-slate-300" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
+                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-slate-500 hover:text-red-400"><i class="fa-solid fa-xmark"></i></button>
                 </div>
               </template>
             </div>
           </div>
 
-          <button @click="enregistrerNouvelleRecette()" type="button" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs transition-all shadow-md">
+          <button type="button" @click="enregistrerNouvelleRecette()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs transition-all shadow-md">
             Enregistrer la recette
           </button>
         </div>
 
         <!-- LISTE DES GOÛTERS PROGRAMMÉS -->
         <div class="space-y-2">
-          <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex justify-between items-center">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
             <span>Planning Goûters</span>
             <span class="text-slate-500 font-normal" x-text="getGoutersDeLaSemaine().length + ' planifié(s)'"></span>
           </h3>
 
           <template x-if="getGoutersDeLaSemaine().length === 0">
-            <div class="card-item p-4 rounded-2xl text-center space-y-1 border-dashed">
-              <p class="text-xs text-slate-500 dark:text-slate-400">Aucun goûter planifié pour cette semaine.</p>
-              <button @click="showPlanifModal = true" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold">Cliquez ici pour planifier</button>
+            <div class="card-item p-4 rounded-2xl text-center space-y-1 border-dashed border-slate-800">
+              <p class="text-xs text-slate-400">Aucun goûter planifié pour cette semaine.</p>
+              <button type="button" @click="showPlanifModal = true" class="text-xs text-indigo-400 hover:underline font-semibold">Cliquez ici pour planifier</button>
             </div>
           </template>
 
           <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
-            <div class="card-item p-3.5 rounded-2xl border-l-2 border-l-indigo-500 space-y-2">
+            <div class="card-item p-3.5 rounded-2xl border-l-2 border-l-indigo-400 space-y-2">
               <div class="flex justify-between items-start">
                 <div>
-                  <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider" x-text="formatDateLisible(g.date)"></span>
-                  <h4 class="font-semibold text-xs text-slate-900 dark:text-slate-100" x-text="getNomRecette(g.recetteId)"></h4>
+                  <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider" x-text="formatDateLisible(g.date)"></span>
+                  <h4 class="font-semibold text-xs text-slate-100" x-text="getNomRecette(g.recetteId)"></h4>
                 </div>
-                <button @click="supprimerGouterPlanifie(g.id)" class="text-slate-400 hover:text-red-500 text-xs p-1 transition-colors">
+                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
 
-              <div class="grid grid-cols-2 gap-2 text-xs bg-slate-100 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+              <div class="grid grid-cols-2 gap-2 text-xs bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
                 <div>
-                  <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-semibold">Animateur</span>
-                  <span class="font-medium text-slate-800 dark:text-slate-200" x-text="g.anim || 'Non renseigné'"></span>
+                  <span class="text-[10px] text-slate-400 block font-semibold">Animateur</span>
+                  <span class="font-medium text-slate-200" x-text="g.anim || 'Non renseigné'"></span>
                 </div>
                 <div>
-                  <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-semibold">Quantité</span>
-                  <span class="font-medium text-slate-800 dark:text-slate-200" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
+                  <span class="text-[10px] text-slate-400 block font-semibold">Quantité</span>
+                  <span class="font-medium text-slate-200" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
                 </div>
               </div>
             </div>
           </template>
         </div>
 
-        <hr class="border-slate-200 dark:border-slate-800 my-3">
+        <hr class="border-slate-800 my-3">
 
         <!-- LISTE DE COURSES GOÛTER -->
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-basket-shopping text-indigo-600 dark:text-indigo-400"></i> Courses Goûter de la Semaine
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-basket-shopping text-indigo-400"></i> Courses Goûter de la Semaine
             </h3>
-            <span class="text-[10px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded-full" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
+            <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded-full" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
           </div>
 
           <div class="space-y-1.5">
@@ -415,10 +377,10 @@
             <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
               <div class="card-item p-2.5 rounded-xl flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 line-through' : ''">
                 <div class="flex items-center space-x-2.5">
-                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-4 h-4 accent-indigo-600 dark:accent-indigo-500 rounded cursor-pointer">
-                  <span class="text-xs font-medium text-slate-800 dark:text-slate-200" x-text="item.nom"></span>
+                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-4 h-4 accent-indigo-500 rounded cursor-pointer">
+                  <span class="text-xs font-medium text-slate-200" x-text="item.nom"></span>
                 </div>
-                <span class="font-semibold text-xs text-indigo-600 dark:text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-lg border border-indigo-500/20" x-text="item.qte + ' ' + item.unite"></span>
+                <span class="font-semibold text-xs text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-lg border border-indigo-500/20" x-text="item.qte + ' ' + item.unite"></span>
               </div>
             </template>
           </div>
@@ -428,21 +390,21 @@
     </div>
 
     <!-- MODAL : PLANIFIER UN GOÛTER -->
-    <div x-show="showPlanifModal" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-3 shadow-2xl">
-        <h3 class="font-bold text-xs text-slate-800 dark:text-slate-200 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2.5 flex items-center gap-2">
-          <i class="fa-solid fa-calendar-plus text-indigo-600 dark:text-indigo-400"></i> Planifier un Goûter
+    <div x-show="showPlanifModal" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" style="display: none;">
+      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-3 border-slate-700 shadow-2xl">
+        <h3 class="font-bold text-xs text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
+          <i class="fa-solid fa-calendar-plus text-indigo-400"></i> Planifier un Goûter
         </h3>
 
         <div class="space-y-2.5">
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Date du goûter</label>
-            <input type="date" x-model="saisieGouter.date" class="input-ui px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-900">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Date du goûter</label>
+            <input type="date" x-model="saisieGouter.date" class="input-ui px-3 py-2 rounded-xl text-xs bg-slate-900 text-left">
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Choisir la recette</label>
-            <select x-model="saisieGouter.recetteId" class="input-ui px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-900">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Choisir la recette</label>
+            <select x-model="saisieGouter.recetteId" class="input-ui px-3 py-2 rounded-xl text-xs bg-slate-900">
               <template x-for="r in recettesGouter" :key="r.id">
                 <option :value="r.id" x-text="r.nom + ' (base 8 enfants)'"></option>
               </template>
@@ -450,20 +412,20 @@
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Animateur(trice) responsable</label>
-            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-ui px-3 py-2 rounded-xl text-xs">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Animateur(trice) responsable</label>
+            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre d'enfants prévus</label>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nombre d'enfants prévus</label>
             <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-ui px-3 py-2 rounded-xl text-xs font-semibold text-center">
-            <p class="text-[11px] text-indigo-600 dark:text-indigo-300 mt-1 text-center" x-show="saisieGouter.nbEnfants > 0" x-text="'= ' + Math.ceil((saisieGouter.nbEnfants || 0) / 8) + ' gâteau(x) à préparer'"></p>
+            <p class="text-[11px] text-indigo-300 mt-1 text-center" x-show="saisieGouter.nbEnfants > 0" x-text="'= ' + Math.ceil((saisieGouter.nbEnfants || 0) / 8) + ' gâteau(x) à préparer'"></p>
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-          <button @click="showPlanifModal = false" class="flex-1 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors">Annuler</button>
-          <button @click="enregistrerGouterPlanifie()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs shadow-md transition-all">Enregistrer</button>
+        <div class="flex gap-2 pt-2 border-t border-slate-800">
+          <button type="button" @click="showPlanifModal = false" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-300 transition-colors">Annuler</button>
+          <button type="button" @click="enregistrerGouterPlanifie()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs shadow-md transition-all">Enregistrer</button>
         </div>
       </div>
     </div>
@@ -471,35 +433,35 @@
     <!-- 4. ONGLET : COURSES MATÉRIEL -->
     <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-98" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
-        <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-          <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
-            <i class="fa-solid fa-cart-shopping text-indigo-600 dark:text-indigo-400"></i> Courses Matériel
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
+            <i class="fa-solid fa-cart-shopping text-indigo-400"></i> Courses Matériel
           </h2>
-          <span class="text-xs bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">Activités</span>
+          <span class="text-xs bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-medium">Activités</span>
         </div>
 
         <div class="grid grid-cols-5 gap-1.5">
-          <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-ui px-3 py-2 rounded-xl text-xs">
+          <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-ui px-3 py-2 rounded-xl text-xs text-left">
           <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-2 rounded-xl text-xs text-center">
-          <button @click="addCourseDirecte()" class="col-span-1 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-bold text-white transition-all active:scale-95">+</button>
+          <button type="button" @click="addCourseDirecte()" class="col-span-1 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-xs font-bold text-white transition-all active:scale-95">+</button>
         </div>
 
         <div class="space-y-2">
           <template x-for="item in listeCourses" :key="item.id">
-            <div class="card-item p-3 rounded-2xl flex items-center justify-between transition-opacity" :class="item.achete ? 'opacity-40 line-through' : ''">
+            <div class="card-item p-3 rounded-2xl flex items-center justify-between border-slate-800 transition-opacity" :class="item.achete ? 'opacity-40 line-through' : ''">
               <div class="flex items-center space-x-3">
-                <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-indigo-600 dark:accent-indigo-500 rounded cursor-pointer">
+                <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-indigo-500 rounded cursor-pointer">
                 <div>
-                  <p class="text-xs font-semibold text-slate-800 dark:text-slate-200" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
+                  <p class="text-xs font-semibold text-slate-200" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
                   <p class="text-[11px] text-slate-500" x-text="'Pour : ' + item.activite"></p>
                 </div>
               </div>
-              <button @click="deleteCourse(item.id)" class="text-slate-400 hover:text-red-500 text-xs p-1 transition-colors"><i class="fa-solid fa-trash"></i></button>
+              <button type="button" @click="deleteCourse(item.id)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors"><i class="fa-solid fa-trash"></i></button>
             </div>
           </template>
         </div>
 
-        <button @click="viderAchetes()" class="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 rounded-xl transition-all border border-slate-300 dark:border-slate-700">
+        <button type="button" @click="viderAchetes()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-400 hover:text-slate-200 rounded-xl transition-all border border-slate-700">
           Nettoyer les articles achetés
         </button>
       </div>
@@ -509,74 +471,81 @@
     <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-98" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-panel p-5 rounded-3xl space-y-4 shadow-xl">
         
-        <div class="space-y-3 border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="space-y-3 border-b border-slate-800 pb-3">
           <div class="flex items-center justify-between">
-            <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
-              <i class="fa-solid fa-calendar-days text-indigo-600 dark:text-indigo-400"></i> Planning Équipe
+            <h2 class="text-base font-bold flex items-center gap-2.5 text-slate-100">
+              <i class="fa-solid fa-calendar-days text-indigo-400"></i> Planning Équipe
             </h2>
             <div class="flex gap-1.5">
-              <button @click="ouvrirModalOrg()" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 text-xs font-medium rounded-xl transition-all flex items-center gap-1.5">
-                <i class="fa-solid fa-bus text-amber-500 dark:text-amber-400"></i> Sortie
+              <button type="button" @click="ouvrirModalOrg()" class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-medium rounded-xl transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-bus text-amber-400"></i> Sortie
               </button>
-              <button @click="nouveauCreneauVierge()" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white rounded-xl transition-all shadow-md">
+              <button type="button" @click="nouveauCreneauVierge()" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white rounded-xl transition-all shadow-md">
                 + Créneau
               </button>
             </div>
           </div>
 
           <div class="flex items-center justify-between card-item px-3 py-2 rounded-2xl">
-            <button @click="changerJour(-1)" class="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+            <button type="button" @click="changerJour(-1)" class="p-1 text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-left text-xs"></i></button>
             <div class="text-center">
-              <p class="text-xs font-semibold text-indigo-600 dark:text-indigo-300" x-text="formatDateLisible(dateAffichee)"></p>
+              <p class="text-xs font-semibold text-indigo-300" x-text="formatDateLisible(dateAffichee)"></p>
               <p class="text-[10px] text-slate-500" x-text="dateAffichee === getTodayISO() ? 'Aujourd\'hui' : ''"></p>
             </div>
-            <button @click="changerJour(1)" class="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+            <button type="button" @click="changerJour(1)" class="p-1 text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
           </div>
         </div>
 
+        <!-- ENCADRÉ SORTIES : MISE EN VALEUR OPTIMISÉE POUR LE MODE SOMBRE -->
         <template x-if="getOrgDuJour()">
-          <div class="card-item p-4 rounded-2xl space-y-3 border-l-2 border-l-amber-500 bg-amber-500/5 dark:bg-slate-900">
+          <div class="card-item p-4 rounded-2xl space-y-3 border-l-4 border-l-amber-400 bg-gradient-to-r from-amber-500/10 via-slate-900 to-orange-500/10 border-t border-r border-b border-amber-500/30 shadow-lg shadow-amber-950/20 relative overflow-hidden">
             <div class="flex justify-between items-start">
-              <span class="text-xs font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-bus"></i> <span x-text="getOrgDuJour().titre"></span>
-              </span>
-              <button @click="effacerOrgDuJour()" class="text-slate-400 hover:text-red-500 text-xs p-1 transition-colors" title="Supprimer la sortie">
+              <div>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/30 text-[10px] font-bold tracking-wider mb-1">
+                  <i class="fa-solid fa-triangle-exclamation animate-pulse"></i> SORTIE SPÉCIALE
+                </span>
+                <h3 class="text-sm font-bold text-amber-200 flex items-center gap-2">
+                  <i class="fa-solid fa-bus text-amber-400"></i> <span x-text="getOrgDuJour().titre"></span>
+                </h3>
+              </div>
+              <button type="button" @click="effacerOrgDuJour()" class="text-slate-400 hover:text-red-400 text-xs p-1 transition-colors" title="Supprimer la sortie">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </div>
 
-            <p class="text-xs font-medium text-slate-700 dark:text-slate-300" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
+            <p class="text-xs font-medium text-slate-200" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
             
-            <div class="grid grid-cols-2 gap-2 text-xs bg-white/70 dark:bg-slate-950/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+            <div class="grid grid-cols-2 gap-2 text-xs bg-slate-950/80 p-2.5 rounded-xl border border-amber-500/20">
               <div>
-                <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-semibold">Bus Départ ALSH</span>
-                <span class="font-medium text-slate-800 dark:text-slate-200" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
+                <span class="text-[10px] text-amber-300/80 block font-semibold">Bus Départ ALSH</span>
+                <span class="font-medium text-slate-100" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
               </div>
-              <div class="border-l border-slate-200 dark:border-slate-800 pl-2">
-                <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-semibold">Bus Retour</span>
-                <span class="font-medium text-slate-800 dark:text-slate-200" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
+              <div class="border-l border-slate-800 pl-2">
+                <span class="text-[10px] text-amber-300/80 block font-semibold">Bus Retour</span>
+                <span class="font-medium text-slate-100" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
               </div>
             </div>
 
             <template x-if="getOrgDuJour().consignes">
-              <p class="text-xs text-slate-600 dark:text-slate-400 italic bg-white/40 dark:bg-slate-950/40 p-2 rounded-lg border border-slate-200 dark:border-slate-800" x-text="'💡 Consignes : ' + getOrgDuJour().consignes"></p>
+              <p class="text-xs text-amber-200/90 italic bg-amber-950/30 p-2 rounded-lg border border-amber-500/20" x-text="'💡 Consignes : ' + getOrgDuJour().consignes"></p>
             </template>
 
-            <div class="space-y-2 pt-1 border-t border-slate-200 dark:border-slate-800">
-              <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Groupes d'enfants :</p>
+            <div class="space-y-2 pt-1 border-t border-slate-800/80">
+              <p class="text-[10px] font-bold text-amber-400/90 uppercase tracking-wider">Groupes d'enfants :</p>
               
               <template x-for="(g, idx) in getOrgDuJour().groupes" :key="idx">
-                <div class="card-item p-2.5 rounded-xl text-xs space-y-1 bg-white dark:bg-slate-950/40 border-slate-200 dark:border-slate-800">
+                <div class="card-item p-2.5 rounded-xl text-xs space-y-1 bg-slate-950/60 border-slate-800">
                   <div class="flex justify-between items-center">
-                    <span class="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                      <i class="fa-solid fa-user-gear text-indigo-600 dark:text-indigo-400"></i> <span class="text-slate-900 dark:text-slate-200" x-text="g.anim"></span>
+                    <span class="font-semibold text-slate-300 flex items-center gap-1.5">
+                      <!-- CORRECTION ICÔNE : fa-user-group à la place de fa-user-gear -->
+                      <i class="fa-solid fa-user-group text-indigo-400"></i> <span class="text-slate-200" x-text="g.anim"></span>
                     </span>
-                    <span class="text-[10px] bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded-full" x-text="g.enfants.length + ' enfants'"></span>
+                    <span class="text-[10px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded-full" x-text="g.enfants.length + ' enfants'"></span>
                   </div>
 
                   <div class="flex flex-wrap gap-1 pt-1">
                     <template x-for="(prenom, pIdx) in g.enfants" :key="pIdx">
-                      <span class="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] px-2 py-0.5 rounded-md font-medium" x-text="prenom"></span>
+                      <span class="bg-slate-800/90 text-slate-300 text-[10px] px-2 py-0.5 rounded-md font-medium border border-slate-700/50" x-text="prenom"></span>
                     </template>
                   </div>
                 </div>
@@ -586,35 +555,35 @@
         </template>
 
         <div class="space-y-2.5">
-          <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Planning des Animateurs</h3>
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Planning des Animateurs</h3>
 
           <template x-for="p in planningGlobal" :key="p.id">
-            <div class="card-item p-3.5 rounded-2xl space-y-2.5 border-l-2" :class="aUnCreneau(p, dateAffichee) ? 'border-l-indigo-500' : 'border-l-slate-300 dark:border-l-slate-700 opacity-60'">
+            <div class="card-item p-3.5 rounded-2xl space-y-2.5 border-l-2" :class="aUnCreneau(p, dateAffichee) ? 'border-l-indigo-400' : 'border-l-slate-700 opacity-60'">
               
               <div class="flex justify-between items-center">
-                <button @click="ouvrirDetailAnim(p)" class="font-semibold text-xs text-slate-800 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-300 flex items-center gap-1.5 transition-colors">
+                <button type="button" @click="ouvrirDetailAnim(p)" class="font-semibold text-xs text-slate-200 hover:text-indigo-300 flex items-center gap-1.5 transition-colors">
                   <span x-text="p.nom"></span>
-                  <i class="fa-solid fa-circle-info text-slate-400 dark:text-slate-500 text-[11px]"></i>
+                  <i class="fa-solid fa-circle-info text-slate-500 text-[11px]"></i>
                 </button>
                 
                 <div class="flex items-center space-x-1">
-                  <button @click="editerPlanningDuJour(p)" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 text-[10px] font-medium rounded-lg transition-all">
+                  <button type="button" @click="editerPlanningDuJour(p)" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[10px] font-medium rounded-lg transition-all">
                     Modifier
                   </button>
-                  <button @click="supprimerAnim(p.id)" class="text-slate-400 hover:text-red-500 text-xs p-1 transition-colors">
+                  <button type="button" @click="supprimerAnim(p.id)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                   </button>
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="bg-white dark:bg-slate-900/90 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 block mb-0.5">☀️ Matin</span>
-                  <p class="font-medium text-slate-800 dark:text-slate-200 truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
+                <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+                  <span class="text-[10px] font-semibold text-slate-400 block mb-0.5">☀️ Matin</span>
+                  <p class="font-medium text-slate-200 truncate text-left" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
                 </div>
-                <div class="bg-white dark:bg-slate-900/90 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 block mb-0.5">🌆 Après-midi</span>
-                  <p class="font-medium text-slate-800 dark:text-slate-200 truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
+                <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+                  <span class="text-[10px] font-semibold text-slate-400 block mb-0.5">🌆 Après-midi</span>
+                  <p class="font-medium text-slate-200 truncate text-left" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
                 </div>
               </div>
 
@@ -626,92 +595,94 @@
     </div>
 
     <!-- MODAL : ORGANISATION / SORTIES -->
-    <div x-show="showOrgModal" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-3 max-h-[90vh] overflow-y-auto shadow-2xl">
-        <h3 class="font-bold text-xs text-slate-800 dark:text-slate-200 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2.5 flex items-center gap-2">
-          <i class="fa-solid fa-bus text-amber-500 dark:text-amber-400"></i> Programmation d'une Sortie
+    <div x-show="showOrgModal" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" style="display: none;">
+      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-3 max-h-[90vh] overflow-y-auto border-slate-700 shadow-2xl">
+        <h3 class="font-bold text-xs text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
+          <i class="fa-solid fa-bus text-amber-400"></i> Programmation d'une Sortie
         </h3>
 
         <div class="space-y-2.5">
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Date de la sortie</label>
-            <input type="date" x-model="saisieOrg.date" class="input-ui px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-900">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Date de la sortie</label>
+            <input type="date" x-model="saisieOrg.date" class="input-ui px-3 py-2 rounded-xl text-xs bg-slate-900 text-left">
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Nom / Titre de la sortie</label>
-            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-ui px-3 py-2 rounded-xl text-xs">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nom / Titre de la sortie</label>
+            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Lieu de destination</label>
-            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo de Beauval" class="input-ui px-3 py-2 rounded-xl text-xs">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Lieu de destination</label>
+            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo de Beauval" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Bus Départ</label>
-              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-ui px-3 py-2 rounded-xl text-xs">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Bus Départ</label>
+              <!-- CORRECTION ALIGNEMENT CURSEUR : text-left explicite -->
+              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
             </div>
             <div>
-              <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Bus Retour</label>
-              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-ui px-3 py-2 rounded-xl text-xs">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Bus Retour</label>
+              <!-- CORRECTION ALIGNEMENT CURSEUR : text-left explicite -->
+              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
             </div>
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Consignes à prévoir</label>
-            <input type="text" x-model="saisieOrg.consignes" placeholder="ex: Casquette, sac à dos" class="input-ui px-3 py-2 rounded-xl text-xs">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Consignes à prévoir</label>
+            <input type="text" x-model="saisieOrg.consignes" placeholder="ex: Casquette, sac à dos" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
           </div>
         </div>
 
-        <div class="border-t border-slate-200 dark:border-slate-800 pt-3 space-y-2">
-          <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Ajouter un Animateur & ses enfants</span>
+        <div class="border-t border-slate-800 pt-3 space-y-2">
+          <span class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Ajouter un Animateur & ses enfants</span>
           
-          <div class="space-y-2 card-item p-3 rounded-2xl">
-            <input type="text" x-model="tempGroupe.anim" placeholder="Animateur / Animatrice (ex: Sarah)" class="input-ui px-3 py-2 rounded-xl text-xs">
-            <textarea x-model="tempGroupe.enfantsTxt" placeholder="Enfants séparés par une virgule (ex: Lucas, Yanis, Léa)" class="input-ui px-3 py-2 rounded-xl text-xs h-16 resize-none"></textarea>
+          <div class="space-y-2 card-item p-3 rounded-2xl border-slate-800">
+            <input type="text" x-model="tempGroupe.anim" placeholder="Animateur / Animatrice (ex: Sarah)" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
+            <textarea x-model="tempGroupe.enfantsTxt" placeholder="Enfants séparés par une virgule (ex: Lucas, Yanis, Léa)" class="input-ui px-3 py-2 rounded-xl text-xs h-16 resize-none text-left"></textarea>
             
-            <button @click="ajouterGroupeAOrg()" class="w-full py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-semibold rounded-xl text-xs text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition-all">
+            <button type="button" @click="ajouterGroupeAOrg()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 font-semibold rounded-xl text-xs text-slate-200 border border-slate-700 transition-all">
               + Ajouter ce groupe
             </button>
           </div>
 
           <div class="space-y-1.5 pt-1">
             <template x-for="(g, i) in saisieOrg.groupes" :key="i">
-              <div class="card-item p-2.5 rounded-xl text-xs space-y-1">
+              <div class="card-item p-2.5 rounded-xl text-xs space-y-1 border-slate-800">
                 <div class="flex justify-between items-center">
-                  <span class="font-semibold text-indigo-600 dark:text-indigo-300" x-text="'Anim : ' + g.anim"></span>
-                  <button @click="saisieOrg.groupes.splice(i, 1)" class="text-slate-400 hover:text-red-500 text-xs"><i class="fa-solid fa-xmark"></i></button>
+                  <span class="font-semibold text-indigo-300" x-text="'Anim : ' + g.anim"></span>
+                  <button type="button" @click="saisieOrg.groupes.splice(i, 1)" class="text-slate-500 hover:text-red-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <p class="text-[11px] text-slate-500 dark:text-slate-400" x-text="g.enfants.join(', ')"></p>
+                <p class="text-[11px] text-slate-400" x-text="g.enfants.join(', ')"></p>
               </div>
             </template>
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-          <button @click="showOrgModal = false" class="flex-1 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors">Annuler</button>
-          <button @click="sauvegarderOrg()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs shadow-md transition-all">Enregistrer</button>
+        <div class="flex gap-2 pt-2 border-t border-slate-800">
+          <button type="button" @click="showOrgModal = false" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-300 transition-colors">Annuler</button>
+          <button type="button" @click="sauvegarderOrg()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs shadow-md transition-all">Enregistrer</button>
         </div>
       </div>
     </div>
 
     <!-- MODAL : DATES D'UN ANIMATEUR -->
-    <div x-show="animSelectionne !== null" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-4 max-h-[85vh] overflow-y-auto shadow-2xl">
+    <div x-show="animSelectionne !== null" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" style="display: none;">
+      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-4 max-h-[85vh] overflow-y-auto border-slate-700 shadow-2xl">
         
-        <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
           <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-300 font-bold text-sm">
+            <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm">
               <span x-text="animSelectionne?.nom ? animSelectionne.nom.charAt(0) : 'A'"></span>
             </div>
             <div>
-              <h3 class="font-bold text-sm text-slate-900 dark:text-slate-100" x-text="animSelectionne?.nom"></h3>
-              <p class="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-wider">Planning individuel</p>
+              <h3 class="font-bold text-sm text-slate-100" x-text="animSelectionne?.nom"></h3>
+              <p class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Planning individuel</p>
             </div>
           </div>
-          <button @click="animSelectionne = null" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-base p-1"><i class="fa-solid fa-xmark"></i></button>
+          <button type="button" @click="animSelectionne = null" class="text-slate-500 hover:text-white text-base p-1"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="space-y-2.5">
@@ -720,28 +691,28 @@
           </template>
 
           <template x-for="(planningDate, dateKey) in animSelectionne?.dates" :key="dateKey">
-            <div class="card-item p-3 rounded-2xl space-y-2 border-l-2" :class="dateKey === dateAffichee ? 'border-l-indigo-500 bg-indigo-50/50 dark:bg-slate-900' : 'border-l-slate-300 dark:border-l-slate-700'">
+            <div class="card-item p-3 rounded-2xl space-y-2 border-l-2" :class="dateKey === dateAffichee ? 'border-l-indigo-400 bg-slate-900' : 'border-l-slate-700'">
               
-              <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800/60 pb-1.5">
-                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200" x-text="formatDateLisible(dateKey)"></span>
+              <div class="flex justify-between items-center border-b border-slate-800/60 pb-1.5">
+                <span class="text-xs font-semibold text-slate-200" x-text="formatDateLisible(dateKey)"></span>
                 <div class="flex items-center space-x-2">
-                  <button @click="allerADate(dateKey)" class="px-2 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 text-[10px] font-semibold rounded-lg border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors">
+                  <button type="button" @click="allerADate(dateKey)" class="px-2 py-0.5 bg-indigo-500/10 text-indigo-300 text-[10px] font-semibold rounded-lg border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors">
                     Voir la journée
                   </button>
-                  <button @click="supprimerDateAnim(animSelectionne, dateKey)" class="text-slate-400 hover:text-red-500 text-xs p-1 transition-colors">
+                  <button type="button" @click="supprimerDateAnim(animSelectionne, dateKey)" class="text-slate-500 hover:text-red-400 text-xs p-1 transition-colors">
                     <i class="fa-solid fa-trash"></i>
                   </button>
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="bg-white dark:bg-slate-950/60 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 block">☀️ Matin</span>
-                  <p class="font-medium text-slate-700 dark:text-slate-300" x-text="planningDate.matin || 'Repos'"></p>
+                <div class="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+                  <span class="text-[10px] font-semibold text-slate-400 block">☀️ Matin</span>
+                  <p class="font-medium text-slate-300 text-left" x-text="planningDate.matin || 'Repos'"></p>
                 </div>
-                <div class="bg-white dark:bg-slate-950/60 p-2 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 block">🌆 Après-midi</span>
-                  <p class="font-medium text-slate-700 dark:text-slate-300" x-text="planningDate.aprem || 'Repos'"></p>
+                <div class="bg-slate-950/60 p-2 rounded-xl border border-slate-800">
+                  <span class="text-[10px] font-semibold text-slate-400 block">🌆 Après-midi</span>
+                  <p class="font-medium text-slate-300 text-left" x-text="planningDate.aprem || 'Repos'"></p>
                 </div>
               </div>
 
@@ -749,97 +720,82 @@
           </template>
         </div>
 
-        <button @click="animSelectionne = null" class="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold rounded-xl text-xs text-slate-700 dark:text-slate-300 transition-colors">Fermer</button>
+        <button type="button" @click="animSelectionne = null" class="w-full py-2 bg-slate-800 hover:bg-slate-700 font-semibold rounded-xl text-xs text-slate-300 transition-colors">Fermer</button>
       </div>
     </div>
 
     <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
-    <div x-show="showAddAnimModal" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-3 shadow-2xl">
-        <h3 class="font-bold text-xs text-slate-800 dark:text-slate-200 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2.5 flex items-center gap-2">
-          <i class="fa-solid fa-user-pen text-indigo-600 dark:text-indigo-400"></i> Modifier / Créer un Créneau
+    <div x-show="showAddAnimModal" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" style="display: none;">
+      <div class="card-panel p-5 rounded-3xl max-w-sm w-full space-y-3 border-slate-700 shadow-2xl">
+        <h3 class="font-bold text-xs text-slate-200 uppercase tracking-wider border-b border-slate-800 pb-2.5 flex items-center gap-2">
+          <i class="fa-solid fa-user-pen text-indigo-400"></i> Modifier / Créer un Créneau
         </h3>
         
         <div class="space-y-2.5">
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Nom de l'animateur</label>
-            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-ui px-3 py-2 rounded-xl text-xs">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nom de l'animateur</label>
+            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
           </div>
 
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Date du créneau</label>
-            <input type="date" x-model="saisiePlanning.date" class="input-ui px-3 py-2 rounded-xl text-xs bg-white dark:bg-slate-900">
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Date du créneau</label>
+            <input type="date" x-model="saisiePlanning.date" class="input-ui px-3 py-2 rounded-xl text-xs bg-slate-900 text-left">
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Créneau Matin</label>
-              <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu -6a" class="input-ui px-3 py-2 rounded-xl text-xs">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Créneau Matin</label>
+              <!-- CORRECTION ALIGNEMENT CURSEUR : text-left explicite -->
+              <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu -6a" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
             </div>
             <div>
-              <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Créneau Après-midi</label>
-              <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu" class="input-ui px-3 py-2 rounded-xl text-xs">
+              <label class="block text-[11px] font-semibold text-slate-300 mb-1">Créneau Après-midi</label>
+              <!-- CORRECTION ALIGNEMENT CURSEUR : text-left explicite -->
+              <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu" class="input-ui px-3 py-2 rounded-xl text-xs text-left">
             </div>
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
-          <button @click="showAddAnimModal = false" class="flex-1 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors">Annuler</button>
-          <button @click="validerPlanning()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs shadow-md transition-all">Enregistrer</button>
+        <div class="flex gap-2 pt-2 border-t border-slate-800">
+          <button type="button" @click="showAddAnimModal = false" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-300 transition-colors">Annuler</button>
+          <button type="button" @click="validerPlanning()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 font-semibold text-white rounded-xl text-xs shadow-md transition-all">Enregistrer</button>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- NAVBAR FLOATING UNIFIÉE (5 ONGLETS) -->
-  <nav class="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40 glass-nav rounded-2xl p-1.5 flex justify-around items-center shadow-2xl">
-    <button @click="currentTab = 'fiche'" :class="currentTab === 'fiche' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'" class="flex flex-col items-center py-2 px-3 rounded-xl transition-all">
+  <!-- NAVBAR FLOATING LIQUID GLASSMORPHISM APPLE (ROUNDED-FULL) -->
+  <nav class="fixed bottom-5 left-4 right-4 max-w-md mx-auto z-40 glass-nav-apple rounded-full p-2 flex justify-around items-center">
+    <button type="button" @click="currentTab = 'fiche'" :class="currentTab === 'fiche' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
       <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
-      <span class="text-[10px] font-medium mt-1">Fiches</span>
+      <span class="text-[9px] font-semibold mt-1 tracking-tight">Fiches</span>
     </button>
-    <button @click="currentTab = 'soins'" :class="currentTab === 'soins' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'" class="flex flex-col items-center py-2 px-3 rounded-xl transition-all">
+    <button type="button" @click="currentTab = 'soins'" :class="currentTab === 'soins' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
       <i class="fa-solid fa-kit-medical text-sm"></i>
-      <span class="text-[10px] font-medium mt-1">Soins</span>
+      <span class="text-[9px] font-semibold mt-1 tracking-tight">Soins</span>
     </button>
-    <button @click="currentTab = 'gouter'" :class="currentTab === 'gouter' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'" class="flex flex-col items-center py-2 px-3 rounded-xl transition-all">
+    <button type="button" @click="currentTab = 'gouter'" :class="currentTab === 'gouter' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
       <i class="fa-solid fa-cookie-bite text-sm"></i>
-      <span class="text-[10px] font-medium mt-1">Goûter</span>
+      <span class="text-[9px] font-semibold mt-1 tracking-tight">Goûter</span>
     </button>
-    <button @click="currentTab = 'courses'" :class="currentTab === 'courses' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'" class="flex flex-col items-center py-2 px-3 rounded-xl transition-all">
+    <button type="button" @click="currentTab = 'courses'" :class="currentTab === 'courses' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
       <i class="fa-solid fa-cart-shopping text-sm"></i>
-      <span class="text-[10px] font-medium mt-1">Matériel</span>
+      <span class="text-[9px] font-semibold mt-1 tracking-tight">Matériel</span>
     </button>
-    <button @click="currentTab = 'planning'" :class="currentTab === 'planning' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-500/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'" class="flex flex-col items-center py-2 px-3 rounded-xl transition-all">
+    <button type="button" @click="currentTab = 'planning'" :class="currentTab === 'planning' ? 'text-indigo-300 bg-white/10 shadow-inner' : 'text-slate-400 hover:text-slate-200'" class="flex flex-col items-center py-2 px-3.5 rounded-full transition-all duration-200 active:scale-95">
       <i class="fa-solid fa-calendar-days text-sm"></i>
-      <span class="text-[10px] font-medium mt-1">Planning</span>
+      <span class="text-[9px] font-semibold mt-1 tracking-tight">Planning</span>
     </button>
   </nav>
 
-  <!-- LOGIQUE ALPINE JS (AVEC DÉTECTION THÈME SYSTÈME ET TOGGLE) -->
+  <!-- LOGIQUE ALPINE JS -->
   <script>
     function alshApp() {
-      const todayISO = new Date().toISOString().split('T')[0];
+      const today = new Date();
+      const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
       return {
-        // GESTION DU MODE SOMBRE / CLAIR
-        isDark: false,
-
-        initTheme() {
-          // Détection initiale : Préférence système iOS / Android
-          const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          this.isDark = systemPrefersDark;
-
-          // Écoute les changements de thème en direct sur le téléphone
-          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            this.isDark = e.matches;
-          });
-        },
-
-        toggleTheme() {
-          this.isDark = !this.isDark;
-        },
-
         currentTab: 'fiche',
         dateAffichee: todayISO,
         newMatosNom: '',
@@ -893,9 +849,17 @@
         goutersPlanifies: [],
         coursesAchetesGouter: {},
 
-        init() {
-          this.initTheme();
+        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
+        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
+        registreSoins: [],
+        listeCourses: [],
+        saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
+        organisations: {},
+        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] },
+        tempGroupe: { anim: '', enfantsTxt: '' },
+        planningGlobal: [],
 
+        init() {
           const lundi = this.getLundiDeLaSemaine(new Date());
           const mardiStr = this.addDaysISO(lundi, 1);
           const jeudiStr = this.addDaysISO(lundi, 3);
@@ -933,7 +897,7 @@
         addDaysISO(dateObj, days) {
           const res = new Date(dateObj);
           res.setDate(res.getDate() + days);
-          return res.toISOString().split('T')[0];
+          return `${res.getFullYear()}-${String(res.getMonth() + 1).padStart(2, '0')}-${String(res.getDate()).padStart(2, '0')}`;
         },
 
         changerSemaine(delta) {
@@ -1067,16 +1031,6 @@
           this.coursesAchetesGouter[semaineKey] = !this.coursesAchetesGouter[semaineKey];
         },
 
-        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
-        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
-        registreSoins: [],
-        listeCourses: [],
-        saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
-        organisations: {},
-        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] },
-        tempGroupe: { anim: '', enfantsTxt: '' },
-        planningGlobal: [],
-
         getTodayISO() {
           const d = new Date();
           return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -1100,14 +1054,15 @@
         },
 
         getPlanningDuJour(anim, dateKey) {
-          if (anim.dates && anim.dates[dateKey]) {
+          if (anim && anim.dates && anim.dates[dateKey]) {
             return anim.dates[dateKey];
           }
           return { matin: 'Repos / Non programmé', aprem: 'Repos / Non programmé' };
         },
 
         aUnCreneau(anim, dateKey) {
-          return anim.dates && anim.dates[dateKey] && (anim.dates[dateKey].matin !== 'Repos / Non programmé' || anim.dates[dateKey].aprem !== 'Repos / Non programmé');
+          return anim && anim.dates && anim.dates[dateKey] && 
+            (anim.dates[dateKey].matin !== 'Repos / Non programmé' || anim.dates[dateKey].aprem !== 'Repos / Non programmé');
         },
 
         editerPlanningDuJour(anim) {
@@ -1222,18 +1177,21 @@
           }
 
           const element = document.getElementById('pdf-template');
-          element.classList.remove('hidden');
+          element.style.display = 'block';
 
           const opt = {
             margin:       0.5,
-            filename:     `fiche_${this.fiche.titre || 'activite'}.pdf`,
+            filename:     `fiche_${(this.fiche.titre || 'activite').replace(/\s+/g, '_')}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
+            html2canvas:  { scale: 2, logging: false },
             jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
           };
 
           html2pdf().set(opt).from(element).save().then(() => {
-            element.classList.add('hidden');
+            element.style.display = 'none';
+          }).catch(err => {
+            element.style.display = 'none';
+            console.error(err);
           });
 
           this.showToast('Génération du PDF...');
@@ -1251,7 +1209,7 @@
             prevenirFamille: this.soin.prevenirFamille
           });
           this.showToast('Soin ajouté au registre !');
-          this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = '';
+          this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = ''; this.soin.prevenirFamille = false;
         },
 
         deleteSoin(id) {
@@ -1326,6 +1284,9 @@
 
         supprimerAnim(id) {
           this.planningGlobal = this.planningGlobal.filter(p => p.id !== id);
+          if (this.animSelectionne && this.animSelectionne.id === id) {
+            this.animSelectionne = null;
+          }
           this.showToast('Animateur retiré.');
         },
 
