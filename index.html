@@ -2,24 +2,24 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CloudStudio ALSH — Calculator</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>CloudStudio ALSH — Taux d'encadrement</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌼</text></svg>">
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800;900&display=swap');
 
   :root {
-    /* Palette tirée de la référence visuelle */
     --bg-violet: #D8B4F8;
     --bg-yellow: #FDE047;
     --card-dark: #0F0F11;
     --card-dark-soft: #1A1A1E;
+    --card-dark-hover: #26262B;
     --text-light: #F4F4F6;
     --text-muted: #8E8E93;
     --text-dark: #0F0F11;
     --accent-yellow: #FFE600;
-    --accent-purple: #A855F7;
+    --accent-purple: #C084FC;
     --accent-coral: #FCA5A5;
 
     --font-head: 'Syne', -apple-system, sans-serif;
@@ -48,11 +48,6 @@
     padding: 20px 16px max(40px, env(safe-area-inset-bottom));
   }
 
-  :focus-visible {
-    outline: 2px solid var(--text-dark);
-    outline-offset: 3px;
-  }
-
   main {
     width: 100%;
     max-width: 410px;
@@ -61,7 +56,7 @@
     gap: 16px;
   }
 
-  /* Micro-Header Style Reference ( SAME SITE - POCKET SIZE ) */
+  /* Micro-Header */
   .top-meta {
     display: flex;
     justify-content: space-between;
@@ -87,12 +82,12 @@
     padding: 0;
   }
 
-  /* Title Display Large Reference */
+  /* Title Display */
   .hero-title {
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 42px;
-    line-height: 0.92;
+    font-size: 38px;
+    line-height: 0.95;
     letter-spacing: -0.04em;
     text-transform: lowercase;
     margin: 8px 0 0;
@@ -101,12 +96,12 @@
 
   .hero-sub {
     font-size: 11.5px;
-    color: rgba(15, 15, 17, 0.7);
+    color: rgba(15, 15, 17, 0.75);
     margin: 8px 0 0;
     line-height: 1.35;
   }
 
-  /* Selector Carousel/Dock (Inspire de la pilule noire de selection) */
+  /* Selector Carousel Dock */
   .selector-dock {
     background: var(--card-dark);
     border-radius: 28px;
@@ -124,7 +119,7 @@
     font-family: var(--font-mono);
     font-size: 10.5px;
     font-weight: 700;
-    padding: 10px 6px;
+    padding: 10px 4px;
     border-radius: 22px;
     cursor: pointer;
     transition: all 0.25s var(--ease-out);
@@ -138,7 +133,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   }
 
-  /* Blocs Sombre Floating Dark Card */
+  /* Floating Dark Card */
   .dark-card {
     background: var(--card-dark);
     color: var(--text-light);
@@ -157,9 +152,12 @@
     letter-spacing: 0.08em;
     color: var(--text-muted);
     text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  /* Steppers Modern minimal */
+  /* Steppers avec saisie clavier anti-zoom */
   .stepper-row {
     display: flex;
     align-items: center;
@@ -185,7 +183,8 @@
     align-items: center;
     background: var(--card-dark-soft);
     border-radius: 20px;
-    padding: 3px;
+    padding: 4px;
+    border: 1px solid rgba(255,255,255,0.06);
   }
 
   .step-btn {
@@ -203,56 +202,41 @@
     align-items: center;
     justify-content: center;
     transition: background 0.15s ease;
+    user-select: none;
   }
-  .step-btn:active { background: rgba(255,255,255,0.1); }
+  .step-btn:active { background: rgba(255,255,255,0.12); }
 
   .stepper-val {
-    width: 36px;
+    width: 48px;
     border: none;
     background: transparent;
     color: var(--accent-yellow);
     font-family: var(--font-mono);
-    font-size: 16px;
+    font-size: 16px; /* Empêche le zoom iOS */
     font-weight: 700;
     text-align: center;
     outline: none;
+    padding: 0;
+    -moz-appearance: textfield;
   }
+  .stepper-val::-webkit-outer-spin-button,
+  .stepper-val::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-  /* Pill Buttons Primary (Inspire du bouton "Let Dot drive ->") */
-  .btn-pill-primary {
-    background: var(--accent-yellow);
-    color: var(--card-dark);
-    border: none;
-    padding: 16px 20px;
-    border-radius: 999px;
-    font-family: var(--font-head);
-    font-weight: 900;
-    font-size: 15px;
-    letter-spacing: -0.01em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 8px 20px rgba(253, 224, 71, 0.3);
-    transition: transform 0.2s var(--ease-spring), background-color 0.2s ease;
-    width: 100%;
-    text-transform: lowercase;
-  }
-  .btn-pill-primary:active {
-    transform: scale(0.97);
+  .stepper-val:focus {
+    background: rgba(255, 230, 0, 0.15);
+    border-radius: 8px;
   }
 
   /* Results Display */
   .hero-result {
     text-align: center;
-    padding: 10px 0 6px;
+    padding: 4px 0;
   }
 
   .huge-number {
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 88px;
+    font-size: 82px;
     line-height: 0.85;
     letter-spacing: -0.05em;
     color: var(--text-light);
@@ -267,31 +251,97 @@
     color: var(--accent-yellow);
   }
 
-  /* Segmented Visual Indicator */
-  .anim-track {
+  /* Jauge à Fleurs Interactives ( Flowers Track ) */
+  .flower-jauge-container {
+    background: var(--card-dark-soft);
+    border-radius: 22px;
+    padding: 14px 12px;
+    border: 1px solid rgba(255,255,255,0.06);
     display: flex;
-    gap: 6px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin: 10px 0;
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .anim-dot {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--card-dark-soft);
-    border: 2px solid rgba(255,255,255,0.1);
+  .jauge-title {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .flowers-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  .flower-node {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+    background: var(--card-dark-hover);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 9px;
-    font-weight: 700;
-    color: var(--card-dark);
-    transition: all 0.3s var(--ease-spring);
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.25s var(--ease-spring), background 0.2s ease;
+    border: 1px solid rgba(255,255,255,0.08);
   }
-  .anim-dot.fill-a { background: var(--accent-yellow); border-color: var(--accent-yellow); }
-  .anim-dot.fill-b { background: var(--bg-violet); border-color: var(--bg-violet); }
+
+  .flower-node:hover, .flower-node:focus {
+    transform: scale(1.15);
+    background: rgba(255,255,255,0.15);
+    z-index: 10;
+  }
+
+  /* Tooltip explication sous chaque fleur */
+  .flower-node::after {
+    content: attr(data-reason);
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: #000000;
+    color: var(--text-light);
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.2s var(--ease-spring);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .flower-node:hover::after, .flower-node:focus::after {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+
+  .flower-empty {
+    opacity: 0.25;
+    filter: grayscale(100%);
+  }
+
+  /* Legend Flowers */
+  .flower-legend {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 9.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
 
   /* Toggles & Options */
   .option-row {
@@ -346,17 +396,15 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     background: var(--card-dark-soft);
-    padding: 10px;
+    padding: 12px 10px;
     border-radius: 20px;
   }
 
-  .qual-item {
-    text-align: center;
-  }
+  .qual-item { text-align: center; }
   .qual-val {
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 20px;
+    font-size: 22px;
     color: var(--text-light);
   }
   .qual-lbl {
@@ -366,7 +414,28 @@
     margin-top: 2px;
   }
 
-  /* Safety alert */
+  .btn-pill-primary {
+    background: var(--accent-yellow);
+    color: var(--card-dark);
+    border: none;
+    padding: 16px 20px;
+    border-radius: 999px;
+    font-family: var(--font-head);
+    font-weight: 900;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 8px 20px rgba(253, 224, 71, 0.25);
+    transition: transform 0.2s var(--ease-spring);
+    width: 100%;
+    text-transform: lowercase;
+  }
+  .btn-pill-primary:active { transform: scale(0.97); }
+
   .alert-banner {
     background: rgba(252, 165, 165, 0.15);
     border: 1px solid var(--accent-coral);
@@ -379,16 +448,15 @@
   }
   .alert-banner.visible { display: block; }
 
-  /* Footer Tag Reference */
   .bottom-tag {
     text-align: center;
-    padding: 12px 0;
+    padding: 8px 0 16px;
   }
   .tag-pill {
     display: inline-block;
     background: var(--card-dark);
     color: var(--accent-yellow);
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 700;
     padding: 8px 18px;
     border-radius: 999px;
@@ -422,19 +490,19 @@
 <body>
 
   <main>
-    <!-- Header Meta ( SAME SITE - POCKET SIZE ) -->
+    <!-- Header Meta -->
     <div class="top-meta">
       <span>( ALSH — SDJES )</span>
       <button class="btn-mini-action" id="resetBtn">RESET</button>
     </div>
 
-    <!-- Title Large ( This site is awake. ) -->
+    <!-- Title Updated -->
     <div>
-      <h1 class="hero-title">anim’s needed.</h1>
-      <p class="hero-sub">Calculateur instantané du taux d’encadrement réglementaire en accueil de loisirs.</p>
+      <h1 class="hero-title">taux d'encadrement</h1>
+      <p class="hero-sub">Calculateur instantané du besoin réglementaire en animation.</p>
     </div>
 
-    <!-- Mode Dock Switcher ( The Guided Tour ) -->
+    <!-- Mode Dock Switcher -->
     <div class="selector-dock" role="radiogroup" aria-label="Régime ALSH">
       <button class="dock-btn active" data-regime="hors_p5">Hors PEDT<br>&gt; 5h</button>
       <button class="dock-btn" data-regime="hors_m5">Hors PEDT<br>≤ 5h</button>
@@ -442,10 +510,14 @@
       <button class="dock-btn" data-regime="avec_m5">Avec PEDT<br>≤ 5h</button>
     </div>
 
-    <!-- Floating Dark Card ( Standard CloudStudio UI ) -->
+    <!-- Inputs Card -->
     <div class="dark-card">
-      <div class="card-tag">( 01 . EFFECTIFS )</div>
+      <div class="card-tag">
+        <span>( 01 . EFFECTIFS )</span>
+        <span id="totalKidsBadge" style="color:var(--accent-yellow)">0 ENFANT</span>
+      </div>
 
+      <!-- Saisie -6ans clavier direct -->
       <div class="stepper-row">
         <div class="stepper-label">
           Moins de 6 ans
@@ -453,11 +525,12 @@
         </div>
         <div class="stepper-controls">
           <button class="step-btn" data-target="n36" data-delta="-1">–</button>
-          <input type="text" id="n36" class="stepper-val" value="0" readonly>
+          <input type="number" id="n36" class="stepper-val" value="0" min="0" inputmode="numeric" onfocus="this.select()">
           <button class="step-btn" data-target="n36" data-delta="1">+</button>
         </div>
       </div>
 
+      <!-- Saisie +6ans clavier direct -->
       <div class="stepper-row">
         <div class="stepper-label">
           6 ans et plus
@@ -465,20 +538,20 @@
         </div>
         <div class="stepper-controls">
           <button class="step-btn" data-target="n612" data-delta="-1">–</button>
-          <input type="text" id="n612" class="stepper-val" value="0" readonly>
+          <input type="number" id="n612" class="stepper-val" value="0" min="0" inputmode="numeric" onfocus="this.select()">
           <button class="step-btn" data-target="n612" data-delta="1">+</button>
         </div>
       </div>
 
       <div class="alert-banner" id="safetyAlert">
-        ⚠️ Minimum 2 animateurs requis en activité.
+        ⚠️ Sécurité SDJES : Minimum 2 animateurs requis dès qu'il y a 1 enfant.
       </div>
 
       <!-- Toggles Options -->
       <label class="option-row">
         <span class="option-text">
           <strong>Mutualisation des restes</strong>
-          Optimisation du nombre total d'anim’s
+          Optimisation SDJES par cumul
         </span>
         <input type="checkbox" id="mutualToggle" checked style="display:none;">
         <span class="custom-switch"></span>
@@ -503,8 +576,23 @@
         <div class="huge-label" id="totalAnimLabel">Animateurs requis</div>
       </div>
 
-      <!-- Visuel des pastilles d'anim's -->
-      <div class="anim-track" id="animTrack"></div>
+      <!-- Nouvelle Jauge en fleurs interactives -->
+      <div class="flower-jauge-container">
+        <div class="jauge-title">
+          <span>Jauge du besoin</span>
+          <span style="color:var(--text-light)" id="jaugeRatioText">0 anim'</span>
+        </div>
+        
+        <div class="flowers-grid" id="flowersGrid">
+          <span class="flower-node flower-empty">🌼</span>
+        </div>
+
+        <div class="flower-legend">
+          <span class="legend-item">🌸 -6ans</span>
+          <span class="legend-item">🌼 +6ans</span>
+          <span class="legend-item">🌺 Règle Sécu</span>
+        </div>
+      </div>
 
       <!-- Qualifications -->
       <div class="qual-grid">
@@ -522,13 +610,13 @@
         </div>
       </div>
 
-      <!-- Main Action Pill -->
+      <!-- Button -->
       <button class="btn-pill-primary" id="copyBtn">
         copier le bilan ➔
       </button>
     </div>
 
-    <!-- Bottom Tag ( FULLY RESPONSIVE - TOUR, GAME & ALL ) -->
+    <!-- Footer Tag -->
     <div class="bottom-tag">
       <span class="tag-pill" id="footerPill">REGIME: HORS PEDT ( > 5H )</span>
     </div>
@@ -553,7 +641,9 @@
   const dirRow = document.getElementById('dirRow');
   const totalAnimEl = document.getElementById('totalAnim');
   const totalAnimLabelEl = document.getElementById('totalAnimLabel');
-  const animTrack = document.getElementById('animTrack');
+  const flowersGrid = document.getElementById('flowersGrid');
+  const jaugeRatioText = document.getElementById('jaugeRatioText');
+  const totalKidsBadge = document.getElementById('totalKidsBadge');
   const safetyAlert = document.getElementById('safetyAlert');
   const ratioLabel36 = document.getElementById('ratioLabel36');
   const ratioLabel612 = document.getElementById('ratioLabel612');
@@ -564,26 +654,36 @@
   const qNonDiplomes = document.getElementById('qNonDiplomes');
   const qStagiaires = document.getElementById('qStagiaires');
 
-  // Regime Dock Selector
+  // Switcher de régime PEDT
   document.querySelectorAll('.dock-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeRegimeKey = btn.dataset.regime;
-      
-      // Adaptation du fond dynamique selon le mode (comme sur l'image)
       document.body.style.backgroundColor = REGIMES[activeRegimeKey].bg;
       recalc();
     });
   });
 
-  // Stepper Handlers
+  // Boutons + / -
   document.querySelectorAll('.step-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const inp = document.getElementById(btn.dataset.target);
-      let val = parseInt(inp.value, 10) + parseInt(btn.dataset.delta, 10);
+      let val = (parseInt(inp.value, 10) || 0) + parseInt(btn.dataset.delta, 10);
       if (val < 0) val = 0;
       inp.value = val;
+      recalc();
+    });
+  });
+
+  // Saisie Clavier Directe
+  [n36input, n612input].forEach(inp => {
+    inp.addEventListener('input', () => {
+      if (inp.value < 0 || inp.value === '') inp.value = 0;
+      recalc();
+    });
+    inp.addEventListener('blur', () => {
+      if (inp.value === '') inp.value = 0;
       recalc();
     });
   });
@@ -608,21 +708,46 @@
     ratioLabel36.textContent = `Ratio 1 / ${reg.ratio36}`;
     ratioLabel612.textContent = `Ratio 1 / ${reg.ratio612}`;
     footerPill.textContent = `REGIME: ${reg.label}`;
+    totalKidsBadge.textContent = `${totalKids} ENFANT${totalKids > 1 ? 'S' : ''}`;
 
     let needed = 0;
+    let flowerReasons = [];
 
     if (totalKids > 0) {
       if (mutualToggle.checked) {
-        const full = Math.floor(n36 / reg.ratio36) + Math.floor(n612 / reg.ratio612);
-        const rem = (n36 % reg.ratio36) + (n612 % reg.ratio612);
-        if (rem === 0) needed = full;
-        else if (rem <= reg.ratio36) needed = full + 1;
-        else needed = full + 2;
+        // Mode Mutualisé SDJES
+        const full36 = Math.floor(n36 / reg.ratio36);
+        const full612 = Math.floor(n612 / reg.ratio612);
+        
+        for(let i=0; i<full36; i++) flowerReasons.push({ flower: '🌸', reason: `-6ans: Groupe complet (${reg.ratio36} enf.)` });
+        for(let i=0; i<full612; i++) flowerReasons.push({ flower: '🌼', reason: `+6ans: Groupe complet (${reg.ratio612} enf.)` });
+
+        const rem36 = n36 % reg.ratio36;
+        const rem612 = n612 % reg.ratio612;
+        const remTotal = rem36 + rem612;
+
+        if (remTotal > 0 && remTotal <= reg.ratio36) {
+          flowerReasons.push({ flower: '🌸', reason: `Mutualisation des restes (${remTotal} enf.)` });
+        } else if (remTotal > reg.ratio36) {
+          flowerReasons.push({ flower: '🌸', reason: `Restes mutualisés - tranche 1 (${reg.ratio36} enf.)` });
+          flowerReasons.push({ flower: '🌼', reason: `Restes mutualisés - tranche 2 (${remTotal - reg.ratio36} enf.)` });
+        }
+        needed = flowerReasons.length;
       } else {
-        needed = (n36 > 0 ? Math.ceil(n36 / reg.ratio36) : 0) + (n612 > 0 ? Math.ceil(n612 / reg.ratio612) : 0);
+        // Mode Séparé
+        const c36 = Math.ceil(n36 / reg.ratio36);
+        const c612 = Math.ceil(n612 / reg.ratio612);
+
+        for(let i=0; i<c36; i++) flowerReasons.push({ flower: '🌸', reason: `Groupe -6ans (${n36} enf.)` });
+        for(let i=0; i<c612; i++) flowerReasons.push({ flower: '🌼', reason: `Groupe +6ans (${n612} enf.)` });
+        needed = c36 + c612;
       }
 
+      // Règle de sécurité
       if (needed < 2) {
+        while(flowerReasons.length < 2) {
+          flowerReasons.push({ flower: '🌺', reason: "Règle de sécurité (Min. 2 anim's)" });
+        }
         needed = 2;
         safetyAlert.classList.add('visible');
       } else {
@@ -632,7 +757,7 @@
       safetyAlert.classList.remove('visible');
     }
 
-    // Directeur
+    // Directeur inclus ?
     const dirEligible = totalKids > 0 && totalKids <= 50;
     dirRow.style.opacity = dirEligible ? '1' : '0.4';
     dirRow.style.pointerEvents = dirEligible ? 'auto' : 'none';
@@ -647,6 +772,7 @@
     }
 
     totalAnimEl.textContent = finalAnim;
+    jaugeRatioText.textContent = `${finalAnim} anim' sur le terrain`;
 
     // Qualifications
     const diplomes = Math.ceil(finalAnim * 0.5);
@@ -657,19 +783,25 @@
     qNonDiplomes.textContent = nonDiplomes;
     qStagiaires.textContent = stagiaires;
 
-    // Pastilles visuelles
-    animTrack.innerHTML = '';
-    for (let i = 0; i < finalAnim; i++) {
-      const dot = document.createElement('div');
-      dot.className = `anim-dot ${i % 2 === 0 ? 'fill-a' : 'fill-b'}`;
-      dot.textContent = i + 1;
-      animTrack.appendChild(dot);
+    // Rendu des fleurs interactives
+    flowersGrid.innerHTML = '';
+    if (flowerReasons.length === 0) {
+      flowersGrid.innerHTML = '<span class="flower-node flower-empty">🌼</span>';
+    } else {
+      flowerReasons.slice(0, finalAnim).forEach((item) => {
+        const span = document.createElement('span');
+        span.className = 'flower-node';
+        span.textContent = item.flower;
+        span.setAttribute('data-reason', item.reason);
+        span.setAttribute('tabindex', '0');
+        flowersGrid.appendChild(span);
+      });
     }
   }
 
   // Copie Bilan
   document.getElementById('copyBtn').addEventListener('click', () => {
-    const text = `⚡ ALSH CALCULATION BILAN
+    const text = `⚡ ALSH TAUX D'ENCADREMENT
 Régime: ${REGIMES[activeRegimeKey].label}
 Enfants: ${parseInt(n36input.value) + parseInt(n612input.value)} (-6ans: ${n36input.value} | +6ans: ${n612input.value})
 -----------------------------
