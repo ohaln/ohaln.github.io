@@ -11,15 +11,12 @@
 
   :root {
     --bg-violet: #D8B4F8;
-    --bg-yellow: #FDE047;
     --card-dark: #0F0F11;
     --card-dark-soft: #1A1A1E;
-    --card-dark-hover: #26262B;
     --text-light: #F4F4F6;
     --text-muted: #8E8E93;
     --text-dark: #0F0F11;
     --accent-yellow: #FFE600;
-    --accent-purple: #C084FC;
     --accent-coral: #FCA5A5;
 
     --font-head: 'Syne', -apple-system, sans-serif;
@@ -37,35 +34,36 @@
     background-color: var(--bg-violet);
     color: var(--text-dark);
     font-family: var(--font-mono);
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
+    overflow: hidden;
     transition: background-color 0.4s ease;
-  }
-
-  body {
-    padding: 20px 16px max(40px, env(safe-area-inset-bottom));
   }
 
   main {
     width: 100%;
-    max-width: 410px;
+    max-width: 390px;
+    height: 100%;
+    max-height: 844px;
+    padding: 12px 14px max(12px, env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    justify-content: space-between;
+    gap: 8px;
   }
 
-  /* Micro-Header */
+  /* Header Compact */
   .top-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    padding: 0 4px;
     color: rgba(15, 15, 17, 0.7);
   }
 
@@ -73,42 +71,35 @@
     background: transparent;
     border: none;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     cursor: pointer;
     text-decoration: underline;
-    text-underline-offset: 3px;
+    text-underline-offset: 2px;
     color: var(--text-dark);
     padding: 0;
   }
 
-  /* Title Display */
+  /* Title Compact */
   .hero-title {
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 38px;
+    font-size: 28px;
     line-height: 0.95;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
     text-transform: lowercase;
-    margin: 8px 0 0;
+    margin: 2px 0 0;
     color: var(--text-dark);
   }
 
-  .hero-sub {
-    font-size: 11.5px;
-    color: rgba(15, 15, 17, 0.75);
-    margin: 8px 0 0;
-    line-height: 1.35;
-  }
-
-  /* Selector Carousel Dock */
+  /* Selector Dock */
   .selector-dock {
     background: var(--card-dark);
-    border-radius: 28px;
-    padding: 6px;
+    border-radius: 20px;
+    padding: 4px;
     display: flex;
-    gap: 4px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    gap: 3px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
 
   .dock-btn {
@@ -117,350 +108,302 @@
     border: none;
     color: var(--text-muted);
     font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-size: 9.5px;
     font-weight: 700;
-    padding: 10px 4px;
-    border-radius: 22px;
+    padding: 6px 2px;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.25s var(--ease-out);
+    transition: all 0.2s var(--ease-out);
     text-align: center;
-    line-height: 1.2;
+    line-height: 1.15;
   }
 
   .dock-btn.active {
     background: var(--text-light);
     color: var(--card-dark);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   }
 
-  /* Floating Dark Card */
+  /* Dark Card Compact */
   .dark-card {
     background: var(--card-dark);
     color: var(--text-light);
-    border-radius: 32px;
-    padding: 24px 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+    border-radius: 24px;
+    padding: 14px 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    position: relative;
+    gap: 10px;
   }
 
   .card-tag {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.08em;
     color: var(--text-muted);
     text-transform: uppercase;
     display: flex;
     justify-content: space-between;
-    align-items: center;
   }
 
-  /* Steppers avec saisie clavier anti-zoom */
+  /* Steppers Anti-Zoom */
   .stepper-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
   }
 
   .stepper-label {
-    font-size: 12.5px;
+    font-size: 11.5px;
     font-weight: 700;
-    color: var(--text-light);
   }
   .stepper-label small {
     display: block;
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 400;
-    margin-top: 2px;
   }
 
   .stepper-controls {
     display: flex;
     align-items: center;
     background: var(--card-dark-soft);
-    border-radius: 20px;
-    padding: 4px;
-    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 2px;
   }
 
   .step-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 16px;
+    width: 30px;
+    height: 30px;
+    border-radius: 12px;
     border: none;
     background: transparent;
     color: var(--text-light);
     font-family: var(--font-mono);
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s ease;
-    user-select: none;
   }
-  .step-btn:active { background: rgba(255,255,255,0.12); }
 
   .stepper-val {
-    width: 48px;
+    width: 40px;
     border: none;
     background: transparent;
     color: var(--accent-yellow);
     font-family: var(--font-mono);
-    font-size: 16px; /* Empêche le zoom iOS */
+    font-size: 16px; /* Empêche zoom iOS */
     font-weight: 700;
     text-align: center;
     outline: none;
     padding: 0;
-    -moz-appearance: textfield;
-  }
-  .stepper-val::-webkit-outer-spin-button,
-  .stepper-val::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-  .stepper-val:focus {
-    background: rgba(255, 230, 0, 0.15);
-    border-radius: 8px;
   }
 
-  /* Results Display */
-  .hero-result {
-    text-align: center;
-    padding: 4px 0;
-  }
-
-  .huge-number {
-    font-family: var(--font-head);
-    font-weight: 900;
-    font-size: 82px;
-    line-height: 0.85;
-    letter-spacing: -0.05em;
-    color: var(--text-light);
-    margin: 4px 0;
-  }
-
-  .huge-label {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--accent-yellow);
-  }
-
-  /* Jauge à Fleurs Interactives ( Flowers Track ) */
-  .flower-jauge-container {
-    background: var(--card-dark-soft);
-    border-radius: 22px;
-    padding: 14px 12px;
-    border: 1px solid rgba(255,255,255,0.06);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .jauge-title {
-    font-size: 10px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .flowers-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    align-items: center;
-    min-height: 40px;
-  }
-
-  .flower-node {
-    position: relative;
-    width: 38px;
-    height: 38px;
-    border-radius: 14px;
-    background: var(--card-dark-hover);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    cursor: pointer;
-    transition: transform 0.25s var(--ease-spring), background 0.2s ease;
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .flower-node:hover, .flower-node:focus {
-    transform: scale(1.15);
-    background: rgba(255,255,255,0.15);
-    z-index: 10;
-  }
-
-  /* Tooltip explication sous chaque fleur */
-  .flower-node::after {
-    content: attr(data-reason);
-    position: absolute;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%) scale(0.8);
-    background: #000000;
-    color: var(--text-light);
-    padding: 6px 10px;
-    border-radius: 10px;
-    font-size: 10px;
-    font-family: var(--font-mono);
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: all 0.2s var(--ease-spring);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.15);
-  }
-
-  .flower-node:hover::after, .flower-node:focus::after {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-  }
-
-  .flower-empty {
-    opacity: 0.25;
-    filter: grayscale(100%);
-  }
-
-  /* Legend Flowers */
-  .flower-legend {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    font-size: 9.5px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-  .legend-item { display: flex; align-items: center; gap: 4px; }
-
-  /* Toggles & Options */
+  /* Toggles */
   .option-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.06);
     cursor: pointer;
   }
 
   .option-text {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-muted);
   }
   .option-text strong {
     display: block;
     color: var(--text-light);
-    font-size: 12px;
+    font-size: 10.5px;
   }
 
   .custom-switch {
-    width: 42px;
-    height: 24px;
+    width: 36px;
+    height: 20px;
     background: var(--card-dark-soft);
     border-radius: 999px;
     position: relative;
-    transition: background 0.2s ease;
   }
   .custom-switch::after {
     content: '';
     position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 18px;
-    height: 18px;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
     background: var(--text-light);
     border-radius: 50%;
     transition: transform 0.2s var(--ease-spring);
   }
-  input:checked + .custom-switch {
-    background: var(--accent-yellow);
-  }
+  input:checked + .custom-switch { background: var(--accent-yellow); }
   input:checked + .custom-switch::after {
-    transform: translateX(18px);
+    transform: translateX(16px);
     background: var(--card-dark);
   }
 
-  /* Grid Qualifications */
+  /* Results Display */
+  .hero-result {
+    text-align: center;
+    padding: 2px 0;
+  }
+
+  .huge-number {
+    font-family: var(--font-head);
+    font-weight: 900;
+    font-size: 56px;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    color: var(--text-light);
+    margin: 2px 0;
+  }
+
+  .huge-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-yellow);
+  }
+
+  /* JAUGE DE FLEURS COMPACTE */
+  .flower-jauge-box {
+    background: var(--card-dark-soft);
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .jauge-bar-bg {
+    height: 22px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+  }
+
+  .jauge-bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, #A855F7, var(--accent-yellow));
+    border-radius: 12px;
+    transition: width 0.4s var(--ease-out);
+  }
+
+  .jauge-flowers-overlay {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 13px;
+    padding: 0 4px;
+    user-select: none;
+  }
+
+  /* Accordéon détail de jauge */
+  .details-toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 0 0;
+  }
+
+  .details-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    font-size: 9.5px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .details-content.open {
+    max-height: 100px;
+    padding-top: 4px;
+  }
+
+  /* Qualifications Grid */
   .qual-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 6px;
     background: var(--card-dark-soft);
-    padding: 12px 10px;
-    border-radius: 20px;
+    padding: 8px;
+    border-radius: 14px;
+    text-align: center;
   }
 
-  .qual-item { text-align: center; }
   .qual-val {
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 22px;
+    font-size: 16px;
     color: var(--text-light);
   }
   .qual-lbl {
-    font-size: 9px;
+    font-size: 8.5px;
     color: var(--text-muted);
     text-transform: uppercase;
-    margin-top: 2px;
   }
 
   .btn-pill-primary {
     background: var(--accent-yellow);
     color: var(--card-dark);
     border: none;
-    padding: 16px 20px;
+    padding: 12px;
     border-radius: 999px;
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 15px;
-    letter-spacing: -0.01em;
+    font-size: 13.5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    box-shadow: 0 8px 20px rgba(253, 224, 71, 0.25);
-    transition: transform 0.2s var(--ease-spring);
+    gap: 6px;
     width: 100%;
     text-transform: lowercase;
   }
-  .btn-pill-primary:active { transform: scale(0.97); }
 
   .alert-banner {
     background: rgba(252, 165, 165, 0.15);
     border: 1px solid var(--accent-coral);
     color: var(--accent-coral);
-    padding: 10px 14px;
-    border-radius: 16px;
-    font-size: 11px;
-    line-height: 1.3;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 9.5px;
     display: none;
   }
   .alert-banner.visible { display: block; }
 
   .bottom-tag {
     text-align: center;
-    padding: 8px 0 16px;
   }
   .tag-pill {
     display: inline-block;
     background: var(--card-dark);
     color: var(--accent-yellow);
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 700;
-    padding: 8px 18px;
+    padding: 6px 14px;
     border-radius: 999px;
-    letter-spacing: 0.04em;
   }
 
   /* Toast */
@@ -471,11 +414,10 @@
     transform: translateX(-50%) translateY(80px);
     background: var(--card-dark);
     color: var(--text-light);
-    padding: 12px 20px;
+    padding: 10px 18px;
     border-radius: 999px;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     opacity: 0;
     transition: all 0.3s var(--ease-spring);
     pointer-events: none;
@@ -496,14 +438,13 @@
       <button class="btn-mini-action" id="resetBtn">RESET</button>
     </div>
 
-    <!-- Title Updated -->
+    <!-- Title -->
     <div>
       <h1 class="hero-title">taux d'encadrement</h1>
-      <p class="hero-sub">Calculateur instantané du besoin réglementaire en animation.</p>
     </div>
 
     <!-- Mode Dock Switcher -->
-    <div class="selector-dock" role="radiogroup" aria-label="Régime ALSH">
+    <div class="selector-dock" role="radiogroup">
       <button class="dock-btn active" data-regime="hors_p5">Hors PEDT<br>&gt; 5h</button>
       <button class="dock-btn" data-regime="hors_m5">Hors PEDT<br>≤ 5h</button>
       <button class="dock-btn" data-regime="avec_p5">Avec PEDT<br>&gt; 5h</button>
@@ -517,7 +458,7 @@
         <span id="totalKidsBadge" style="color:var(--accent-yellow)">0 ENFANT</span>
       </div>
 
-      <!-- Saisie -6ans clavier direct -->
+      <!-- Saisie -6ans -->
       <div class="stepper-row">
         <div class="stepper-label">
           Moins de 6 ans
@@ -530,7 +471,7 @@
         </div>
       </div>
 
-      <!-- Saisie +6ans clavier direct -->
+      <!-- Saisie +6ans -->
       <div class="stepper-row">
         <div class="stepper-label">
           6 ans et plus
@@ -544,14 +485,14 @@
       </div>
 
       <div class="alert-banner" id="safetyAlert">
-        ⚠️ Sécurité SDJES : Minimum 2 animateurs requis dès qu'il y a 1 enfant.
+        ⚠️ Minimum 2 animateurs requis en activité.
       </div>
 
       <!-- Toggles Options -->
       <label class="option-row">
         <span class="option-text">
           <strong>Mutualisation des restes</strong>
-          Optimisation SDJES par cumul
+          Optimisation du nombre d'anim’s
         </span>
         <input type="checkbox" id="mutualToggle" checked style="display:none;">
         <span class="custom-switch"></span>
@@ -560,14 +501,14 @@
       <label class="option-row" id="dirRow">
         <span class="option-text">
           <strong>Inclure le directeur</strong>
-          Éligible si effectif total ≤ 50
+          Si effectif global ≤ 50 enfants
         </span>
         <input type="checkbox" id="dirToggle" style="display:none;">
         <span class="custom-switch"></span>
       </label>
     </div>
 
-    <!-- Result Floating Card -->
+    <!-- Result Card -->
     <div class="dark-card" style="background: #141417;">
       <div class="card-tag">( 02 . RÉSULTAT )</div>
 
@@ -576,21 +517,22 @@
         <div class="huge-label" id="totalAnimLabel">Animateurs requis</div>
       </div>
 
-      <!-- Nouvelle Jauge en fleurs interactives -->
-      <div class="flower-jauge-container">
-        <div class="jauge-title">
-          <span>Jauge du besoin</span>
-          <span style="color:var(--text-light)" id="jaugeRatioText">0 anim'</span>
-        </div>
-        
-        <div class="flowers-grid" id="flowersGrid">
-          <span class="flower-node flower-empty">🌼</span>
+      <!-- JAUGE FLEUR HORIZONTALE -->
+      <div class="flower-jauge-box">
+        <div class="jauge-bar-bg">
+          <div class="jauge-bar-fill" id="jaugeFill"></div>
+          <div class="jauge-flowers-overlay">
+            <span>🌸</span><span>🌼</span><span>🌸</span><span>🌼</span><span>🌸</span><span>🌼</span>
+          </div>
         </div>
 
-        <div class="flower-legend">
-          <span class="legend-item">🌸 -6ans</span>
-          <span class="legend-item">🌼 +6ans</span>
-          <span class="legend-item">🌺 Règle Sécu</span>
+        <button class="details-toggle-btn" id="toggleDetailsBtn">
+          <span>Voir le détail du calcul</span>
+          <span id="arrowIcon">▼</span>
+        </button>
+
+        <div class="details-content" id="detailsContent">
+          <!-- Injecté dynamiquement par JS -->
         </div>
       </div>
 
@@ -610,7 +552,6 @@
         </div>
       </div>
 
-      <!-- Button -->
       <button class="btn-pill-primary" id="copyBtn">
         copier le bilan ➔
       </button>
@@ -641,8 +582,10 @@
   const dirRow = document.getElementById('dirRow');
   const totalAnimEl = document.getElementById('totalAnim');
   const totalAnimLabelEl = document.getElementById('totalAnimLabel');
-  const flowersGrid = document.getElementById('flowersGrid');
-  const jaugeRatioText = document.getElementById('jaugeRatioText');
+  const jaugeFill = document.getElementById('jaugeFill');
+  const detailsContent = document.getElementById('detailsContent');
+  const toggleDetailsBtn = document.getElementById('toggleDetailsBtn');
+  const arrowIcon = document.getElementById('arrowIcon');
   const totalKidsBadge = document.getElementById('totalKidsBadge');
   const safetyAlert = document.getElementById('safetyAlert');
   const ratioLabel36 = document.getElementById('ratioLabel36');
@@ -654,7 +597,13 @@
   const qNonDiplomes = document.getElementById('qNonDiplomes');
   const qStagiaires = document.getElementById('qStagiaires');
 
-  // Switcher de régime PEDT
+  // Toggle Accordéon Détails
+  toggleDetailsBtn.addEventListener('click', () => {
+    const isOpen = detailsContent.classList.toggle('open');
+    arrowIcon.textContent = isOpen ? '▲' : '▼';
+  });
+
+  // Switcher régime
   document.querySelectorAll('.dock-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
@@ -665,7 +614,7 @@
     });
   });
 
-  // Boutons + / -
+  // Controls Stepper
   document.querySelectorAll('.step-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const inp = document.getElementById(btn.dataset.target);
@@ -676,7 +625,7 @@
     });
   });
 
-  // Saisie Clavier Directe
+  // Input Clavier Direct
   [n36input, n612input].forEach(inp => {
     inp.addEventListener('input', () => {
       if (inp.value < 0 || inp.value === '') inp.value = 0;
@@ -711,43 +660,39 @@
     totalKidsBadge.textContent = `${totalKids} ENFANT${totalKids > 1 ? 'S' : ''}`;
 
     let needed = 0;
-    let flowerReasons = [];
+    let detailLines = [];
 
     if (totalKids > 0) {
       if (mutualToggle.checked) {
-        // Mode Mutualisé SDJES
         const full36 = Math.floor(n36 / reg.ratio36);
         const full612 = Math.floor(n612 / reg.ratio612);
         
-        for(let i=0; i<full36; i++) flowerReasons.push({ flower: '🌸', reason: `-6ans: Groupe complet (${reg.ratio36} enf.)` });
-        for(let i=0; i<full612; i++) flowerReasons.push({ flower: '🌼', reason: `+6ans: Groupe complet (${reg.ratio612} enf.)` });
+        if (full36 > 0) detailLines.push(`• ${full36} anim' pour les -6ans (${full36 * reg.ratio36} enf.)`);
+        if (full612 > 0) detailLines.push(`• ${full612} anim' pour les +6ans (${full612 * reg.ratio612} enf.)`);
 
         const rem36 = n36 % reg.ratio36;
         const rem612 = n612 % reg.ratio612;
         const remTotal = rem36 + rem612;
 
         if (remTotal > 0 && remTotal <= reg.ratio36) {
-          flowerReasons.push({ flower: '🌸', reason: `Mutualisation des restes (${remTotal} enf.)` });
+          detailLines.push(`• 1 anim' pour restes mutualisés (${remTotal} enf.)`);
+          needed = full36 + full612 + 1;
         } else if (remTotal > reg.ratio36) {
-          flowerReasons.push({ flower: '🌸', reason: `Restes mutualisés - tranche 1 (${reg.ratio36} enf.)` });
-          flowerReasons.push({ flower: '🌼', reason: `Restes mutualisés - tranche 2 (${remTotal - reg.ratio36} enf.)` });
+          detailLines.push(`• 2 anim's pour restes mutualisés (${remTotal} enf.)`);
+          needed = full36 + full612 + 2;
+        } else {
+          needed = full36 + full612;
         }
-        needed = flowerReasons.length;
       } else {
-        // Mode Séparé
         const c36 = Math.ceil(n36 / reg.ratio36);
         const c612 = Math.ceil(n612 / reg.ratio612);
-
-        for(let i=0; i<c36; i++) flowerReasons.push({ flower: '🌸', reason: `Groupe -6ans (${n36} enf.)` });
-        for(let i=0; i<c612; i++) flowerReasons.push({ flower: '🌼', reason: `Groupe +6ans (${n612} enf.)` });
+        if (c36 > 0) detailLines.push(`• ${c36} anim' pour -6ans`);
+        if (c612 > 0) detailLines.push(`• ${c612} anim' pour +6ans`);
         needed = c36 + c612;
       }
 
-      // Règle de sécurité
       if (needed < 2) {
-        while(flowerReasons.length < 2) {
-          flowerReasons.push({ flower: '🌺', reason: "Règle de sécurité (Min. 2 anim's)" });
-        }
+        detailLines.push(`• Règle de sécurité SDJES (Min. 2 anim's)`);
         needed = 2;
         safetyAlert.classList.add('visible');
       } else {
@@ -755,9 +700,10 @@
       }
     } else {
       safetyAlert.classList.remove('visible');
+      detailLines.push(`• Aucun enfant renseigné`);
     }
 
-    // Directeur inclus ?
+    // Directeur
     const dirEligible = totalKids > 0 && totalKids <= 50;
     dirRow.style.opacity = dirEligible ? '1' : '0.4';
     dirRow.style.pointerEvents = dirEligible ? 'auto' : 'none';
@@ -767,12 +713,19 @@
     if (dirToggle.checked && dirEligible) {
       finalAnim = Math.max(needed - 1, 0);
       totalAnimLabelEl.textContent = "Animateurs (+ Directeur)";
+      detailLines.push(`• Directeur comptabilisé dans le taux (-1)`);
     } else {
       totalAnimLabelEl.textContent = "Animateurs requis";
     }
 
     totalAnimEl.textContent = finalAnim;
-    jaugeRatioText.textContent = `${finalAnim} anim' sur le terrain`;
+
+    // Mise à jour de la JAUGE FLEUR (Capacité basée sur une réf max de 10 anims)
+    const fillPercent = Math.min((finalAnim / 10) * 100, 100);
+    jaugeFill.style.width = `${fillPercent}%`;
+
+    // Détails de l'accordéon
+    detailsContent.innerHTML = detailLines.map(l => `<div>${l}</div>`).join('');
 
     // Qualifications
     const diplomes = Math.ceil(finalAnim * 0.5);
@@ -782,21 +735,6 @@
     qDiplomes.textContent = diplomes;
     qNonDiplomes.textContent = nonDiplomes;
     qStagiaires.textContent = stagiaires;
-
-    // Rendu des fleurs interactives
-    flowersGrid.innerHTML = '';
-    if (flowerReasons.length === 0) {
-      flowersGrid.innerHTML = '<span class="flower-node flower-empty">🌼</span>';
-    } else {
-      flowerReasons.slice(0, finalAnim).forEach((item) => {
-        const span = document.createElement('span');
-        span.className = 'flower-node';
-        span.textContent = item.flower;
-        span.setAttribute('data-reason', item.reason);
-        span.setAttribute('tabindex', '0');
-        flowersGrid.appendChild(span);
-      });
-    }
   }
 
   // Copie Bilan
