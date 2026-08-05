@@ -4,47 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
-<meta name="theme-color" content="#FEE74C">
+<meta name="theme-color" content="#120826">
 <title>Calculateur Taux d'encadrement ALSH — Outil SDJES</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
+
+<!-- Fonts Premium Style Cloudstudio -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    /* Palette Yellow & Violet (Inspirée du design Retro-Modern / Neo-Brutalism) */
-    --bg-canvas: #FAF5E4;
-    --yellow-bright: #FFE500;
-    --yellow-soft: #FFF275;
-    --yellow-muted: #FFFBEB;
-    --violet-deep: #1B0B2E;
-    --violet-card: #281242;
-    --violet-main: #7C3AED;
-    --violet-light: #C084FC;
-    --violet-accent: #DDD6FE;
+    --bg-dark: #120826;
+    --card-bg: #1B0F38;
+    --card-inner: #0C051B;
     
-    --text-dark: #120620;
-    --text-light: #FFFFFF;
-    --text-muted-dark: #524763;
-    --text-muted-light: rgba(255, 255, 255, 0.75);
+    /* Palette Violet & Jaune */
+    --yellow: #FFE600;
+    --yellow-hover: #FFF066;
+    --violet-neon: #C084FC;
+    --violet-glow: #A855F7;
+    --violet-light: #F3E8FF;
+    
+    --text-white: #FFFFFF;
+    --text-muted: #A79BCE;
+    --text-dark: #0F081D;
 
-    --border-dark: #120620;
-    --border-light: rgba(255, 255, 255, 0.15);
+    --border-subtle: rgba(255, 255, 255, 0.12);
+    --border-highlight: rgba(255, 230, 0, 0.4);
 
-    --radius-full: 9999px;
     --radius-xl: 28px;
     --radius-lg: 20px;
-    --radius-md: 14px;
-    --radius-sm: 10px;
+    --radius-pill: 999px;
 
-    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: 'Space Mono', monospace;
-
-    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-fast: 0.18s var(--ease-out);
-    --transition-smooth: 0.3s var(--ease-out);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -52,858 +46,641 @@
   html, body {
     margin: 0;
     padding: 0;
-    background-color: var(--bg-canvas);
-    color: var(--text-dark);
-    font-family: var(--font-sans);
     min-height: 100vh;
+    background-color: var(--bg-dark);
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: var(--text-white);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
   }
 
-  /* Pattern de fond à pois style retro-design */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(var(--text-muted-dark) 0.75px, transparent 0.75px);
-    background-size: 20px 20px;
-    opacity: 0.08;
-    pointer-events: none;
-    z-index: 0;
+  /* Structural Container (Pocket Size style) */
+  body {
+    padding: 16px;
+    padding-bottom: max(90px, calc(40px + env(safe-area-inset-bottom)));
   }
 
   main {
     width: 100%;
-    max-width: 480px;
-    padding: 24px 16px max(90px, calc(40px + env(safe-area-inset-bottom)));
-    position: relative;
-    z-index: 1;
+    max-width: 460px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
   }
 
-  /* Tag style parentheses ( ( SAME SITE - POCKET SIZE ) ) */
+  /* Micro-Header Monospace Label */
   .mono-tag {
-    font-family: var(--font-mono);
+    font-family: 'Space Mono', monospace;
     font-size: 11px;
-    font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+    color: var(--yellow);
   }
 
-  /* Card containers */
-  .card-container {
-    background: #FFFFFF;
-    border: 2px solid var(--border-dark);
+  /* Base Card Styling */
+  .card-block {
+    background: var(--card-bg);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-xl);
     padding: 22px;
-    box-shadow: 4px 6px 0px var(--border-dark);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-  }
-
-  .card-dark {
-    background: var(--violet-deep);
-    border: 2px solid var(--border-dark);
-    border-radius: var(--radius-xl);
-    padding: 22px;
-    color: var(--text-light);
-    box-shadow: 4px 6px 0px var(--border-dark);
-  }
-
-  /* Header Section */
-  .hero-card {
-    background: var(--yellow-bright);
-    border: 2px solid var(--border-dark);
-    border-radius: var(--radius-xl);
-    padding: 24px 22px;
-    box-shadow: 4px 6px 0px var(--border-dark);
     position: relative;
-    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
   }
 
-  .hero-top {
+  /* Header Card */
+  .hero-card {
+    background: linear-gradient(145deg, #24144A, #160C30);
+    border: 1px solid rgba(192, 132, 252, 0.25);
+  }
+
+  .header-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
-    gap: 8px;
+    margin-bottom: 12px;
   }
 
   .eyebrow-badge {
-    background: var(--violet-deep);
-    color: var(--yellow-bright);
+    background: var(--card-inner);
     padding: 6px 14px;
-    border-radius: var(--radius-full);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
   }
 
   .btn-reset {
-    background: #FFFFFF;
-    border: 2px solid var(--border-dark);
-    color: var(--border-dark);
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: var(--text-muted);
     padding: 6px 14px;
-    border-radius: var(--radius-full);
-    font-family: var(--font-mono);
+    border-radius: var(--radius-pill);
     font-size: 11px;
     font-weight: 700;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.2s ease;
   }
   .btn-reset:hover {
-    background: var(--violet-deep);
-    color: var(--yellow-bright);
-    transform: translateY(-1px);
+    background: var(--yellow);
+    color: var(--text-dark);
   }
-  .btn-reset:active { transform: scale(0.95); }
 
   h1 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 800;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.05;
     letter-spacing: -0.03em;
-    line-height: 1.1;
-    color: var(--border-dark);
+    margin: 8px 0 6px 0;
   }
 
-  .hero-sub {
-    margin: 6px 0 0;
+  .sub {
+    color: var(--text-muted);
     font-size: 13.5px;
+    margin: 0;
     font-weight: 600;
-    color: var(--text-muted-dark);
   }
 
-  /* Section Titles */
-  .section-label {
+  /* Section Title */
+  .section-head {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 12px;
-  }
-  .section-label .title-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .section-num {
-    color: var(--violet-main);
+    margin-top: 6px;
   }
 
-  .info-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--bg-canvas);
-    border: 2px solid var(--border-dark);
-    color: var(--border-dark);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 700;
-    cursor: help;
-    position: relative;
-  }
-
-  .info-icon:hover::after, .info-icon:focus::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 130%;
-    right: 0;
-    width: 230px;
-    background: var(--violet-deep);
-    border: 2px solid var(--yellow-bright);
-    color: var(--text-light);
-    padding: 10px 14px;
-    border-radius: var(--radius-md);
-    font-family: var(--font-sans);
-    font-size: 11.5px;
-    font-weight: 600;
-    line-height: 1.4;
-    box-shadow: 4px 6px 0px var(--border-dark);
-    z-index: 100;
-    pointer-events: none;
-    text-align: left;
-    white-space: normal;
-  }
-
-  /* Regime Grid Cards */
+  /* Regimes Grid (Cloudstudio options style) */
   .regime-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+    margin-bottom: 14px;
   }
 
   .regime-card {
-    background: var(--bg-canvas);
-    border: 2px solid var(--border-dark);
-    border-radius: var(--radius-md);
-    padding: 12px 14px;
-    text-align: left;
+    background: var(--card-inner);
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    padding: 14px 12px;
     cursor: pointer;
-    transition: all var(--transition-fast);
-    color: var(--text-dark);
+    text-align: left;
+    transition: all 0.2s var(--ease-out);
+    color: var(--text-white);
   }
+
   .regime-card .r-title {
     display: block;
     font-size: 14px;
     font-weight: 800;
   }
+
   .regime-card .r-sub {
     display: block;
-    font-family: var(--font-mono);
     font-size: 11px;
-    font-weight: 700;
-    color: var(--text-muted-dark);
+    color: var(--text-muted);
     margin-top: 3px;
+    font-weight: 600;
   }
+
   .regime-card:hover {
-    background: var(--yellow-soft);
+    border-color: rgba(255, 230, 0, 0.4);
     transform: translateY(-2px);
   }
+
   .regime-card.active {
-    background: var(--violet-deep);
-    color: var(--text-light);
-    border-color: var(--border-dark);
-    box-shadow: 2px 3px 0px var(--border-dark);
+    background: var(--yellow);
+    color: var(--text-dark);
+    border-color: var(--yellow);
   }
-  .regime-card.active .r-title { color: var(--yellow-bright); }
-  .regime-card.active .r-sub { color: var(--violet-light); }
 
-  /* PEDT Info Note */
+  .regime-card.active .r-sub {
+    color: rgba(15, 8, 29, 0.75);
+  }
+
+  /* Note PEDT Info */
   .pedt-info-note {
-    background: var(--yellow-muted);
-    border: 2px solid var(--border-dark);
-    border-radius: var(--radius-md);
-    padding: 12px 14px;
-    margin-top: 12px;
-    margin-bottom: 16px;
+    background: var(--card-inner);
+    border-left: 4px solid var(--violet-neon);
+    padding: 10px 14px;
+    border-radius: 12px;
     font-size: 12px;
-    line-height: 1.45;
-    color: var(--border-dark);
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-bottom: 18px;
   }
-  .pedt-info-note strong {
-    color: var(--violet-main);
+  .pedt-info-note strong { color: var(--text-white); }
+
+  /* Info Tooltip Icon */
+  .info-icon {
+    background: var(--card-inner);
+    border: 1px solid var(--border-subtle);
+    color: var(--yellow);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    cursor: help;
+    position: relative;
+  }
+  .info-icon:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 130%;
+    right: 0;
+    width: 220px;
+    background: var(--card-inner);
+    border: 1px solid var(--yellow);
+    color: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    z-index: 99;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
   }
 
-  /* Inputs & Steppers */
-  .field { margin-bottom: 16px; }
-  .field:last-of-type { margin-bottom: 0; }
+  /* Fields & Steppers */
+  .field { margin-bottom: 14px; }
   .field label {
     display: block;
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 700;
-    color: var(--border-dark);
     margin-bottom: 8px;
+    color: var(--text-white);
   }
 
   .stepper {
     display: flex;
     align-items: center;
-    background: var(--bg-canvas);
-    border: 2px solid var(--border-dark);
-    border-radius: var(--radius-md);
-    padding: 4px;
+    background: var(--card-inner);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    padding: 5px;
   }
+
   .stepper input {
-    flex: 1;
     width: 100%;
-    text-align: center;
     border: none;
     background: transparent;
-    color: var(--border-dark);
-    font-family: var(--font-sans);
-    font-size: 22px;
-    font-weight: 800;
+    color: var(--yellow);
+    font-size: 24px;
+    font-weight: 900;
+    text-align: center;
     outline: none;
   }
-  .stepper input::-webkit-outer-spin-button,
-  .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
   .stepbtn {
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
-    border-radius: var(--radius-sm);
-    border: 2px solid var(--border-dark);
-    background: var(--yellow-bright);
-    color: var(--border-dark);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: var(--violet-neon);
+    color: var(--text-dark);
     font-size: 22px;
-    font-weight: 800;
+    font-weight: 900;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    user-select: none;
+    transition: transform 0.15s ease, background 0.15s ease;
+    flex-shrink: 0;
   }
-  .stepbtn:hover {
-    background: var(--violet-deep);
-    color: var(--yellow-bright);
-  }
+
+  .stepbtn:hover { background: var(--yellow); }
   .stepbtn:active { transform: scale(0.9); }
 
-  /* Total Kids Banner */
+  /* Total Kids Indicator */
   .total-kids-indicator {
+    background: var(--card-inner);
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
+    color: var(--text-muted);
     font-weight: 700;
-    background: var(--violet-deep);
-    color: var(--text-light);
-    border: 2px solid var(--border-dark);
-    border-radius: var(--radius-full);
-    padding: 10px 16px;
-    margin-top: 14px;
-    margin-bottom: 8px;
-    box-shadow: 2px 3px 0px var(--border-dark);
+    margin: 12px 0;
   }
-  .total-kids-indicator strong {
-    color: var(--yellow-bright);
-    font-size: 1.1em;
-  }
+  .total-kids-indicator strong { color: var(--yellow); font-size: 14px; }
 
   .safety-alert {
     display: none;
-    align-items: center;
-    gap: 8px;
-    background: #FFF1F2;
-    border: 2px solid var(--border-dark);
-    color: #E11D48;
+    background: rgba(255, 77, 77, 0.15);
+    border: 1px solid #FF4D4D;
+    color: #FF7070;
     padding: 10px 14px;
-    border-radius: var(--radius-md);
+    border-radius: 14px;
     font-size: 12px;
     font-weight: 700;
-    margin-top: 10px;
+    margin-top: 8px;
   }
-  .safety-alert.visible { display: flex; }
+  .safety-alert.visible { display: block; }
 
-  /* Mutual Selector Pill Container */
+  /* Mutual Selector Switch */
   .mutual-selector {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    background: var(--bg-canvas);
-    padding: 6px;
-    border-radius: var(--radius-lg);
-    border: 2px solid var(--border-dark);
+    gap: 8px;
+    background: var(--card-inner);
+    padding: 5px;
+    border-radius: var(--radius-pill);
     margin-top: 6px;
-    margin-bottom: 14px;
   }
+
   .mutual-btn {
     background: transparent;
-    border: 2px solid transparent;
-    border-radius: var(--radius-md);
-    padding: 10px 8px;
+    border: none;
+    padding: 10px;
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
     cursor: pointer;
-    transition: all var(--transition-fast);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    transition: all 0.2s ease;
     text-align: center;
   }
-  .mutual-btn strong {
-    font-size: 12.5px;
-    font-weight: 800;
-    color: var(--border-dark);
-  }
-  .mutual-btn small {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--text-muted-dark);
-    margin-top: 2px;
-  }
-  .mutual-btn.active {
-    background: var(--violet-deep);
-    border-color: var(--border-dark);
-  }
-  .mutual-btn.active strong { color: var(--yellow-bright); }
-  .mutual-btn.active small { color: var(--violet-light); }
 
-  /* Toggle Row */
+  .mutual-btn strong { display: block; font-size: 12px; font-weight: 800; color: #fff; }
+  .mutual-btn small { font-size: 10px; opacity: 0.7; }
+
+  .mutual-btn.active {
+    background: var(--violet-neon);
+    color: var(--text-dark);
+  }
+  .mutual-btn.active strong { color: var(--text-dark); }
+  .mutual-btn.active small { color: rgba(15, 8, 29, 0.8); }
+
+  /* Toggle Switches */
   .toggle-group {
     margin-top: 14px;
     padding-top: 14px;
-    border-top: 2px dashed var(--bg-canvas);
+    border-top: 1px solid var(--border-subtle);
   }
+
   .toggle-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
     cursor: pointer;
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 700;
-    color: var(--border-dark);
-    user-select: none;
-    padding: 6px 0;
   }
-  .toggle-row small {
-    display: block;
-    font-weight: 600;
-    color: var(--text-muted-dark);
-    font-size: 11.5px;
-    margin-top: 2px;
-  }
+
+  .toggle-row small { display: block; color: var(--text-muted); font-size: 11px; font-weight: 500; }
   .toggle-row input { display: none; }
-  
+
   .switch {
     width: 50px;
     height: 28px;
-    border-radius: 999px;
-    background: var(--bg-canvas);
-    border: 2px solid var(--border-dark);
+    background: var(--card-inner);
+    border-radius: var(--radius-pill);
     position: relative;
+    border: 1px solid var(--border-subtle);
+    transition: background 0.3s ease;
     flex-shrink: 0;
-    transition: background 0.25s var(--ease-out);
   }
   .switch::after {
     content: "";
     position: absolute;
-    top: 2px;
-    left: 2px;
+    top: 3px;
+    left: 3px;
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: var(--border-dark);
-    transition: transform 0.3s var(--ease-spring);
+    background: #fff;
+    transition: transform 0.25s var(--ease-bounce);
   }
   .toggle-row input:checked + .switch {
-    background: var(--yellow-bright);
+    background: var(--yellow);
   }
   .toggle-row input:checked + .switch::after {
     transform: translateX(22px);
-    background: var(--violet-deep);
+    background: var(--text-dark);
   }
   .toggle-row.disabled { opacity: 0.4; pointer-events: none; }
 
-  /* ---------- GAUGES SECTION (Jauges d'encadrement explicatives) ---------- */
+  /* Visual Pool / Gauge display */
   .pool-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 14px;
+    align-items: center;
+    margin-bottom: 12px;
   }
   .badge-mutualized {
-    background: var(--yellow-bright);
-    color: var(--border-dark);
-    border: 2px solid var(--border-dark);
-    padding: 4px 12px;
-    border-radius: var(--radius-full);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 700;
+    background: var(--yellow);
+    color: var(--text-dark);
+    font-size: 10px;
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
     opacity: 0;
     transform: scale(0.85);
-    transition: all 0.3s var(--ease-spring);
+    transition: all 0.3s var(--ease-bounce);
   }
   .badge-mutualized.visible { opacity: 1; transform: scale(1); }
 
-  .pool-track {
+  .pool-track { display: flex; gap: 6px; flex-wrap: wrap; }
+  .segment {
+    flex: 1;
+    min-width: 40px;
+    height: 34px;
+    background: var(--card-inner);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+  }
+  .segment .fillA { background: var(--yellow); height: 100%; transition: width 0.3s ease; }
+  .segment .fillB { background: var(--violet-neon); height: 100%; transition: width 0.3s ease; }
+  .segment.ghost { opacity: 0.3; width: 100%; border: 1px dashed var(--text-muted); }
+
+  .pool-split-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .pool-subgroup { display: flex; flex-direction: column; gap: 6px; }
+  .subgroup-label { font-size: 11px; font-weight: 800; text-transform: uppercase; }
+  .subgroup-label.lbl-a { color: var(--yellow); }
+  .subgroup-label.lbl-b { color: var(--violet-neon); }
+
+  .pool-legend { display: flex; gap: 14px; margin-top: 10px; }
+  .pool-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); font-weight: 700; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-a { background: var(--yellow); }
+  .dot-b { background: var(--violet-neon); }
+
+  /* Main Result Display */
+  .result-card {
+    background: var(--card-inner);
+    border: 2px solid var(--yellow);
+    text-align: center;
+    padding: 24px;
+  }
+
+  .headline {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-  }
-
-  /* Individually styled animator segment gauge block */
-  .segment {
-    background: var(--violet-card);
-    border: 2px solid var(--border-light);
-    border-radius: var(--radius-md);
-    padding: 10px 12px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s var(--ease-out);
-  }
-  .segment.new-seg {
-    animation: segPop 0.35s var(--ease-spring) forwards;
-  }
-  @keyframes segPop {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .segment-top-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    font-weight: 700;
-  }
-  .segment-top-info .anim-name { color: var(--yellow-bright); }
-  .segment-top-info .anim-ratio { color: var(--text-muted-light); }
-
-  /* Horizontal progress bar inside segment */
-  .gauge-bar-outer {
-    height: 18px;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--radius-full);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-  }
-  .fillA, .fillB {
-    height: 100%;
-    width: 0%;
-    transition: width 0.4s var(--ease-out);
-  }
-  .fillA {
-    background: var(--yellow-bright);
-    box-shadow: 0 0 10px rgba(255, 229, 0, 0.5);
-  }
-  .fillB {
-    background: var(--violet-light);
-    box-shadow: 0 0 10px rgba(192, 132, 252, 0.5);
-  }
-  .gauge-label {
-    position: absolute;
-    inset: 0;
-    display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    font-weight: 700;
-    color: var(--border-dark);
-    text-shadow: 0 0 2px rgba(255,255,255,0.8);
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  .segment.ghost {
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px dashed rgba(255, 255, 255, 0.2);
-    text-align: center;
-    padding: 16px;
-    color: var(--text-muted-light);
-    font-family: var(--font-mono);
-    font-size: 12px;
-  }
-
-  .pool-split-container { display: flex; flex-direction: column; gap: 14px; width: 100%; }
-  .pool-subgroup { display: flex; flex-direction: column; gap: 8px; }
-  .subgroup-label { font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-transform: uppercase; }
-  .subgroup-label.lbl-a { color: var(--yellow-bright); }
-  .subgroup-label.lbl-b { color: var(--violet-light); }
-
-  .pool-legend {
-    display: flex;
-    gap: 16px;
     margin-top: 14px;
-    padding-top: 10px;
-    border-top: 1px dashed rgba(255, 255, 255, 0.15);
   }
-  .pool-legend span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: var(--text-muted-light);
-    font-weight: 600;
-  }
-  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid var(--border-dark); }
-  .dot-a { background: var(--yellow-bright); }
-  .dot-b { background: var(--violet-light); }
 
-  /* Headline Total Anim Card */
-  .hero-total-box {
-    background: var(--yellow-bright);
-    border: 2px solid var(--border-dark);
-    border-radius: var(--radius-lg);
-    padding: 18px 20px;
-    margin-top: 16px;
-    color: var(--border-dark);
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: 3px 4px 0px var(--border-dark);
-  }
-  .big-num {
-    font-size: 52px;
-    font-weight: 800;
-    line-height: 1;
+  .big {
+    font-size: 68px;
+    font-weight: 900;
+    line-height: 0.95;
+    color: var(--yellow);
     letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
   }
-  .big-label {
-    font-size: 15px;
+  .biglabel {
+    margin-top: 6px;
+    font-size: 14px;
     font-weight: 800;
-    line-height: 1.25;
+    color: var(--text-white);
   }
-
-  @keyframes numPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-    100% { transform: scale(1); }
-  }
-  .num-pulse { animation: numPulse 0.3s var(--ease-spring); display: inline-block; }
 
   /* Qualifications Grid */
-  .quali-title {
-    margin: 0 0 14px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-muted-dark);
-  }
   .qgrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 8px;
+    margin-top: 10px;
   }
   .qcard {
-    background: var(--bg-canvas);
-    border: 2px solid var(--border-dark);
-    border-radius: var(--radius-md);
-    padding: 14px 8px;
+    background: var(--card-inner);
+    border-radius: var(--radius-lg);
+    padding: 12px 6px;
     text-align: center;
-    transition: transform var(--transition-fast);
+    border: 1px solid var(--border-subtle);
   }
-  .qcard:hover { transform: translateY(-2px); }
-  .qnum {
-    display: block;
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--violet-deep);
-  }
-  .qlabel {
-    display: block;
-    margin-top: 4px;
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1.2;
-    color: var(--border-dark);
-  }
-  .qlabel small {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    font-weight: 700;
-    color: var(--text-muted-dark);
-    margin-top: 2px;
-  }
+  .qnum { display: block; font-size: 24px; font-weight: 900; color: var(--text-white); }
+  .qlabel { display: block; font-size: 10.5px; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
+  .qmin .qnum { color: var(--yellow); }
+  .qmax .qnum { color: var(--violet-neon); }
+  .qflex .qnum { color: #52E596; }
 
-  /* Big Action Button (Style Screen 1 'Let Dot Drive ->') */
-  .btn-action {
+  /* Main Pill Button (CTA Style) */
+  .btn-share {
     width: 100%;
-    margin-top: 18px;
+    margin-top: 16px;
     padding: 16px;
-    border-radius: var(--radius-full);
-    border: 2px solid var(--border-dark);
-    background: var(--yellow-bright);
-    color: var(--border-dark);
-    font-family: var(--font-sans);
+    border-radius: var(--radius-pill);
+    border: none;
+    background: var(--yellow);
+    color: var(--text-dark);
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 900;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    box-shadow: 3px 4px 0px var(--border-dark);
-    transition: all var(--transition-fast);
+    gap: 8px;
+    transition: all 0.2s var(--ease-out);
+    box-shadow: 0 8px 20px rgba(255, 230, 0, 0.25);
   }
-  .btn-action:hover {
-    background: var(--violet-deep);
-    color: var(--yellow-bright);
+  .btn-share:hover {
+    background: var(--yellow-hover);
     transform: translateY(-2px);
-    box-shadow: 4px 6px 0px var(--border-dark);
   }
-  .btn-action:active { transform: scale(0.98); }
-  .btn-action.copied {
-    background: #10B981;
-    color: #FFFFFF;
+  .btn-share.copied {
+    background: #52E596;
+    color: var(--text-dark);
   }
 
-  /* Floating Sticky Bottom Bar (Inspired by Screen 1/2 Bottom Floating Controls) */
+  /* Sticky Mini Bar */
   .sticky-mini-bar {
     position: fixed;
     bottom: max(16px, env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%) translateY(120px);
     width: calc(100% - 32px);
-    max-width: 440px;
-    background: var(--violet-deep);
-    border: 2px solid var(--border-dark);
-    border-radius: var(--radius-full);
-    padding: 10px 20px;
+    max-width: 420px;
+    background: var(--yellow);
+    color: var(--text-dark);
+    border-radius: var(--radius-pill);
+    padding: 12px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 4px 8px 0px var(--border-dark);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.6);
     z-index: 100;
     cursor: pointer;
     opacity: 0;
-    transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
+    transition: all 0.35s var(--ease-bounce);
   }
   .sticky-mini-bar.visible {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
   }
-  .mini-info { display: flex; align-items: center; gap: 10px; }
-  .mini-count { font-size: 24px; font-weight: 800; color: var(--yellow-bright); }
-  .mini-label { font-size: 13px; font-weight: 700; color: var(--text-light); }
+  .mini-count { font-size: 24px; font-weight: 900; }
+  .mini-label { font-size: 12px; font-weight: 800; }
   .mini-arrow {
-    background: var(--yellow-bright);
-    color: var(--border-dark);
-    padding: 6px 14px;
-    border-radius: var(--radius-full);
-    border: 2px solid var(--border-dark);
-    font-family: var(--font-mono);
+    background: var(--text-dark);
+    color: var(--yellow);
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
   }
 
   /* Toast Notification */
   .toast {
     position: fixed;
-    bottom: max(24px, calc(10px + env(safe-area-inset-bottom)));
+    bottom: 30px;
     left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--violet-deep);
-    border: 2px solid var(--yellow-bright);
-    color: var(--text-light);
-    padding: 12px 24px;
-    border-radius: var(--radius-full);
-    font-family: var(--font-sans);
-    font-size: 13px;
-    font-weight: 700;
-    box-shadow: 4px 8px 0px var(--border-dark);
+    transform: translateX(-50%) translateY(80px);
+    background: var(--violet-neon);
+    color: var(--text-dark);
+    padding: 10px 22px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 800;
     opacity: 0;
-    transition: all 0.35s var(--ease-spring);
-    z-index: 9999;
-    pointer-events: none;
+    transition: all 0.3s var(--ease-bounce);
+    z-index: 999;
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
   footer.note {
-    font-family: var(--font-mono);
     font-size: 11px;
-    line-height: 1.5;
-    color: var(--text-muted-dark);
-    padding: 0 8px;
+    color: var(--text-muted);
     text-align: center;
+    line-height: 1.4;
+    padding: 0 10px;
   }
 
   @media (max-width: 360px) {
-    .regime-grid, .mutual-selector { grid-template-columns: 1fr; }
-    .qgrid { grid-template-columns: 1fr; }
-  }
-
-  @media print {
-    body { background: #fff !important; color: #000 !important; }
-    .btn-reset, .btn-action, .stepper button, .toast, .sticky-mini-bar { display: none !important; }
-    .card-container, .card-dark, .hero-card { box-shadow: none !important; border: 1px solid #000 !important; background: #fff !important; color: #000 !important; }
+    .regime-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
   <main>
-
-    <!-- Header / Hero (Inspired by Screen 1 Yellow Card) -->
-    <header class="hero-card">
-      <div class="hero-top">
-        <span class="mono-tag eyebrow-badge" id="eyebrowBadge">Hors PEDT · > 5h / jour</span>
-        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser à zéro">
-          ↺ RESET
+    <!-- Header Hero -->
+    <header class="card-block hero-card">
+      <div class="header-top">
+        <div class="eyebrow-badge">
+          <span class="mono-tag" id="eyebrowBadge">( HORS PEDT · > 5H / JOUR )</span>
+        </div>
+        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser">
+          ↺ Reset
         </button>
       </div>
-      <h1>Encadrement ALSH.</h1>
-      <p class="hero-sub">Calculateur instantané conforme réglementation SDJES</p>
+      <h1>Taux d'encadrement.</h1>
+      <p class="sub">Calculateur ALSH conforme SDJES</p>
     </header>
 
-    <!-- Section Inputs -->
-    <section class="card-container">
-      <div class="section-label">
-        <div class="title-group">
-          <span class="mono-tag section-num">( 01 )</span>
-          <span class="mono-tag" style="color: var(--border-dark);">RÉGIME D'ACCUEIL</span>
-        </div>
-        <span class="info-icon" tabindex="0" role="button" aria-label="Modifie les ratios légaux d'encadrement" data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
+    <!-- Inputs Section -->
+    <section class="card-block">
+      <div class="section-head">
+        <span class="mono-tag">( 1. RÉGIME D'ACCUEIL )</span>
+        <span class="info-icon" tabindex="0" role="button" aria-label="Aide PEDT" data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT.">ⓘ</span>
       </div>
 
       <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
         <button type="button" class="regime-card active" role="radio" aria-checked="true" data-regime="hors_p5">
           <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">+5h / jour</span>
+          <span class="r-sub">+5h par jour</span>
         </button>
         <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="hors_m5">
           <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">≤ 5h / jour</span>
+          <span class="r-sub">≤ 5h par jour</span>
         </button>
         <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_p5">
           <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">+5h / jour</span>
+          <span class="r-sub">+5h par jour</span>
         </button>
         <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_m5">
           <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">≤ 5h / jour</span>
+          <span class="r-sub">≤ 5h par jour</span>
         </button>
       </div>
 
-      <!-- Note PEDT -->
       <div class="pedt-info-note">
-        <strong>💡 C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> est une démarche locale réunissant commune, écoles et CAF pour optimiser les taux d'encadrement.
+        💡 <strong>C'est quoi le PEDT ?</strong> Le Projet Éducatif de Territoire regroupe les acteurs locaux (écoles, mairie, CAF) et permet de bénéficier de taux d'encadrement aménagés.
       </div>
 
-      <div class="section-label">
-        <div class="title-group">
-          <span class="mono-tag section-num">( 02 )</span>
-          <span class="mono-tag" style="color: var(--border-dark);">EFFECTIFS ENREGISTRÉS</span>
-        </div>
+      <div class="section-head">
+        <span class="mono-tag">( 2. EFFECTIFS )</span>
       </div>
 
       <div class="field">
         <label for="n36">Enfants de - de 6 ans</label>
         <div class="stepper">
-          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant de - de 6 ans">–</button>
+          <button class="stepbtn" data-target="n36" data-delta="-1" aria-label="Retirer 1">–</button>
           <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant de - de 6 ans">+</button>
+          <button class="stepbtn" data-target="n36" data-delta="1" aria-label="Ajouter 1">+</button>
         </div>
       </div>
 
       <div class="field">
         <label for="n612">Enfants de + de 6 ans</label>
         <div class="stepper">
-          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant de + de 6 ans">–</button>
+          <button class="stepbtn" data-target="n612" data-delta="-1" aria-label="Retirer 1">–</button>
           <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant de + de 6 ans">+</button>
+          <button class="stepbtn" data-target="n612" data-delta="1" aria-label="Ajouter 1">+</button>
         </div>
       </div>
 
-      <!-- Compteur Total -->
       <div class="total-kids-indicator" id="totalKidsIndicator" aria-live="polite">
-        EFFECTIF TOTAL : <strong>0</strong> ENFANT
+        Effectif total : <strong>0</strong> enfant
       </div>
 
       <div class="safety-alert" id="safetyAlert" role="alert" aria-live="assertive">
-        <span>⚠️ <strong>SÉCURITÉ :</strong> Minimum 2 Anim' requis sur tout ALSH actif !</span>
+        ⚠️ <strong>Sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.
       </div>
 
-      <div class="section-label" style="margin-top: 18px;">
-        <div class="title-group">
-          <span class="mono-tag section-num">( 03 )</span>
-          <span class="mono-tag" style="color: var(--border-dark);">MODE DE CALCUL</span>
+      <div class="field">
+        <div class="section-head" style="margin-top: 14px;">
+          <span class="mono-tag">( 3. MODE DE CALCUL )</span>
+          <span class="info-icon" tabindex="0" role="button" aria-label="Aide Mutualisation" data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour optimiser les besoins.">ⓘ</span>
         </div>
-        <span class="info-icon" tabindex="0" role="button" aria-label="Option de mutualisation des restes" data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour optimiser l'effectif nécessaire.">ⓘ</span>
-      </div>
-
-      <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
-        <button type="button" class="mutual-btn active" role="radio" aria-checked="true" data-mode="avec">
-          <strong>AVEC MUTUALISATION</strong>
-          <small>Règles SDJES</small>
-        </button>
-        <button type="button" class="mutual-btn" role="radio" aria-checked="false" data-mode="sans">
-          <strong>SANS MUTUALISATION</strong>
-          <small>Calcul séparé</small>
-        </button>
+        <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
+          <button type="button" class="mutual-btn active" role="radio" aria-checked="true" data-mode="avec">
+            <strong>Avec mutualisation</strong>
+            <small>Règle SDJES</small>
+          </button>
+          <button type="button" class="mutual-btn" role="radio" aria-checked="false" data-mode="sans">
+            <strong>Sans mutualisation</strong>
+            <small>Calcul séparé</small>
+          </button>
+        </div>
       </div>
 
       <div class="toggle-group">
@@ -915,68 +692,66 @@
       </div>
     </section>
 
-    <!-- Section Résultats & Jauges (Card Dark Style Photo) -->
-    <section class="card-dark" id="resultCard" aria-live="polite">
-      <div class="pool-header">
-        <span class="mono-tag" style="color: var(--yellow-bright);">( JAUGES D'ENCADREMENT )</span>
-        <span class="badge-mutualized" id="mutualBadge">⚡ MUTUALISÉ</span>
+    <!-- Visual Pool & Main Result Card -->
+    <section class="card-block result-card" id="resultCard" aria-live="polite">
+      <div class="pool">
+        <div class="pool-header">
+          <span class="mono-tag">( POSTES D'ENCADREMENT )</span>
+          <span class="badge-mutualized" id="mutualBadge">⚡ Mutualisé</span>
+        </div>
+        <div class="pool-track" id="poolTrack"></div>
+        <div class="pool-legend">
+          <span><i class="dot dot-a"></i>- de 6 ans</span>
+          <span><i class="dot dot-b"></i>+ de 6 ans</span>
+        </div>
       </div>
 
-      <!-- Jauges des animateurs -->
-      <div class="pool-track" id="poolTrack"></div>
-
-      <div class="pool-legend">
-        <span><i class="dot dot-a"></i>- de 6 ans</span>
-        <span><i class="dot dot-b"></i>+ de 6 ans</span>
-      </div>
-
-      <!-- Headline Total Card -->
-      <div class="hero-total-box">
-        <span class="big-num" id="totalAnim">0</span>
-        <span class="big-label" id="totalAnimLabel">Anim' requis sur le terrain</span>
+      <div class="headline">
+        <span class="big" id="totalAnim">0</span>
+        <span class="biglabel" id="totalAnimLabel">Anim' sur le terrain</span>
       </div>
     </section>
 
-    <!-- Composition Équipe -->
-    <section class="card-container">
-      <span class="mono-tag quali-title">( COMPOSITION RECOMMANDÉE DE L'ÉQUIPE )</span>
-      
+    <!-- Qualifications Grid -->
+    <section class="card-block">
+      <div class="section-head">
+        <span class="mono-tag">( COMPOSITION DE L'ÉQUIPE )</span>
+      </div>
       <div class="qgrid">
-        <div class="qcard">
+        <div class="qcard qmin">
           <span class="qnum" id="qDiplomes">0</span>
-          <span class="qlabel">Diplômé·e·s<small>Min. 50%</small></span>
+          <span class="qlabel">Diplômé·e·s<br><small>Min. 50%</small></span>
         </div>
-        <div class="qcard">
+        <div class="qcard qmax">
           <span class="qnum" id="qNonDiplomes">0</span>
-          <span class="qlabel">Non-diplômé·e·s<small>Max. 20%</small></span>
+          <span class="qlabel">Non-diplômés<br><small>Max. 20%</small></span>
         </div>
-        <div class="qcard">
+        <div class="qcard qflex">
           <span class="qnum" id="qStagiaires">0</span>
-          <span class="qlabel">Stagiaires<small>BAFA / Ajust.</small></span>
+          <span class="qlabel">Stagiaires<br><small>Ajustement</small></span>
         </div>
       </div>
 
-      <button type="button" class="btn-action" id="copyBtn">
-        <span id="copyBtnIcon">📋</span> <span id="copyBtnText">COPIER LE BILAN DE CALCUL -></span>
+      <button type="button" class="btn-share" id="copyBtn">
+        <span id="copyBtnIcon">📋</span> <span id="copyBtnText">Copier le bilan de calcul</span>
       </button>
     </section>
 
     <footer class="note" id="footerNote">
-      ( OUTIL INDICATIF SDJES — CONFORME À LA LÉGISLATION ALSH EN VIGUEUR )
+      Outil indicatif SDJES — Conforme à la législation ALSH en vigueur.
     </footer>
-
   </main>
 
-  <!-- Sticky Mini Bar Mobile -->
+  <!-- Sticky Mini Bar -->
   <div class="sticky-mini-bar" id="stickyMiniBar">
-    <div class="mini-info">
+    <div>
       <span class="mini-count" id="miniAnimCount">0</span>
-      <span class="mini-label" id="miniAnimLabel">Anim' requis</span>
+      <span class="mini-label" id="miniAnimLabel" style="margin-left:6px;">Anim' requis</span>
     </div>
-    <span class="mini-arrow">DÉTAILS ➔</span>
+    <span class="mini-arrow">Voir détails ➔</span>
   </div>
 
-  <div class="toast" id="toast" role="status">📋 Bilan copié dans le presse-papier !</div>
+  <div class="toast" id="toast" role="status">📋 Bilan copié !</div>
 
 <script>
   const STORAGE_KEY = 'alsh_calculator_state';
@@ -1013,13 +788,12 @@
   let activeMutualMode = 'avec';
 
   const REGIMES = {
-    hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
-    hors_m5: { ratio36: 10, ratio612: 14, tag: "Hors PEDT · ≤ 5h / jour" },
-    avec_p5: { ratio36: 10, ratio612: 14, tag: "Avec PEDT · > 5h / jour" },
-    avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
+    hors_p5: { ratio36: 8,  ratio612: 12, tag: "( HORS PEDT · > 5H / JOUR )" },
+    hors_m5: { ratio36: 10, ratio612: 14, tag: "( HORS PEDT · ≤ 5H / JOUR )" },
+    avec_p5: { ratio36: 10, ratio612: 14, tag: "( AVEC PEDT · > 5H / JOUR )" },
+    avec_m5: { ratio36: 14, ratio612: 18, tag: "( AVEC PEDT · ≤ 5H / JOUR )" }
   };
 
-  /* ----- Persistance localStorage ----- */
   function saveState() {
     const state = {
       regime: activeRegimeKey,
@@ -1028,9 +802,7 @@
       n612: n612input.value,
       dir: dirToggle.checked
     };
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch(e) {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
   }
 
   function loadState() {
@@ -1150,7 +922,6 @@
     showToast("🔄 Effectifs réinitialisés");
   });
 
-  /* RENDER GAUGES (Jauges claires pour les anim's) */
   function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
     const currentModeKey = isSplitMode ? 'split' : 'normal';
     if (poolTrack.dataset.mode !== currentModeKey) {
@@ -1159,7 +930,7 @@
     }
 
     if (totalNeeded === 0){
-      poolTrack.innerHTML = '<div class="segment ghost">( AUCUN ANIMEUR REQUIS POUR LE MOMENT )</div>';
+      poolTrack.innerHTML = '<div class="segment ghost"></div>';
       return;
     }
 
@@ -1197,16 +968,8 @@
 
         while (segs.length < count) {
           const seg = document.createElement('div');
-          seg.className = 'segment new-seg';
-          seg.innerHTML = `
-            <div class="segment-top-info">
-              <span class="anim-name">Anim #${segs.length + 1}</span>
-              <span class="anim-ratio">Ratio 1:${maxRatio}</span>
-            </div>
-            <div class="gauge-bar-outer">
-              <div class="${fillClass}"></div>
-              <span class="gauge-label"></span>
-            </div>`;
+          seg.className = 'segment';
+          seg.innerHTML = `<div class="${fillClass}"></div>`;
           track.appendChild(seg);
           segs.push(seg);
         }
@@ -1219,10 +982,7 @@
           const kidsForAnim = Math.min(maxRatio, currentKids - (i * maxRatio));
           const fillPct = (kidsForAnim / maxRatio) * 100;
           const fillEl = seg.querySelector('.' + fillClass);
-          const labelEl = seg.querySelector('.gauge-label');
-
           fillEl.style.width = fillPct + '%';
-          labelEl.textContent = `${kidsForAnim} / ${maxRatio} enfants`;
         });
       }
 
@@ -1233,19 +993,14 @@
       let existingSegs = Array.from(poolTrack.querySelectorAll(':scope > .segment'));
 
       while (existingSegs.length < totalNeeded) {
-        const segIdx = existingSegs.length + 1;
         const seg = document.createElement('div');
-        seg.className = 'segment new-seg';
-        seg.innerHTML = `
-          <div class="segment-top-info">
-            <span class="anim-name">Poste Anim' #${segIdx}</span>
-            <span class="anim-ratio">Capacité & Mutualisation</span>
-          </div>
-          <div class="gauge-bar-outer">
-            <div class="fillA"></div>
-            <div class="fillB"></div>
-            <span class="gauge-label"></span>
-          </div>`;
+        seg.className = 'segment';
+        const fillA = document.createElement('div');
+        fillA.className = 'fillA';
+        const fillB = document.createElement('div');
+        fillB.className = 'fillB';
+        seg.appendChild(fillA);
+        seg.appendChild(fillB);
         poolTrack.appendChild(seg);
         existingSegs.push(seg);
       }
@@ -1276,13 +1031,9 @@
 
         const fillA = seg.querySelector('.fillA');
         const fillB = seg.querySelector('.fillB');
-        const labelEl = seg.querySelector('.gauge-label');
 
         fillA.style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
         fillB.style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
-
-        const totalFill = Math.round(fillAPct + fillBPct);
-        labelEl.textContent = `Charge poste : ${totalFill}%`;
       });
     }
   }
@@ -1290,7 +1041,7 @@
   function animateNumber(el, to){
     const from = parseInt(el.textContent, 10) || 0;
     if (from === to){ return; }
-    const duration = 280;
+    const duration = 250;
     const start = performance.now();
     const ease = t => 1 - Math.pow(1 - t, 3);
 
@@ -1301,10 +1052,6 @@
       if (t < 1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
-
-    el.classList.remove('num-pulse');
-    void el.offsetWidth;
-    el.classList.add('num-pulse');
   }
 
   function recalc(){
@@ -1315,7 +1062,7 @@
     const n612 = clampInt(n612input.value);
     const effectif = n36 + n612;
 
-    totalKidsIndicator.innerHTML = `EFFECTIF TOTAL : <strong>${effectif}</strong> ENFANT${effectif > 1 ? 'S' : ''}`;
+    totalKidsIndicator.innerHTML = `Effectif total : <strong>${effectif}</strong> enfant${effectif > 1 ? 's' : ''}`;
 
     const r1 = currentRegime.ratio36;
     const r2 = currentRegime.ratio612;
@@ -1364,9 +1111,9 @@
     let displayed = totalNeeded;
     if (dirToggle.checked && directorEligible){
       displayed = Math.max(totalNeeded - 1, 0);
-      totalAnimLabelEl.textContent = "Anim' requis sur le terrain (+ le directeur)";
+      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ le directeur)";
     } else {
-      totalAnimLabelEl.textContent = "Anim' requis sur le terrain";
+      totalAnimLabelEl.textContent = "Anim' sur le terrain";
     }
     
     animateNumber(totalAnimEl, displayed);
@@ -1375,7 +1122,7 @@
 
     const saved = naiveSum - totalNeeded;
     if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
-      mutualBadge.textContent = `⚡ -${saved} ANIM' MUTUALISÉ${saved > 1 ? 'S' : ''}`;
+      mutualBadge.textContent = `⚡ -${saved} Anim' mutualisé${saved > 1 ? 's' : ''}`;
       mutualBadge.classList.add('visible');
     } else {
       mutualBadge.classList.remove('visible');
@@ -1391,10 +1138,10 @@
     animateNumber(qStagiaires, stagiaires);
 
     let modeText = activeMutualMode === 'avec' 
-      ? "Avec mutualisation (SDJES)" 
-      : "Sans mutualisation";
+      ? "Avec mutualisation (Règle SDJES)" 
+      : "Sans mutualisation (Calcul séparé)";
 
-    footerNote.textContent = `( ${currentRegime.tag.toUpperCase()} — ${modeText.toUpperCase()} )`;
+    footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
     
     saveState();
   }
@@ -1419,9 +1166,9 @@
 -----------------------------------
 > ANIM' REQUIS : ${totalAnim}
 
-Composition recommandée de l'équipe :
-• Diplômé·e·s (Min. 50%) : ${qDiplomes.textContent}
-• Non-diplômé·e·s (Max. 20%) : ${qNonDiplomes.textContent}
+Composition recommandée :
+• Diplômés (Min. 50%) : ${qDiplomes.textContent}
+• Non-diplômés (Max. 20%) : ${qNonDiplomes.textContent}
 • Stagiaires BAFA : ${qStagiaires.textContent}
 `;
 
@@ -1434,14 +1181,14 @@ Composition recommandée de l'équipe :
       navigator.clipboard.writeText(textSummary).then(() => {
         copyBtn.classList.add('copied');
         copyBtnIcon.textContent = "✓";
-        copyBtnText.textContent = "BILAN COPIÉ !";
+        copyBtnText.textContent = "Bilan copié !";
 
-        showToast("📋 Bilan copié dans le presse-papier !");
+        showToast("📋 Bilan copié !");
 
         setTimeout(() => {
           copyBtn.classList.remove('copied');
           copyBtnIcon.textContent = "📋";
-          copyBtnText.textContent = "COPIER LE BILAN DE CALCUL ->";
+          copyBtnText.textContent = "Copier le bilan de calcul";
         }, 2200);
 
       }).catch(() => {
