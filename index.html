@@ -17,6 +17,7 @@
     --text-muted: #8E8E93;
     --text-dark: #0F0F11;
     --accent-yellow: #FFE600;
+    --accent-purple: #C084FC;
     --accent-coral: #FCA5A5;
 
     --font-head: 'Syne', -apple-system, sans-serif;
@@ -48,11 +49,11 @@
     max-width: 390px;
     height: 100%;
     max-height: 844px;
-    padding: 12px 14px max(12px, env(safe-area-inset-bottom));
+    padding: 10px 14px max(10px, env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
   }
 
   /* Header Compact */
@@ -84,19 +85,19 @@
   .hero-title {
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 28px;
+    font-size: 26px;
     line-height: 0.95;
     letter-spacing: -0.03em;
     text-transform: lowercase;
-    margin: 2px 0 0;
+    margin: 0;
     color: var(--text-dark);
   }
 
   /* Selector Dock */
   .selector-dock {
     background: var(--card-dark);
-    border-radius: 20px;
-    padding: 4px;
+    border-radius: 18px;
+    padding: 3px;
     display: flex;
     gap: 3px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
@@ -108,10 +109,10 @@
     border: none;
     color: var(--text-muted);
     font-family: var(--font-mono);
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 700;
-    padding: 6px 2px;
-    border-radius: 16px;
+    padding: 5px 2px;
+    border-radius: 14px;
     cursor: pointer;
     transition: all 0.2s var(--ease-out);
     text-align: center;
@@ -127,16 +128,16 @@
   .dark-card {
     background: var(--card-dark);
     color: var(--text-light);
-    border-radius: 24px;
-    padding: 14px 16px;
+    border-radius: 22px;
+    padding: 12px 14px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 
   .card-tag {
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 700;
     letter-spacing: 0.08em;
     color: var(--text-muted);
@@ -153,13 +154,13 @@
   }
 
   .stepper-label {
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 700;
   }
   .stepper-label small {
     display: block;
     color: var(--text-muted);
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 400;
   }
 
@@ -167,19 +168,19 @@
     display: flex;
     align-items: center;
     background: var(--card-dark-soft);
-    border-radius: 14px;
+    border-radius: 12px;
     padding: 2px;
   }
 
   .step-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
     border: none;
     background: transparent;
     color: var(--text-light);
     font-family: var(--font-mono);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
@@ -188,12 +189,12 @@
   }
 
   .stepper-val {
-    width: 40px;
+    width: 38px;
     border: none;
     background: transparent;
     color: var(--accent-yellow);
     font-family: var(--font-mono);
-    font-size: 16px; /* Empêche zoom iOS */
+    font-size: 16px; /* Empêche le zoom iOS */
     font-weight: 700;
     text-align: center;
     outline: none;
@@ -205,24 +206,24 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 6px;
+    padding-top: 4px;
     border-top: 1px solid rgba(255,255,255,0.06);
     cursor: pointer;
   }
 
   .option-text {
-    font-size: 10px;
+    font-size: 9.5px;
     color: var(--text-muted);
   }
   .option-text strong {
     display: block;
     color: var(--text-light);
-    font-size: 10.5px;
+    font-size: 10px;
   }
 
   .custom-switch {
-    width: 36px;
-    height: 20px;
+    width: 34px;
+    height: 18px;
     background: var(--card-dark-soft);
     border-radius: 999px;
     position: relative;
@@ -232,8 +233,8 @@
     position: absolute;
     top: 2px;
     left: 2px;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     background: var(--text-light);
     border-radius: 50%;
     transition: transform 0.2s var(--ease-spring);
@@ -247,13 +248,13 @@
   /* Results Display */
   .hero-result {
     text-align: center;
-    padding: 2px 0;
+    padding: 0;
   }
 
   .huge-number {
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 56px;
+    font-size: 48px;
     line-height: 0.85;
     letter-spacing: -0.05em;
     color: var(--text-light);
@@ -261,84 +262,71 @@
   }
 
   .huge-label {
-    font-size: 10.5px;
+    font-size: 9.5px;
     font-weight: 700;
     text-transform: uppercase;
     color: var(--accent-yellow);
   }
 
-  /* JAUGE DE FLEURS COMPACTE */
-  .flower-jauge-box {
-    background: var(--card-dark-soft);
-    border-radius: 16px;
-    padding: 10px;
+  /* --- DOUBLE JAUGE FLORALE PAR TRANCHE D'ÂGE --- */
+  .jauges-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
+    background: var(--card-dark-soft);
+    padding: 10px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.05);
   }
 
-  .jauge-bar-bg {
-    height: 22px;
+  .jauge-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .jauge-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9.5px;
+    color: var(--text-muted);
+  }
+  .jauge-header strong {
+    color: var(--text-light);
+  }
+
+  .flower-bar-track {
+    height: 20px;
     background: rgba(255,255,255,0.06);
-    border-radius: 12px;
-    overflow: hidden;
+    border-radius: 10px;
     position: relative;
+    overflow: hidden;
     display: flex;
     align-items: center;
-    padding: 0 4px;
+    padding: 0 6px;
   }
 
-  .jauge-bar-fill {
+  .flower-bar-fill {
     position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
     width: 0%;
-    background: linear-gradient(90deg, #A855F7, var(--accent-yellow));
-    border-radius: 12px;
     transition: width 0.4s var(--ease-out);
+    border-radius: 10px;
   }
+  .fill-36 { background: linear-gradient(90deg, #A855F7, #C084FC); }
+  .fill-612 { background: linear-gradient(90deg, #EAB308, var(--accent-yellow)); }
 
-  .jauge-flowers-overlay {
+  .flower-pattern-overlay {
     position: relative;
     z-index: 2;
     display: flex;
     justify-content: space-between;
     width: 100%;
-    font-size: 13px;
-    padding: 0 4px;
+    font-size: 11px;
     user-select: none;
-  }
-
-  /* Accordéon détail de jauge */
-  .details-toggle-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 2px 0 0;
-  }
-
-  .details-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    font-size: 9.5px;
-    color: var(--text-muted);
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .details-content.open {
-    max-height: 100px;
-    padding-top: 4px;
+    opacity: 0.9;
   }
 
   /* Qualifications Grid */
@@ -347,19 +335,19 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
     background: var(--card-dark-soft);
-    padding: 8px;
-    border-radius: 14px;
+    padding: 6px;
+    border-radius: 12px;
     text-align: center;
   }
 
   .qual-val {
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 16px;
+    font-size: 15px;
     color: var(--text-light);
   }
   .qual-lbl {
-    font-size: 8.5px;
+    font-size: 8px;
     color: var(--text-muted);
     text-transform: uppercase;
   }
@@ -368,11 +356,11 @@
     background: var(--accent-yellow);
     color: var(--card-dark);
     border: none;
-    padding: 12px;
+    padding: 11px;
     border-radius: 999px;
     font-family: var(--font-head);
     font-weight: 900;
-    font-size: 13.5px;
+    font-size: 13px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -386,9 +374,9 @@
     background: rgba(252, 165, 165, 0.15);
     border: 1px solid var(--accent-coral);
     color: var(--accent-coral);
-    padding: 6px 10px;
-    border-radius: 12px;
-    font-size: 9.5px;
+    padding: 5px 8px;
+    border-radius: 10px;
+    font-size: 9px;
     display: none;
   }
   .alert-banner.visible { display: block; }
@@ -400,9 +388,9 @@
     display: inline-block;
     background: var(--card-dark);
     color: var(--accent-yellow);
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: 700;
-    padding: 6px 14px;
+    padding: 5px 12px;
     border-radius: 999px;
   }
 
@@ -416,7 +404,7 @@
     color: var(--text-light);
     padding: 10px 18px;
     border-radius: 999px;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 700;
     opacity: 0;
     transition: all 0.3s var(--ease-spring);
@@ -517,22 +505,34 @@
         <div class="huge-label" id="totalAnimLabel">Animateurs requis</div>
       </div>
 
-      <!-- JAUGE FLEUR HORIZONTALE -->
-      <div class="flower-jauge-box">
-        <div class="jauge-bar-bg">
-          <div class="jauge-bar-fill" id="jaugeFill"></div>
-          <div class="jauge-flowers-overlay">
-            <span>🌸</span><span>🌼</span><span>🌸</span><span>🌼</span><span>🌸</span><span>🌼</span>
+      <!-- DOUBLE JAUGE FLEUR PAR TRANCHE -->
+      <div class="jauges-wrapper">
+        <!-- Jauge -6 ans -->
+        <div class="jauge-item">
+          <div class="jauge-header">
+            <span>🌸 Moins de 6 ans</span>
+            <strong id="desc36">0 / 8 enfants (0 anim)</strong>
+          </div>
+          <div class="flower-bar-track">
+            <div class="flower-bar-fill fill-36" id="fill36"></div>
+            <div class="flower-pattern-overlay">
+              <span>🌸</span><span>🌸</span><span>🌸</span><span>🌸</span><span>🌸</span>
+            </div>
           </div>
         </div>
 
-        <button class="details-toggle-btn" id="toggleDetailsBtn">
-          <span>Voir le détail du calcul</span>
-          <span id="arrowIcon">▼</span>
-        </button>
-
-        <div class="details-content" id="detailsContent">
-          <!-- Injecté dynamiquement par JS -->
+        <!-- Jauge +6 ans -->
+        <div class="jauge-item">
+          <div class="jauge-header">
+            <span>🌼 6 ans et plus</span>
+            <strong id="desc612">0 / 12 enfants (0 anim)</strong>
+          </div>
+          <div class="flower-bar-track">
+            <div class="flower-bar-fill fill-612" id="fill612"></div>
+            <div class="flower-pattern-overlay">
+              <span>🌼</span><span>🌼</span><span>🌼</span><span>🌼</span><span>🌼</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -582,10 +582,12 @@
   const dirRow = document.getElementById('dirRow');
   const totalAnimEl = document.getElementById('totalAnim');
   const totalAnimLabelEl = document.getElementById('totalAnimLabel');
-  const jaugeFill = document.getElementById('jaugeFill');
-  const detailsContent = document.getElementById('detailsContent');
-  const toggleDetailsBtn = document.getElementById('toggleDetailsBtn');
-  const arrowIcon = document.getElementById('arrowIcon');
+  
+  const fill36 = document.getElementById('fill36');
+  const fill612 = document.getElementById('fill612');
+  const desc36 = document.getElementById('desc36');
+  const desc612 = document.getElementById('desc612');
+
   const totalKidsBadge = document.getElementById('totalKidsBadge');
   const safetyAlert = document.getElementById('safetyAlert');
   const ratioLabel36 = document.getElementById('ratioLabel36');
@@ -596,12 +598,6 @@
   const qDiplomes = document.getElementById('qDiplomes');
   const qNonDiplomes = document.getElementById('qNonDiplomes');
   const qStagiaires = document.getElementById('qStagiaires');
-
-  // Toggle Accordéon Détails
-  toggleDetailsBtn.addEventListener('click', () => {
-    const isOpen = detailsContent.classList.toggle('open');
-    arrowIcon.textContent = isOpen ? '▲' : '▼';
-  });
 
   // Switcher régime
   document.querySelectorAll('.dock-btn').forEach(btn => {
@@ -614,7 +610,7 @@
     });
   });
 
-  // Controls Stepper
+  // Controls Stepper (+ / -)
   document.querySelectorAll('.step-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const inp = document.getElementById(btn.dataset.target);
@@ -660,39 +656,31 @@
     totalKidsBadge.textContent = `${totalKids} ENFANT${totalKids > 1 ? 'S' : ''}`;
 
     let needed = 0;
-    let detailLines = [];
+    let anim36 = 0;
+    let anim612 = 0;
 
     if (totalKids > 0) {
       if (mutualToggle.checked) {
         const full36 = Math.floor(n36 / reg.ratio36);
         const full612 = Math.floor(n612 / reg.ratio612);
-        
-        if (full36 > 0) detailLines.push(`• ${full36} anim' pour les -6ans (${full36 * reg.ratio36} enf.)`);
-        if (full612 > 0) detailLines.push(`• ${full612} anim' pour les +6ans (${full612 * reg.ratio612} enf.)`);
-
         const rem36 = n36 % reg.ratio36;
         const rem612 = n612 % reg.ratio612;
         const remTotal = rem36 + rem612;
 
-        if (remTotal > 0 && remTotal <= reg.ratio36) {
-          detailLines.push(`• 1 anim' pour restes mutualisés (${remTotal} enf.)`);
-          needed = full36 + full612 + 1;
-        } else if (remTotal > reg.ratio36) {
-          detailLines.push(`• 2 anim's pour restes mutualisés (${remTotal} enf.)`);
-          needed = full36 + full612 + 2;
-        } else {
-          needed = full36 + full612;
-        }
+        let extra = 0;
+        if (remTotal > 0 && remTotal <= reg.ratio36) extra = 1;
+        else if (remTotal > reg.ratio36) extra = 2;
+
+        anim36 = full36;
+        anim612 = full612;
+        needed = full36 + full612 + extra;
       } else {
-        const c36 = Math.ceil(n36 / reg.ratio36);
-        const c612 = Math.ceil(n612 / reg.ratio612);
-        if (c36 > 0) detailLines.push(`• ${c36} anim' pour -6ans`);
-        if (c612 > 0) detailLines.push(`• ${c612} anim' pour +6ans`);
-        needed = c36 + c612;
+        anim36 = n36 > 0 ? Math.ceil(n36 / reg.ratio36) : 0;
+        anim612 = n612 > 0 ? Math.ceil(n612 / reg.ratio612) : 0;
+        needed = anim36 + anim612;
       }
 
       if (needed < 2) {
-        detailLines.push(`• Règle de sécurité SDJES (Min. 2 anim's)`);
         needed = 2;
         safetyAlert.classList.add('visible');
       } else {
@@ -700,7 +688,6 @@
       }
     } else {
       safetyAlert.classList.remove('visible');
-      detailLines.push(`• Aucun enfant renseigné`);
     }
 
     // Directeur
@@ -713,19 +700,22 @@
     if (dirToggle.checked && dirEligible) {
       finalAnim = Math.max(needed - 1, 0);
       totalAnimLabelEl.textContent = "Animateurs (+ Directeur)";
-      detailLines.push(`• Directeur comptabilisé dans le taux (-1)`);
     } else {
       totalAnimLabelEl.textContent = "Animateurs requis";
     }
 
     totalAnimEl.textContent = finalAnim;
 
-    // Mise à jour de la JAUGE FLEUR (Capacité basée sur une réf max de 10 anims)
-    const fillPercent = Math.min((finalAnim / 10) * 100, 100);
-    jaugeFill.style.width = `${fillPercent}%`;
+    // MISE À JOUR DES JAUGES FLEUR PAR TRANCHE
+    // Jauge -6ans
+    const pct36 = n36 > 0 ? Math.min((n36 / (Math.max(1, Math.ceil(n36 / reg.ratio36)) * reg.ratio36)) * 100, 100) : 0;
+    fill36.style.width = `${pct36}%`;
+    desc36.textContent = `${n36} / ${reg.ratio36} enf. (${anim36} anim)`;
 
-    // Détails de l'accordéon
-    detailsContent.innerHTML = detailLines.map(l => `<div>${l}</div>`).join('');
+    // Jauge +6ans
+    const pct612 = n612 > 0 ? Math.min((n612 / (Math.max(1, Math.ceil(n612 / reg.ratio612)) * reg.ratio612)) * 100, 100) : 0;
+    fill612.style.width = `${pct612}%`;
+    desc612.textContent = `${n612} / ${reg.ratio612} enf. (${anim612} anim)`;
 
     // Qualifications
     const diplomes = Math.ceil(finalAnim * 0.5);
