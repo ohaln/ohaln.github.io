@@ -14,7 +14,7 @@
 
 <style>
   :root {
-    /* Mode Dark (Sombre) */
+    /* Mode Dark (Sombre) Unique */
     --bg-main: #09090E;
     --card-bg: rgba(255, 255, 255, 0.04);
     --card-border: rgba(255, 255, 255, 0.1);
@@ -44,46 +44,6 @@
     --transition-fast: 0.18s var(--ease-out);
   }
 
-  /* Mode Light (Clair élégant & ultra lisible) */
-  [data-theme="light"] {
-    --bg-main: #F4F5F9;
-    --card-bg: #FFFFFF;
-    --card-border: #E2E8F0;
-    
-    --yellow: #7C3AED; /* Accent principal en violet chic pour le mode clair */
-    --yellow-dark: #6D28D9;
-    --yellow-glow: rgba(124, 58, 237, 0.15);
-    
-    --purple: #8B5CF6;
-    --purple-bright: #7C3AED;
-    --purple-glow: rgba(124, 58, 237, 0.15);
-    
-    --pink: #E11D48;
-    
-    --text-main: #0F172A;
-    --text-muted: #64748B;
-    --text-dark: #FFFFFF;
-
-    --hero-bg: linear-gradient(145deg, #1E1B4B 0%, #312E81 100%);
-    --tooltip-bg: #0F172A;
-  }
-
-  /* Couleur spécifique -6ans en mode light */
-  [data-theme="light"] .c-yellow {
-    color: #D97706 !important; /* Ambre chaud pour lisibilité sur fond blanc */
-  }
-  [data-theme="light"] .st-36 {
-    border-color: #FCD34D;
-    background: #FFFBEB;
-  }
-  [data-theme="light"] .st-36 input {
-    color: #D97706 !important;
-  }
-  [data-theme="light"] .st-36:focus-within {
-    border-color: #D97706 !important;
-    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2) !important;
-  }
-
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
@@ -101,7 +61,6 @@
     display: flex;
     justify-content: center;
     padding: 24px 16px max(90px, calc(40px + env(safe-area-inset-bottom)));
-    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   /* Arrière-plan néon diffus */
@@ -132,30 +91,13 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    padding: 0 8px; /* Sécurité marge bord d'écran */
+    padding: 0 8px;
   }
 
   .header-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .theme-toggle-btn {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    color: var(--text-main);
-    padding: 6px 14px;
-    border-radius: var(--radius-pill);
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    transition: all var(--transition-fast);
+    justify-content: flex-end;
   }
 
   .btn-reset {
@@ -185,7 +127,7 @@
 
   h1 {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(24px, 7.5vw, 36px); /* Dimensionnement fluide fluide */
+    font-size: clamp(24px, 7.5vw, 36px);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -300,7 +242,7 @@
   }
   .pedt-note strong { color: var(--purple-bright); font-weight: 800; }
 
-  /* Input Steppers (Couleurs Dédiées & Strictement Séparées) */
+  /* Input Steppers */
   .input-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -324,30 +266,21 @@
     transition: all var(--transition-fast);
   }
 
-  /* --- Champ -6 ANS (Style Jaune / Ambre) --- */
+  /* Champ -6 ANS (Jaune) */
   .stepper-box.st-36:focus-within, .stepper-box.st-36:hover {
     border-color: var(--yellow);
     box-shadow: 0 0 14px var(--yellow-glow);
   }
-  .stepper-box.st-36 input {
-    color: var(--yellow);
-  }
-  .stepper-box.st-36 .stepper-btn:hover {
-    background: var(--yellow); color: var(--text-dark);
-  }
+  .stepper-box.st-36 input { color: var(--yellow); }
+  .stepper-box.st-36 .stepper-btn:hover { background: var(--yellow); color: var(--text-dark); }
 
-  /* --- Champ +6 ANS (Style VIOLET Strict) --- */
+  /* Champ +6 ANS (Violet) */
   .stepper-box.st-612:focus-within, .stepper-box.st-612:hover {
     border-color: var(--purple-bright) !important;
     box-shadow: 0 0 14px var(--purple-glow) !important;
   }
-  .stepper-box.st-612 input {
-    color: var(--purple-bright) !important;
-  }
-  .stepper-box.st-612 .stepper-btn:hover {
-    background: var(--purple-bright) !important; 
-    color: #FFFFFF !important;
-  }
+  .stepper-box.st-612 input { color: var(--purple-bright) !important; }
+  .stepper-box.st-612 .stepper-btn:hover { background: var(--purple-bright) !important; color: #FFFFFF !important; }
 
   .stepper-btn {
     width: 36px; height: 36px;
@@ -442,7 +375,7 @@
   }
   .toggle-row.disabled { opacity: 0.35; pointer-events: none; }
 
-  /* Carte Résultat / Hero toujours lisible */
+  /* Carte Résultat / Hero */
   .result-hero-card {
     background: var(--hero-bg);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -465,7 +398,7 @@
 
   .pool-track { display: flex; gap: 6px; flex-wrap: wrap; }
 
-  /* Segments Jauge & Texte Lisible */
+  /* Segments Jauge */
   .segment {
     flex: 1; min-width: 40px; height: 38px; border-radius: var(--radius-pill);
     background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
@@ -581,7 +514,7 @@
     box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 15px var(--purple-glow); opacity: 0;
     transition: all 0.35s var(--ease-spring); z-index: 9999; pointer-events: none;
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    white-space: nowrap; /* Garantie 1 seule ligne */
+    white-space: nowrap;
     max-width: calc(100vw - 32px);
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
@@ -608,13 +541,9 @@
 
   <main>
 
-    <!-- Header & Marge Titre Corrigée -->
+    <!-- Header -->
     <header class="fluid-section header-wrap">
       <div class="header-actions">
-        <button type="button" class="theme-toggle-btn" id="themeBtn">
-          <span id="themeIcon">🌙</span> <span id="themeText">Sombre</span>
-        </button>
-
         <button type="button" class="btn-reset" id="resetBtn">
           réinitialiser
         </button>
@@ -662,7 +591,7 @@
       </div>
     </section>
 
-    <!-- Effectifs avec Couleur Violette Correctement Appliquée au (+6 ans) -->
+    <!-- Effectifs -->
     <section class="fluid-section">
       <div class="section-head">
         <span class="section-title"><span class="section-num">2</span> Effectifs inscrits</span>
@@ -670,7 +599,7 @@
 
       <div class="input-group">
         <div>
-          <label class="field-label c-yellow" for="n36" style="color: var(--yellow);">Moins de 6 ans (-6 ans)</label>
+          <label class="field-label" for="n36" style="color: var(--yellow);">Moins de 6 ans (-6 ans)</label>
           <div class="stepper-box st-36">
             <button class="stepper-btn" data-target="n36" data-delta="-1" aria-label="Moins 1">–</button>
             <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
@@ -786,12 +715,11 @@
     <span class="mini-pill">Détails ➔</span>
   </div>
 
-  <!-- Toast Notification 1 Seule Ligne -->
+  <!-- Toast Notification -->
   <div class="toast" id="toast">⚡ Effectif réinitialisé !</div>
 
 <script>
   const STORAGE_KEY = 'alsh_calc_fluid_state_v3';
-  const THEME_KEY = 'alsh_theme_preference';
 
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
@@ -805,10 +733,6 @@
   const copyBtnIcon = document.getElementById('copyBtnIcon');
   const copyBtnText = document.getElementById('copyBtnText');
   const toast = document.getElementById('toast');
-
-  const themeBtn = document.getElementById('themeBtn');
-  const themeIcon = document.getElementById('themeIcon');
-  const themeText = document.getElementById('themeText');
 
   const resultCard = document.getElementById('resultCard');
   const stickyMiniBar = document.getElementById('stickyMiniBar');
@@ -831,42 +755,6 @@
     avec_p5: { ratio36: 10, ratio612: 14, tag: "Avec PEDT · > 5h / jour" },
     avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
   };
-
-  /* --- Gestion Theme (Auto OS + Bouton Switch) --- */
-  function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    if (theme === 'light') {
-      themeIcon.textContent = '☀️';
-      themeText.textContent = 'Clair';
-    } else {
-      themeIcon.textContent = '🌙';
-      themeText.textContent = 'Sombre';
-    }
-  }
-
-  function initTheme() {
-    const savedTheme = localStorage.getItem(THEME_KEY);
-    if (savedTheme) {
-      applyTheme(savedTheme);
-    } else {
-      const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-      applyTheme(prefersLight ? 'light' : 'dark');
-    }
-  }
-
-  themeBtn.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    applyTheme(newTheme);
-    localStorage.setItem(THEME_KEY, newTheme);
-    showToast(newTheme === 'light' ? '☀️ Mode clair activé' : '🌙 Mode sombre activé');
-  });
-
-  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
-    if (!localStorage.getItem(THEME_KEY)) {
-      applyTheme(e.matches ? 'light' : 'dark');
-    }
-  });
 
   /* --- Persistence --- */
   function saveState() {
@@ -1170,7 +1058,6 @@ Composition recommandée :
     });
   });
 
-  initTheme();
   loadState();
   recalc();
 </script>
