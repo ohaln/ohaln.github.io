@@ -8,50 +8,89 @@
 <title>Calculateur ALSH — Taux d'encadrement SDJES</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 
-<!-- Typographies Google Fonts : Syne (Ultra Heavy) + Plus Jakarta Sans -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    /* Palette Neo-Pop basée sur l'image */
+    /* Mode Dark (Sombre) */
     --bg-main: #09090E;
-    --card-bg: #13131C;
-    --card-bg-elevated: #1B1B29;
-    --card-border: #262638;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(255, 255, 255, 0.1);
     
-    --yellow: #E2FF38;         /* Jaune / Vert Électrique */
+    --yellow: #E2FF38;
     --yellow-dark: #b8d41e;
     --yellow-glow: rgba(226, 255, 56, 0.25);
     
-    --purple: #8B5CF6;         /* Violet Néon */
+    --purple: #8B5CF6;
     --purple-bright: #A78BFA;
-    --purple-glow: rgba(139, 92, 246, 0.35);
+    --purple-glow: rgba(139, 92, 246, 0.3);
     
-    --pink: #FF52A2;           /* Accent Rose Pop */
-    --cream: #FFF9E6;          /* Cream Sticker */
+    --pink: #FF52A2;
     
     --text-main: #FFFFFF;
     --text-muted: #94A3B8;
     --text-dark: #09090E;
 
+    --hero-bg: linear-gradient(145deg, #1A132C 0%, #110D1F 100%);
+    --tooltip-bg: #181824;
+
     --radius-pill: 999px;
-    --radius-card: 28px;
     --radius-box: 20px;
-    --radius-sm: 12px;
 
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --transition-fast: 0.18s var(--ease-out);
-    --transition-smooth: 0.35s var(--ease-out);
+  }
+
+  /* Mode Light (Clair élégant & ultra lisible) */
+  [data-theme="light"] {
+    --bg-main: #F4F5F9;
+    --card-bg: #FFFFFF;
+    --card-border: #E2E8F0;
+    
+    --yellow: #7C3AED; /* Accent principal en violet chic pour le mode clair */
+    --yellow-dark: #6D28D9;
+    --yellow-glow: rgba(124, 58, 237, 0.15);
+    
+    --purple: #8B5CF6;
+    --purple-bright: #7C3AED;
+    --purple-glow: rgba(124, 58, 237, 0.15);
+    
+    --pink: #E11D48;
+    
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --text-dark: #FFFFFF;
+
+    --hero-bg: linear-gradient(145deg, #1E1B4B 0%, #312E81 100%);
+    --tooltip-bg: #0F172A;
+  }
+
+  /* Couleur spécifique -6ans en mode light */
+  [data-theme="light"] .c-yellow {
+    color: #D97706 !important; /* Ambre chaud pour lisibilité sur fond blanc */
+  }
+  [data-theme="light"] .st-36 {
+    border-color: #FCD34D;
+    background: #FFFBEB;
+  }
+  [data-theme="light"] .st-36 input {
+    color: #D97706 !important;
+  }
+  [data-theme="light"] .st-36:focus-within {
+    border-color: #D97706 !important;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2) !important;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
-    height: 100%;
     margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
   }
 
   body {
@@ -62,99 +101,73 @@
     display: flex;
     justify-content: center;
     padding: 24px 16px max(90px, calc(40px + env(safe-area-inset-bottom)));
-    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  :focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--bg-main), 0 0 0 6px var(--yellow);
-    border-radius: inherit;
-  }
-
-  /* Decorative Background Graphics */
+  /* Arrière-plan néon diffus */
   .bg-decorations {
     position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
   }
   .bg-blob {
-    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.25;
+    position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.25;
   }
-  .bg-blob-1 { width: 450px; height: 450px; top: -100px; right: -80px; background: var(--purple); }
-  .bg-blob-2 { width: 350px; height: 350px; bottom: -50px; left: -80px; background: var(--yellow); opacity: 0.15; }
+  .bg-blob-1 { width: 380px; height: 380px; top: -80px; right: -80px; background: var(--purple); }
+  .bg-blob-2 { width: 300px; height: 300px; bottom: -50px; left: -80px; background: var(--yellow); opacity: 0.15; }
 
-  /* Layout Main Container */
   main {
     width: 100%;
-    max-width: 490px;
+    max-width: 460px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
   }
 
-  /* Structural Card Component (Style Chunky Retro Pop) */
-  .pop-card {
-    background: var(--card-bg);
-    border: 2px solid var(--card-border);
-    border-radius: var(--radius-card);
-    padding: 24px;
+  .fluid-section {
     position: relative;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    opacity: 0;
-    animation: popIn 0.5s var(--ease-out) forwards;
+    width: 100%;
   }
 
-  main > *:nth-child(1) { animation-delay: 0.05s; }
-  main > *:nth-child(2) { animation-delay: 0.12s; }
-  main > *:nth-child(3) { animation-delay: 0.19s; }
-  main > *:nth-child(4) { animation-delay: 0.26s; }
-
-  @keyframes popIn {
-    from { opacity: 0; transform: translateY(24px) scale(0.96); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  /* Header Branding Section */
-  .header-card {
-    background: var(--card-bg);
-    padding: 26px 24px;
+  /* Header avec marges de sécurité anti-débordement */
+  .header-wrap {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    padding: 0 8px; /* Sécurité marge bord d'écran */
   }
 
-  .header-top {
+  .header-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
   }
 
-  .sticker-badge {
-    background: var(--cream);
-    color: var(--text-dark);
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+  .theme-toggle-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
     padding: 6px 14px;
     border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    box-shadow: 0 4px 12px rgba(255, 249, 230, 0.15);
-  }
-  .sticker-badge::before {
-    content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--pink);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: all var(--transition-fast);
   }
 
   .btn-reset {
-    background: rgba(255,255,255,0.06);
+    background: var(--card-bg);
     border: 1px solid var(--card-border);
     color: var(--text-muted);
     padding: 6px 14px;
     border-radius: var(--radius-pill);
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 700;
     cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     transition: all var(--transition-fast);
   }
   .btn-reset:hover {
@@ -165,45 +178,45 @@
 
   .brand-title-wrap {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 12px;
   }
 
   h1 {
     font-family: 'Syne', sans-serif;
-    font-size: 32px;
+    font-size: clamp(24px, 7.5vw, 36px); /* Dimensionnement fluide fluide */
     font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     margin: 0;
     text-transform: lowercase;
     color: var(--text-main);
+    word-break: break-word;
   }
   h1 span {
     color: var(--purple-bright);
     display: block;
   }
 
-  /* Vector Flower Graphic Motif (as in image) */
   .flower-motif {
-    width: 48px;
-    height: 48px;
+    width: clamp(34px, 9vw, 44px);
+    height: clamp(34px, 9vw, 44px);
     flex-shrink: 0;
     fill: var(--pink);
     animation: rotateSlow 25s linear infinite;
   }
   @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-  /* Section Titles */
+  /* En-têtes de sections */
   .section-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
   }
   .section-title {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -213,195 +226,211 @@
     gap: 8px;
   }
   .section-num {
-    background: var(--yellow);
-    color: var(--text-dark);
-    width: 22px;
-    height: 22px;
+    background: var(--purple-bright);
+    color: #FFFFFF;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 800;
   }
 
   .info-pop {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     color: var(--text-muted); font-size: 11px; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
     cursor: help; position: relative;
   }
   .info-pop:hover::after, .info-pop:focus::after {
     content: attr(data-tooltip);
-    position: absolute; bottom: 130%; right: 0; width: 230px;
-    background: var(--card-bg-elevated); border: 2px solid var(--purple);
-    color: #fff; padding: 10px 14px; border-radius: var(--radius-sm);
+    position: absolute; bottom: 130%; right: 0; width: min(240px, 80vw);
+    background: var(--tooltip-bg); border: 1px solid var(--purple-bright);
+    color: #fff; padding: 10px 14px; border-radius: 12px;
     font-size: 11.5px; font-weight: 600; line-height: 1.4;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.8); z-index: 100; pointer-events: none;
-    text-align: left; text-transform: none; letter-spacing: normal;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25); z-index: 100; pointer-events: none;
   }
 
-  /* Regime Grid Options */
+  /* Grille des Régimes */
   .regime-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
   }
 
   .regime-card {
-    background: var(--card-bg-elevated);
-    border: 2px solid var(--card-border);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-box);
-    padding: 14px 12px;
+    padding: 12px;
     text-align: left;
     cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     transition: all var(--transition-fast);
     color: var(--text-muted);
-    position: relative;
   }
   .regime-card .r-title {
-    display: block; font-weight: 800; font-size: 14px; color: var(--text-main);
+    display: block; font-weight: 800; font-size: 13px; color: var(--text-main);
   }
   .regime-card .r-sub {
-    display: block; font-size: 11px; font-weight: 600; margin-top: 2px; opacity: 0.8;
+    display: block; font-size: 10.5px; font-weight: 600; margin-top: 2px; opacity: 0.8;
   }
 
-  .regime-card:hover {
-    border-color: var(--purple-bright);
-    transform: translateY(-2px);
-  }
   .regime-card.active {
     background: var(--purple);
     border-color: var(--purple);
-    color: #fff;
-    box-shadow: 0 8px 24px var(--purple-glow);
+    color: #fff !important;
+    box-shadow: 0 8px 20px var(--purple-glow);
   }
-  .regime-card.active .r-title { color: #fff; }
-  .regime-card.active .r-sub { color: var(--yellow); }
+  .regime-card.active .r-title, .regime-card.active .r-sub { color: #fff !important; }
 
-  /* PEDT Banner */
   .pedt-note {
-    font-size: 12px;
-    line-height: 1.5;
-    background: rgba(139, 92, 246, 0.1);
-    border: 1.5px dashed var(--purple-bright);
-    border-radius: var(--radius-box);
-    padding: 12px 14px;
-    margin-top: 12px;
-    margin-bottom: 20px;
-    color: #E2D9F3;
+    font-size: 11.5px;
+    line-height: 1.45;
+    background: rgba(139, 92, 246, 0.08);
+    border-left: 3px solid var(--purple-bright);
+    padding: 10px 14px;
+    margin-top: 10px;
+    border-radius: 0 12px 12px 0;
+    color: var(--text-main);
   }
-  .pedt-note strong { color: var(--yellow); font-weight: 800; }
+  .pedt-note strong { color: var(--purple-bright); font-weight: 800; }
 
-  /* Numeric Inputs & Steppers */
+  /* Input Steppers (Couleurs Dédiées & Strictement Séparées) */
   .input-group {
-    display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
+  @media (max-width: 360px) {
+    .input-group { grid-template-columns: 1fr; }
+  }
+
   .field-label {
-    font-size: 13.5px; font-weight: 700; color: var(--text-main); display: block;
+    font-size: 12px; font-weight: 800; display: block; margin-bottom: 6px;
   }
 
   .stepper-box {
     display: flex; align-items: center; justify-content: space-between;
-    background: var(--card-bg-elevated);
-    border: 2px solid var(--card-border);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-pill);
-    padding: 6px;
-    transition: border-color var(--transition-fast);
+    padding: 4px 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    transition: all var(--transition-fast);
   }
-  .stepper-box:focus-within {
+
+  /* --- Champ -6 ANS (Style Jaune / Ambre) --- */
+  .stepper-box.st-36:focus-within, .stepper-box.st-36:hover {
     border-color: var(--yellow);
-    box-shadow: 0 0 16px var(--yellow-glow);
+    box-shadow: 0 0 14px var(--yellow-glow);
+  }
+  .stepper-box.st-36 input {
+    color: var(--yellow);
+  }
+  .stepper-box.st-36 .stepper-btn:hover {
+    background: var(--yellow); color: var(--text-dark);
+  }
+
+  /* --- Champ +6 ANS (Style VIOLET Strict) --- */
+  .stepper-box.st-612:focus-within, .stepper-box.st-612:hover {
+    border-color: var(--purple-bright) !important;
+    box-shadow: 0 0 14px var(--purple-glow) !important;
+  }
+  .stepper-box.st-612 input {
+    color: var(--purple-bright) !important;
+  }
+  .stepper-box.st-612 .stepper-btn:hover {
+    background: var(--purple-bright) !important; 
+    color: #FFFFFF !important;
   }
 
   .stepper-btn {
-    width: 44px; height: 44px;
+    width: 36px; height: 36px;
     border-radius: 50%;
     border: none;
     background: var(--card-bg);
     color: var(--text-main);
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 800;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all var(--transition-fast);
-  }
-  .stepper-btn:hover {
-    background: var(--yellow); color: var(--text-dark);
+    flex-shrink: 0;
   }
   .stepper-btn:active { transform: scale(0.88); }
 
   .stepper-box input {
-    flex: 1; border: none; background: transparent;
-    color: var(--text-main); font-family: 'Syne', sans-serif;
-    font-size: 24px; font-weight: 800; text-align: center;
-    outline: none; font-variant-numeric: tabular-nums;
+    width: 100%; border: none; background: transparent;
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 800; text-align: center;
+    outline: none; font-variant-numeric: tabular-nums; min-width: 0;
   }
   .stepper-box input::-webkit-outer-spin-button,
   .stepper-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
   .total-kids-pill {
-    background: var(--card-bg-elevated);
+    background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-pill);
     text-align: center;
     padding: 10px 16px;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 600;
     color: var(--text-muted);
+    margin-top: 10px;
   }
-  .total-kids-pill strong {
-    color: var(--yellow); font-weight: 800; font-size: 1.1em;
-  }
+  .total-kids-pill strong { color: var(--purple-bright); font-weight: 800; }
 
   .alert-box {
     display: none; align-items: center; gap: 8px;
     background: rgba(255, 82, 162, 0.12);
-    border: 1.5px solid var(--pink);
+    border: 1px solid var(--pink);
     border-radius: var(--radius-box);
     padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--pink);
     margin-top: 10px;
   }
   .alert-box.visible { display: flex; }
 
-  /* Calculation Mode Selector */
+  /* Mode Mutualisation Selector */
   .mutual-selector {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-    background: var(--card-bg-elevated); padding: 5px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+    background: var(--card-bg); padding: 4px;
     border-radius: var(--radius-pill); border: 1px solid var(--card-border);
-    margin-top: 6px;
   }
   .mutual-btn {
     background: transparent; border: none;
-    border-radius: var(--radius-pill); padding: 10px 12px;
+    border-radius: var(--radius-pill); padding: 8px 10px;
     color: var(--text-muted); cursor: pointer;
     transition: all var(--transition-fast);
-    font-size: 12px; font-weight: 800; text-align: center;
+    font-size: 11.5px; font-weight: 800; text-align: center;
   }
   .mutual-btn.active {
-    background: var(--yellow);
-    color: var(--text-dark);
-    box-shadow: 0 4px 14px var(--yellow-glow);
+    background: var(--purple);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px var(--purple-glow);
   }
 
-  /* Retro Toggle Switch */
+  /* Toggle Row */
   .toggle-row {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    cursor: pointer; padding-top: 14px; margin-top: 14px;
-    border-top: 1px solid var(--card-border);
+    cursor: pointer; padding-top: 12px; margin-top: 12px;
   }
-  .toggle-label { font-size: 13px; font-weight: 700; color: var(--text-main); }
-  .toggle-label small { display: block; font-weight: 500; color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+  .toggle-label { font-size: 12.5px; font-weight: 700; color: var(--text-main); }
+  .toggle-label small { display: block; font-weight: 500; color: var(--text-muted); font-size: 10.5px; margin-top: 2px; }
   .toggle-row input { display: none; }
 
   .switch-track {
-    width: 52px; height: 30px; border-radius: var(--radius-pill);
-    background: var(--card-bg-elevated); border: 2px solid var(--card-border);
+    width: 46px; height: 26px; border-radius: var(--radius-pill);
+    background: var(--card-bg); border: 1px solid var(--card-border);
     position: relative; flex-shrink: 0; transition: background 0.3s ease;
   }
   .switch-track::after {
-    content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+    content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
     border-radius: 50%; background: var(--text-muted);
     transition: transform 0.3s var(--ease-spring), background 0.3s ease;
   }
@@ -409,189 +438,169 @@
     background: var(--purple); border-color: var(--purple);
   }
   .toggle-row input:checked + .switch-track::after {
-    transform: translateX(22px); background: var(--yellow);
+    transform: translateX(20px); background: #FFFFFF;
   }
-  .toggle-row.disabled { opacity: 0.4; pointer-events: none; }
+  .toggle-row.disabled { opacity: 0.35; pointer-events: none; }
 
-  /* Visual Pool Gauge Section */
-  .result-card {
-    background: linear-gradient(145deg, #181128, #110D1F);
-    border: 2px solid var(--purple);
+  /* Carte Résultat / Hero toujours lisible */
+  .result-hero-card {
+    background: var(--hero-bg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
   }
 
   .pool-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px;
   }
   .pool-badge {
-    background: var(--yellow); color: var(--text-dark);
-    font-size: 11px; font-weight: 800; padding: 4px 12px;
-    border-radius: var(--radius-pill); opacity: 0; transform: scale(0.85);
-    transition: all 0.3s var(--ease-spring);
+    background: #E2FF38; color: #09090E;
+    font-size: 10.5px; font-weight: 800; padding: 4px 10px;
+    border-radius: var(--radius-pill); opacity: 0; transform: scale(0.9);
+    transition: all 0.3s var(--ease-spring); flex-shrink: 0;
   }
   .pool-badge.visible { opacity: 1; transform: scale(1); }
 
-  .pool-track { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pool-track { display: flex; gap: 6px; flex-wrap: wrap; }
 
-  /* Pill Segments inspired by the graphics in the image */
+  /* Segments Jauge & Texte Lisible */
   .segment {
-    flex: 1; min-width: 48px; height: 42px; border-radius: var(--radius-pill);
-    background: rgba(0,0,0,0.4); border: 2px solid var(--card-border);
+    flex: 1; min-width: 40px; height: 38px; border-radius: var(--radius-pill);
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
     overflow: hidden; position: relative; display: flex;
-    transition: transform 0.3s var(--ease-out), border-color 0.3s ease;
   }
-  .segment.new-seg { animation: segPop 0.35s var(--ease-spring) forwards; }
-  @keyframes segPop {
-    from { opacity: 0; transform: scale(0.8) translateY(6px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
   .segment .fillA, .segment .fillB {
     height: 100%; width: 0%; transition: width 0.4s var(--ease-out); position: relative;
   }
-  .fillA { background: var(--yellow); }
-  .fillB { background: var(--purple-bright); }
+  .fillA { background: #E2FF38; }
+  .fillB { background: #A78BFA; }
 
   .gauge-label {
     position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800; color: #000; font-variant-numeric: tabular-nums; z-index: 2;
+    font-size: 11px; font-weight: 800; color: #FFFFFF;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8);
+    z-index: 2; font-variant-numeric: tabular-nums;
   }
 
-  .segment.ghost { opacity: 0.3; width: 100%; }
+  .segment.ghost { opacity: 0.25; width: 100%; }
   .segment.ghost::after {
     content: "–"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); font-size: 18px;
+    color: #fff; font-size: 16px;
   }
 
-  .pool-split-container { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+  .pool-split-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
   .pool-subgroup { display: flex; flex-direction: column; gap: 6px; }
-  .subgroup-label { font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-  .subgroup-label.lbl-a { color: var(--yellow); }
-  .subgroup-label.lbl-b { color: var(--purple-bright); }
+  .subgroup-label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+  .subgroup-label.lbl-a { color: #E2FF38; }
+  .subgroup-label.lbl-b { color: #A78BFA; }
 
-  .pool-legend { display: flex; gap: 16px; margin-top: 14px; }
-  .pool-legend span { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: var(--text-muted); }
-  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-  .dot-a { background: var(--yellow); }
-  .dot-b { background: var(--purple-bright); }
+  .pool-legend { display: flex; gap: 14px; margin-top: 12px; }
+  .pool-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.8); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot-a { background: #E2FF38; }
+  .dot-b { background: #A78BFA; }
 
-  /* Giant Hero Result Display */
+  /* Grand Affichage Chiffre */
   .hero-result-wrap {
-    display: flex; align-items: center; gap: 16px; margin-top: 20px;
+    display: flex; align-items: center; gap: 14px; margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.15);
   }
   .big-num {
     font-family: 'Syne', sans-serif;
-    font-size: 64px;
+    font-size: clamp(44px, 11vw, 58px);
     font-weight: 800;
     line-height: 1;
-    color: var(--yellow);
-    text-shadow: 0 0 30px var(--yellow-glow);
+    color: #E2FF38;
+    text-shadow: 0 0 20px rgba(226, 255, 56, 0.3);
     font-variant-numeric: tabular-nums;
   }
   .big-label {
-    font-size: 15px; font-weight: 800; line-height: 1.25; color: var(--text-main); max-width: 200px;
+    font-size: clamp(13px, 4vw, 15px); font-weight: 800; line-height: 1.25; color: #FFFFFF;
   }
 
-  @keyframes numPulse {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.15); }
-    100% { transform: scale(1); }
-  }
-  .num-pulse { animation: numPulse 0.35s var(--ease-spring); }
-
-  /* Qualifications Team Breakdown Grid */
-  .quali-title {
-    font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 12px;
-  }
-  .q-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  /* Compteurs Diplômes */
+  .q-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
   .q-card {
-    background: var(--card-bg-elevated); border: 2px solid var(--card-border);
-    border-radius: var(--radius-box); padding: 14px 8px; text-align: center;
-    transition: transform var(--transition-fast);
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: var(--radius-box); padding: 12px 6px; text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
   }
-  .q-card:hover { transform: translateY(-3px); }
   .q-num {
-    font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; display: block;
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; display: block;
   }
-  .q-label { display: block; margin-top: 4px; font-size: 11px; font-weight: 700; color: var(--text-muted); line-height: 1.3; }
-  .q-label small { font-size: 9.5px; opacity: 0.75; display: block; }
+  .q-label { display: block; margin-top: 2px; font-size: 10px; font-weight: 700; color: var(--text-muted); line-height: 1.2; }
+  .q-label small { font-size: 9px; opacity: 0.75; display: block; }
 
-  .q-min .q-num { color: #52E596; }
+  .q-min .q-num { color: #10B981; }
   .q-max .q-num { color: var(--pink); }
-  .q-flex .q-num { color: var(--yellow); }
+  .q-flex .q-num { color: var(--purple-bright); }
 
-  /* Main Action Button (CTA) */
+  /* Bouton d'action Principal */
   .btn-cta {
-    width: 100%; margin-top: 20px; padding: 16px;
+    width: 100%; margin-top: 16px; padding: 15px;
     border-radius: var(--radius-pill); border: none;
-    background: var(--yellow); color: var(--text-dark);
+    background: var(--purple); color: #FFFFFF;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 14px; font-weight: 800; cursor: pointer;
+    font-size: 13.5px; font-weight: 800; cursor: pointer;
     display: flex; align-items: center; justify-content: center; gap: 8px;
     transition: all var(--transition-fast);
-    box-shadow: 0 8px 24px var(--yellow-glow);
+    box-shadow: 0 8px 20px var(--purple-glow);
   }
-  .btn-cta:hover {
-    background: var(--yellow-dark); transform: translateY(-2px);
-    box-shadow: 0 12px 28px var(--yellow-glow);
-  }
+  .btn-cta:hover { transform: translateY(-1px); filter: brightness(1.1); }
   .btn-cta:active { transform: scale(0.98); }
+  .btn-cta.copied { background: #10B981; box-shadow: none; color: #fff; }
 
-  .btn-cta.copied {
-    background: #52E596; color: var(--text-dark); box-shadow: none;
-  }
-
-  /* Sticky Floating Mini Bar */
+  /* Sticky Mini Bar */
   .sticky-bar {
     position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%;
-    transform: translateX(-50%) translateY(120px);
-    width: calc(100% - 32px); max-width: 450px;
-    background: var(--card-bg-elevated);
-    border: 2px solid var(--purple);
-    border-radius: var(--radius-pill);
-    padding: 10px 20px;
+    transform: translateX(-50%) translateY(100px);
+    width: calc(100% - 32px); max-width: 420px;
+    background: #0F172A; border: 1px solid var(--purple-bright);
+    border-radius: var(--radius-pill); padding: 8px 18px;
     display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.8); z-index: 100; cursor: pointer;
+    box-shadow: 0 16px 35px rgba(0,0,0,0.4); z-index: 100; cursor: pointer;
     opacity: 0; transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
   }
   .sticky-bar.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
-  .mini-count { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--yellow); }
+  .mini-count { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: #E2FF38; }
   .mini-txt { font-size: 12px; font-weight: 800; color: #fff; margin-left: 8px; }
   .mini-pill {
-    background: var(--purple); color: #fff; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800;
+    background: var(--purple); color: #fff; padding: 5px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800;
   }
 
-  /* Toast Notification Popup */
+  /* POPUP / TOAST UNIFIÉ SUR 1 SEULE LIGNE */
   .toast {
-    position: fixed; bottom: max(24px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--cream); color: var(--text-dark);
-    padding: 12px 24px; border-radius: var(--radius-pill);
-    font-size: 13px; font-weight: 800;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.6); opacity: 0;
+    position: fixed; bottom: max(20px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #0F172A; color: #FFFFFF;
+    border: 1px solid var(--purple-bright);
+    padding: 10px 20px; border-radius: var(--radius-pill);
+    font-size: 12px; font-weight: 800;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 15px var(--purple-glow); opacity: 0;
     transition: all 0.35s var(--ease-spring); z-index: 9999; pointer-events: none;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    white-space: nowrap; /* Garantie 1 seule ligne */
+    max-width: calc(100vw - 32px);
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
   footer.legal-note {
-    font-size: 11px; font-weight: 600; line-height: 1.5; color: var(--text-muted);
-    padding: 0 8px; text-align: center; margin-top: 4px;
+    font-size: 12px; font-weight: 700; color: var(--text-muted); text-align: center;
+    letter-spacing: 0.02em;
   }
 
-  @media (max-width: 360px) {
-    .regime-grid, .mutual-selector { grid-template-columns: 1fr; }
-  }
-
-  @media print {
-    body { background: #fff !important; color: #000 !important; padding: 0 !important; }
-    .bg-decorations, .btn-reset, .btn-cta, .stepper-btn, .toast, .sticky-bar { display: none !important; }
-    .pop-card { background: #fff !important; border: 1px solid #000 !important; box-shadow: none !important; color: #000 !important; }
-    h1, .big-num, .q-num, label, span { color: #000 !important; }
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--card-border) 50%, transparent 100%);
+    width: 100%;
+    margin: 4px 0;
   }
 </style>
 </head>
 <body>
 
-  <!-- Retro Glow Decorative Background -->
   <div class="bg-decorations">
     <div class="bg-blob bg-blob-1"></div>
     <div class="bg-blob bg-blob-2"></div>
@@ -599,99 +608,107 @@
 
   <main>
 
-    <!-- Header Section -->
-    <header class="pop-card header-card">
-      <div class="header-top">
-        <div class="sticker-badge" id="eyebrowBadge">HORS PEDT · > 5H / JOUR</div>
-        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser les effectifs à zéro">
-          ↺ RAZ
+    <!-- Header & Marge Titre Corrigée -->
+    <header class="fluid-section header-wrap">
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" id="themeBtn">
+          <span id="themeIcon">🌙</span> <span id="themeText">Sombre</span>
+        </button>
+
+        <button type="button" class="btn-reset" id="resetBtn">
+          réinitialiser
         </button>
       </div>
 
       <div class="brand-title-wrap">
         <h1>taux <span>d'encadrement</span></h1>
         
-        <!-- Vector Flower Accent SVG -->
         <svg class="flower-motif" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <path d="M50 34C53 20 67 20 67 34C81 34 81 48 67 48C81 48 81 62 67 62C67 76 53 76 50 62C47 76 33 76 33 62C19 62 19 48 33 48C19 48 19 34 33 34C33 20 47 20 50 34Z" />
         </svg>
       </div>
     </header>
 
-    <!-- Configuration Section -->
-    <section class="pop-card">
+    <div class="divider"></div>
+
+    <!-- Régimes -->
+    <section class="fluid-section">
       <div class="section-head">
         <span class="section-title"><span class="section-num">1</span> Régime d'accueil</span>
-        <span class="info-pop" tabindex="0" role="button" aria-label="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT." data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
+        <span class="info-pop" tabindex="0" role="button" data-tooltip="Modifie les ratios réglementaires d'encadrement selon la présence d'un PEDT.">ⓘ</span>
       </div>
 
-      <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
-        <button type="button" class="regime-card active" role="radio" aria-checked="true" data-regime="hors_p5">
+      <div class="regime-grid">
+        <button type="button" class="regime-card active" data-regime="hors_p5">
           <span class="r-title">Hors PEDT</span>
           <span class="r-sub">+5h par jour</span>
         </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="hors_m5">
+        <button type="button" class="regime-card" data-regime="hors_m5">
           <span class="r-title">Hors PEDT</span>
           <span class="r-sub">≤ 5h par jour</span>
         </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_p5">
+        <button type="button" class="regime-card" data-regime="avec_p5">
           <span class="r-title">Avec PEDT</span>
           <span class="r-sub">+5h par jour</span>
         </button>
-        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_m5">
+        <button type="button" class="regime-card" data-regime="avec_m5">
           <span class="r-title">Avec PEDT</span>
           <span class="r-sub">≤ 5h par jour</span>
         </button>
       </div>
 
-      <!-- Explanatory PEDT Note -->
       <div class="pedt-note">
-        <strong>💡 C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> réunit la commune et les acteurs locaux (écoles, CAF). Il adapte les ratios réglementaires d'encadrement.
+        <strong>💡 PEDT :</strong> Le Projet Éducatif de Territoire adapte les ratios légaux d'encadrement sur votre commune.
       </div>
+    </section>
 
+    <!-- Effectifs avec Couleur Violette Correctement Appliquée au (+6 ans) -->
+    <section class="fluid-section">
       <div class="section-head">
         <span class="section-title"><span class="section-num">2</span> Effectifs inscrits</span>
       </div>
 
       <div class="input-group">
         <div>
-          <label class="field-label" for="n36">Moins de 6 ans (-6 ans)</label>
-          <div class="stepper-box" style="margin-top: 6px;">
-            <button class="stepper-btn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
+          <label class="field-label c-yellow" for="n36" style="color: var(--yellow);">Moins de 6 ans (-6 ans)</label>
+          <div class="stepper-box st-36">
+            <button class="stepper-btn" data-target="n36" data-delta="-1" aria-label="Moins 1">–</button>
             <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-            <button class="stepper-btn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
+            <button class="stepper-btn" data-target="n36" data-delta="1" aria-label="Plus 1">+</button>
           </div>
         </div>
 
         <div>
-          <label class="field-label" for="n612">6 ans et plus (+6 ans)</label>
-          <div class="stepper-box" style="margin-top: 6px;">
-            <button class="stepper-btn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
+          <label class="field-label" for="n612" style="color: var(--purple-bright);">6 ans et plus (+6 ans)</label>
+          <div class="stepper-box st-612">
+            <button class="stepper-btn" data-target="n612" data-delta="-1" aria-label="Moins 1">–</button>
             <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-            <button class="stepper-btn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
+            <button class="stepper-btn" data-target="n612" data-delta="1" aria-label="Plus 1">+</button>
           </div>
         </div>
       </div>
 
-      <div class="total-kids-pill" id="totalKidsIndicator" aria-live="polite">
+      <div class="total-kids-pill" id="totalKidsIndicator">
         Effectif total : <strong>0 enfant</strong>
       </div>
 
-      <div class="alert-box" id="safetyAlert" role="alert" aria-live="assertive">
-        <span>⚠️ <strong>Sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
+      <div class="alert-box" id="safetyAlert">
+        <span>⚠️ <strong>Règle de sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
       </div>
+    </section>
 
-      <!-- Calculation Mode -->
-      <div class="section-head" style="margin-top: 20px;">
+    <!-- Mutualisation -->
+    <section class="fluid-section">
+      <div class="section-head">
         <span class="section-title"><span class="section-num">3</span> Mutualisation</span>
-        <span class="info-pop" tabindex="0" role="button" aria-label="Permet de combiner les restes de groupes (-6ans et +6ans) pour optimiser l'effectif d'encadrement." data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif requis.">ⓘ</span>
+        <span class="info-pop" tabindex="0" role="button" data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour optimiser l'effectif d'encadrement.">ⓘ</span>
       </div>
 
-      <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
-        <button type="button" class="mutual-btn active" role="radio" aria-checked="true" data-mode="avec">
+      <div class="mutual-selector">
+        <button type="button" class="mutual-btn active" data-mode="avec">
           Avec mutualisation
         </button>
-        <button type="button" class="mutual-btn" role="radio" aria-checked="false" data-mode="sans">
+        <button type="button" class="mutual-btn" data-mode="sans">
           Calcul séparé
         </button>
       </div>
@@ -706,14 +723,14 @@
       </label>
     </section>
 
-    <!-- Main Results Hero Card -->
-    <section class="pop-card result-card" id="resultCard" aria-live="polite">
+    <!-- Carte Hero Néon -->
+    <section class="result-hero-card" id="resultCard">
       <div class="pool-header">
         <span class="section-title" style="color: #fff;">Postes requis</span>
         <span class="pool-badge" id="mutualBadge">⚡ MUTUALISÉ</span>
       </div>
 
-      <!-- Pill Visual Track -->
+      <!-- Jauge de Pilules -->
       <div class="pool-track" id="poolTrack"></div>
 
       <div class="pool-legend">
@@ -727,9 +744,11 @@
       </div>
     </section>
 
-    <!-- Team Composition & Share Section -->
-    <section class="pop-card">
-      <div class="quali-title">Composition réglementaire de l'équipe</div>
+    <!-- Composition & Export -->
+    <section class="fluid-section">
+      <div class="section-head">
+        <span class="section-title">Composition réglementaire</span>
+      </div>
       
       <div class="q-grid">
         <div class="q-card q-min">
@@ -751,8 +770,9 @@
       </button>
     </section>
 
-    <footer class="legal-note" id="footerNote">
-      Outil indicatif SDJES — Conforme à la législation ALSH en vigueur.
+    <!-- Pied de Page Personnalisé -->
+    <footer class="legal-note">
+      par Allan.H - 2026
     </footer>
 
   </main>
@@ -766,11 +786,12 @@
     <span class="mini-pill">Détails ➔</span>
   </div>
 
-  <!-- Toast Popup -->
-  <div class="toast" id="toast" role="status">⚡ Bilan copié dans le presse-papier !</div>
+  <!-- Toast Notification 1 Seule Ligne -->
+  <div class="toast" id="toast">⚡ Effectif réinitialisé !</div>
 
 <script>
-  const STORAGE_KEY = 'alsh_calculator_state';
+  const STORAGE_KEY = 'alsh_calc_fluid_state_v3';
+  const THEME_KEY = 'alsh_theme_preference';
 
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
@@ -778,8 +799,6 @@
   const safetyAlert = document.getElementById('safetyAlert');
   const dirToggle = document.getElementById('dirToggle');
   const dirRow = document.getElementById('dirRow');
-  const eyebrowBadge = document.getElementById('eyebrowBadge');
-  const footerNote = document.getElementById('footerNote');
   const mutualBadge = document.getElementById('mutualBadge');
   const resetBtn = document.getElementById('resetBtn');
   const copyBtn = document.getElementById('copyBtn');
@@ -787,10 +806,13 @@
   const copyBtnText = document.getElementById('copyBtnText');
   const toast = document.getElementById('toast');
 
+  const themeBtn = document.getElementById('themeBtn');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');
+
   const resultCard = document.getElementById('resultCard');
   const stickyMiniBar = document.getElementById('stickyMiniBar');
   const miniAnimCount = document.getElementById('miniAnimCount');
-  const miniAnimLabel = document.getElementById('miniAnimLabel');
 
   const poolTrack = document.getElementById('poolTrack');
   const totalAnimEl = document.getElementById('totalAnim');
@@ -810,7 +832,43 @@
     avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
   };
 
-  /* ----- State Persistence ----- */
+  /* --- Gestion Theme (Auto OS + Bouton Switch) --- */
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'light') {
+      themeIcon.textContent = '☀️';
+      themeText.textContent = 'Clair';
+    } else {
+      themeIcon.textContent = '🌙';
+      themeText.textContent = 'Sombre';
+    }
+  }
+
+  function initTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme) {
+      applyTheme(savedTheme);
+    } else {
+      const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      applyTheme(prefersLight ? 'light' : 'dark');
+    }
+  }
+
+  themeBtn.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(newTheme);
+    localStorage.setItem(THEME_KEY, newTheme);
+    showToast(newTheme === 'light' ? '☀️ Mode clair activé' : '🌙 Mode sombre activé');
+  });
+
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+    if (!localStorage.getItem(THEME_KEY)) {
+      applyTheme(e.matches ? 'light' : 'dark');
+    }
+  });
+
+  /* --- Persistence --- */
   function saveState() {
     const state = {
       regime: activeRegimeKey,
@@ -831,17 +889,13 @@
       if (state.regime && REGIMES[state.regime]) {
         activeRegimeKey = state.regime;
         document.querySelectorAll('.regime-card').forEach(b => {
-          const isActive = b.dataset.regime === activeRegimeKey;
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+          b.classList.toggle('active', b.dataset.regime === activeRegimeKey);
         });
       }
       if (state.mutualMode) {
         activeMutualMode = state.mutualMode;
         document.querySelectorAll('.mutual-btn').forEach(b => {
-          const isActive = b.dataset.mode === activeMutualMode;
-          b.classList.toggle('active', isActive);
-          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+          b.classList.toggle('active', b.dataset.mode === activeMutualMode);
         });
       }
       if (state.n36 !== undefined) n36input.value = clampInt(state.n36);
@@ -850,14 +904,9 @@
     } catch(e) {}
   }
 
-  /* Intersection Observer for Sticky Mini Bar */
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (!entry.isIntersecting) {
-        stickyMiniBar.classList.add('visible');
-      } else {
-        stickyMiniBar.classList.remove('visible');
-      }
+      stickyMiniBar.classList.toggle('visible', !entry.isIntersecting);
     });
   }, { threshold: 0.15 });
 
@@ -868,27 +917,20 @@
   });
 
   function hapticFeedback() {
-    if ('vibrate' in navigator) {
-      try { navigator.vibrate(8); } catch(e){}
-    }
+    if ('vibrate' in navigator) { try { navigator.vibrate(8); } catch(e){} }
   }
 
   function showToast(msg) {
     toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 2600);
+    setTimeout(() => { toast.classList.remove('show'); }, 2500);
   }
 
-  /* Listeners for Regime & Mutualization Mode */
   document.querySelectorAll('.regime-card').forEach(btn => {
     btn.addEventListener('click', () => {
       hapticFeedback();
-      document.querySelectorAll('.regime-card').forEach(c => {
-        c.classList.remove('active');
-        c.setAttribute('aria-checked', 'false');
-      });
+      document.querySelectorAll('.regime-card').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
-      btn.setAttribute('aria-checked', 'true');
       activeRegimeKey = btn.dataset.regime;
       recalc();
     });
@@ -897,12 +939,8 @@
   document.querySelectorAll('.mutual-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       hapticFeedback();
-      document.querySelectorAll('.mutual-btn').forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-checked', 'false');
-      });
+      document.querySelectorAll('.mutual-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      btn.setAttribute('aria-checked', 'true');
       activeMutualMode = btn.dataset.mode;
       recalc();
     });
@@ -910,8 +948,7 @@
 
   function clampInt(v){
     v = parseInt(v, 10);
-    if (isNaN(v) || v < 0) return 0;
-    return v;
+    return (isNaN(v) || v < 0) ? 0 : v;
   }
 
   document.querySelectorAll('.stepper-btn').forEach(btn => {
@@ -938,153 +975,93 @@
     n612input.value = 0;
     dirToggle.checked = false;
     recalc();
-    showToast("🔄 Effectifs réinitialisés");
+    showToast("⚡ Effectifs réinitialisés !");
   });
 
-  /* Visual Pool Segment Rendering */
+  /* Rendu Jauge */
   function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
-    const currentModeKey = isSplitMode ? 'split' : 'normal';
-    if (poolTrack.dataset.mode !== currentModeKey) {
-      poolTrack.innerHTML = '';
-      poolTrack.dataset.mode = currentModeKey;
-    }
+    poolTrack.innerHTML = '';
 
     if (totalNeeded === 0){
       poolTrack.innerHTML = '<div class="segment ghost"></div>';
       return;
     }
 
-    const ghost = poolTrack.querySelector('.ghost');
-    if (ghost) ghost.remove();
-
     if (isSplitMode) {
-      let container = poolTrack.querySelector('.pool-split-container');
-      if (!container) {
-        poolTrack.innerHTML = '';
-        container = document.createElement('div');
-        container.className = 'pool-split-container';
-        poolTrack.appendChild(container);
-      }
+      const container = document.createElement('div');
+      container.className = 'pool-split-container';
+      poolTrack.appendChild(container);
 
       const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
       const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
 
-      function syncTrack(groupId, labelText, count, maxRatio, currentKids, fillClass, labelColorClass) {
-        let group = container.querySelector('.' + groupId);
-        if (count === 0) {
-          if (group) group.remove();
-          return;
-        }
-        if (!group) {
-          group = document.createElement('div');
-          group.className = `pool-subgroup ${groupId}`;
-          group.innerHTML = `<span class="subgroup-label ${labelColorClass}"></span><div class="pool-track"></div>`;
-          container.appendChild(group);
-        }
-
-        group.querySelector('.subgroup-label').textContent = labelText;
+      function renderSubTrack(labelText, count, maxRatio, currentKids, fillClass, labelColorClass) {
+        if (count === 0) return;
+        const group = document.createElement('div');
+        group.className = 'pool-subgroup';
+        group.innerHTML = `<span class="subgroup-label ${labelColorClass}">${labelText}</span><div class="pool-track"></div>`;
         const track = group.querySelector('.pool-track');
-        let segs = Array.from(track.querySelectorAll('.segment'));
 
-        while (segs.length < count) {
+        for (let i = 0; i < count; i++) {
           const seg = document.createElement('div');
-          seg.className = 'segment new-seg';
-          seg.innerHTML = `<div class="${fillClass}"></div><span class="gauge-label"></span>`;
-          track.appendChild(seg);
-          segs.push(seg);
-        }
-        while (segs.length > count) {
-          const segToRemove = segs.pop();
-          segToRemove.remove();
-        }
-
-        segs.forEach((seg, i) => {
+          seg.className = 'segment';
+          const fill = document.createElement('div');
+          fill.className = fillClass;
+          
           const kidsForAnim = Math.min(maxRatio, currentKids - (i * maxRatio));
-          const fillPct = (kidsForAnim / maxRatio) * 100;
-          const fillEl = seg.querySelector('.' + fillClass);
-          const labelEl = seg.querySelector('.gauge-label');
+          const fillPercent = (kidsForAnim / maxRatio) * 100;
+          fill.style.width = fillPercent + '%';
+          
+          seg.appendChild(fill);
 
-          fillEl.style.width = fillPct + '%';
-          labelEl.textContent = `${kidsForAnim}/${maxRatio}`;
-        });
+          const label = document.createElement('span');
+          label.className = 'gauge-label';
+          label.textContent = `${kidsForAnim}/${maxRatio}`;
+          seg.appendChild(label);
+
+          track.appendChild(seg);
+        }
+        container.appendChild(group);
       }
 
-      syncTrack('group-a', `- de 6 ans (${count36} Anim' / ${n36} enf.)`, count36, r1, n36, 'fillA', 'lbl-a');
-      syncTrack('group-b', `+ de 6 ans (${count612} Anim' / ${n612} enf.)`, count612, r2, n612, 'fillB', 'lbl-b');
+      renderSubTrack(`- de 6 ans (${count36} Anim' / ${n36} enf.)`, count36, r1, n36, 'fillA', 'lbl-a');
+      renderSubTrack(`+ de 6 ans (${count612} Anim' / ${n612} enf.)`, count612, r2, n612, 'fillB', 'lbl-b');
 
     } else {
-      let existingSegs = Array.from(poolTrack.querySelectorAll(':scope > .segment'));
+      const total36Anims = n36 / r1;
+      const total612Anims = n612 / r2;
 
-      while (existingSegs.length < totalNeeded) {
+      for (let i = 0; i < totalNeeded; i++) {
         const seg = document.createElement('div');
-        seg.className = 'segment new-seg';
+        seg.className = 'segment';
+        
         const fillA = document.createElement('div');
         fillA.className = 'fillA';
         const fillB = document.createElement('div');
         fillB.className = 'fillB';
-        seg.appendChild(fillA);
-        seg.appendChild(fillB);
-        poolTrack.appendChild(seg);
-        existingSegs.push(seg);
-      }
 
-      while (existingSegs.length > totalNeeded) {
-        const segToRemove = existingSegs.pop();
-        segToRemove.remove();
-      }
+        const segStart = i;
+        const segEnd = i + 1;
+        const aEnd = Math.min(segEnd, total36Anims);
+        const aStart = Math.max(segStart, 0);
+        const fillAPct = Math.max(0, aEnd - aStart) * 100;
 
-      const total36Anims = n36 / r1;
-      const total612Anims = n612 / r2;
-
-      existingSegs.forEach((seg, i) => {
-        let fillAPct = 0;
-        let fillBPct = 0;
-
-        if (total36Anims + total612Anims > 0) {
-          const segStart = i;
-          const segEnd = i + 1;
-          const aEnd = Math.min(segEnd, total36Anims);
-          const aStart = Math.max(segStart, 0);
-          fillAPct = Math.max(0, aEnd - aStart) * 100;
-
-          const bStart = Math.max(segStart, total36Anims);
-          const bEnd = Math.min(segEnd, total36Anims + total612Anims);
-          fillBPct = Math.max(0, bEnd - bStart) * 100;
-        }
-
-        const fillA = seg.querySelector('.fillA');
-        const fillB = seg.querySelector('.fillB');
+        const bStart = Math.max(segStart, total36Anims);
+        const bEnd = Math.min(segEnd, total36Anims + total612Anims);
+        const fillBPct = Math.max(0, bEnd - bStart) * 100;
 
         fillA.style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
         fillB.style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
-      });
+
+        seg.appendChild(fillA);
+        seg.appendChild(fillB);
+        poolTrack.appendChild(seg);
+      }
     }
   }
 
-  function animateNumber(el, to){
-    const from = parseInt(el.textContent, 10) || 0;
-    if (from === to){ return; }
-    const duration = 280;
-    const start = performance.now();
-    const ease = t => 1 - Math.pow(1 - t, 3);
-
-    function step(now){
-      const t = Math.min(1, (now - start) / duration);
-      const val = Math.round(from + (to - from) * ease(t));
-      el.textContent = val;
-      if (t < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-
-    el.classList.remove('num-pulse');
-    void el.offsetWidth;
-    el.classList.add('num-pulse');
-  }
-
-  /* Core Recalculation Engine */
   function recalc(){
     const currentRegime = REGIMES[activeRegimeKey];
-    eyebrowBadge.textContent = currentRegime.tag.toUpperCase();
 
     const n36 = clampInt(n36input.value);
     const n612 = clampInt(n612input.value);
@@ -1108,13 +1085,9 @@
         const rem612 = n612 % r2;
         const remTotal = rem36 + rem612;
 
-        if (remTotal === 0) {
-          totalNeeded = fullGroups;
-        } else if (remTotal <= r1) {
-          totalNeeded = fullGroups + 1;
-        } else {
-          totalNeeded = fullGroups + 2;
-        }
+        if (remTotal === 0) totalNeeded = fullGroups;
+        else if (remTotal <= r1) totalNeeded = fullGroups + 1;
+        else totalNeeded = fullGroups + 2;
       } else {
         totalNeeded = naiveSum;
       }
@@ -1129,8 +1102,7 @@
       safetyAlert.classList.remove('visible');
     }
 
-    const isSplitMode = (activeMutualMode === 'sans');
-    renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode);
+    renderPool(totalNeeded, n36, n612, r1, r2, (activeMutualMode === 'sans'));
 
     const directorEligible = effectif > 0 && effectif <= 50;
     dirRow.classList.toggle('disabled', !directorEligible);
@@ -1144,7 +1116,7 @@
       totalAnimLabelEl.textContent = "Anim' sur le terrain";
     }
     
-    animateNumber(totalAnimEl, displayed);
+    totalAnimEl.textContent = displayed;
     miniAnimCount.textContent = displayed;
 
     const saved = naiveSum - totalNeeded;
@@ -1156,75 +1128,49 @@
     }
 
     const base = displayed;
-    const diplomesMin = Math.ceil(base * 0.5);
-    const nonDiplomesMax = Math.floor(base * 0.2);
-    const stagiaires = Math.max(base - diplomesMin - nonDiplomesMax, 0);
+    qDiplomes.textContent = Math.ceil(base * 0.5);
+    qNonDiplomes.textContent = Math.floor(base * 0.2);
+    qStagiaires.textContent = Math.max(base - Math.ceil(base * 0.5) - Math.floor(base * 0.2), 0);
 
-    animateNumber(qDiplomes, diplomesMin);
-    animateNumber(qNonDiplomes, nonDiplomesMax);
-    animateNumber(qStagiaires, stagiaires);
-
-    let modeText = activeMutualMode === 'avec' 
-      ? "Avec mutualisation (Règle SDJES)" 
-      : "Sans mutualisation (Calcul séparé)";
-
-    footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
-    
     saveState();
   }
 
-  /* Copy Summary Report */
   copyBtn.addEventListener('click', () => {
     hapticFeedback();
     const currentRegime = REGIMES[activeRegimeKey];
     const n36 = clampInt(n36input.value);
     const n612 = clampInt(n612input.value);
-    const totalKids = n36 + n612;
-    const totalAnim = totalAnimEl.textContent;
-    const mode = activeMutualMode === 'avec' ? "Avec mutualisation" : "Sans mutualisation";
-    const dirInclus = dirToggle.checked ? "Oui" : "Non";
 
     const textSummary = 
 `📋 BILAN TAUX D'ENCADREMENT ALSH
 -----------------------------------
 - Régime : ${currentRegime.tag}
-- Effectifs : ${totalKids} enfants (-6ans: ${n36} | +6ans: ${n612})
-- Mode de calcul : ${mode}
-- Directeur inclus sur le terrain : ${dirInclus}
+- Effectifs : ${n36 + n612} enfants (-6ans: ${n36} | +6ans: ${n612})
+- Mode : ${activeMutualMode === 'avec' ? "Avec mutualisation" : "Calcul séparé"}
+- Directeur sur le terrain : ${dirToggle.checked ? "Oui" : "Non"}
 -----------------------------------
-> ANIM' REQUIS : ${totalAnim}
+> ANIM' REQUIS : ${totalAnimEl.textContent}
 
-Composition recommandée de l'équipe :
+Composition recommandée :
 • Diplômé·e·s (Min. 50%) : ${qDiplomes.textContent}
 • Non-diplômé·e·s (Max. 20%) : ${qNonDiplomes.textContent}
-• Stagiaires BAFA : ${qStagiaires.textContent}
-`;
+• Stagiaires BAFA : ${qStagiaires.textContent}`;
 
-    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
-      navigator.share({
-        title: "Bilan ALSH",
-        text: textSummary
-      }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(textSummary).then(() => {
-        copyBtn.classList.add('copied');
-        copyBtnIcon.textContent = "✓";
-        copyBtnText.textContent = "Bilan copié !";
+    navigator.clipboard.writeText(textSummary).then(() => {
+      copyBtn.classList.add('copied');
+      copyBtnIcon.textContent = "✓";
+      copyBtnText.textContent = "Bilan copié !";
+      showToast("⚡ Bilan copié dans le presse-papier !");
 
-        showToast("⚡ Bilan copié dans le presse-papier !");
-
-        setTimeout(() => {
-          copyBtn.classList.remove('copied');
-          copyBtnIcon.textContent = "📋";
-          copyBtnText.textContent = "Copier le bilan complet";
-        }, 2200);
-
-      }).catch(() => {
-        showToast("Impossible de copier automatiquement.");
-      });
-    }
+      setTimeout(() => {
+        copyBtn.classList.remove('copied');
+        copyBtnIcon.textContent = "📋";
+        copyBtnText.textContent = "Copier le bilan complet";
+      }, 2000);
+    });
   });
 
+  initTheme();
   loadState();
   recalc();
 </script>
