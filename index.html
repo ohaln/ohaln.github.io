@@ -8,14 +8,17 @@
 <title>Calculateur ALSH — Taux d'encadrement SDJES</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 
-<!-- Typographies Google Fonts : Syne (Ultra Heavy) + Plus Jakarta Sans -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
 <style>
   :root {
+    /* Mode Dark (Par défaut) */
     --bg-main: #09090E;
+    --card-bg-subtle: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(255, 255, 255, 0.1);
+    
     --yellow: #E2FF38;
     --yellow-dark: #b8d41e;
     --yellow-glow: rgba(226, 255, 56, 0.25);
@@ -31,12 +34,37 @@
     --text-muted: #94A3B8;
     --text-dark: #09090E;
 
+    --hero-bg: linear-gradient(145deg, #1A132C 0%, #110D1F 100%);
+
     --radius-pill: 999px;
     --radius-box: 20px;
 
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --transition-fast: 0.18s var(--ease-out);
+  }
+
+  /* Theme Light Override */
+  [data-theme="light"] {
+    --bg-main: #F4F4F8;
+    --card-bg-subtle: rgba(0, 0, 0, 0.03);
+    --card-border: rgba(0, 0, 0, 0.12);
+    
+    --yellow: #D1F000;
+    --yellow-dark: #a8c200;
+    --yellow-glow: rgba(209, 240, 0, 0.3);
+    
+    --purple: #7C3AED;
+    --purple-bright: #6D28D9;
+    --purple-glow: rgba(124, 58, 237, 0.15);
+    
+    --pink: #E11D48;
+    
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --text-dark: #0F172A;
+
+    --hero-bg: linear-gradient(145deg, #2A1B4E 0%, #17102B 100%);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -55,7 +83,8 @@
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 20px 16px max(90px, calc(40px + env(safe-area-inset-bottom)));
+    padding: 24px 20px max(90px, calc(40px + env(safe-area-inset-bottom)));
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   :focus-visible {
@@ -64,7 +93,7 @@
     border-radius: inherit;
   }
 
-  /* Arrière-plan néon diffus & fluide */
+  /* Arrière-plan néon diffus */
   .bg-decorations {
     position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
   }
@@ -74,7 +103,6 @@
   .bg-blob-1 { width: 380px; height: 380px; top: -80px; right: -80px; background: var(--purple); }
   .bg-blob-2 { width: 300px; height: 300px; bottom: -50px; left: -80px; background: var(--yellow); opacity: 0.18; }
 
-  /* Structure fluide SANS grosses boîtes rigides */
   main {
     width: 100%;
     max-width: 460px;
@@ -88,48 +116,44 @@
     width: 100%;
   }
 
-  /* Header Aéré */
+  /* Header */
   .header-wrap {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+    padding-left: 4px; /* Sécurité marge titre */
   }
 
-  .header-top {
+  .header-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 12px;
   }
 
-  .sticker-badge {
-    background: var(--cream);
-    color: var(--text-dark);
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+  .theme-toggle-btn {
+    background: var(--card-bg-subtle);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
     padding: 6px 14px;
     border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    box-shadow: 0 4px 15px rgba(255, 249, 230, 0.2);
-    max-width: 100%;
-    word-break: break-word;
+    transition: all var(--transition-fast);
   }
-  .sticker-badge::before {
-    content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--pink); flex-shrink: 0;
-  }
+  .theme-toggle-btn:hover { background: rgba(255, 255, 255, 0.12); }
 
   .btn-reset {
-    background: rgba(255,255,255,0.08);
-    border: none;
+    background: var(--card-bg-subtle);
+    border: 1px solid var(--card-border);
     color: var(--text-muted);
     padding: 6px 14px;
     border-radius: var(--radius-pill);
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 700;
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -137,21 +161,23 @@
   .btn-reset:hover {
     background: var(--pink);
     color: #fff;
+    border-color: var(--pink);
   }
 
   .brand-title-wrap {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px;
+    padding-right: 4px;
   }
 
   h1 {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(28px, 8vw, 36px);
+    font-size: clamp(28px, 8.5vw, 38px);
     font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
     margin: 0;
     text-transform: lowercase;
     color: var(--text-main);
@@ -170,7 +196,7 @@
   }
   @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-  /* Titres fluides & légers */
+  /* Titres fluides */
   .section-head {
     display: flex;
     align-items: center;
@@ -202,7 +228,8 @@
 
   .info-pop {
     width: 20px; height: 20px; border-radius: 50%;
-    background: rgba(255,255,255,0.06);
+    background: var(--card-bg-subtle);
+    border: 1px solid var(--card-border);
     color: var(--text-muted); font-size: 11px; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
     cursor: help; position: relative;
@@ -216,7 +243,7 @@
     box-shadow: 0 12px 30px rgba(0,0,0,0.8); z-index: 100; pointer-events: none;
   }
 
-  /* Régimes de Choix Incrustés (SANS conteneurs lourds) */
+  /* Régimes Grid */
   .regime-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -224,8 +251,8 @@
   }
 
   .regime-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--card-bg-subtle);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-box);
     padding: 12px;
     text-align: left;
@@ -253,7 +280,6 @@
   .regime-card.active .r-title { color: #fff; }
   .regime-card.active .r-sub { color: var(--yellow); }
 
-  /* Note PEDT intégrée très doucement */
   .pedt-note {
     font-size: 11.5px;
     line-height: 1.45;
@@ -262,11 +288,11 @@
     padding: 10px 14px;
     margin-top: 10px;
     border-radius: 0 12px 12px 0;
-    color: #E2D9F3;
+    color: var(--text-main);
   }
-  .pedt-note strong { color: var(--yellow); font-weight: 800; }
+  .pedt-note strong { color: var(--purple-bright); font-weight: 800; }
 
-  /* Steppers fluides incrustés */
+  /* Steppers & Couleurs dédiées aux tranches d'âge */
   .input-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -282,22 +308,42 @@
 
   .stepper-box {
     display: flex; align-items: center; justify-content: space-between;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--card-bg-subtle);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-pill);
     padding: 4px 6px;
-    transition: border-color var(--transition-fast);
+    transition: all var(--transition-fast);
   }
-  .stepper-box:focus-within {
+
+  /* -6 ans : Style Jaune */
+  .stepper-box.st-36:focus-within, .stepper-box.st-36:hover {
     border-color: var(--yellow);
     box-shadow: 0 0 16px var(--yellow-glow);
+  }
+  .stepper-box.st-36 .stepper-btn:hover {
+    background: var(--yellow); color: var(--text-dark);
+  }
+  .stepper-box.st-36 input {
+    color: var(--yellow);
+  }
+
+  /* +6 ans : Style Violet */
+  .stepper-box.st-612:focus-within, .stepper-box.st-612:hover {
+    border-color: var(--purple-bright);
+    box-shadow: 0 0 16px var(--purple-glow);
+  }
+  .stepper-box.st-612 .stepper-btn:hover {
+    background: var(--purple-bright); color: #fff;
+  }
+  .stepper-box.st-612 input {
+    color: var(--purple-bright);
   }
 
   .stepper-btn {
     width: 38px; height: 38px;
     border-radius: 50%;
     border: none;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--card-bg-subtle);
     color: var(--text-main);
     font-size: 20px;
     font-weight: 800;
@@ -306,14 +352,11 @@
     transition: all var(--transition-fast);
     flex-shrink: 0;
   }
-  .stepper-btn:hover {
-    background: var(--yellow); color: var(--text-dark);
-  }
   .stepper-btn:active { transform: scale(0.88); }
 
   .stepper-box input {
     width: 100%; border: none; background: transparent;
-    color: var(--text-main); font-family: 'Syne', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 20px; font-weight: 800; text-align: center;
     outline: none; font-variant-numeric: tabular-nums; min-width: 0;
   }
@@ -321,7 +364,7 @@
   .stepper-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
   .total-kids-pill {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--card-bg-subtle);
     border-radius: var(--radius-pill);
     text-align: center;
     padding: 10px 16px;
@@ -342,11 +385,11 @@
   }
   .alert-box.visible { display: flex; }
 
-  /* Boutons Mode Incrustés */
+  /* Mode Selector */
   .mutual-selector {
     display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-    background: rgba(255, 255, 255, 0.04); padding: 4px;
-    border-radius: var(--radius-pill); border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--card-bg-subtle); padding: 4px;
+    border-radius: var(--radius-pill); border: 1px solid var(--card-border);
   }
   .mutual-btn {
     background: transparent; border: none;
@@ -361,7 +404,7 @@
     box-shadow: 0 4px 14px var(--yellow-glow);
   }
 
-  /* Toggle Row Directeur */
+  /* Toggle Row */
   .toggle-row {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     cursor: pointer; padding-top: 12px; margin-top: 12px;
@@ -372,7 +415,7 @@
 
   .switch-track {
     width: 46px; height: 26px; border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--card-bg-subtle); border: 1px solid var(--card-border);
     position: relative; flex-shrink: 0; transition: background 0.3s ease;
   }
   .switch-track::after {
@@ -388,14 +431,14 @@
   }
   .toggle-row.disabled { opacity: 0.35; pointer-events: none; }
 
-  /* Carte Résultat / Pilules Ultra Lumineuse */
+  /* Carte Résultat / Pilules */
   .result-hero-card {
-    background: linear-gradient(145deg, #1A132C 0%, #110D1F 100%);
+    background: var(--hero-bg);
     border: 1px solid var(--purple-bright);
     border-radius: 24px;
     padding: 20px;
     position: relative;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 25px var(--purple-glow);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3), 0 0 25px var(--purple-glow);
   }
 
   .pool-header {
@@ -411,10 +454,10 @@
 
   .pool-track { display: flex; gap: 6px; flex-wrap: wrap; }
 
-  /* Segments Pilules Géantes */
+  /* Segments Pilules & Correction Lisibilité Texte (Noir sur Noir évité) */
   .segment {
     flex: 1; min-width: 40px; height: 38px; border-radius: var(--radius-pill);
-    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
     overflow: hidden; position: relative; display: flex;
   }
   .segment .fillA, .segment .fillB {
@@ -425,13 +468,15 @@
 
   .gauge-label {
     position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800; color: #000; z-index: 2; font-variant-numeric: tabular-nums;
+    font-size: 11px; font-weight: 800; color: #FFFFFF;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8);
+    z-index: 2; font-variant-numeric: tabular-nums;
   }
 
   .segment.ghost { opacity: 0.25; width: 100%; }
   .segment.ghost::after {
     content: "–"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); font-size: 16px;
+    color: #fff; font-size: 16px;
   }
 
   .pool-split-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
@@ -441,15 +486,15 @@
   .subgroup-label.lbl-b { color: var(--purple-bright); }
 
   .pool-legend { display: flex; gap: 14px; margin-top: 12px; }
-  .pool-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--text-muted); }
+  .pool-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7); }
   .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
   .dot-a { background: var(--yellow); }
   .dot-b { background: var(--purple-bright); }
 
-  /* Giant Number Display */
+  /* Display Résultat Hero */
   .hero-result-wrap {
     display: flex; align-items: center; gap: 14px; margin-top: 16px; padding-top: 14px;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(255,255,255,0.12);
   }
   .big-num {
     font-family: 'Syne', sans-serif;
@@ -461,13 +506,13 @@
     font-variant-numeric: tabular-nums;
   }
   .big-label {
-    font-size: clamp(13px, 4vw, 15px); font-weight: 800; line-height: 1.25; color: var(--text-main);
+    font-size: clamp(13px, 4vw, 15px); font-weight: 800; line-height: 1.25; color: #FFFFFF;
   }
 
   /* Qualifications Breakdown Grid */
   .q-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
   .q-card {
-    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--card-bg-subtle); border: 1px solid var(--card-border);
     border-radius: var(--radius-box); padding: 12px 6px; text-align: center;
   }
   .q-num {
@@ -495,7 +540,7 @@
     background: var(--yellow-dark); transform: translateY(-1px);
   }
   .btn-cta:active { transform: scale(0.98); }
-  .btn-cta.copied { background: #52E596; box-shadow: none; }
+  .btn-cta.copied { background: #52E596; box-shadow: none; color: #000; }
 
   /* Sticky Mini Bar */
   .sticky-bar {
@@ -515,25 +560,28 @@
     background: var(--purple); color: #fff; padding: 5px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800;
   }
 
+  /* Popup / Toasts retravaillés sur le thème Neon */
   .toast {
     position: fixed; bottom: max(20px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
     transform: translateX(-50%) translateY(80px);
-    background: var(--cream); color: var(--text-dark);
-    padding: 10px 22px; border-radius: var(--radius-pill);
+    background: #141420; color: #FFFFFF;
+    border: 1px solid var(--purple-bright);
+    padding: 12px 24px; border-radius: var(--radius-pill);
     font-size: 12.5px; font-weight: 800;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6); opacity: 0;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.8), 0 0 15px var(--purple-glow); opacity: 0;
     transition: all 0.35s var(--ease-spring); z-index: 9999; pointer-events: none;
+    display: flex; align-items: center; gap: 8px;
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
   footer.legal-note {
-    font-size: 11px; font-weight: 600; line-height: 1.4; color: var(--text-muted); text-align: center;
+    font-size: 12px; font-weight: 700; color: var(--text-muted); text-align: center;
+    letter-spacing: 0.02em;
   }
 
-  /* Micro Ligne Séparatrice Fluide */
   .divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, var(--card-border) 50%, transparent 100%);
     width: 100%;
     margin: 4px 0;
   }
@@ -541,7 +589,6 @@
 </head>
 <body>
 
-  <!-- Retro Glow Decorative Background -->
   <div class="bg-decorations">
     <div class="bg-blob bg-blob-1"></div>
     <div class="bg-blob bg-blob-2"></div>
@@ -549,19 +596,21 @@
 
   <main>
 
-    <!-- Header Section (Aéré & Fluide) -->
+    <!-- Header avec actions (Theme & Reset) -->
     <header class="fluid-section header-wrap">
-      <div class="header-top">
-        <div class="sticker-badge" id="eyebrowBadge">HORS PEDT · > 5H / JOUR</div>
-        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser">
-          ↺ RAZ
+      <div class="header-actions">
+        <button type="button" class="theme-toggle-btn" id="themeBtn">
+          <span id="themeIcon">🌙</span> <span id="themeText">Sombre</span>
+        </button>
+
+        <button type="button" class="btn-reset" id="resetBtn">
+          réinitialiser
         </button>
       </div>
 
       <div class="brand-title-wrap">
         <h1>taux <span>d'encadrement</span></h1>
         
-        <!-- Vector Flower Accent -->
         <svg class="flower-motif" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <path d="M50 34C53 20 67 20 67 34C81 34 81 48 67 48C81 48 81 62 67 62C67 76 53 76 50 62C47 76 33 76 33 62C19 62 19 48 33 48C19 48 19 34 33 34C33 20 47 20 50 34Z" />
         </svg>
@@ -570,7 +619,7 @@
 
     <div class="divider"></div>
 
-    <!-- Configuration Section (Régimes & Effectifs) -->
+    <!-- Régimes de Choix -->
     <section class="fluid-section">
       <div class="section-head">
         <span class="section-title"><span class="section-num">1</span> Régime d'accueil</span>
@@ -601,7 +650,7 @@
       </div>
     </section>
 
-    <!-- Effectifs -->
+    <!-- Effectifs avec Couleurs Dédiées -->
     <section class="fluid-section">
       <div class="section-head">
         <span class="section-title"><span class="section-num">2</span> Effectifs inscrits</span>
@@ -609,8 +658,8 @@
 
       <div class="input-group">
         <div>
-          <label class="field-label" for="n36">Moins de 6 ans (-6 ans)</label>
-          <div class="stepper-box">
+          <label class="field-label" for="n36" style="color: var(--yellow);">Moins de 6 ans (-6 ans)</label>
+          <div class="stepper-box st-36">
             <button class="stepper-btn" data-target="n36" data-delta="-1" aria-label="Moins 1">–</button>
             <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
             <button class="stepper-btn" data-target="n36" data-delta="1" aria-label="Plus 1">+</button>
@@ -618,8 +667,8 @@
         </div>
 
         <div>
-          <label class="field-label" for="n612">6 ans et plus (+6 ans)</label>
-          <div class="stepper-box">
+          <label class="field-label" for="n612" style="color: var(--purple-bright);">6 ans et plus (+6 ans)</label>
+          <div class="stepper-box st-612">
             <button class="stepper-btn" data-target="n612" data-delta="-1" aria-label="Moins 1">–</button>
             <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
             <button class="stepper-btn" data-target="n612" data-delta="1" aria-label="Plus 1">+</button>
@@ -662,14 +711,14 @@
       </label>
     </section>
 
-    <!-- Carte Hero Néon (Pilules & Résultat) -->
+    <!-- Carte Hero Néon -->
     <section class="result-hero-card" id="resultCard">
       <div class="pool-header">
         <span class="section-title" style="color: #fff;">Postes requis</span>
         <span class="pool-badge" id="mutualBadge">⚡ MUTUALISÉ</span>
       </div>
 
-      <!-- Visual Track (Pilules) -->
+      <!-- Jauge de Pilules -->
       <div class="pool-track" id="poolTrack"></div>
 
       <div class="pool-legend">
@@ -709,8 +758,9 @@
       </button>
     </section>
 
-    <footer class="legal-note" id="footerNote">
-      Outil indicatif SDJES — Conforme à la réglementation ALSH.
+    <!-- Pied de Page Personnalisé -->
+    <footer class="legal-note">
+      par Allan.H - 2026
     </footer>
 
   </main>
@@ -724,10 +774,11 @@
     <span class="mini-pill">Détails ➔</span>
   </div>
 
-  <div class="toast" id="toast">⚡ Bilan copié dans le presse-papier !</div>
+  <div class="toast" id="toast">⚡ Effectif réinitialisé !</div>
 
 <script>
-  const STORAGE_KEY = 'alsh_calc_fluid_state';
+  const STORAGE_KEY = 'alsh_calc_fluid_state_v2';
+  const THEME_KEY = 'alsh_theme_preference';
 
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
@@ -735,14 +786,16 @@
   const safetyAlert = document.getElementById('safetyAlert');
   const dirToggle = document.getElementById('dirToggle');
   const dirRow = document.getElementById('dirRow');
-  const eyebrowBadge = document.getElementById('eyebrowBadge');
-  const footerNote = document.getElementById('footerNote');
   const mutualBadge = document.getElementById('mutualBadge');
   const resetBtn = document.getElementById('resetBtn');
   const copyBtn = document.getElementById('copyBtn');
   const copyBtnIcon = document.getElementById('copyBtnIcon');
   const copyBtnText = document.getElementById('copyBtnText');
   const toast = document.getElementById('toast');
+
+  const themeBtn = document.getElementById('themeBtn');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');
 
   const resultCard = document.getElementById('resultCard');
   const stickyMiniBar = document.getElementById('stickyMiniBar');
@@ -766,6 +819,43 @@
     avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
   };
 
+  /* --- Gestion Theme (iOS/Android Auto + Switch) --- */
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'light') {
+      themeIcon.textContent = '☀️';
+      themeText.textContent = 'Clair';
+    } else {
+      themeIcon.textContent = '🌙';
+      themeText.textContent = 'Sombre';
+    }
+  }
+
+  function initTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme) {
+      applyTheme(savedTheme);
+    } else {
+      const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      applyTheme(prefersLight ? 'light' : 'dark');
+    }
+  }
+
+  themeBtn.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    applyTheme(newTheme);
+    localStorage.setItem(THEME_KEY, newTheme);
+    showToast(newTheme === 'light' ? '☀️ Mode clair activé' : '🌙 Mode sombre activé');
+  });
+
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+    if (!localStorage.getItem(THEME_KEY)) {
+      applyTheme(e.matches ? 'light' : 'dark');
+    }
+  });
+
+  /* --- Persistence État --- */
   function saveState() {
     const state = {
       regime: activeRegimeKey,
@@ -872,9 +962,10 @@
     n612input.value = 0;
     dirToggle.checked = false;
     recalc();
-    showToast("🔄 Effectifs réinitialisés");
+    showToast("⚡ Effectifs réinitialisés !");
   });
 
+  /* Rendu Jauge Pilules + Correction Lisibilité Texte */
   function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
     poolTrack.innerHTML = '';
 
@@ -905,10 +996,17 @@
           fill.className = fillClass;
           
           const kidsForAnim = Math.min(maxRatio, currentKids - (i * maxRatio));
-          fill.style.width = ((kidsForAnim / maxRatio) * 100) + '%';
+          const fillPercent = (kidsForAnim / maxRatio) * 100;
+          fill.style.width = fillPercent + '%';
           
           seg.appendChild(fill);
-          seg.innerHTML += `<span class="gauge-label">${kidsForAnim}/${maxRatio}</span>`;
+
+          // Astuce Lisibilité : Texte Blanc avec Ombre Propre
+          const label = document.createElement('span');
+          label.className = 'gauge-label';
+          label.textContent = `${kidsForAnim}/${maxRatio}`;
+          seg.appendChild(label);
+
           track.appendChild(seg);
         }
         container.appendChild(group);
@@ -952,7 +1050,6 @@
 
   function recalc(){
     const currentRegime = REGIMES[activeRegimeKey];
-    eyebrowBadge.textContent = currentRegime.tag.toUpperCase();
 
     const n36 = clampInt(n36input.value);
     const n612 = clampInt(n612input.value);
@@ -1023,7 +1120,6 @@
     qNonDiplomes.textContent = Math.floor(base * 0.2);
     qStagiaires.textContent = Math.max(base - Math.ceil(base * 0.5) - Math.floor(base * 0.2), 0);
 
-    footerNote.textContent = `${currentRegime.tag} — ${activeMutualMode === 'avec' ? "Avec mutualisation (SDJES)" : "Calcul séparé"}.`;
     saveState();
   }
 
@@ -1062,6 +1158,7 @@ Composition recommandée :
     });
   });
 
+  initTheme();
   loadState();
   recalc();
 </script>
