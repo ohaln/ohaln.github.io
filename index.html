@@ -4,127 +4,132 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
-<meta name="theme-color" content="#0B0B10">
+<meta name="theme-color" content="#09090E">
 <title>Calculateur ALSH — Taux d'encadrement SDJES</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 
+<!-- Typographies Google Fonts : Syne (Ultra Heavy) + Plus Jakarta Sans -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    /* Palette Neo-Pop Épurée */
-    --bg-main: #0B0B12;
-    --card-bg: #14141E;
-    --card-bg-subtle: #1B1B28;
-    --card-border: #28283C;
-    
+    --bg-main: #09090E;
     --yellow: #E2FF38;
-    --yellow-glow: rgba(226, 255, 56, 0.15);
+    --yellow-dark: #b8d41e;
+    --yellow-glow: rgba(226, 255, 56, 0.25);
     
     --purple: #8B5CF6;
-    --purple-light: #A78BFA;
-    --purple-glow: rgba(139, 92, 246, 0.2);
+    --purple-bright: #A78BFA;
+    --purple-glow: rgba(139, 92, 246, 0.3);
     
     --pink: #FF52A2;
+    --cream: #FFF9E6;
     
     --text-main: #FFFFFF;
-    --text-muted: #8E8EA0;
-    --text-dark: #0B0B12;
+    --text-muted: #94A3B8;
+    --text-dark: #09090E;
 
     --radius-pill: 999px;
-    --radius-card: 20px;
-    --radius-box: 14px;
+    --radius-box: 20px;
 
-    --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: 0.18s var(--ease-out);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
 
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
     color: var(--text-main);
     background: var(--bg-main);
     min-height: 100vh;
-    margin: 0;
     display: flex;
     justify-content: center;
-    padding: 32px 16px max(80px, calc(30px + env(safe-area-inset-bottom)));
+    padding: 20px 16px max(90px, calc(40px + env(safe-area-inset-bottom)));
   }
 
   :focus-visible {
-    outline: 2px solid var(--yellow);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: 0 0 0 3px var(--bg-main), 0 0 0 5px var(--yellow);
+    border-radius: inherit;
   }
 
+  /* Arrière-plan néon diffus & fluide */
+  .bg-decorations {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+  }
+  .bg-blob {
+    position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.3;
+  }
+  .bg-blob-1 { width: 380px; height: 380px; top: -80px; right: -80px; background: var(--purple); }
+  .bg-blob-2 { width: 300px; height: 300px; bottom: -50px; left: -80px; background: var(--yellow); opacity: 0.18; }
+
+  /* Structure fluide SANS grosses boîtes rigides */
   main {
     width: 100%;
-    max-width: 440px;
+    max-width: 460px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 28px;
   }
 
-  /* Cartes épurées */
-  .pop-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-card);
-    padding: 20px;
+  .fluid-section {
     position: relative;
+    width: 100%;
   }
 
-  /* Header Clean */
-  .header-card {
-    padding: 16px 20px;
+  /* Header Aéré */
+  .header-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .header-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-
-  .header-left {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .sticker-badge {
-    background: var(--card-bg-subtle);
-    border: 1px solid var(--card-border);
-    color: var(--yellow);
-    font-size: 10px;
+    background: var(--cream);
+    color: var(--text-dark);
+    font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 4px 10px;
+    letter-spacing: 0.04em;
+    padding: 6px 14px;
     border-radius: var(--radius-pill);
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    width: fit-content;
+    box-shadow: 0 4px 15px rgba(255, 249, 230, 0.2);
+    max-width: 100%;
+    word-break: break-word;
   }
   .sticker-badge::before {
-    content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--pink);
+    content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--pink); flex-shrink: 0;
   }
-
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    margin: 0;
-    letter-spacing: -0.02em;
-    color: var(--text-main);
-  }
-  h1 span { color: var(--purple-light); }
 
   .btn-reset {
-    background: transparent;
-    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.08);
+    border: none;
     color: var(--text-muted);
-    padding: 6px 12px;
+    padding: 6px 14px;
     border-radius: var(--radius-pill);
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 700;
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -132,10 +137,40 @@
   .btn-reset:hover {
     background: var(--pink);
     color: #fff;
-    border-color: var(--pink);
   }
 
-  /* Titres de sections */
+  .brand-title-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 8vw, 36px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 0;
+    text-transform: lowercase;
+    color: var(--text-main);
+  }
+  h1 span {
+    color: var(--purple-bright);
+    display: block;
+  }
+
+  .flower-motif {
+    width: clamp(38px, 10vw, 48px);
+    height: clamp(38px, 10vw, 48px);
+    flex-shrink: 0;
+    fill: var(--pink);
+    animation: rotateSlow 25s linear infinite;
+  }
+  @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Titres fluides & légers */
   .section-head {
     display: flex;
     align-items: center;
@@ -143,314 +178,409 @@
     margin-bottom: 12px;
   }
   .section-title {
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     color: var(--text-muted);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   .section-num {
-    color: var(--yellow);
+    background: var(--yellow);
+    color: var(--text-dark);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10.5px;
+    font-weight: 800;
   }
 
   .info-pop {
-    width: 18px; height: 18px; border-radius: 50%;
-    background: var(--card-bg-subtle); border: 1px solid var(--card-border);
-    color: var(--text-muted); font-size: 10px; font-weight: 800;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-muted); font-size: 11px; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
     cursor: help; position: relative;
   }
   .info-pop:hover::after, .info-pop:focus::after {
     content: attr(data-tooltip);
-    position: absolute; bottom: 130%; right: 0; width: 220px;
-    background: var(--card-bg-subtle); border: 1px solid var(--purple-light);
-    color: #fff; padding: 10px; border-radius: var(--radius-box);
-    font-size: 11px; font-weight: 600; line-height: 1.4;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5); z-index: 100; pointer-events: none;
-    text-align: left; text-transform: none; letter-spacing: normal;
+    position: absolute; bottom: 130%; right: 0; width: min(240px, 80vw);
+    background: #181824; border: 1px solid var(--purple-bright);
+    color: #fff; padding: 10px 14px; border-radius: 12px;
+    font-size: 11.5px; font-weight: 600; line-height: 1.4;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.8); z-index: 100; pointer-events: none;
   }
 
-  /* Régimes Grid (Épuré) */
+  /* Régimes de Choix Incrustés (SANS conteneurs lourds) */
   .regime-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 8px;
-    margin-bottom: 20px;
   }
 
   .regime-card {
-    background: var(--card-bg-subtle);
-    border: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-box);
-    padding: 10px 12px;
+    padding: 12px;
     text-align: left;
     cursor: pointer;
     transition: all var(--transition-fast);
+    color: var(--text-muted);
   }
   .regime-card .r-title {
-    display: block; font-weight: 800; font-size: 12.5px; color: var(--text-muted);
+    display: block; font-weight: 800; font-size: 13px; color: var(--text-main);
   }
   .regime-card .r-sub {
-    display: block; font-size: 10.5px; font-weight: 600; margin-top: 2px; color: var(--text-muted); opacity: 0.7;
+    display: block; font-size: 10.5px; font-weight: 600; margin-top: 2px; opacity: 0.8;
   }
 
-  .regime-card:hover { border-color: var(--purple-light); }
+  .regime-card:hover {
+    border-color: var(--purple-bright);
+    background: rgba(139, 92, 246, 0.1);
+  }
   .regime-card.active {
-    background: rgba(139, 92, 246, 0.15);
-    border-color: var(--purple-light);
+    background: var(--purple);
+    border-color: var(--purple);
+    color: #fff;
+    box-shadow: 0 8px 24px var(--purple-glow);
   }
   .regime-card.active .r-title { color: #fff; }
-  .regime-card.active .r-sub { color: var(--yellow); opacity: 1; }
+  .regime-card.active .r-sub { color: var(--yellow); }
 
-  /* Inputs & Steppers */
-  .input-grid {
+  /* Note PEDT intégrée très doucement */
+  .pedt-note {
+    font-size: 11.5px;
+    line-height: 1.45;
+    background: rgba(139, 92, 246, 0.08);
+    border-left: 3px solid var(--purple-bright);
+    padding: 10px 14px;
+    margin-top: 10px;
+    border-radius: 0 12px 12px 0;
+    color: #E2D9F3;
+  }
+  .pedt-note strong { color: var(--yellow); font-weight: 800; }
+
+  /* Steppers fluides incrustés */
+  .input-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 12px;
+  }
+  @media (max-width: 360px) {
+    .input-group { grid-template-columns: 1fr; }
   }
 
   .field-label {
-    font-size: 12px; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 6px;
+    font-size: 12.5px; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 6px;
   }
 
   .stepper-box {
     display: flex; align-items: center; justify-content: space-between;
-    background: var(--card-bg-subtle);
-    border: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-pill);
-    padding: 4px;
+    padding: 4px 6px;
     transition: border-color var(--transition-fast);
   }
-  .stepper-box:focus-within { border-color: var(--yellow); }
+  .stepper-box:focus-within {
+    border-color: var(--yellow);
+    box-shadow: 0 0 16px var(--yellow-glow);
+  }
 
   .stepper-btn {
-    width: 32px; height: 32px;
-    border-radius: 50%; border: none;
-    background: var(--card-bg);
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-main);
-    font-size: 16px; font-weight: 800;
+    font-size: 20px;
+    font-weight: 800;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all var(--transition-fast);
+    flex-shrink: 0;
   }
-  .stepper-btn:hover { background: var(--yellow); color: var(--text-dark); }
+  .stepper-btn:hover {
+    background: var(--yellow); color: var(--text-dark);
+  }
+  .stepper-btn:active { transform: scale(0.88); }
 
   .stepper-box input {
     width: 100%; border: none; background: transparent;
     color: var(--text-main); font-family: 'Syne', sans-serif;
-    font-size: 18px; font-weight: 800; text-align: center; outline: none;
+    font-size: 20px; font-weight: 800; text-align: center;
+    outline: none; font-variant-numeric: tabular-nums; min-width: 0;
   }
   .stepper-box input::-webkit-outer-spin-button,
   .stepper-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-  .total-kids-bar {
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--card-bg-subtle);
+  .total-kids-pill {
+    background: rgba(255, 255, 255, 0.03);
     border-radius: var(--radius-pill);
-    padding: 8px 14px;
-    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 10px;
   }
-  .total-kids-bar strong { color: var(--yellow); font-weight: 800; }
+  .total-kids-pill strong { color: var(--yellow); font-weight: 800; }
 
   .alert-box {
     display: none; align-items: center; gap: 8px;
-    background: rgba(255, 82, 162, 0.1);
+    background: rgba(255, 82, 162, 0.12);
     border: 1px solid var(--pink);
     border-radius: var(--radius-box);
-    padding: 8px 12px; font-size: 11px; font-weight: 700; color: var(--pink);
-    margin-top: 8px;
+    padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--pink);
+    margin-top: 10px;
   }
   .alert-box.visible { display: flex; }
 
-  /* Mode Mutualisation */
+  /* Boutons Mode Incrustés */
   .mutual-selector {
     display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-    background: var(--card-bg-subtle); padding: 4px;
-    border-radius: var(--radius-pill); border: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.04); padding: 4px;
+    border-radius: var(--radius-pill); border: 1px solid rgba(255, 255, 255, 0.08);
   }
   .mutual-btn {
     background: transparent; border: none;
-    border-radius: var(--radius-pill); padding: 6px 10px;
+    border-radius: var(--radius-pill); padding: 8px 10px;
     color: var(--text-muted); cursor: pointer;
     transition: all var(--transition-fast);
-    font-size: 11px; font-weight: 700; text-align: center;
+    font-size: 11.5px; font-weight: 800; text-align: center;
   }
   .mutual-btn.active {
-    background: var(--yellow); color: var(--text-dark);
+    background: var(--yellow);
+    color: var(--text-dark);
+    box-shadow: 0 4px 14px var(--yellow-glow);
   }
 
-  /* Toggle Switch Épuré */
+  /* Toggle Row Directeur */
   .toggle-row {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     cursor: pointer; padding-top: 12px; margin-top: 12px;
-    border-top: 1px solid var(--card-border);
   }
-  .toggle-label { font-size: 12px; font-weight: 700; color: var(--text-main); }
-  .toggle-label small { display: block; font-weight: 500; color: var(--text-muted); font-size: 10px; margin-top: 1px; }
+  .toggle-label { font-size: 12.5px; font-weight: 700; color: var(--text-main); }
+  .toggle-label small { display: block; font-weight: 500; color: var(--text-muted); font-size: 10.5px; margin-top: 2px; }
   .toggle-row input { display: none; }
 
   .switch-track {
-    width: 42px; height: 24px; border-radius: var(--radius-pill);
-    background: var(--card-bg-subtle); border: 1px solid var(--card-border);
-    position: relative; flex-shrink: 0; transition: background 0.2s ease;
+    width: 46px; height: 26px; border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative; flex-shrink: 0; transition: background 0.3s ease;
   }
   .switch-track::after {
-    content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
-    border-radius: 50%; background: var(--text-muted); transition: transform 0.2s ease, background 0.2s ease;
+    content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
+    border-radius: 50%; background: var(--text-muted);
+    transition: transform 0.3s var(--ease-spring), background 0.3s ease;
   }
-  .toggle-row input:checked + .switch-track { background: var(--purple); border-color: var(--purple); }
-  .toggle-row input:checked + .switch-track::after { transform: translateX(18px); background: var(--yellow); }
+  .toggle-row input:checked + .switch-track {
+    background: var(--purple); border-color: var(--purple);
+  }
+  .toggle-row input:checked + .switch-track::after {
+    transform: translateX(20px); background: var(--yellow);
+  }
   .toggle-row.disabled { opacity: 0.35; pointer-events: none; }
 
-  /* Carte Résultat / Visuel Pilules */
-  .result-card {
-    background: linear-gradient(180deg, #181528 0%, #12101D 100%);
-    border: 1px solid var(--purple-light);
+  /* Carte Résultat / Pilules Ultra Lumineuse */
+  .result-hero-card {
+    background: linear-gradient(145deg, #1A132C 0%, #110D1F 100%);
+    border: 1px solid var(--purple-bright);
+    border-radius: 24px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 25px var(--purple-glow);
   }
 
   .pool-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px;
   }
   .pool-badge {
     background: var(--yellow); color: var(--text-dark);
-    font-size: 10px; font-weight: 800; padding: 3px 8px;
-    border-radius: var(--radius-pill); opacity: 0; transition: opacity 0.2s ease;
+    font-size: 10.5px; font-weight: 800; padding: 4px 10px;
+    border-radius: var(--radius-pill); opacity: 0; transform: scale(0.9);
+    transition: all 0.3s var(--ease-spring); flex-shrink: 0;
   }
-  .pool-badge.visible { opacity: 1; }
+  .pool-badge.visible { opacity: 1; transform: scale(1); }
 
   .pool-track { display: flex; gap: 6px; flex-wrap: wrap; }
 
-  /* Segments Pilules Aérés */
+  /* Segments Pilules Géantes */
   .segment {
-    flex: 1; min-width: 36px; height: 32px; border-radius: var(--radius-pill);
-    background: rgba(0,0,0,0.3); border: 1px solid var(--card-border);
+    flex: 1; min-width: 40px; height: 38px; border-radius: var(--radius-pill);
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
     overflow: hidden; position: relative; display: flex;
   }
-  .segment .fillA, .segment .fillB { height: 100%; width: 0%; transition: width 0.3s ease; }
+  .segment .fillA, .segment .fillB {
+    height: 100%; width: 0%; transition: width 0.4s var(--ease-out); position: relative;
+  }
   .fillA { background: var(--yellow); }
-  .fillB { background: var(--purple-light); }
+  .fillB { background: var(--purple-bright); }
 
   .gauge-label {
     position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 800; color: #000; z-index: 2;
+    font-size: 11px; font-weight: 800; color: #000; z-index: 2; font-variant-numeric: tabular-nums;
   }
-  .segment.ghost { opacity: 0.2; width: 100%; }
+
+  .segment.ghost { opacity: 0.25; width: 100%; }
   .segment.ghost::after {
     content: "–"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); font-size: 14px;
+    color: var(--text-muted); font-size: 16px;
   }
 
-  .pool-split-container { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-  .pool-subgroup { display: flex; flex-direction: column; gap: 4px; }
-  .subgroup-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+  .pool-split-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .pool-subgroup { display: flex; flex-direction: column; gap: 6px; }
+  .subgroup-label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
   .subgroup-label.lbl-a { color: var(--yellow); }
-  .subgroup-label.lbl-b { color: var(--purple-light); }
+  .subgroup-label.lbl-b { color: var(--purple-bright); }
 
-  .pool-legend { display: flex; gap: 14px; margin-top: 10px; }
-  .pool-legend span { display: flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; color: var(--text-muted); }
+  .pool-legend { display: flex; gap: 14px; margin-top: 12px; }
+  .pool-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--text-muted); }
   .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
   .dot-a { background: var(--yellow); }
-  .dot-b { background: var(--purple-light); }
+  .dot-b { background: var(--purple-bright); }
 
-  /* Display Résultat Hero */
+  /* Giant Number Display */
   .hero-result-wrap {
-    display: flex; align-items: baseline; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; gap: 14px; margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
   }
   .big-num {
-    font-family: 'Syne', sans-serif; font-size: 48px; font-weight: 800; line-height: 1; color: var(--yellow);
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 12vw, 60px);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--yellow);
+    text-shadow: 0 0 25px var(--yellow-glow);
+    font-variant-numeric: tabular-nums;
   }
   .big-label {
-    font-size: 13px; font-weight: 700; color: var(--text-main);
+    font-size: clamp(13px, 4vw, 15px); font-weight: 800; line-height: 1.25; color: var(--text-main);
   }
 
-  /* Qualifications Breakdown */
-  .q-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+  /* Qualifications Breakdown Grid */
+  .q-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
   .q-card {
-    background: var(--card-bg-subtle); border: 1px solid var(--card-border);
-    border-radius: var(--radius-box); padding: 10px 6px; text-align: center;
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-box); padding: 12px 6px; text-align: center;
   }
-  .q-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; display: block; }
+  .q-num {
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; display: block;
+  }
   .q-label { display: block; margin-top: 2px; font-size: 10px; font-weight: 700; color: var(--text-muted); line-height: 1.2; }
-  .q-label small { font-size: 9px; opacity: 0.7; display: block; }
+  .q-label small { font-size: 9px; opacity: 0.75; display: block; }
 
   .q-min .q-num { color: #52E596; }
   .q-max .q-num { color: var(--pink); }
   .q-flex .q-num { color: var(--yellow); }
 
-  /* Action CTA */
+  /* CTA Main Button */
   .btn-cta {
-    width: 100%; margin-top: 14px; padding: 12px;
+    width: 100%; margin-top: 16px; padding: 15px;
     border-radius: var(--radius-pill); border: none;
     background: var(--yellow); color: var(--text-dark);
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 13px; font-weight: 800; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: 13.5px; font-weight: 800; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
     transition: all var(--transition-fast);
+    box-shadow: 0 8px 20px var(--yellow-glow);
   }
-  .btn-cta:hover { background: #d3f02e; }
-  .btn-cta.copied { background: #52E596; }
+  .btn-cta:hover {
+    background: var(--yellow-dark); transform: translateY(-1px);
+  }
+  .btn-cta:active { transform: scale(0.98); }
+  .btn-cta.copied { background: #52E596; box-shadow: none; }
 
   /* Sticky Mini Bar */
   .sticky-bar {
     position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%;
     transform: translateX(-50%) translateY(100px);
-    width: calc(100% - 32px); max-width: 410px;
-    background: var(--card-bg-subtle); border: 1px solid var(--purple-light);
-    border-radius: var(--radius-pill); padding: 8px 16px;
+    width: calc(100% - 32px); max-width: 420px;
+    background: #181528; border: 1px solid var(--purple-bright);
+    border-radius: var(--radius-pill); padding: 8px 18px;
     display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6); z-index: 100; cursor: pointer;
-    opacity: 0; transition: all 0.3s ease;
+    box-shadow: 0 16px 35px rgba(0,0,0,0.8); z-index: 100; cursor: pointer;
+    opacity: 0; transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
   }
   .sticky-bar.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
-  .mini-count { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--yellow); }
-  .mini-txt { font-size: 11px; font-weight: 700; color: #fff; margin-left: 6px; }
+  .mini-count { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--yellow); }
+  .mini-txt { font-size: 12px; font-weight: 800; color: #fff; margin-left: 8px; }
+  .mini-pill {
+    background: var(--purple); color: #fff; padding: 5px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800;
+  }
 
   .toast {
     position: fixed; bottom: max(20px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
     transform: translateX(-50%) translateY(80px);
-    background: #FFF; color: var(--text-dark);
-    padding: 10px 20px; border-radius: var(--radius-pill);
-    font-size: 12px; font-weight: 800;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0;
-    transition: all 0.3s ease; z-index: 9999; pointer-events: none;
+    background: var(--cream); color: var(--text-dark);
+    padding: 10px 22px; border-radius: var(--radius-pill);
+    font-size: 12.5px; font-weight: 800;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6); opacity: 0;
+    transition: all 0.35s var(--ease-spring); z-index: 9999; pointer-events: none;
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
   footer.legal-note {
-    font-size: 10.5px; font-weight: 600; color: var(--text-muted); text-align: center; margin-top: 2px;
+    font-size: 11px; font-weight: 600; line-height: 1.4; color: var(--text-muted); text-align: center;
+  }
+
+  /* Micro Ligne Séparatrice Fluide */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+    width: 100%;
+    margin: 4px 0;
   }
 </style>
 </head>
 <body>
 
+  <!-- Retro Glow Decorative Background -->
+  <div class="bg-decorations">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+  </div>
+
   <main>
 
-    <!-- Header Section Clean -->
-    <header class="pop-card header-card">
-      <div class="header-left">
+    <!-- Header Section (Aéré & Fluide) -->
+    <header class="fluid-section header-wrap">
+      <div class="header-top">
         <div class="sticker-badge" id="eyebrowBadge">HORS PEDT · > 5H / JOUR</div>
-        <h1>taux <span>d'encadrement</span></h1>
+        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser">
+          ↺ RAZ
+        </button>
       </div>
-      <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser">
-        ↺ RAZ
-      </button>
+
+      <div class="brand-title-wrap">
+        <h1>taux <span>d'encadrement</span></h1>
+        
+        <!-- Vector Flower Accent -->
+        <svg class="flower-motif" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 34C53 20 67 20 67 34C81 34 81 48 67 48C81 48 81 62 67 62C67 76 53 76 50 62C47 76 33 76 33 62C19 62 19 48 33 48C19 48 19 34 33 34C33 20 47 20 50 34Z" />
+        </svg>
+      </div>
     </header>
 
-    <!-- Configuration Section -->
-    <section class="pop-card">
+    <div class="divider"></div>
+
+    <!-- Configuration Section (Régimes & Effectifs) -->
+    <section class="fluid-section">
       <div class="section-head">
-        <span class="section-title"><span class="section-num">01</span> Régime d'accueil</span>
-        <span class="info-pop" tabindex="0" role="button" data-tooltip="Le Projet Éducatif de Territoire (PEDT) adapte les ratios légaux d'encadrement selon les conventions locales.">ⓘ</span>
+        <span class="section-title"><span class="section-num">1</span> Régime d'accueil</span>
+        <span class="info-pop" tabindex="0" role="button" data-tooltip="Modifie les ratios réglementaires d'encadrement selon la présence d'un PEDT.">ⓘ</span>
       </div>
 
       <div class="regime-grid">
         <button type="button" class="regime-card active" data-regime="hors_p5">
           <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">> 5h par jour</span>
+          <span class="r-sub">+5h par jour</span>
         </button>
         <button type="button" class="regime-card" data-regime="hors_m5">
           <span class="r-title">Hors PEDT</span>
@@ -458,7 +588,7 @@
         </button>
         <button type="button" class="regime-card" data-regime="avec_p5">
           <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">> 5h par jour</span>
+          <span class="r-sub">+5h par jour</span>
         </button>
         <button type="button" class="regime-card" data-regime="avec_m5">
           <span class="r-title">Avec PEDT</span>
@@ -466,43 +596,51 @@
         </button>
       </div>
 
+      <div class="pedt-note">
+        <strong>💡 PEDT :</strong> Le Projet Éducatif de Territoire adapte les ratios légaux d'encadrement sur votre commune.
+      </div>
+    </section>
+
+    <!-- Effectifs -->
+    <section class="fluid-section">
       <div class="section-head">
-        <span class="section-title"><span class="section-num">02</span> Effectifs inscrits</span>
+        <span class="section-title"><span class="section-num">2</span> Effectifs inscrits</span>
       </div>
 
-      <div class="input-grid">
+      <div class="input-group">
         <div>
-          <label class="field-label" for="n36">Moins de 6 ans</label>
+          <label class="field-label" for="n36">Moins de 6 ans (-6 ans)</label>
           <div class="stepper-box">
-            <button class="stepper-btn" data-target="n36" data-delta="-1">–</button>
+            <button class="stepper-btn" data-target="n36" data-delta="-1" aria-label="Moins 1">–</button>
             <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-            <button class="stepper-btn" data-target="n36" data-delta="1">+</button>
+            <button class="stepper-btn" data-target="n36" data-delta="1" aria-label="Plus 1">+</button>
           </div>
         </div>
 
         <div>
-          <label class="field-label" for="n612">6 ans et plus</label>
+          <label class="field-label" for="n612">6 ans et plus (+6 ans)</label>
           <div class="stepper-box">
-            <button class="stepper-btn" data-target="n612" data-delta="-1">–</button>
+            <button class="stepper-btn" data-target="n612" data-delta="-1" aria-label="Moins 1">–</button>
             <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-            <button class="stepper-btn" data-target="n612" data-delta="1">+</button>
+            <button class="stepper-btn" data-target="n612" data-delta="1" aria-label="Plus 1">+</button>
           </div>
         </div>
       </div>
 
-      <div class="total-kids-bar" id="totalKidsIndicator">
-        <span>Effectif total</span>
-        <strong>0 enfant</strong>
+      <div class="total-kids-pill" id="totalKidsIndicator">
+        Effectif total : <strong>0 enfant</strong>
       </div>
 
       <div class="alert-box" id="safetyAlert">
-        <span>⚠️ Minimum 2 animateurs requis sur tout accueil actif.</span>
+        <span>⚠️ <strong>Règle de sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
       </div>
+    </section>
 
-      <!-- Mode Mutualisation -->
-      <div class="section-head" style="margin-top: 16px;">
-        <span class="section-title"><span class="section-num">03</span> Mutualisation</span>
-        <span class="info-pop" tabindex="0" role="button" data-tooltip="Permet d'associer les restes d'effectifs (-6ans et +6ans) pour optimiser le nombre d'animateurs requis.">ⓘ</span>
+    <!-- Mutualisation -->
+    <section class="fluid-section">
+      <div class="section-head">
+        <span class="section-title"><span class="section-num">3</span> Mutualisation</span>
+        <span class="info-pop" tabindex="0" role="button" data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour optimiser l'effectif d'encadrement.">ⓘ</span>
       </div>
 
       <div class="mutual-selector">
@@ -524,14 +662,14 @@
       </label>
     </section>
 
-    <!-- Main Results Card -->
-    <section class="pop-card result-card" id="resultCard">
+    <!-- Carte Hero Néon (Pilules & Résultat) -->
+    <section class="result-hero-card" id="resultCard">
       <div class="pool-header">
-        <span class="section-title" style="color: #fff;">Besoin en encadrement</span>
+        <span class="section-title" style="color: #fff;">Postes requis</span>
         <span class="pool-badge" id="mutualBadge">⚡ MUTUALISÉ</span>
       </div>
 
-      <!-- Visual Track -->
+      <!-- Visual Track (Pilules) -->
       <div class="pool-track" id="poolTrack"></div>
 
       <div class="pool-legend">
@@ -545,9 +683,11 @@
       </div>
     </section>
 
-    <!-- Team Composition & Share Section -->
-    <section class="pop-card">
-      <div class="section-title" style="margin-bottom: 8px;">Structure de l'équipe</div>
+    <!-- Composition & Export -->
+    <section class="fluid-section">
+      <div class="section-head">
+        <span class="section-title">Composition réglementaire</span>
+      </div>
       
       <div class="q-grid">
         <div class="q-card q-min">
@@ -570,7 +710,7 @@
     </section>
 
     <footer class="legal-note" id="footerNote">
-      Outil indicatif SDJES — Conforme à la législation ALSH.
+      Outil indicatif SDJES — Conforme à la réglementation ALSH.
     </footer>
 
   </main>
@@ -581,13 +721,13 @@
       <span class="mini-count" id="miniAnimCount">0</span>
       <span class="mini-txt" id="miniAnimLabel">Anim' requis</span>
     </div>
-    <span style="color: var(--purple-light); font-size: 11px; font-weight: 800;">Voir détails ➔</span>
+    <span class="mini-pill">Détails ➔</span>
   </div>
 
-  <div class="toast" id="toast">⚡ Bilan copié !</div>
+  <div class="toast" id="toast">⚡ Bilan copié dans le presse-papier !</div>
 
 <script>
-  const STORAGE_KEY = 'alsh_calculator_state_clean';
+  const STORAGE_KEY = 'alsh_calc_fluid_state';
 
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
@@ -665,7 +805,7 @@
     entries.forEach(entry => {
       stickyMiniBar.classList.toggle('visible', !entry.isIntersecting);
     });
-  }, { threshold: 0.2 });
+  }, { threshold: 0.15 });
 
   observer.observe(resultCard);
 
@@ -673,14 +813,19 @@
     resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 
+  function hapticFeedback() {
+    if ('vibrate' in navigator) { try { navigator.vibrate(8); } catch(e){} }
+  }
+
   function showToast(msg) {
     toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 2400);
+    setTimeout(() => { toast.classList.remove('show'); }, 2500);
   }
 
   document.querySelectorAll('.regime-card').forEach(btn => {
     btn.addEventListener('click', () => {
+      hapticFeedback();
       document.querySelectorAll('.regime-card').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
       activeRegimeKey = btn.dataset.regime;
@@ -690,6 +835,7 @@
 
   document.querySelectorAll('.mutual-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      hapticFeedback();
       document.querySelectorAll('.mutual-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeMutualMode = btn.dataset.mode;
@@ -704,6 +850,7 @@
 
   document.querySelectorAll('.stepper-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      hapticFeedback();
       const target = document.getElementById(btn.dataset.target);
       const delta = parseInt(btn.dataset.delta, 10);
       target.value = clampInt(clampInt(target.value) + delta);
@@ -716,9 +863,10 @@
     inp.addEventListener('blur', () => { inp.value = clampInt(inp.value); recalc(); });
   });
 
-  dirToggle.addEventListener('change', recalc);
+  dirToggle.addEventListener('change', () => { hapticFeedback(); recalc(); });
 
   resetBtn.addEventListener('click', () => {
+    hapticFeedback();
     try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
     n36input.value = 0;
     n612input.value = 0;
@@ -810,7 +958,7 @@
     const n612 = clampInt(n612input.value);
     const effectif = n36 + n612;
 
-    totalKidsIndicator.querySelector('strong').textContent = `${effectif} enfant${effectif > 1 ? 's' : ''}`;
+    totalKidsIndicator.innerHTML = `Effectif total : <strong>${effectif} enfant${effectif > 1 ? 's' : ''}</strong>`;
 
     const r1 = currentRegime.ratio36;
     const r2 = currentRegime.ratio612;
@@ -854,7 +1002,7 @@
     let displayed = totalNeeded;
     if (dirToggle.checked && directorEligible){
       displayed = Math.max(totalNeeded - 1, 0);
-      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ directeur)";
+      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ le directeur)";
     } else {
       totalAnimLabelEl.textContent = "Anim' sur le terrain";
     }
@@ -875,11 +1023,12 @@
     qNonDiplomes.textContent = Math.floor(base * 0.2);
     qStagiaires.textContent = Math.max(base - Math.ceil(base * 0.5) - Math.floor(base * 0.2), 0);
 
-    footerNote.textContent = `${currentRegime.tag} — ${activeMutualMode === 'avec' ? "Avec mutualisation (Règle SDJES)" : "Calcul séparé"}.`;
+    footerNote.textContent = `${currentRegime.tag} — ${activeMutualMode === 'avec' ? "Avec mutualisation (SDJES)" : "Calcul séparé"}.`;
     saveState();
   }
 
   copyBtn.addEventListener('click', () => {
+    hapticFeedback();
     const currentRegime = REGIMES[activeRegimeKey];
     const n36 = clampInt(n36input.value);
     const n612 = clampInt(n612input.value);
