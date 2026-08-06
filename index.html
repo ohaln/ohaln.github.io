@@ -3,654 +3,798 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Calculateur du taux d'encadrement ALSH selon les normes SDJES et PEDT.">
-<meta name="theme-color" content="#F7F4EB">
-<title>Calculateur ALSH — Pocket Edition</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧮</text></svg>">
+<meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
+<meta name="theme-color" content="#09090E">
+<title>Calculateur ALSH — Taux d'encadrement SDJES</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 
+<!-- Typographies Google Fonts : Syne (Ultra Heavy) + Plus Jakarta Sans -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,700;0,800;0,900;1,800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    /* Palette Neo-Brutalist (Fidèle à l'image CloudStudio) */
-    --bg-page: #F7F4EB;              /* Beige crème d'arrière-plan */
-    --card-yellow: #FBEA72;          /* Jaune pocket (Écran 1) */
-    --card-blue: #C5E5F4;            /* Bleu ciel pocket (Écran 2) */
-    --card-pink: #F8B4A6;            /* Rose/Pêche pocket (Écran 3) */
+    /* Palette Neo-Pop basée sur l'image */
+    --bg-main: #09090E;
+    --card-bg: #13131C;
+    --card-bg-elevated: #1B1B29;
+    --card-border: #262638;
     
-    --dark-surface: #111111;         /* Noir mat profond */
-    --dark-border: #000000;          /* Contours bruts */
+    --yellow: #E2FF38;         /* Jaune / Vert Électrique */
+    --yellow-dark: #b8d41e;
+    --yellow-glow: rgba(226, 255, 56, 0.25);
     
-    --text-dark: #000000;
-    --text-muted: #555555;
-    --text-light: #FFFFFF;
-    --text-light-muted: #AAAAAA;
+    --purple: #8B5CF6;         /* Violet Néon */
+    --purple-bright: #A78BFA;
+    --purple-glow: rgba(139, 92, 246, 0.35);
+    
+    --pink: #FF52A2;           /* Accent Rose Pop */
+    --cream: #FFF9E6;          /* Cream Sticker */
+    
+    --text-main: #FFFFFF;
+    --text-muted: #94A3B8;
+    --text-dark: #09090E;
 
-    --radius-screen: 32px;
-    --radius-card: 24px;
     --radius-pill: 999px;
-    --radius-sm: 14px;
+    --radius-card: 28px;
+    --radius-box: 20px;
+    --radius-sm: 12px;
 
-    --border-stroke: 2px solid #000000;
-    --shadow-hard: 0px 6px 0px #000000;
-    --shadow-floating: 0px 16px 32px rgba(0,0,0,0.25);
-
-    --transition-fast: 0.15s cubic-bezier(0.2, 0, 0, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: 0.18s var(--ease-out);
+    --transition-smooth: 0.35s var(--ease-out);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
+    height: 100%;
     margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    background-color: var(--bg-page);
-    color: var(--text-dark);
-    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    display: flex;
-    justify-content: center;
   }
 
   body {
-    padding: 20px 14px 60px;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    color: var(--text-main);
+    background: var(--bg-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px max(90px, calc(40px + env(safe-area-inset-bottom)));
+    overflow-x: hidden;
   }
 
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--bg-main), 0 0 0 6px var(--yellow);
+    border-radius: inherit;
+  }
+
+  /* Decorative Background Graphics */
+  .bg-decorations {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+  }
+  .bg-blob {
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.25;
+  }
+  .bg-blob-1 { width: 450px; height: 450px; top: -100px; right: -80px; background: var(--purple); }
+  .bg-blob-2 { width: 350px; height: 350px; bottom: -50px; left: -80px; background: var(--yellow); opacity: 0.15; }
+
+  /* Layout Main Container */
   main {
     width: 100%;
-    max-width: 420px;
+    max-width: 490px;
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
 
-  /* Mono Header Style (Exactement comme : ( SAME SITE - POCKET SIZE ) */
-  .pocket-header-tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-dark);
-    text-align: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 4px;
-  }
-
-  /* Reset Button Pill */
-  .btn-reset-pill {
-    background: var(--dark-surface);
-    color: var(--text-light);
-    border: none;
-    padding: 4px 12px;
-    border-radius: var(--radius-pill);
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform var(--transition-fast);
-  }
-  .btn-reset-pill:active { transform: scale(0.92); }
-
-  /* ---------- CARD 1 : RÉGIME & CONFIGURATION (Jaune) ---------- */
-  .screen-card-yellow {
-    background-color: var(--card-yellow);
-    border: var(--border-stroke);
-    border-radius: var(--radius-screen);
-    padding: 24px 20px;
-    box-shadow: var(--shadow-hard);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .hero-mono {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--text-dark);
-    opacity: 0.8;
-  }
-
-  .hero-title-giant {
-    font-size: 38px;
-    font-weight: 900;
-    line-height: 0.95;
-    letter-spacing: -0.04em;
-    margin: 4px 0 0;
-    color: var(--text-dark);
-  }
-
-  .hero-subtitle {
-    font-size: 12px;
-    font-weight: 700;
-    opacity: 0.8;
-    margin-top: 6px;
-  }
-
-  /* Pocket Control Bar (Inspiré du carrousel noir en bas du tel 1) */
-  .pocket-control-bar {
-    background: var(--dark-surface);
-    border-radius: 20px;
-    padding: 12px;
-    color: var(--text-light);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .control-bar-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--text-light-muted);
-    text-transform: uppercase;
-    text-align: center;
-  }
-
-  .regime-pills-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-
-  .regime-pill-btn {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: var(--text-light);
-    border-radius: var(--radius-pill);
-    padding: 8px 10px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: center;
-    transition: all var(--transition-fast);
-  }
-  .regime-pill-btn small { display: block; font-family: 'Space Mono', monospace; font-size: 9px; opacity: 0.7; }
-  
-  .regime-pill-btn.active {
-    background: var(--card-yellow);
-    color: var(--text-dark);
-    border-color: #000;
-  }
-  .regime-pill-btn.active small { opacity: 0.9; }
-
-  /* Main Action Button (Inspiré du "Let Dot drive ->") */
-  .btn-main-action {
-    background: var(--card-yellow);
-    color: var(--text-dark);
-    border: var(--border-stroke);
-    border-radius: var(--radius-pill);
-    padding: 14px;
-    font-size: 13px;
-    font-weight: 900;
-    cursor: pointer;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 0 #000;
-    transition: all var(--transition-fast);
-    width: 100%;
-    margin-top: 4px;
-  }
-  .btn-main-action:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #000;
-  }
-
-  /* ---------- CARD 2 : EFFECTIFS (Bleu Ciel) ---------- */
-  .screen-card-blue {
-    background-color: var(--card-blue);
-    border: var(--border-stroke);
-    border-radius: var(--radius-screen);
-    padding: 24px 20px;
-    box-shadow: var(--shadow-hard);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .stepper-row {
-    background: #FFFFFF;
-    border: var(--border-stroke);
+  /* Structural Card Component (Style Chunky Retro Pop) */
+  .pop-card {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
     border-radius: var(--radius-card);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .stepper-label {
-    display: flex;
-    flex-direction: column;
-  }
-  .stepper-label span { font-size: 14px; font-weight: 800; }
-  .stepper-label small { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-muted); }
-
-  .stepper-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .step-circle-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: var(--dark-surface);
-    color: var(--text-light);
-    border: none;
-    font-size: 18px;
-    font-weight: 800;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform var(--transition-fast);
-  }
-  .step-circle-btn:active { transform: scale(0.88); }
-
-  .stepper-input {
-    width: 44px;
-    text-align: center;
-    border: none;
-    background: transparent;
-    font-family: 'Space Mono', monospace;
-    font-size: 20px;
-    font-weight: 700;
-    outline: none;
-  }
-
-  /* Mode selector & Toggles */
-  .mini-segmented-control {
-    background: rgba(0,0,0,0.06);
-    border-radius: var(--radius-pill);
-    padding: 4px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px;
-  }
-
-  .segmented-btn {
-    border: none;
-    background: transparent;
-    padding: 8px;
-    border-radius: var(--radius-pill);
-    font-size: 11px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-  }
-  .segmented-btn.active {
-    background: var(--dark-surface);
-    color: var(--text-light);
-  }
-
-  .toggle-box {
-    background: #FFFFFF;
-    border: var(--border-stroke);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-  }
-  .toggle-box span { font-size: 12px; font-weight: 800; }
-  .toggle-box small { display: block; font-family: 'Space Mono', monospace; font-size: 9px; color: var(--text-muted); }
-
-  .switch-dot {
-    width: 38px;
-    height: 22px;
-    background: #DDD;
-    border: 2px solid #000;
-    border-radius: var(--radius-pill);
+    padding: 24px;
     position: relative;
-    transition: background 0.2s;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    opacity: 0;
+    animation: popIn 0.5s var(--ease-out) forwards;
   }
-  .switch-dot::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 14px;
-    height: 14px;
-    background: #000;
-    border-radius: 50%;
-    transition: transform 0.2s;
-  }
-  input:checked + .switch-dot { background: var(--card-yellow); }
-  input:checked + .switch-dot::after { transform: translateX(16px); }
 
-  /* ---------- CARD 3 : RÉSULTAT FLOTTANT "DOT SHOT" (Rose/Pêche) ---------- */
-  .screen-card-pink {
-    background-color: var(--card-pink);
-    border: var(--border-stroke);
-    border-radius: var(--radius-screen);
-    padding: 20px;
-    box-shadow: var(--shadow-hard);
+  main > *:nth-child(1) { animation-delay: 0.05s; }
+  main > *:nth-child(2) { animation-delay: 0.12s; }
+  main > *:nth-child(3) { animation-delay: 0.19s; }
+  main > *:nth-child(4) { animation-delay: 0.26s; }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Header Branding Section */
+  .header-card {
+    background: var(--card-bg);
+    padding: 26px 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    position: relative;
   }
 
-  .screen-top-bar {
+  .header-top {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-  }
-
-  /* Carte Flottante Noire (1:1 Carte DOT SHOT téléphone 3) */
-  .dark-floating-card {
-    background: var(--dark-surface);
-    color: var(--text-light);
-    border-radius: var(--radius-card);
-    padding: 24px 18px;
-    box-shadow: var(--shadow-floating);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     gap: 12px;
   }
 
-  .floating-card-title {
-    font-size: 28px;
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    color: var(--card-pink);
-    line-height: 1;
-    text-transform: uppercase;
-  }
-
-  .floating-card-sub {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--text-light-muted);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    max-width: 220px;
-    line-height: 1.4;
-  }
-
-  .big-number-display {
-    font-family: 'Space Mono', monospace;
-    font-size: 64px;
-    font-weight: 700;
-    color: var(--card-yellow);
-    line-height: 0.9;
-    margin: 6px 0;
-  }
-
-  /* Visual Pool Track */
-  .pool-track {
-    display: flex;
-    gap: 4px;
-    width: 100%;
-    margin: 4px 0;
-  }
-  .segment {
-    flex: 1;
-    height: 12px;
-    border-radius: 4px;
-    background: rgba(255,255,255,0.15);
-    overflow: hidden;
-    display: flex;
-  }
-  .segment .fillA { background: var(--card-yellow); height: 100%; }
-  .segment .fillB { background: var(--card-blue); height: 100%; }
-
-  .pill-start-btn {
-    background: #FFFFFF;
-    color: var(--dark-surface);
-    border: none;
-    padding: 10px 24px;
-    border-radius: var(--radius-pill);
-    font-family: 'Plus Jakarta Sans', sans-serif;
+  .sticker-badge {
+    background: var(--cream);
+    color: var(--text-dark);
     font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: transform var(--transition-fast);
-  }
-  .pill-start-btn:active { transform: scale(0.94); }
-
-  /* Qualifications Breakdown (En bas de la card 3) */
-  .team-breakdown-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-  }
-  .team-box {
-    background: #FFFFFF;
-    border: var(--border-stroke);
-    border-radius: var(--radius-sm);
-    padding: 8px 4px;
-    text-align: center;
-  }
-  .team-box-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 18px;
-    font-weight: 700;
-  }
-  .team-box-lbl {
-    font-size: 9px;
     font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(255, 249, 230, 0.15);
+  }
+  .sticker-badge::before {
+    content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--pink);
+  }
+
+  .btn-reset {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  .btn-reset:hover {
+    background: var(--pink);
+    color: #fff;
+    border-color: var(--pink);
+  }
+
+  .brand-title-wrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 0;
+    text-transform: lowercase;
+    color: var(--text-main);
+  }
+  h1 span {
+    color: var(--purple-bright);
     display: block;
   }
 
-  /* Bottom Sticky Bar style (Back to site button) */
-  .btn-bottom-black {
-    background: var(--dark-surface);
-    color: var(--text-light);
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 12px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
+  /* Vector Flower Graphic Motif (as in image) */
+  .flower-motif {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    fill: var(--pink);
+    animation: rotateSlow 25s linear infinite;
+  }
+  @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Section Titles */
+  .section-head {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
     gap: 8px;
+  }
+  .section-num {
+    background: var(--yellow);
+    color: var(--text-dark);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .info-pop {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
+    color: var(--text-muted); font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    cursor: help; position: relative;
+  }
+  .info-pop:hover::after, .info-pop:focus::after {
+    content: attr(data-tooltip);
+    position: absolute; bottom: 130%; right: 0; width: 230px;
+    background: var(--card-bg-elevated); border: 2px solid var(--purple);
+    color: #fff; padding: 10px 14px; border-radius: var(--radius-sm);
+    font-size: 11.5px; font-weight: 600; line-height: 1.4;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.8); z-index: 100; pointer-events: none;
+    text-align: left; text-transform: none; letter-spacing: normal;
+  }
+
+  /* Regime Grid Options */
+  .regime-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .regime-card {
+    background: var(--card-bg-elevated);
+    border: 2px solid var(--card-border);
+    border-radius: var(--radius-box);
+    padding: 14px 12px;
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: var(--text-muted);
+    position: relative;
+  }
+  .regime-card .r-title {
+    display: block; font-weight: 800; font-size: 14px; color: var(--text-main);
+  }
+  .regime-card .r-sub {
+    display: block; font-size: 11px; font-weight: 600; margin-top: 2px; opacity: 0.8;
+  }
+
+  .regime-card:hover {
+    border-color: var(--purple-bright);
+    transform: translateY(-2px);
+  }
+  .regime-card.active {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: #fff;
+    box-shadow: 0 8px 24px var(--purple-glow);
+  }
+  .regime-card.active .r-title { color: #fff; }
+  .regime-card.active .r-sub { color: var(--yellow); }
+
+  /* PEDT Banner */
+  .pedt-note {
+    font-size: 12px;
+    line-height: 1.5;
+    background: rgba(139, 92, 246, 0.1);
+    border: 1.5px dashed var(--purple-bright);
+    border-radius: var(--radius-box);
+    padding: 12px 14px;
+    margin-top: 12px;
+    margin-bottom: 20px;
+    color: #E2D9F3;
+  }
+  .pedt-note strong { color: var(--yellow); font-weight: 800; }
+
+  /* Numeric Inputs & Steppers */
+  .input-group {
+    display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;
+  }
+  .field-label {
+    font-size: 13.5px; font-weight: 700; color: var(--text-main); display: block;
+  }
+
+  .stepper-box {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--card-bg-elevated);
+    border: 2px solid var(--card-border);
+    border-radius: var(--radius-pill);
+    padding: 6px;
+    transition: border-color var(--transition-fast);
+  }
+  .stepper-box:focus-within {
+    border-color: var(--yellow);
+    box-shadow: 0 0 16px var(--yellow-glow);
+  }
+
+  .stepper-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: var(--card-bg);
+    color: var(--text-main);
+    font-size: 22px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--transition-fast);
+  }
+  .stepper-btn:hover {
+    background: var(--yellow); color: var(--text-dark);
+  }
+  .stepper-btn:active { transform: scale(0.88); }
+
+  .stepper-box input {
+    flex: 1; border: none; background: transparent;
+    color: var(--text-main); font-family: 'Syne', sans-serif;
+    font-size: 24px; font-weight: 800; text-align: center;
+    outline: none; font-variant-numeric: tabular-nums;
+  }
+  .stepper-box input::-webkit-outer-spin-button,
+  .stepper-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .total-kids-pill {
+    background: var(--card-bg-elevated);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-pill);
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .total-kids-pill strong {
+    color: var(--yellow); font-weight: 800; font-size: 1.1em;
+  }
+
+  .alert-box {
+    display: none; align-items: center; gap: 8px;
+    background: rgba(255, 82, 162, 0.12);
+    border: 1.5px solid var(--pink);
+    border-radius: var(--radius-box);
+    padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--pink);
+    margin-top: 10px;
+  }
+  .alert-box.visible { display: flex; }
+
+  /* Calculation Mode Selector */
+  .mutual-selector {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    background: var(--card-bg-elevated); padding: 5px;
+    border-radius: var(--radius-pill); border: 1px solid var(--card-border);
+    margin-top: 6px;
+  }
+  .mutual-btn {
+    background: transparent; border: none;
+    border-radius: var(--radius-pill); padding: 10px 12px;
+    color: var(--text-muted); cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 12px; font-weight: 800; text-align: center;
+  }
+  .mutual-btn.active {
+    background: var(--yellow);
+    color: var(--text-dark);
+    box-shadow: 0 4px 14px var(--yellow-glow);
+  }
+
+  /* Retro Toggle Switch */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    cursor: pointer; padding-top: 14px; margin-top: 14px;
+    border-top: 1px solid var(--card-border);
+  }
+  .toggle-label { font-size: 13px; font-weight: 700; color: var(--text-main); }
+  .toggle-label small { display: block; font-weight: 500; color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+  .toggle-row input { display: none; }
+
+  .switch-track {
+    width: 52px; height: 30px; border-radius: var(--radius-pill);
+    background: var(--card-bg-elevated); border: 2px solid var(--card-border);
+    position: relative; flex-shrink: 0; transition: background 0.3s ease;
+  }
+  .switch-track::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+    border-radius: 50%; background: var(--text-muted);
+    transition: transform 0.3s var(--ease-spring), background 0.3s ease;
+  }
+  .toggle-row input:checked + .switch-track {
+    background: var(--purple); border-color: var(--purple);
+  }
+  .toggle-row input:checked + .switch-track::after {
+    transform: translateX(22px); background: var(--yellow);
+  }
+  .toggle-row.disabled { opacity: 0.4; pointer-events: none; }
+
+  /* Visual Pool Gauge Section */
+  .result-card {
+    background: linear-gradient(145deg, #181128, #110D1F);
+    border: 2px solid var(--purple);
+  }
+
+  .pool-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+  }
+  .pool-badge {
+    background: var(--yellow); color: var(--text-dark);
+    font-size: 11px; font-weight: 800; padding: 4px 12px;
+    border-radius: var(--radius-pill); opacity: 0; transform: scale(0.85);
+    transition: all 0.3s var(--ease-spring);
+  }
+  .pool-badge.visible { opacity: 1; transform: scale(1); }
+
+  .pool-track { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* Pill Segments inspired by the graphics in the image */
+  .segment {
+    flex: 1; min-width: 48px; height: 42px; border-radius: var(--radius-pill);
+    background: rgba(0,0,0,0.4); border: 2px solid var(--card-border);
+    overflow: hidden; position: relative; display: flex;
+    transition: transform 0.3s var(--ease-out), border-color 0.3s ease;
+  }
+  .segment.new-seg { animation: segPop 0.35s var(--ease-spring) forwards; }
+  @keyframes segPop {
+    from { opacity: 0; transform: scale(0.8) translateY(6px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .segment .fillA, .segment .fillB {
+    height: 100%; width: 0%; transition: width 0.4s var(--ease-out); position: relative;
+  }
+  .fillA { background: var(--yellow); }
+  .fillB { background: var(--purple-bright); }
+
+  .gauge-label {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; color: #000; font-variant-numeric: tabular-nums; z-index: 2;
+  }
+
+  .segment.ghost { opacity: 0.3; width: 100%; }
+  .segment.ghost::after {
+    content: "–"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); font-size: 18px;
+  }
+
+  .pool-split-container { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+  .pool-subgroup { display: flex; flex-direction: column; gap: 6px; }
+  .subgroup-label { font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+  .subgroup-label.lbl-a { color: var(--yellow); }
+  .subgroup-label.lbl-b { color: var(--purple-bright); }
+
+  .pool-legend { display: flex; gap: 16px; margin-top: 14px; }
+  .pool-legend span { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: var(--text-muted); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .dot-a { background: var(--yellow); }
+  .dot-b { background: var(--purple-bright); }
+
+  /* Giant Hero Result Display */
+  .hero-result-wrap {
+    display: flex; align-items: center; gap: 16px; margin-top: 20px;
+  }
+  .big-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--yellow);
+    text-shadow: 0 0 30px var(--yellow-glow);
+    font-variant-numeric: tabular-nums;
+  }
+  .big-label {
+    font-size: 15px; font-weight: 800; line-height: 1.25; color: var(--text-main); max-width: 200px;
+  }
+
+  @keyframes numPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  .num-pulse { animation: numPulse 0.35s var(--ease-spring); }
+
+  /* Qualifications Team Breakdown Grid */
+  .quali-title {
+    font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 12px;
+  }
+  .q-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .q-card {
+    background: var(--card-bg-elevated); border: 2px solid var(--card-border);
+    border-radius: var(--radius-box); padding: 14px 8px; text-align: center;
     transition: transform var(--transition-fast);
   }
-  .btn-bottom-black:active { transform: scale(0.96); }
+  .q-card:hover { transform: translateY(-3px); }
+  .q-num {
+    font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; display: block;
+  }
+  .q-label { display: block; margin-top: 4px; font-size: 11px; font-weight: 700; color: var(--text-muted); line-height: 1.3; }
+  .q-label small { font-size: 9.5px; opacity: 0.75; display: block; }
 
-  /* Toast Notification */
-  .toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--dark-surface);
-    color: var(--card-yellow);
-    border: 2px solid #000;
-    padding: 8px 18px;
+  .q-min .q-num { color: #52E596; }
+  .q-max .q-num { color: var(--pink); }
+  .q-flex .q-num { color: var(--yellow); }
+
+  /* Main Action Button (CTA) */
+  .btn-cta {
+    width: 100%; margin-top: 20px; padding: 16px;
+    border-radius: var(--radius-pill); border: none;
+    background: var(--yellow); color: var(--text-dark);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; font-weight: 800; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all var(--transition-fast);
+    box-shadow: 0 8px 24px var(--yellow-glow);
+  }
+  .btn-cta:hover {
+    background: var(--yellow-dark); transform: translateY(-2px);
+    box-shadow: 0 12px 28px var(--yellow-glow);
+  }
+  .btn-cta:active { transform: scale(0.98); }
+
+  .btn-cta.copied {
+    background: #52E596; color: var(--text-dark); box-shadow: none;
+  }
+
+  /* Sticky Floating Mini Bar */
+  .sticky-bar {
+    position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    width: calc(100% - 32px); max-width: 450px;
+    background: var(--card-bg-elevated);
+    border: 2px solid var(--purple);
     border-radius: var(--radius-pill);
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 999;
+    padding: 10px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.8); z-index: 100; cursor: pointer;
+    opacity: 0; transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
+  }
+  .sticky-bar.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .mini-count { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: var(--yellow); }
+  .mini-txt { font-size: 12px; font-weight: 800; color: #fff; margin-left: 8px; }
+  .mini-pill {
+    background: var(--purple); color: #fff; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800;
+  }
+
+  /* Toast Notification Popup */
+  .toast {
+    position: fixed; bottom: max(24px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--cream); color: var(--text-dark);
+    padding: 12px 24px; border-radius: var(--radius-pill);
+    font-size: 13px; font-weight: 800;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.6); opacity: 0;
+    transition: all 0.35s var(--ease-spring); z-index: 9999; pointer-events: none;
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  footer.legal-note {
+    font-size: 11px; font-weight: 600; line-height: 1.5; color: var(--text-muted);
+    padding: 0 8px; text-align: center; margin-top: 4px;
+  }
+
+  @media (max-width: 360px) {
+    .regime-grid, .mutual-selector { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    body { background: #fff !important; color: #000 !important; padding: 0 !important; }
+    .bg-decorations, .btn-reset, .btn-cta, .stepper-btn, .toast, .sticky-bar { display: none !important; }
+    .pop-card { background: #fff !important; border: 1px solid #000 !important; box-shadow: none !important; color: #000 !important; }
+    h1, .big-num, .q-num, label, span { color: #000 !important; }
+  }
 </style>
 </head>
 <body>
 
+  <!-- Retro Glow Decorative Background -->
+  <div class="bg-decorations">
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+  </div>
+
   <main>
-    <!-- Top Bar style ( SAME SITE - POCKET SIZE ) -->
-    <div class="pocket-header-tag">
-      <span>( ALSH — POCKET SIZE )</span>
-      <button type="button" class="btn-reset-pill" id="resetBtn">↺ RESET</button>
-    </div>
 
-    <!-- ================= CARD 1 : RÉGIME (JAUNE) ================= -->
-    <section class="screen-card-yellow">
-      <div>
-        <span class="hero-mono" id="regimeBadge">( CHOOSE YOUR REGIME )</span>
-        <h1 class="hero-title-giant">Norme ALSH.</h1>
-        <p class="hero-subtitle">Sélectionne la réglementation de ton accueil :</p>
-      </div>
-
-      <div class="pocket-control-bar">
-        <span class="control-bar-title">Régime d'encadrement</span>
-        <div class="regime-pills-grid" role="radiogroup">
-          <button type="button" class="regime-pill-btn active" data-regime="hors_p5">
-            Hors PEDT
-            <small>> 5h / jour</small>
-          </button>
-          <button type="button" class="regime-pill-btn" data-regime="hors_m5">
-            Hors PEDT
-            <small>≤ 5h / jour</small>
-          </button>
-          <button type="button" class="regime-pill-btn" data-regime="avec_p5">
-            Avec PEDT
-            <small>> 5h / jour</small>
-          </button>
-          <button type="button" class="regime-pill-btn" data-regime="avec_m5">
-            Avec PEDT
-            <small>≤ 5h / jour</small>
-          </button>
-        </div>
-      </div>
-
-      <button type="button" class="btn-main-action" id="scrollToKidsBtn">
-        Ajuster les enfants →
-      </button>
-    </section>
-
-    <!-- ================= CARD 2 : EFFECTIFS (BLEU CIEL) ================= -->
-    <section class="screen-card-blue" id="kidsSection">
-      <div>
-        <span class="hero-mono">( ENTER NUMBERS )</span>
-        <h2 style="font-size:24px; font-weight:900; margin:4px 0 0; letter-spacing:-0.03em;">Les Enfants.</h2>
-      </div>
-
-      <!-- Stepper - 6 ans -->
-      <div class="stepper-row">
-        <div class="stepper-label">
-          <span>Moins de 6 ans</span>
-          <small id="ratioLabel36">Ratio : 1 / 8</small>
-        </div>
-        <div class="stepper-controls">
-          <button class="step-circle-btn" data-target="n36" data-delta="-1">–</button>
-          <input id="n36" class="stepper-input" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="step-circle-btn" data-target="n36" data-delta="1">+</button>
-        </div>
-      </div>
-
-      <!-- Stepper + 6 ans -->
-      <div class="stepper-row">
-        <div class="stepper-label">
-          <span>Plus de 6 ans</span>
-          <small id="ratioLabel612">Ratio : 1 / 12</small>
-        </div>
-        <div class="stepper-controls">
-          <button class="step-circle-btn" data-target="n612" data-delta="-1">–</button>
-          <input id="n612" class="stepper-input" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-          <button class="step-circle-btn" data-target="n612" data-delta="1">+</button>
-        </div>
-      </div>
-
-      <!-- Mutualisation toggle -->
-      <div class="mini-segmented-control">
-        <button type="button" class="segmented-btn active" data-mode="avec">Mutualisé</button>
-        <button type="button" class="segmented-btn" data-mode="sans">Séparé</button>
-      </div>
-
-      <!-- Director toggle -->
-      <label class="toggle-box" id="dirRow">
-        <div>
-          <span>Directeur dans l'effectif</span>
-          <small>Uniquement si ≤ 50 enfants</small>
-        </div>
-        <input type="checkbox" id="dirToggle" style="display:none;">
-        <span class="switch-dot"></span>
-      </label>
-    </section>
-
-    <!-- ================= CARD 3 : RÉSULTATS FLOTTANT (ROSE) ================= -->
-    <section class="screen-card-pink">
-      <div class="screen-top-bar">
-        <span>TOTAL ENFANTS</span>
-        <span id="totalKidsBadge" style="font-size:14px; font-weight:900;">0</span>
-      </div>
-
-      <!-- Dark Floating Card Style "DOT SHOT" -->
-      <div class="dark-floating-card">
-        <span class="floating-card-title">Besoin Anim'</span>
-        <span class="floating-card-sub" id="calculationSubText">RÈGLE SDJES APPLIQUÉE</span>
-
-        <div class="big-number-display" id="totalAnim">0</div>
-
-        <!-- Jauge visuelle -->
-        <div class="pool-track" id="poolTrack">
-          <div class="segment"></div>
-        </div>
-
-        <button type="button" class="pill-start-btn" id="copyBtn">
-          Copier le Bilan
+    <!-- Header Section -->
+    <header class="pop-card header-card">
+      <div class="header-top">
+        <div class="sticker-badge" id="eyebrowBadge">HORS PEDT · > 5H / JOUR</div>
+        <button type="button" class="btn-reset" id="resetBtn" title="Réinitialiser les effectifs à zéro">
+          ↺ RAZ
         </button>
       </div>
 
-      <!-- Composition d'équipe -->
-      <span class="hero-mono" style="text-align:center;">( DIPLÔMES REQUIS )</span>
-      <div class="team-breakdown-grid">
-        <div class="team-box">
-          <span class="team-box-num" id="qDiplomes">0</span>
-          <span class="team-box-lbl">Diplômés<br><small>(50% min)</small></span>
+      <div class="brand-title-wrap">
+        <h1>taux <span>d'encadrement</span></h1>
+        
+        <!-- Vector Flower Accent SVG -->
+        <svg class="flower-motif" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 34C53 20 67 20 67 34C81 34 81 48 67 48C81 48 81 62 67 62C67 76 53 76 50 62C47 76 33 76 33 62C19 62 19 48 33 48C19 48 19 34 33 34C33 20 47 20 50 34Z" />
+        </svg>
+      </div>
+    </header>
+
+    <!-- Configuration Section -->
+    <section class="pop-card">
+      <div class="section-head">
+        <span class="section-title"><span class="section-num">1</span> Régime d'accueil</span>
+        <span class="info-pop" tabindex="0" role="button" aria-label="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT." data-tooltip="Modifie les ratios légaux d'encadrement selon la présence d'une convention PEDT sur le territoire.">ⓘ</span>
+      </div>
+
+      <div class="regime-grid" role="radiogroup" aria-label="Régime d'accueil ALSH">
+        <button type="button" class="regime-card active" role="radio" aria-checked="true" data-regime="hors_p5">
+          <span class="r-title">Hors PEDT</span>
+          <span class="r-sub">+5h par jour</span>
+        </button>
+        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="hors_m5">
+          <span class="r-title">Hors PEDT</span>
+          <span class="r-sub">≤ 5h par jour</span>
+        </button>
+        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_p5">
+          <span class="r-title">Avec PEDT</span>
+          <span class="r-sub">+5h par jour</span>
+        </button>
+        <button type="button" class="regime-card" role="radio" aria-checked="false" data-regime="avec_m5">
+          <span class="r-title">Avec PEDT</span>
+          <span class="r-sub">≤ 5h par jour</span>
+        </button>
+      </div>
+
+      <!-- Explanatory PEDT Note -->
+      <div class="pedt-note">
+        <strong>💡 C'est quoi le PEDT ?</strong> Le <em>Projet Éducatif de Territoire</em> réunit la commune et les acteurs locaux (écoles, CAF). Il adapte les ratios réglementaires d'encadrement.
+      </div>
+
+      <div class="section-head">
+        <span class="section-title"><span class="section-num">2</span> Effectifs inscrits</span>
+      </div>
+
+      <div class="input-group">
+        <div>
+          <label class="field-label" for="n36">Moins de 6 ans (-6 ans)</label>
+          <div class="stepper-box" style="margin-top: 6px;">
+            <button class="stepper-btn" data-target="n36" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
+            <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
+            <button class="stepper-btn" data-target="n36" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
+          </div>
         </div>
-        <div class="team-box">
-          <span class="team-box-num" id="qStagiaires">0</span>
-          <span class="team-box-lbl">Stagiaires<br><small>(BAFA)</small></span>
-        </div>
-        <div class="team-box">
-          <span class="team-box-num" id="qNonDiplomes">0</span>
-          <span class="team-box-lbl">Non diplô.<br><small>(20% max)</small></span>
+
+        <div>
+          <label class="field-label" for="n612">6 ans et plus (+6 ans)</label>
+          <div class="stepper-box" style="margin-top: 6px;">
+            <button class="stepper-btn" data-target="n612" data-delta="-1" aria-label="Retirer 1 enfant">–</button>
+            <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
+            <button class="stepper-btn" data-target="n612" data-delta="1" aria-label="Ajouter 1 enfant">+</button>
+          </div>
         </div>
       </div>
 
-      <button type="button" class="btn-bottom-black" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        ← Retour en haut
+      <div class="total-kids-pill" id="totalKidsIndicator" aria-live="polite">
+        Effectif total : <strong>0 enfant</strong>
+      </div>
+
+      <div class="alert-box" id="safetyAlert" role="alert" aria-live="assertive">
+        <span>⚠️ <strong>Sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
+      </div>
+
+      <!-- Calculation Mode -->
+      <div class="section-head" style="margin-top: 20px;">
+        <span class="section-title"><span class="section-num">3</span> Mutualisation</span>
+        <span class="info-pop" tabindex="0" role="button" aria-label="Permet de combiner les restes de groupes (-6ans et +6ans) pour optimiser l'effectif d'encadrement." data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour réduire l'effectif requis.">ⓘ</span>
+      </div>
+
+      <div class="mutual-selector" role="radiogroup" aria-label="Mode de mutualisation">
+        <button type="button" class="mutual-btn active" role="radio" aria-checked="true" data-mode="avec">
+          Avec mutualisation
+        </button>
+        <button type="button" class="mutual-btn" role="radio" aria-checked="false" data-mode="sans">
+          Calcul séparé
+        </button>
+      </div>
+
+      <label class="toggle-row" id="dirRow" for="dirToggle">
+        <span class="toggle-label">
+          Directeur inclus dans l'encadrement
+          <small>Possible si effectif total ≤ 50 enfants</small>
+        </span>
+        <input type="checkbox" id="dirToggle">
+        <span class="switch-track"></span>
+      </label>
+    </section>
+
+    <!-- Main Results Hero Card -->
+    <section class="pop-card result-card" id="resultCard" aria-live="polite">
+      <div class="pool-header">
+        <span class="section-title" style="color: #fff;">Postes requis</span>
+        <span class="pool-badge" id="mutualBadge">⚡ MUTUALISÉ</span>
+      </div>
+
+      <!-- Pill Visual Track -->
+      <div class="pool-track" id="poolTrack"></div>
+
+      <div class="pool-legend">
+        <span><i class="dot dot-a"></i>-6 ans</span>
+        <span><i class="dot dot-b"></i>+6 ans</span>
+      </div>
+
+      <div class="hero-result-wrap">
+        <span class="big-num" id="totalAnim">0</span>
+        <span class="big-label" id="totalAnimLabel">Anim' sur le terrain</span>
+      </div>
+    </section>
+
+    <!-- Team Composition & Share Section -->
+    <section class="pop-card">
+      <div class="quali-title">Composition réglementaire de l'équipe</div>
+      
+      <div class="q-grid">
+        <div class="q-card q-min">
+          <span class="q-num" id="qDiplomes">0</span>
+          <span class="q-label">Diplômé·es<small>Min. 50%</small></span>
+        </div>
+        <div class="q-card q-max">
+          <span class="q-num" id="qNonDiplomes">0</span>
+          <span class="q-label">Non-diplômé·es<small>Max. 20%</small></span>
+        </div>
+        <div class="q-card q-flex">
+          <span class="q-num" id="qStagiaires">0</span>
+          <span class="q-label">Stagiaires<small>BAFA</small></span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-cta" id="copyBtn">
+        <span id="copyBtnIcon">📋</span> <span id="copyBtnText">Copier le bilan complet</span>
       </button>
     </section>
+
+    <footer class="legal-note" id="footerNote">
+      Outil indicatif SDJES — Conforme à la législation ALSH en vigueur.
+    </footer>
+
   </main>
 
-  <div class="toast" id="toast">Copie effectuée !</div>
+  <!-- Sticky Mini Bar -->
+  <div class="sticky-bar" id="stickyMiniBar">
+    <div style="display: flex; align-items: center;">
+      <span class="mini-count" id="miniAnimCount">0</span>
+      <span class="mini-txt" id="miniAnimLabel">Anim' requis</span>
+    </div>
+    <span class="mini-pill">Détails ➔</span>
+  </div>
+
+  <!-- Toast Popup -->
+  <div class="toast" id="toast" role="status">⚡ Bilan copié dans le presse-papier !</div>
 
 <script>
-  const STORAGE_KEY = 'alsh_pocket_state';
+  const STORAGE_KEY = 'alsh_calculator_state';
 
   const n36input = document.getElementById('n36');
   const n612input = document.getElementById('n612');
-  const totalKidsBadge = document.getElementById('totalKidsBadge');
+  const totalKidsIndicator = document.getElementById('totalKidsIndicator');
+  const safetyAlert = document.getElementById('safetyAlert');
   const dirToggle = document.getElementById('dirToggle');
   const dirRow = document.getElementById('dirRow');
-  const regimeBadge = document.getElementById('regimeBadge');
-  const ratioLabel36 = document.getElementById('ratioLabel36');
-  const ratioLabel612 = document.getElementById('ratioLabel612');
+  const eyebrowBadge = document.getElementById('eyebrowBadge');
+  const footerNote = document.getElementById('footerNote');
+  const mutualBadge = document.getElementById('mutualBadge');
   const resetBtn = document.getElementById('resetBtn');
   const copyBtn = document.getElementById('copyBtn');
+  const copyBtnIcon = document.getElementById('copyBtnIcon');
+  const copyBtnText = document.getElementById('copyBtnText');
   const toast = document.getElementById('toast');
+
+  const resultCard = document.getElementById('resultCard');
+  const stickyMiniBar = document.getElementById('stickyMiniBar');
+  const miniAnimCount = document.getElementById('miniAnimCount');
+  const miniAnimLabel = document.getElementById('miniAnimLabel');
 
   const poolTrack = document.getElementById('poolTrack');
   const totalAnimEl = document.getElementById('totalAnim');
-  const calculationSubText = document.getElementById('calculationSubText');
+  const totalAnimLabelEl = document.getElementById('totalAnimLabel');
 
   const qDiplomes = document.getElementById('qDiplomes');
   const qNonDiplomes = document.getElementById('qNonDiplomes');
@@ -660,53 +804,119 @@
   let activeMutualMode = 'avec';
 
   const REGIMES = {
-    hors_p5: { ratio36: 8,  ratio612: 12, label: "( HORS PEDT · > 5H )" },
-    hors_m5: { ratio36: 10, ratio612: 14, label: "( HORS PEDT · ≤ 5H )" },
-    avec_p5: { ratio36: 10, ratio612: 14, label: "( AVEC PEDT · > 5H )" },
-    avec_m5: { ratio36: 14, ratio612: 18, label: "( AVEC PEDT · ≤ 5H )" }
+    hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
+    hors_m5: { ratio36: 10, ratio612: 14, tag: "Hors PEDT · ≤ 5h / jour" },
+    avec_p5: { ratio36: 10, ratio612: 14, tag: "Avec PEDT · > 5h / jour" },
+    avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
   };
 
-  function haptic() {
-    if ('vibrate' in navigator) try { navigator.vibrate(6); } catch(e){}
+  /* ----- State Persistence ----- */
+  function saveState() {
+    const state = {
+      regime: activeRegimeKey,
+      mutualMode: activeMutualMode,
+      n36: n36input.value,
+      n612: n612input.value,
+      dir: dirToggle.checked
+    };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  }
+
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const state = JSON.parse(saved);
+
+      if (state.regime && REGIMES[state.regime]) {
+        activeRegimeKey = state.regime;
+        document.querySelectorAll('.regime-card').forEach(b => {
+          const isActive = b.dataset.regime === activeRegimeKey;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+      }
+      if (state.mutualMode) {
+        activeMutualMode = state.mutualMode;
+        document.querySelectorAll('.mutual-btn').forEach(b => {
+          const isActive = b.dataset.mode === activeMutualMode;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+      }
+      if (state.n36 !== undefined) n36input.value = clampInt(state.n36);
+      if (state.n612 !== undefined) n612input.value = clampInt(state.n612);
+      if (state.dir !== undefined) dirToggle.checked = Boolean(state.dir);
+    } catch(e) {}
+  }
+
+  /* Intersection Observer for Sticky Mini Bar */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) {
+        stickyMiniBar.classList.add('visible');
+      } else {
+        stickyMiniBar.classList.remove('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  observer.observe(resultCard);
+
+  stickyMiniBar.addEventListener('click', () => {
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  function hapticFeedback() {
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate(8); } catch(e){}
+    }
   }
 
   function showToast(msg) {
     toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 2200);
+    setTimeout(() => { toast.classList.remove('show'); }, 2600);
   }
 
-  function clampInt(v){
-    v = parseInt(v, 10);
-    return isNaN(v) || v < 0 ? 0 : v;
-  }
-
-  // Regime Selection
-  document.querySelectorAll('.regime-pill-btn').forEach(btn => {
+  /* Listeners for Regime & Mutualization Mode */
+  document.querySelectorAll('.regime-card').forEach(btn => {
     btn.addEventListener('click', () => {
-      haptic();
-      document.querySelectorAll('.regime-pill-btn').forEach(c => c.classList.remove('active'));
+      hapticFeedback();
+      document.querySelectorAll('.regime-card').forEach(c => {
+        c.classList.remove('active');
+        c.setAttribute('aria-checked', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-checked', 'true');
       activeRegimeKey = btn.dataset.regime;
       recalc();
     });
   });
 
-  // Mode Selection (Mutualisé / Séparé)
-  document.querySelectorAll('.segmented-btn').forEach(btn => {
+  document.querySelectorAll('.mutual-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      haptic();
-      document.querySelectorAll('.segmented-btn').forEach(b => b.classList.remove('active'));
+      hapticFeedback();
+      document.querySelectorAll('.mutual-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-checked', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-checked', 'true');
       activeMutualMode = btn.dataset.mode;
       recalc();
     });
   });
 
-  // Steppers
-  document.querySelectorAll('.step-circle-btn').forEach(btn => {
+  function clampInt(v){
+    v = parseInt(v, 10);
+    if (isNaN(v) || v < 0) return 0;
+    return v;
+  }
+
+  document.querySelectorAll('.stepper-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      haptic();
+      hapticFeedback();
       const target = document.getElementById(btn.dataset.target);
       const delta = parseInt(btn.dataset.delta, 10);
       target.value = clampInt(clampInt(target.value) + delta);
@@ -719,117 +929,305 @@
     inp.addEventListener('blur', () => { inp.value = clampInt(inp.value); recalc(); });
   });
 
-  dirToggle.addEventListener('change', () => { haptic(); recalc(); });
-
-  document.getElementById('scrollToKidsBtn').addEventListener('click', () => {
-    document.getElementById('kidsSection').scrollIntoView({ behavior: 'smooth' });
-  });
+  dirToggle.addEventListener('change', () => { hapticFeedback(); recalc(); });
 
   resetBtn.addEventListener('click', () => {
-    haptic();
+    hapticFeedback();
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
     n36input.value = 0;
     n612input.value = 0;
     dirToggle.checked = false;
     recalc();
-    showToast("↺ Réinitialisé");
+    showToast("🔄 Effectifs réinitialisés");
   });
 
-  function renderPool(total) {
-    poolTrack.innerHTML = '';
-    if (total === 0) {
-      poolTrack.innerHTML = '<div class="segment"></div>';
+  /* Visual Pool Segment Rendering */
+  function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
+    const currentModeKey = isSplitMode ? 'split' : 'normal';
+    if (poolTrack.dataset.mode !== currentModeKey) {
+      poolTrack.innerHTML = '';
+      poolTrack.dataset.mode = currentModeKey;
+    }
+
+    if (totalNeeded === 0){
+      poolTrack.innerHTML = '<div class="segment ghost"></div>';
       return;
     }
-    for (let i = 0; i < total; i++) {
-      const seg = document.createElement('div');
-      seg.className = 'segment';
-      seg.innerHTML = `<div class="fillA" style="width:100%"></div>`;
-      poolTrack.appendChild(seg);
+
+    const ghost = poolTrack.querySelector('.ghost');
+    if (ghost) ghost.remove();
+
+    if (isSplitMode) {
+      let container = poolTrack.querySelector('.pool-split-container');
+      if (!container) {
+        poolTrack.innerHTML = '';
+        container = document.createElement('div');
+        container.className = 'pool-split-container';
+        poolTrack.appendChild(container);
+      }
+
+      const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
+      const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
+
+      function syncTrack(groupId, labelText, count, maxRatio, currentKids, fillClass, labelColorClass) {
+        let group = container.querySelector('.' + groupId);
+        if (count === 0) {
+          if (group) group.remove();
+          return;
+        }
+        if (!group) {
+          group = document.createElement('div');
+          group.className = `pool-subgroup ${groupId}`;
+          group.innerHTML = `<span class="subgroup-label ${labelColorClass}"></span><div class="pool-track"></div>`;
+          container.appendChild(group);
+        }
+
+        group.querySelector('.subgroup-label').textContent = labelText;
+        const track = group.querySelector('.pool-track');
+        let segs = Array.from(track.querySelectorAll('.segment'));
+
+        while (segs.length < count) {
+          const seg = document.createElement('div');
+          seg.className = 'segment new-seg';
+          seg.innerHTML = `<div class="${fillClass}"></div><span class="gauge-label"></span>`;
+          track.appendChild(seg);
+          segs.push(seg);
+        }
+        while (segs.length > count) {
+          const segToRemove = segs.pop();
+          segToRemove.remove();
+        }
+
+        segs.forEach((seg, i) => {
+          const kidsForAnim = Math.min(maxRatio, currentKids - (i * maxRatio));
+          const fillPct = (kidsForAnim / maxRatio) * 100;
+          const fillEl = seg.querySelector('.' + fillClass);
+          const labelEl = seg.querySelector('.gauge-label');
+
+          fillEl.style.width = fillPct + '%';
+          labelEl.textContent = `${kidsForAnim}/${maxRatio}`;
+        });
+      }
+
+      syncTrack('group-a', `- de 6 ans (${count36} Anim' / ${n36} enf.)`, count36, r1, n36, 'fillA', 'lbl-a');
+      syncTrack('group-b', `+ de 6 ans (${count612} Anim' / ${n612} enf.)`, count612, r2, n612, 'fillB', 'lbl-b');
+
+    } else {
+      let existingSegs = Array.from(poolTrack.querySelectorAll(':scope > .segment'));
+
+      while (existingSegs.length < totalNeeded) {
+        const seg = document.createElement('div');
+        seg.className = 'segment new-seg';
+        const fillA = document.createElement('div');
+        fillA.className = 'fillA';
+        const fillB = document.createElement('div');
+        fillB.className = 'fillB';
+        seg.appendChild(fillA);
+        seg.appendChild(fillB);
+        poolTrack.appendChild(seg);
+        existingSegs.push(seg);
+      }
+
+      while (existingSegs.length > totalNeeded) {
+        const segToRemove = existingSegs.pop();
+        segToRemove.remove();
+      }
+
+      const total36Anims = n36 / r1;
+      const total612Anims = n612 / r2;
+
+      existingSegs.forEach((seg, i) => {
+        let fillAPct = 0;
+        let fillBPct = 0;
+
+        if (total36Anims + total612Anims > 0) {
+          const segStart = i;
+          const segEnd = i + 1;
+          const aEnd = Math.min(segEnd, total36Anims);
+          const aStart = Math.max(segStart, 0);
+          fillAPct = Math.max(0, aEnd - aStart) * 100;
+
+          const bStart = Math.max(segStart, total36Anims);
+          const bEnd = Math.min(segEnd, total36Anims + total612Anims);
+          fillBPct = Math.max(0, bEnd - bStart) * 100;
+        }
+
+        const fillA = seg.querySelector('.fillA');
+        const fillB = seg.querySelector('.fillB');
+
+        fillA.style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
+        fillB.style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
+      });
     }
   }
 
+  function animateNumber(el, to){
+    const from = parseInt(el.textContent, 10) || 0;
+    if (from === to){ return; }
+    const duration = 280;
+    const start = performance.now();
+    const ease = t => 1 - Math.pow(1 - t, 3);
+
+    function step(now){
+      const t = Math.min(1, (now - start) / duration);
+      const val = Math.round(from + (to - from) * ease(t));
+      el.textContent = val;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+
+    el.classList.remove('num-pulse');
+    void el.offsetWidth;
+    el.classList.add('num-pulse');
+  }
+
+  /* Core Recalculation Engine */
   function recalc(){
     const currentRegime = REGIMES[activeRegimeKey];
-    regimeBadge.textContent = currentRegime.label;
-
-    const r1 = currentRegime.ratio36;
-    const r2 = currentRegime.ratio612;
-
-    ratioLabel36.textContent = `Ratio : 1 / ${r1}`;
-    ratioLabel612.textContent = `Ratio : 1 / ${r2}`;
+    eyebrowBadge.textContent = currentRegime.tag.toUpperCase();
 
     const n36 = clampInt(n36input.value);
     const n612 = clampInt(n612input.value);
     const effectif = n36 + n612;
 
-    totalKidsBadge.textContent = effectif;
+    totalKidsIndicator.innerHTML = `Effectif total : <strong>${effectif} enfant${effectif > 1 ? 's' : ''}</strong>`;
+
+    const r1 = currentRegime.ratio36;
+    const r2 = currentRegime.ratio612;
+
+    const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
+    const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
+    const naiveSum = naive36 + naive612;
 
     let totalNeeded = 0;
 
     if (effectif > 0) {
       if (activeMutualMode === 'avec') {
         const fullGroups = Math.floor(n36 / r1) + Math.floor(n612 / r2);
-        const remTotal = (n36 % r1) + (n612 % r2);
+        const rem36 = n36 % r1;
+        const rem612 = n612 % r2;
+        const remTotal = rem36 + rem612;
 
-        if (remTotal === 0) totalNeeded = fullGroups;
-        else if (remTotal <= r1) totalNeeded = fullGroups + 1;
-        else totalNeeded = fullGroups + 2;
+        if (remTotal === 0) {
+          totalNeeded = fullGroups;
+        } else if (remTotal <= r1) {
+          totalNeeded = fullGroups + 1;
+        } else {
+          totalNeeded = fullGroups + 2;
+        }
       } else {
-        totalNeeded = (n36 > 0 ? Math.ceil(n36 / r1) : 0) + (n612 > 0 ? Math.ceil(n612 / r2) : 0);
+        totalNeeded = naiveSum;
       }
 
-      // Minimum 2 animateurs
-      if (totalNeeded < 2) totalNeeded = 2;
+      if (totalNeeded < 2) {
+        totalNeeded = 2;
+        safetyAlert.classList.add('visible');
+      } else {
+        safetyAlert.classList.remove('visible');
+      }
+    } else {
+      safetyAlert.classList.remove('visible');
     }
 
-    renderPool(totalNeeded);
+    const isSplitMode = (activeMutualMode === 'sans');
+    renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode);
 
     const directorEligible = effectif > 0 && effectif <= 50;
-    dirRow.style.opacity = directorEligible ? "1" : "0.4";
-    dirRow.style.pointerEvents = directorEligible ? "auto" : "none";
+    dirRow.classList.toggle('disabled', !directorEligible);
     if (!directorEligible) dirToggle.checked = false;
 
     let displayed = totalNeeded;
     if (dirToggle.checked && directorEligible){
       displayed = Math.max(totalNeeded - 1, 0);
-      calculationSubText.textContent = "DIRECTEUR DANS L'EFFECTIF (-1)";
+      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ le directeur)";
     } else {
-      calculationSubText.textContent = activeMutualMode === 'avec' ? "CALCUL MUTUALISÉ APPLIQUÉ" : "CALCUL SÉPARÉ PAR TRANCHE";
+      totalAnimLabelEl.textContent = "Anim' sur le terrain";
+    }
+    
+    animateNumber(totalAnimEl, displayed);
+    miniAnimCount.textContent = displayed;
+
+    const saved = naiveSum - totalNeeded;
+    if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
+      mutualBadge.textContent = `⚡ -${saved} ANIM' MUTUALISÉ${saved > 1 ? 'S' : ''}`;
+      mutualBadge.classList.add('visible');
+    } else {
+      mutualBadge.classList.remove('visible');
     }
 
-    totalAnimEl.textContent = displayed;
+    const base = displayed;
+    const diplomesMin = Math.ceil(base * 0.5);
+    const nonDiplomesMax = Math.floor(base * 0.2);
+    const stagiaires = Math.max(base - diplomesMin - nonDiplomesMax, 0);
 
-    // Directeurs & Qualifications
-    const diplomesMin = Math.ceil(displayed * 0.5);
-    const nonDiplomesMax = Math.floor(displayed * 0.2);
-    const stagiaires = Math.max(displayed - diplomesMin - nonDiplomesMax, 0);
+    animateNumber(qDiplomes, diplomesMin);
+    animateNumber(qNonDiplomes, nonDiplomesMax);
+    animateNumber(qStagiaires, stagiaires);
 
-    qDiplomes.textContent = diplomesMin;
-    qNonDiplomes.textContent = nonDiplomesMax;
-    qStagiaires.textContent = stagiaires;
+    let modeText = activeMutualMode === 'avec' 
+      ? "Avec mutualisation (Règle SDJES)" 
+      : "Sans mutualisation (Calcul séparé)";
+
+    footerNote.textContent = `${currentRegime.tag} — ${modeText}.`;
+    
+    saveState();
   }
 
+  /* Copy Summary Report */
   copyBtn.addEventListener('click', () => {
-    haptic();
+    hapticFeedback();
     const currentRegime = REGIMES[activeRegimeKey];
     const n36 = clampInt(n36input.value);
     const n612 = clampInt(n612input.value);
-    const textSummary = 
-`📋 BILAN ENCADREMENT ALSH
-------------------------
-Régime: ${currentRegime.label}
-Enfants: ${n36 + n612} (-6ans: ${n36} | +6ans: ${n612})
-> ANIMATEURS REQUIS: ${totalAnimEl.textContent}
-• Diplômés min: ${qDiplomes.textContent}
-• Stagiaires: ${qStagiaires.textContent}
-• Non-diplômés max: ${qNonDiplomes.textContent}`;
+    const totalKids = n36 + n612;
+    const totalAnim = totalAnimEl.textContent;
+    const mode = activeMutualMode === 'avec' ? "Avec mutualisation" : "Sans mutualisation";
+    const dirInclus = dirToggle.checked ? "Oui" : "Non";
 
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(textSummary).then(() => showToast("Bilan copié !"));
+    const textSummary = 
+`📋 BILAN TAUX D'ENCADREMENT ALSH
+-----------------------------------
+- Régime : ${currentRegime.tag}
+- Effectifs : ${totalKids} enfants (-6ans: ${n36} | +6ans: ${n612})
+- Mode de calcul : ${mode}
+- Directeur inclus sur le terrain : ${dirInclus}
+-----------------------------------
+> ANIM' REQUIS : ${totalAnim}
+
+Composition recommandée de l'équipe :
+• Diplômé·e·s (Min. 50%) : ${qDiplomes.textContent}
+• Non-diplômé·e·s (Max. 20%) : ${qNonDiplomes.textContent}
+• Stagiaires BAFA : ${qStagiaires.textContent}
+`;
+
+    if (navigator.share && /Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      navigator.share({
+        title: "Bilan ALSH",
+        text: textSummary
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(textSummary).then(() => {
+        copyBtn.classList.add('copied');
+        copyBtnIcon.textContent = "✓";
+        copyBtnText.textContent = "Bilan copié !";
+
+        showToast("⚡ Bilan copié dans le presse-papier !");
+
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtnIcon.textContent = "📋";
+          copyBtnText.textContent = "Copier le bilan complet";
+        }, 2200);
+
+      }).catch(() => {
+        showToast("Impossible de copier automatiquement.");
+      });
     }
   });
 
+  loadState();
   recalc();
 </script>
+
 </body>
 </html>
