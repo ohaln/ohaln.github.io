@@ -534,6 +534,19 @@
             </div>
           </div>
 
+          <!-- FILTRES INTERACTIFS : ANIM, -6 ANS, +6 ANS -->
+          <div class="flex gap-1.5 pt-1">
+            <button type="button" @click="filtrePlanning = 'anim'" :class="filtrePlanning === 'anim' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+              Animateurs
+            </button>
+            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+              -6 ans
+            </button>
+            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+              +6 ans
+            </button>
+          </div>
+
           <div class="flex items-center justify-between card-item-bento px-4 py-2.5">
             <button type="button" @click="changerJour(-1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-left text-sm"></i></button>
             <div class="text-center">
@@ -543,7 +556,7 @@
           </div>
         </div>
 
-        <!-- ENCADRÉ SORTIE SPÉCIALE (AVEC GESTION DES ANIMATEURS ET LISTES D'ENFANTS) -->
+        <!-- ENCADRÉ SORTIE SPÉCIALE (AVEC ENCADRÉS INDIVIDUELS POUR CHAQUE ENFANT DANS LE BLOC DE L'ANIMATEUR) -->
         <template x-if="getOrgDuJour()">
           <div class="card-item-bento p-4 space-y-3 bg-yellow-400 text-black">
             <div class="flex justify-between items-start border-b border-black/10 pb-2">
@@ -571,24 +584,35 @@
               </div>
             </div>
 
-            <!-- RENSEIGNEMENTS DES ANIMATEURS & LEURS ENFANTS -->
-            <div class="space-y-1.5 pt-1">
+            <!-- ENCADRÉS DES ANIMATEURS ET PETITS ENCADRÉS DES ENFANTS -->
+            <div class="space-y-2 pt-1">
               <span class="text-[11px] font-black text-black uppercase block">Groupes d'enfants affectés :</span>
               <template x-for="g in getOrgDuJour().groupes" :key="g.id">
-                <div class="bg-black/10 p-2 rounded-xl text-xs space-y-0.5">
-                  <div class="font-bold text-black" x-text="'👤 Anim: ' + g.anim"></div>
-                  <div class="text-[11px] text-black/80 font-medium" x-text="'👦 Enfants: ' + g.enfants"></div>
+                <div class="bg-black/10 p-3 rounded-2xl border border-black/10 space-y-2">
+                  <div class="font-black text-xs text-black flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Animateur : <span x-text="g.anim"></span></span>
+                  </div>
+                  
+                  <div class="grid grid-cols-2 gap-1.5">
+                    <template x-for="(ef, index) in parseEnfantsList(g.enfants)" :key="index">
+                      <div class="bg-white/80 p-2 rounded-xl text-[11px] font-bold text-black shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-child text-yellow-600 text-[10px]"></i>
+                        <span x-text="ef"></span>
+                      </div>
+                    </template>
+                  </div>
                 </div>
               </template>
             </div>
           </div>
         </template>
 
-        <!-- LISTE PLANNING DES ANIMATEURS -->
+        <!-- LISTE PLANNING DES ANIMATEURS / GROUPES -->
         <div class="space-y-3">
-          <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider">Planning des Animateurs</h3>
+          <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider" x-text="filtrePlanning === 'anim' ? 'Planning des Animateurs' : 'Groupes concernés (' + filtrePlanning + ')'"></h3>
 
-          <template x-for="p in planningGlobal" :key="p.id">
+          <template x-for="p in getPlanningFiltre()" :key="p.id">
             <div class="card-item-bento p-4 space-y-3 bg-white/10">
               
               <div class="flex justify-between items-center">
@@ -607,29 +631,25 @@
                 </div>
               </div>
 
-              <!-- AFFICHAGE DES CRÉNEAUX ET AGE DE COULEUR FLASHY -->
+              <!-- AFFICHAGE DES CRÉNEAUX ET ÂGE SANS MENTION DE COULEUR -->
               <div class="grid grid-cols-2 gap-2 text-xs">
                 
                 <!-- MATIN -->
-                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" 
-                     :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'border-cyan-400' : (getPlanningDuJour(p, dateAffichee).ageMatin === '+6 ans' ? 'border-emerald-400' : 'border-gray-500')">
+                <div class="bg-black/20 p-2.5 rounded-xl border-l-4 border-yellow-400">
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-[10px] text-white/60 block">☀️ Matin</span>
-                    <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md"
-                          :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'bg-cyan-400 text-black' : (getPlanningDuJour(p, dateAffichee).ageMatin === '+6 ans' ? 'bg-emerald-400 text-black' : 'bg-gray-700 text-white')"
-                          x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></span>
+                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageMatin)" class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-white/20 hover:bg-yellow-400 hover:text-black text-white transition-colors"
+                          x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></button>
                   </div>
                   <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
                 </div>
 
                 <!-- APRÈS-MIDI -->
-                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" 
-                     :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'border-cyan-400' : (getPlanningDuJour(p, dateAffichee).ageAprem === '+6 ans' ? 'border-emerald-400' : 'border-gray-500')">
+                <div class="bg-black/20 p-2.5 rounded-xl border-l-4 border-yellow-400">
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
-                    <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md"
-                          :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'bg-cyan-400 text-black' : (getPlanningDuJour(p, dateAffichee).ageAprem === '+6 ans' ? 'bg-emerald-400 text-black' : 'bg-gray-700 text-white')"
-                          x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></span>
+                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageAprem)" class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-white/20 hover:bg-yellow-400 hover:text-black text-white transition-colors"
+                          x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></button>
                   </div>
                   <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
                 </div>
@@ -643,7 +663,7 @@
       </div>
     </div>
 
-    <!-- MODAL : ORGANISATION / SORTIES (AVEC CORRECTION DU POPUP DATE ET AJOUT ANIM/ENFANTS) -->
+    <!-- MODAL : ORGANISATION / SORTIES -->
     <div x-show="showOrgModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
       <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[90vh] overflow-y-auto">
         <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
@@ -651,7 +671,6 @@
         </h3>
 
         <div class="space-y-3">
-          <!-- FIX DATE : S'ADAPTE SANS DÉPASSER DU CADRE -->
           <div>
             <label class="block text-[11px] font-bold text-white/80 mb-1">Date</label>
             <input type="date" x-model="saisieOrg.date" class="input-chubby w-full px-3 py-2 text-xs overflow-hidden">
@@ -684,7 +703,7 @@
             
             <div class="space-y-1.5">
               <input type="text" x-model="tempGroupe.anim" placeholder="Nom Animateur (ex: Sarah)" class="input-chubby w-full px-2.5 py-1.5 text-xs">
-              <input type="text" x-model="tempGroupe.enfants" placeholder="Enfants (ex: Lucas, Nathan, Zoé... ou 12 enfants)" class="input-chubby w-full px-2.5 py-1.5 text-xs">
+              <input type="text" x-model="tempGroupe.enfants" placeholder="Enfants (ex: Lucas, Nathan, Zoé...)" class="input-chubby w-full px-2.5 py-1.5 text-xs">
               <button type="button" @click="ajouterGroupeSortie()" class="bg-yellow-400 hover:bg-yellow-300 text-black w-full py-1.5 text-xs font-black rounded-xl transition-transform active:scale-95">+ Ajouter ce groupe</button>
             </div>
 
@@ -754,7 +773,7 @@
       </div>
     </div>
 
-    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU AVEC SÉLECTION TRANCHE D'ÂGE -->
+    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU SANS CORRESPONDANCE DE COULEURS -->
     <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
       <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20">
         <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
@@ -777,10 +796,10 @@
             <span class="text-[11px] font-bold text-yellow-300 block">☀️ Créneau Matin</span>
             <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu de piste" class="input-chubby w-full px-3 py-1.5 text-xs">
             <div class="flex items-center gap-2 pt-1">
-              <span class="text-[10px] text-white/80">Âge :</span>
+              <span class="text-[10px] text-white/80">Tranche d'âge :</span>
               <select x-model="saisiePlanning.ageMatin" class="input-chubby px-2 py-1 text-[11px] font-bold flex-1">
-                <option value="-6 ans">-6 ans (Bleu Ciel)</option>
-                <option value="+6 ans">+6 ans (Vert Pomme)</option>
+                <option value="-6 ans">-6 ans</option>
+                <option value="+6 ans">+6 ans</option>
               </select>
             </div>
           </div>
@@ -790,10 +809,10 @@
             <span class="text-[11px] font-bold text-yellow-300 block">🌆 Créneau Après-midi</span>
             <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu Forêt" class="input-chubby w-full px-3 py-1.5 text-xs">
             <div class="flex items-center gap-2 pt-1">
-              <span class="text-[10px] text-white/80">Âge :</span>
+              <span class="text-[10px] text-white/80">Tranche d'âge :</span>
               <select x-model="saisiePlanning.ageAprem" class="input-chubby px-2 py-1 text-[11px] font-bold flex-1">
-                <option value="-6 ans">-6 ans (Bleu Ciel)</option>
-                <option value="+6 ans">+6 ans (Vert Pomme)</option>
+                <option value="-6 ans">-6 ans</option>
+                <option value="+6 ans">+6 ans</option>
               </select>
             </div>
           </div>
@@ -858,6 +877,7 @@
       return {
         currentTab: 'fiche',
         dateAffichee: todayISO,
+        filtrePlanning: 'anim', // 'anim', '-6 ans', '+6 ans'
         newMatosNom: '',
         newMatosQte: '',
         nouvelleCourseNom: '',
@@ -950,14 +970,41 @@
           ];
         },
 
+        // PURGE TOTALE DES DONNÉES DE L'APPLICATION
         reinitialiserApp() {
-          if (confirm("Réinitialiser les données saisies ?")) {
+          if (confirm("Réinitialiser TOUTES les données ? (Cette action supprimera l'intégralité des informations)")) {
             this.fiche = { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] };
             this.registreSoins = [];
             this.listeCourses = [];
             this.organisations = {};
-            this.showToast("Application réinitialisée ! 🔄");
+            this.planningGlobal = [];
+            this.goutersPlanifies = [];
+            this.coursesAchetesGouter = {};
+            this.animSelectionne = null;
+            this.filtrePlanning = 'anim';
+            this.showToast("Toutes les informations ont été supprimées ! 🗑️");
           }
+        },
+
+        getPlanningFiltre() {
+          if (this.filtrePlanning === 'anim') {
+            return this.planningGlobal;
+          }
+          return this.planningGlobal.filter(p => {
+            const pJour = this.getPlanningDuJour(p, this.dateAffichee);
+            return pJour.ageMatin === this.filtrePlanning || pJour.ageAprem === this.filtrePlanning;
+          });
+        },
+
+        filtrerParAge(age) {
+          if (age) {
+            this.filtrePlanning = age;
+          }
+        },
+
+        parseEnfantsList(chaine) {
+          if (!chaine) return [];
+          return chaine.split(',').map(item => item.trim()).filter(item => item.length > 0);
         },
 
         getLundiDeLaSemaine(d) {
