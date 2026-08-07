@@ -14,7 +14,6 @@
 
 <style>
   :root {
-    /* Mode Dark Sombre Unique */
     --bg-main: #09090E;
     --card-bg: rgba(255, 255, 255, 0.04);
     --card-border: rgba(255, 255, 255, 0.1);
@@ -41,7 +40,7 @@
 
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-fast: 0.18s var(--ease-out);
+    --transition-fast: 0.22s var(--ease-out);
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -63,7 +62,6 @@
     padding: 24px 16px max(90px, calc(40px + env(safe-area-inset-bottom)));
   }
 
-  /* Arrière-plan néon diffus */
   .bg-decorations {
     position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
   }
@@ -79,6 +77,12 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+    animation: fadeIn 0.6s var(--ease-out);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .fluid-section {
@@ -116,6 +120,10 @@
     background: var(--pink);
     color: #fff;
     border-color: var(--pink);
+    transform: translateY(-1px);
+  }
+  .btn-reset:active {
+    transform: scale(0.95);
   }
 
   .brand-title-wrap {
@@ -125,10 +133,9 @@
     gap: 12px;
   }
 
-  /* Titre stricte sur 2 lignes, taille réduite pour éviter la coupe */
   h1 {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(22px, 6vw, 30px); /* Taille réduite */
+    font-size: clamp(22px, 6vw, 30px);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.01em;
@@ -148,6 +155,10 @@
     flex-shrink: 0;
     fill: var(--pink);
     animation: rotateSlow 25s linear infinite;
+    transition: transform 0.3s var(--ease-spring);
+  }
+  .flower-motif:hover {
+    transform: scale(1.15) rotate(45deg);
   }
   @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -169,7 +180,6 @@
     gap: 8px;
   }
 
-  /* Pastilles JAUNES NÉON */
   .section-num {
     background: var(--yellow);
     color: var(--text-dark);
@@ -182,6 +192,11 @@
     font-size: 11px;
     font-weight: 800;
     box-shadow: 0 0 10px var(--yellow-glow);
+    transition: transform 0.3s var(--ease-spring);
+  }
+
+  .fluid-section:hover .section-num {
+    transform: scale(1.1);
   }
 
   .info-pop {
@@ -191,15 +206,28 @@
     color: var(--text-muted); font-size: 11px; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
     cursor: help; position: relative;
+    transition: all var(--transition-fast);
+  }
+  .info-pop:hover, .info-pop:focus {
+    background: var(--purple);
+    color: #fff;
+    border-color: var(--purple-bright);
+    transform: scale(1.1);
   }
   .info-pop:hover::after, .info-pop:focus::after {
     content: attr(data-tooltip);
-    position: absolute; bottom: 130%; right: 0; width: min(280px, 85vw); /* Légèrement plus large */
+    position: absolute; bottom: 130%; right: 0; width: min(280px, 85vw);
     background: var(--tooltip-bg); border: 1px solid var(--purple-bright);
     color: #fff; padding: 12px 16px; border-radius: 14px;
     font-size: 11.5px; font-weight: 600; line-height: 1.5;
     box-shadow: 0 12px 30px rgba(0,0,0,0.4); z-index: 100; pointer-events: none;
     text-align: left;
+    animation: popIn 0.2s var(--ease-spring);
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(6px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   /* Grille des Régimes */
@@ -220,10 +248,16 @@
     transition: all var(--transition-fast);
     color: var(--text-muted);
   }
+  .regime-card:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+  }
+  .regime-card:active {
+    transform: scale(0.97);
+  }
   .regime-card .r-title {
     display: block; font-weight: 800; font-size: 13px; color: var(--text-main);
   }
-  /* Sous-titres JAUNES */
   .regime-card .r-sub {
     display: block; font-size: 10.5px; font-weight: 700; margin-top: 2px;
     color: var(--yellow);
@@ -237,18 +271,6 @@
   }
   .regime-card.active .r-title { color: #fff !important; }
   .regime-card.active .r-sub { color: var(--yellow) !important; }
-
-  .pedt-note {
-    font-size: 11.5px;
-    line-height: 1.45;
-    background: rgba(139, 92, 246, 0.08);
-    border-left: 3px solid var(--purple-bright);
-    padding: 10px 14px;
-    margin-top: 10px;
-    border-radius: 0 12px 12px 0;
-    color: var(--text-main);
-  }
-  .pedt-note strong { color: var(--purple-bright); font-weight: 800; }
 
   /* Input Steppers */
   .input-group {
@@ -274,7 +296,6 @@
     transition: all var(--transition-fast);
   }
 
-  /* Champ -6 ANS (Jaune) */
   .stepper-box.st-36:focus-within, .stepper-box.st-36:hover {
     border-color: var(--yellow);
     box-shadow: 0 0 14px var(--yellow-glow);
@@ -282,7 +303,6 @@
   .stepper-box.st-36 input { color: var(--yellow); }
   .stepper-box.st-36 .stepper-btn:hover { background: var(--yellow); color: var(--text-dark); }
 
-  /* Champ +6 ANS (Violet) */
   .stepper-box.st-612:focus-within, .stepper-box.st-612:hover {
     border-color: var(--purple-bright) !important;
     box-shadow: 0 0 14px var(--purple-glow) !important;
@@ -303,7 +323,7 @@
     transition: all var(--transition-fast);
     flex-shrink: 0;
   }
-  .stepper-btn:active { transform: scale(0.88); }
+  .stepper-btn:active { transform: scale(0.85); }
 
   .stepper-box input {
     width: 100%; border: none; background: transparent;
@@ -314,7 +334,6 @@
   .stepper-box input::-webkit-outer-spin-button,
   .stepper-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-  /* Effectif total avec Chiffre JAUNE NÉON */
   .total-kids-pill {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -325,6 +344,7 @@
     font-weight: 600;
     color: var(--text-muted);
     margin-top: 10px;
+    transition: all var(--transition-fast);
   }
   .total-kids-pill strong { color: var(--yellow); font-weight: 800; text-shadow: 0 0 10px var(--yellow-glow); }
 
@@ -335,10 +355,16 @@
     border-radius: var(--radius-box);
     padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--pink);
     margin-top: 10px;
+    animation: shake 0.4s var(--ease-spring);
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
   }
   .alert-box.visible { display: flex; }
 
-  /* Mode Mutualisation Selector (Actif en JAUNE) */
+  /* Mutualisation Selector */
   .mutual-selector {
     display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
     background: var(--card-bg); padding: 4px;
@@ -357,10 +383,11 @@
     box-shadow: 0 4px 15px var(--yellow-glow);
   }
 
-  /* Toggle Row avec Switch JAUNE */
+  /* Toggle Row */
   .toggle-row {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     cursor: pointer; padding-top: 12px; margin-top: 12px;
+    transition: opacity var(--transition-fast);
   }
   .toggle-label { font-size: 12.5px; font-weight: 700; color: var(--text-main); }
   .toggle-label small { display: block; font-weight: 500; color: var(--text-muted); font-size: 10.5px; margin-top: 2px; }
@@ -393,6 +420,7 @@
     padding: 20px;
     position: relative;
     box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    transition: transform 0.3s var(--ease-spring);
   }
 
   .pool-header {
@@ -408,11 +436,11 @@
 
   .pool-track { display: flex; gap: 6px; flex-wrap: wrap; }
 
-  /* Segments Jauge */
   .segment {
     flex: 1; min-width: 40px; height: 38px; border-radius: var(--radius-pill);
     background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
     overflow: hidden; position: relative; display: flex;
+    animation: popIn 0.3s var(--ease-spring);
   }
   .segment .fillA, .segment .fillB {
     height: 100%; width: 0%; transition: width 0.4s var(--ease-out); position: relative;
@@ -452,13 +480,24 @@
   }
   .big-num {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(40px, 10vw, 54px); /* Taille réduite */
+    font-size: clamp(40px, 10vw, 54px);
     font-weight: 800;
     line-height: 1;
     color: #E2FF38;
     text-shadow: 0 0 20px rgba(226, 255, 56, 0.3);
     font-variant-numeric: tabular-nums;
+    transition: transform 0.25s var(--ease-spring);
+    display: inline-block;
   }
+  .big-num.pulse {
+    animation: numPulse 0.35s var(--ease-spring);
+  }
+  @keyframes numPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); color: #FFF; }
+    100% { transform: scale(1); }
+  }
+
   .big-label {
     font-size: clamp(13px, 4vw, 15px); font-weight: 800; line-height: 1.25; color: #FFFFFF;
   }
@@ -469,9 +508,15 @@
     background: var(--card-bg); border: 1px solid var(--card-border);
     border-radius: var(--radius-box); padding: 12px 6px; text-align: center;
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    transition: all var(--transition-fast);
+  }
+  .q-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.2);
   }
   .q-num {
     font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; display: block;
+    transition: transform 0.25s var(--ease-spring);
   }
   .q-label { display: block; margin-top: 2px; font-size: 10px; font-weight: 700; color: var(--text-muted); line-height: 1.2; }
   .q-label small { font-size: 9px; opacity: 0.75; display: block; }
@@ -480,10 +525,10 @@
   .q-max .q-num { color: var(--pink); }
   .q-flex .q-num { color: var(--purple-bright); }
 
-  /* Bouton d'action Principal unifié */
+  /* Bouton d'action Principal */
   .btn-cta {
     width: 100%; margin-top: 16px; 
-    height: 50px; /* Hauteur fixe pour éviter le changement de taille */
+    height: 50px;
     border-radius: var(--radius-pill); border: none;
     background: var(--purple); color: #FFFFFF;
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -491,16 +536,16 @@
     display: flex; align-items: center; justify-content: center; gap: 8px;
     transition: all var(--transition-fast);
     box-shadow: 0 8px 20px var(--purple-glow);
-    padding: 0 20px; /* Marges internes */
+    padding: 0 20px;
   }
-  .btn-cta:hover { transform: translateY(-1px); filter: brightness(1.1); }
-  .btn-cta:active { transform: scale(0.98); }
+  .btn-cta:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 12px 25px var(--purple-glow); }
+  .btn-cta:active { transform: scale(0.97); }
   
-  /* État copié en JAUNE NÉON, même taille */
   .btn-cta.copied { 
     background: var(--yellow); 
     box-shadow: 0 8px 20px var(--yellow-glow); 
     color: var(--text-dark); 
+    animation: popIn 0.3s var(--ease-spring);
   }
 
   /* Sticky Mini Bar */
@@ -515,13 +560,14 @@
     opacity: 0; transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
   }
   .sticky-bar.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .sticky-bar:hover { transform: translateX(-50%) translateY(-3px); }
   .mini-count { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: #E2FF38; }
   .mini-txt { font-size: 12px; font-weight: 800; color: #fff; margin-left: 8px; }
   .mini-pill {
     background: var(--purple); color: #fff; padding: 5px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800;
   }
 
-  /* POPUP / TOAST UNIFIÉ */
+  /* Toast Popup */
   .toast {
     position: fixed; bottom: max(20px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
     transform: translateX(-50%) translateY(80px);
@@ -582,7 +628,6 @@
     <section class="fluid-section">
       <div class="section-head">
         <span class="section-title"><span class="section-num">1</span> Régime d'accueil</span>
-        <!-- Définition PEDT améliorée dans l'infobulle -->
         <span class="info-pop" tabindex="0" role="button" data-tooltip="Le Projet Éducatif de Territoire (PEDT) est une démarche partenariale (communes, EPCI, Éducation Nationale, CAF, etc.) qui définit un cadre d'organisation pour les temps périscolaires. Il permet de bénéficier de taux d'encadrement allégés conformes à la réglementation SDJES.">ⓘ</span>
       </div>
 
@@ -603,10 +648,6 @@
           <span class="r-title">Avec PEDT</span>
           <span class="r-sub">≤ 5h par jour</span>
         </button>
-      </div>
-
-      <div class="pedt-note">
-        <strong>💡 PEDT :</strong> Le Projet Éducatif de Territoire adapte les ratios légaux d'encadrement sur votre territoire.
       </div>
     </section>
 
@@ -713,7 +754,6 @@
         </div>
       </div>
 
-      <!-- Bouton unifié en taille et en couleur ambre au clic -->
       <button type="button" class="btn-cta" id="copyBtn">
         <span id="copyBtnIcon">📋</span> <span id="copyBtnText">Copier le bilan complet</span>
       </button>
@@ -768,6 +808,7 @@
 
   let activeRegimeKey = 'hors_p5';
   let activeMutualMode = 'avec';
+  let lastAnimValue = -1;
 
   const REGIMES = {
     hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
@@ -886,7 +927,7 @@
     showToast("⚡ Effectifs réinitialisés !");
   });
 
-  /* Rendu Jauge */
+  /* Rendu Jauge avec animations fluides */
   function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
     poolTrack.innerHTML = '';
 
@@ -1024,6 +1065,14 @@
       totalAnimLabelEl.textContent = "Anim' sur le terrain";
     }
     
+    // Animation d'impulsion si le chiffre change
+    if (lastAnimValue !== -1 && lastAnimValue !== displayed) {
+      totalAnimEl.classList.remove('pulse');
+      void totalAnimEl.offsetWidth; // Force reflow
+      totalAnimEl.classList.add('pulse');
+    }
+    lastAnimValue = displayed;
+
     totalAnimEl.textContent = displayed;
     miniAnimCount.textContent = displayed;
 
