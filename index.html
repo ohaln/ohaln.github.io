@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALSHFlow - Edition Chubby Playful</title>
+  <title>ALSHFlow - Animation Hub</title>
 
-  <!-- Google Fonts: Fredoka pour un style ludique & rond -->
+  <!-- Google Fonts: Fredoka -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,10 +24,8 @@
       --bg-yellow: #fcd307;
       --bg-blue: #4d53ed;
       --card-blue: #5b61f6;
-      --card-blue-dark: #3b41d6;
       --text-dark: #111111;
       --text-light: #ffffff;
-      --pill-white: #ffffff;
       --radius-lg: 28px;
       --radius-md: 18px;
       --radius-pill: 999px;
@@ -43,35 +41,7 @@
       overflow-x: hidden;
     }
 
-    /* Top Marquee Banner Style LESA */
-    .top-banner {
-      background-color: #f7ca00;
-      color: var(--text-dark);
-      padding: 6px 0;
-      font-size: 13px;
-      font-weight: 600;
-      overflow: hidden;
-      white-space: nowrap;
-      display: flex;
-      border-bottom: 2px solid rgba(0, 0, 0, 0.08);
-    }
-
-    .banner-track {
-      display: inline-block;
-      white-space: nowrap;
-      animation: marquee 25s linear infinite;
-    }
-
-    .banner-track span {
-      margin-right: 40px;
-    }
-
-    @keyframes marquee {
-      0% { transform: translateX(0%); }
-      100% { transform: translateX(-50%); }
-    }
-
-    /* Carte Style Bento LESA */
+    /* Carte Style Bento */
     .card-bento {
       background-color: var(--card-blue);
       color: var(--text-light);
@@ -86,7 +56,7 @@
       color: var(--text-light);
     }
 
-    /* Inputs arrondis style LESA */
+    /* Inputs arrondis */
     .input-chubby {
       background-color: #ffffff;
       border: 2px solid transparent;
@@ -94,6 +64,7 @@
       color: var(--text-dark);
       font-weight: 600;
       transition: all 0.2s ease;
+      max-width: 100%;
     }
 
     .input-chubby:focus {
@@ -101,31 +72,26 @@
       border-color: var(--text-dark);
     }
 
-    /* Navigation Flottante Style Pillule LESA */
+    /* Navigation Flottante */
     .nav-pill {
       background: var(--text-dark);
       border-radius: var(--radius-pill);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     }
 
+    /* Correctif pour les inputs date sur mobile/popups */
     input[type="date"] {
-      text-align: left;
+      appearance: none;
+      -webkit-appearance: none;
+      min-height: 42px;
     }
   </style>
 </head>
 
 <body class="pb-28 select-none flex flex-col min-h-screen" x-data="alshApp()">
 
-  <!-- MARQUEE BANNER HAUT DE PAGE -->
-  <div class="top-banner">
-    <div class="banner-track">
-      <span>⚡ <b>ALSHFlow</b> — Le compagnon d'animation le plus rapide et amusant !</span>
-      <span>⚡ <b>ALSHFlow</b> — Préparez vos fiches, vos soins et vos goûters en un clin d'œil !</span>
-    </div>
-  </div>
-
-  <!-- HEADER BRANDING -->
-  <header class="max-w-md mx-auto w-full px-4 pt-4 mb-2 flex items-center justify-between">
+  <!-- HEADER BRANDING AVEC BOUTON RÉINITIALISER -->
+  <header class="max-w-md mx-auto w-full px-4 pt-5 mb-2 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <div class="w-11 h-11 bg-black text-yellow-400 rounded-2xl flex items-center justify-center text-xl font-black shadow-md">
         ⚡
@@ -137,9 +103,11 @@
         <p class="text-[11px] font-semibold text-black/70 uppercase tracking-wider">Animation Hub</p>
       </div>
     </div>
-    <span class="bg-white text-black font-bold text-xs px-3.5 py-1.5 rounded-full shadow-sm">
-      Anims Zone 🦊
-    </span>
+    
+    <!-- Bouton Réinitialiser utile -->
+    <button type="button" @click="reinitialiserApp()" class="bg-black hover:bg-gray-900 text-yellow-400 font-bold text-xs px-3.5 py-2 rounded-full shadow-md transition-transform active:scale-95 flex items-center gap-1.5">
+      <i class="fa-solid fa-rotate-left"></i> Réinit.
+    </button>
   </header>
 
   <!-- TOAST NOTIFICATION STYLISÉE -->
@@ -150,7 +118,7 @@
        x-transition:leave="transition ease-in duration-150"
        x-transition:leave-start="opacity-100 scale-100"
        x-transition:leave-end="opacity-0 scale-95"
-       class="fixed top-12 right-4 left-4 z-50 max-w-md mx-auto bg-black text-white p-4 rounded-3xl shadow-2xl flex items-center justify-between border border-white/20"
+       class="fixed top-5 right-4 left-4 z-50 max-w-md mx-auto bg-black text-white p-4 rounded-3xl shadow-2xl flex items-center justify-between border border-white/20"
        style="display: none;">
     <div class="flex items-center space-x-3">
       <i class="fa-solid fa-circle-check text-yellow-400 text-xl"></i>
@@ -575,10 +543,10 @@
           </div>
         </div>
 
-        <!-- ENCADRÉ SORTIES SPECIALE -->
+        <!-- ENCADRÉ SORTIE SPÉCIALE (AVEC GESTION DES ANIMATEURS ET LISTES D'ENFANTS) -->
         <template x-if="getOrgDuJour()">
-          <div class="card-item-bento p-4 space-y-2 bg-yellow-400 text-black">
-            <div class="flex justify-between items-start">
+          <div class="card-item-bento p-4 space-y-3 bg-yellow-400 text-black">
+            <div class="flex justify-between items-start border-b border-black/10 pb-2">
               <div>
                 <span class="inline-block px-2.5 py-0.5 rounded-full bg-black text-yellow-400 text-[10px] font-black uppercase mb-1">
                   🚨 SORTIE SPÉCIALE
@@ -594,7 +562,7 @@
             
             <div class="grid grid-cols-2 gap-2 text-xs bg-white/40 p-2 rounded-xl">
               <div>
-                <span class="text-[10px] text-black/60 font-bold block">Bus Aller</span>
+                <span class="text-[10px] text-black/60 font-bold block">Bus Départ</span>
                 <span class="font-black text-black" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
               </div>
               <div>
@@ -602,9 +570,21 @@
                 <span class="font-black text-black" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
               </div>
             </div>
+
+            <!-- RENSEIGNEMENTS DES ANIMATEURS & LEURS ENFANTS -->
+            <div class="space-y-1.5 pt-1">
+              <span class="text-[11px] font-black text-black uppercase block">Groupes d'enfants affectés :</span>
+              <template x-for="g in getOrgDuJour().groupes" :key="g.id">
+                <div class="bg-black/10 p-2 rounded-xl text-xs space-y-0.5">
+                  <div class="font-bold text-black" x-text="'👤 Anim: ' + g.anim"></div>
+                  <div class="text-[11px] text-black/80 font-medium" x-text="'👦 Enfants: ' + g.enfants"></div>
+                </div>
+              </template>
+            </div>
           </div>
         </template>
 
+        <!-- LISTE PLANNING DES ANIMATEURS -->
         <div class="space-y-3">
           <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider">Planning des Animateurs</h3>
 
@@ -627,15 +607,33 @@
                 </div>
               </div>
 
+              <!-- AFFICHAGE DES CRÉNEAUX ET AGE DE COULEUR FLASHY -->
               <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="bg-black/20 p-2.5 rounded-xl">
-                  <span class="text-[10px] text-white/60 block mb-0.5">☀️ Matin</span>
+                
+                <!-- MATIN -->
+                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" 
+                     :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'border-cyan-400' : (getPlanningDuJour(p, dateAffichee).ageMatin === '+6 ans' ? 'border-emerald-400' : 'border-gray-500')">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-[10px] text-white/60 block">☀️ Matin</span>
+                    <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md"
+                          :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'bg-cyan-400 text-black' : (getPlanningDuJour(p, dateAffichee).ageMatin === '+6 ans' ? 'bg-emerald-400 text-black' : 'bg-gray-700 text-white')"
+                          x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></span>
+                  </div>
                   <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
                 </div>
-                <div class="bg-black/20 p-2.5 rounded-xl">
-                  <span class="text-[10px] text-white/60 block mb-0.5">🌆 Après-midi</span>
+
+                <!-- APRÈS-MIDI -->
+                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" 
+                     :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'border-cyan-400' : (getPlanningDuJour(p, dateAffichee).ageAprem === '+6 ans' ? 'border-emerald-400' : 'border-gray-500')">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
+                    <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md"
+                          :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'bg-cyan-400 text-black' : (getPlanningDuJour(p, dateAffichee).ageAprem === '+6 ans' ? 'bg-emerald-400 text-black' : 'bg-gray-700 text-white')"
+                          x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></span>
+                  </div>
                   <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
                 </div>
+
               </div>
 
             </div>
@@ -645,7 +643,7 @@
       </div>
     </div>
 
-    <!-- MODAL : ORGANISATION / SORTIES -->
+    <!-- MODAL : ORGANISATION / SORTIES (AVEC CORRECTION DU POPUP DATE ET AJOUT ANIM/ENFANTS) -->
     <div x-show="showOrgModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
       <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[90vh] overflow-y-auto">
         <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
@@ -653,9 +651,10 @@
         </h3>
 
         <div class="space-y-3">
+          <!-- FIX DATE : S'ADAPTE SANS DÉPASSER DU CADRE -->
           <div>
             <label class="block text-[11px] font-bold text-white/80 mb-1">Date</label>
-            <input type="date" x-model="saisieOrg.date" class="input-chubby w-full px-3 py-2 text-xs">
+            <input type="date" x-model="saisieOrg.date" class="input-chubby w-full px-3 py-2 text-xs overflow-hidden">
           </div>
 
           <div>
@@ -676,6 +675,29 @@
             <div>
               <label class="block text-[11px] font-bold text-white/80 mb-1">Bus Retour</label>
               <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-chubby w-full px-3 py-2 text-xs">
+            </div>
+          </div>
+
+          <!-- AJOUT ANIMATEURS ET ENFANTS POUR LA SORTIE -->
+          <div class="card-item-bento p-3 space-y-2.5 bg-white/10">
+            <span class="text-xs font-bold text-yellow-300 block">👥 Animateurs & Enfants attribués</span>
+            
+            <div class="space-y-1.5">
+              <input type="text" x-model="tempGroupe.anim" placeholder="Nom Animateur (ex: Sarah)" class="input-chubby w-full px-2.5 py-1.5 text-xs">
+              <input type="text" x-model="tempGroupe.enfants" placeholder="Enfants (ex: Lucas, Nathan, Zoé... ou 12 enfants)" class="input-chubby w-full px-2.5 py-1.5 text-xs">
+              <button type="button" @click="ajouterGroupeSortie()" class="bg-yellow-400 hover:bg-yellow-300 text-black w-full py-1.5 text-xs font-black rounded-xl transition-transform active:scale-95">+ Ajouter ce groupe</button>
+            </div>
+
+            <div class="space-y-1 pt-1">
+              <template x-for="(grp, idx) in saisieOrg.groupes" :key="idx">
+                <div class="flex justify-between items-center text-xs bg-black/20 p-2 rounded-xl">
+                  <div>
+                    <p class="font-bold text-yellow-300" x-text="grp.anim"></p>
+                    <p class="text-[11px] text-white/80" x-text="grp.enfants"></p>
+                  </div>
+                  <button type="button" @click="saisieOrg.groupes.splice(idx, 1)" class="text-rose-400"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -717,11 +739,11 @@
               <div class="grid grid-cols-2 gap-2 text-xs">
                 <div class="bg-black/20 p-2 rounded-xl">
                   <span class="text-[10px] text-white/60 block">☀️ Matin</span>
-                  <p class="font-bold text-white" x-text="planningDate.matin || 'Repos'"></p>
+                  <p class="font-bold text-white" x-text="(planningDate.matin || 'Repos') + ' (' + (planningDate.ageMatin || '-6 ans') + ')'"></p>
                 </div>
                 <div class="bg-black/20 p-2 rounded-xl">
                   <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
-                  <p class="font-bold text-white" x-text="planningDate.aprem || 'Repos'"></p>
+                  <p class="font-bold text-white" x-text="(planningDate.aprem || 'Repos') + ' (' + (planningDate.ageAprem || '-6 ans') + ')'"></p>
                 </div>
               </div>
             </div>
@@ -732,7 +754,7 @@
       </div>
     </div>
 
-    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
+    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU AVEC SÉLECTION TRANCHE D'ÂGE -->
     <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
       <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20">
         <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
@@ -747,19 +769,35 @@
 
           <div>
             <label class="block text-[11px] font-bold text-white/80 mb-1">Date</label>
-            <input type="date" x-model="saisiePlanning.date" class="input-chubby w-full px-3 py-2 text-xs">
+            <input type="date" x-model="saisiePlanning.date" class="input-chubby w-full px-3 py-2 text-xs overflow-hidden">
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] font-bold text-white/80 mb-1">Créneau Matin</label>
-              <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu -6a" class="input-chubby w-full px-3 py-2 text-xs">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-white/80 mb-1">Créneau A-M</label>
-              <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu" class="input-chubby w-full px-3 py-2 text-xs">
+          <!-- Saisie Matin -->
+          <div class="space-y-1 bg-black/20 p-2.5 rounded-xl border border-white/10">
+            <span class="text-[11px] font-bold text-yellow-300 block">☀️ Créneau Matin</span>
+            <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu de piste" class="input-chubby w-full px-3 py-1.5 text-xs">
+            <div class="flex items-center gap-2 pt-1">
+              <span class="text-[10px] text-white/80">Âge :</span>
+              <select x-model="saisiePlanning.ageMatin" class="input-chubby px-2 py-1 text-[11px] font-bold flex-1">
+                <option value="-6 ans">-6 ans (Bleu Ciel)</option>
+                <option value="+6 ans">+6 ans (Vert Pomme)</option>
+              </select>
             </div>
           </div>
+
+          <!-- Saisie Après-midi -->
+          <div class="space-y-1 bg-black/20 p-2.5 rounded-xl border border-white/10">
+            <span class="text-[11px] font-bold text-yellow-300 block">🌆 Créneau Après-midi</span>
+            <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu Forêt" class="input-chubby w-full px-3 py-1.5 text-xs">
+            <div class="flex items-center gap-2 pt-1">
+              <span class="text-[10px] text-white/80">Âge :</span>
+              <select x-model="saisiePlanning.ageAprem" class="input-chubby px-2 py-1 text-[11px] font-bold flex-1">
+                <option value="-6 ans">-6 ans (Bleu Ciel)</option>
+                <option value="+6 ans">+6 ans (Vert Pomme)</option>
+              </select>
+            </div>
+          </div>
+
         </div>
 
         <div class="flex gap-2 pt-2 border-t border-white/20">
@@ -771,7 +809,7 @@
 
   </main>
 
-  <!-- NAVBAR FLOTTANTE PILULE (STYLE LESA) -->
+  <!-- NAVBAR FLOTTANTE PILULE -->
   <nav class="fixed bottom-5 left-4 right-4 max-w-md mx-auto z-40 nav-pill p-2 flex justify-around items-center">
     
     <button type="button" @click="currentTab = 'fiche'" 
@@ -811,7 +849,7 @@
 
   </nav>
 
-  <!-- LOGIQUE ALPINE JS CONSERVÉE À 100% -->
+  <!-- LOGIQUE ALPINE JS -->
   <script>
     function alshApp() {
       const today = new Date();
@@ -875,10 +913,13 @@
         soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
         registreSoins: [],
         listeCourses: [],
-        saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
+        
+        saisiePlanning: { nom: '', date: todayISO, matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' },
+        
         organisations: {},
-        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] },
-        tempGroupe: { anim: '', enfantsTxt: '' },
+        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] },
+        tempGroupe: { anim: '', enfants: '' },
+        
         planningGlobal: [],
 
         init() {
@@ -896,17 +937,27 @@
               id: 101,
               nom: 'Sarah',
               dates: {
-                [todayISO]: { matin: 'Jeux d\'expression (-6a)', aprem: 'Atelier Pâtisserie' }
+                [todayISO]: { matin: 'Jeux d\'expression', ageMatin: '-6 ans', aprem: 'Atelier Pâtisserie', ageAprem: '-6 ans' }
               }
             },
             {
               id: 102,
               nom: 'Thomas',
               dates: {
-                [todayISO]: { matin: 'Sport Co (+6a)', aprem: 'Grand Jeu Forêt' }
+                [todayISO]: { matin: 'Sport Co', ageMatin: '+6 ans', aprem: 'Grand Jeu Forêt', ageAprem: '+6 ans' }
               }
             }
           ];
+        },
+
+        reinitialiserApp() {
+          if (confirm("Réinitialiser les données saisies ?")) {
+            this.fiche = { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] };
+            this.registreSoins = [];
+            this.listeCourses = [];
+            this.organisations = {};
+            this.showToast("Application réinitialisée ! 🔄");
+          }
         },
 
         getLundiDeLaSemaine(d) {
@@ -987,12 +1038,12 @@
           this.saisieGouter.recetteId = newId;
           this.nouvelleRecette = { nom: '', ingredients: [] };
           this.showAddRecetteModal = false;
-          this.showToast('Recette ajoutée au livre ! 🎉');
+          this.showToast('Recette ajoutée ! 🍰');
         },
 
         enregistrerGouterPlanifie() {
           if (!this.saisieGouter.date || !this.saisieGouter.recetteId) {
-            this.showToast('Oups ! Choisis une date et une recette.');
+            this.showToast('Choisis une date et une recette !');
             return;
           }
 
@@ -1005,7 +1056,7 @@
           });
 
           this.showPlanifModal = false;
-          this.showToast('Goûter planifié ! 🍰');
+          this.showToast('Goûter planifié ! 🍪');
         },
 
         supprimerGouterPlanifie(id) {
@@ -1074,7 +1125,7 @@
           if (anim && anim.dates && anim.dates[dateKey]) {
             return anim.dates[dateKey];
           }
-          return { matin: 'Repos / Libre', aprem: 'Repos / Libre' };
+          return { matin: 'Repos / Libre', ageMatin: '-6 ans', aprem: 'Repos / Libre', ageAprem: '+6 ans' };
         },
 
         editerPlanningDuJour(anim) {
@@ -1083,7 +1134,9 @@
             nom: anim.nom,
             date: this.dateAffichee,
             matin: pJour.matin === 'Repos / Libre' ? '' : pJour.matin,
-            aprem: pJour.aprem === 'Repos / Libre' ? '' : pJour.aprem
+            ageMatin: pJour.ageMatin || '-6 ans',
+            aprem: pJour.aprem === 'Repos / Libre' ? '' : pJour.aprem,
+            ageAprem: pJour.ageAprem || '+6 ans'
           };
           this.showAddAnimModal = true;
         },
@@ -1093,7 +1146,9 @@
             nom: '',
             date: this.dateAffichee,
             matin: '',
-            aprem: ''
+            ageMatin: '-6 ans',
+            aprem: '',
+            ageAprem: '+6 ans'
           };
           this.showAddAnimModal = true;
         },
@@ -1107,9 +1162,22 @@
           if (orgCourante) {
             this.saisieOrg = JSON.parse(JSON.stringify(orgCourante));
           } else {
-            this.saisieOrg = { date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] };
+            this.saisieOrg = { date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] };
           }
+          this.tempGroupe = { anim: '', enfants: '' };
           this.showOrgModal = true;
+        },
+
+        ajouterGroupeSortie() {
+          if(this.tempGroupe.anim.trim() !== '' && this.tempGroupe.enfants.trim() !== '') {
+            if(!this.saisieOrg.groupes) this.saisieOrg.groupes = [];
+            this.saisieOrg.groupes.push({
+              id: Date.now(),
+              anim: this.tempGroupe.anim.trim(),
+              enfants: this.tempGroupe.enfants.trim()
+            });
+            this.tempGroupe = { anim: '', enfants: '' };
+          }
         },
 
         sauvegarderOrg() {
@@ -1117,7 +1185,7 @@
             this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
             this.dateAffichee = this.saisieOrg.date;
             this.showOrgModal = false;
-            this.showToast('Sortie enregistrée ! 🚌');
+            this.showToast('Sortie programmée ! 🚌');
           }
         },
 
@@ -1151,7 +1219,7 @@
               achete: false
             });
           });
-          this.showToast('Fiche validée & matériel transféré ! 📦');
+          this.showToast('Fiche créée & Matériel en cours d\'achat ! 📦');
         },
 
         exportPDF() {
@@ -1191,7 +1259,7 @@
             console.error(err);
           });
 
-          this.showToast('Génération du PDF en cours... 📄');
+          this.showToast('PDF en préparation... 📄');
         },
 
         submitSoin() {
@@ -1205,13 +1273,13 @@
             heure: timeStr,
             prevenirFamille: this.soin.prevenirFamille
           });
-          this.showToast('Soin enregistré ! 🩺');
+          this.showToast('Soin bien enregistré ! 🩺');
           this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = ''; this.soin.prevenirFamille = false;
         },
 
         deleteSoin(id) {
           this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-          this.showToast('Soin supprimé.');
+          this.showToast('Soin retiré.');
         },
 
         addCourseDirecte() {
@@ -1234,7 +1302,7 @@
 
         viderAchetes() {
           this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.showToast('Liste nettoyée ! ✨');
+          this.showToast('Articles achetés nettoyés ! ✨');
         },
 
         ouvrirDetailAnim(p) {
@@ -1263,7 +1331,9 @@
 
             anim.dates[this.saisiePlanning.date] = {
               matin: this.saisiePlanning.matin.trim() || 'Repos / Libre',
-              aprem: this.saisiePlanning.aprem.trim() || 'Repos / Libre'
+              ageMatin: this.saisiePlanning.ageMatin || '-6 ans',
+              aprem: this.saisiePlanning.aprem.trim() || 'Repos / Libre',
+              ageAprem: this.saisiePlanning.ageAprem || '+6 ans'
             };
 
             this.showAddAnimModal = false;
