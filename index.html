@@ -3,1252 +3,408 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALSH Flow - Modèle Pure Flat Design</title>
-
-  <!-- Google Fonts: Inter (Pureté Flat Design) -->
+  <title>LESA - App</title>
+  <!-- Google Fonts: Fredoka pour un style ludique & rond -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Alpine.js -->
-  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- html2pdf.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  
   <style>
-    *, ::before, ::after { box-sizing: border-box; }
-
     :root {
-      --font-main: 'Inter', sans-serif;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --pink: #ec4899;
-      --green: #10b981;
-      --yellow: #f59e0b;
-      --purple: #8b5cf6;
-      --dark: #1e293b;
-      --bg-flat: #f1f5f9;
-      --border-flat: #cbd5e1;
+      --bg-yellow: #fcd307;
+      --bg-blue: #4d53ed;
+      --card-blue: #5b61f6;
+      --card-blue-dark: #3b41d6;
+      --text-dark: #111111;
+      --text-light: #ffffff;
+      --pill-white: #ffffff;
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Fredoka', sans-serif;
     }
 
     body {
-      font-family: var(--font-main);
-      background-color: var(--bg-flat);
-      color: var(--dark);
+      background-color: var(--bg-yellow);
+      color: var(--text-dark);
+      overflow-x: hidden;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* CARTE FLAT (Pas d'ombres, juste bordure et fond blanc) */
-    .card-flat {
-      background-color: #ffffff;
-      border: 1px solid var(--border-flat);
-      border-radius: 12px;
-    }
-
-    .card-item {
-      background-color: #ffffff;
-      border: 1px solid var(--border-flat);
-      border-radius: 8px;
-    }
-
-    /* INPUTS FLAT */
-    .input-ui {
-      background-color: #ffffff;
-      border: 1px solid #94a3b8;
-      border-radius: 6px;
-      color: var(--dark);
-      font-weight: 500;
-      transition: border-color 0.15s ease;
-    }
-
-    .input-ui:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    /* BOUTONS FLAT (Couleur unie, pas d'ombre) */
-    .btn-flat {
-      border: none;
+    /* Top Marquee Banner */
+    .top-banner {
+      background-color: #f7ca00;
+      color: var(--text-dark);
+      padding: 8px 0;
+      font-size: 14px;
       font-weight: 600;
-      transition: background-color 0.15s ease;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .banner-track {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 25s linear infinite;
+    }
+
+    .banner-track span {
+      margin-right: 40px;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Main Layout */
+    .app-container {
+      display: flex;
+      flex: 1;
+      min-height: calc(100vh - 36px);
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 70px;
+      padding: 20px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      border-right: 1px solid rgba(0, 0, 0, 0.08);
+      z-index: 10;
+    }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .menu-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .menu-btn span {
+      display: block;
+      width: 22px;
+      height: 3px;
+      background-color: var(--text-dark);
+      border-radius: 3px;
+    }
+
+    .lang-picker {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.05);
+      padding: 6px;
+      border-radius: 20px;
+    }
+
+    .lang-flag {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
       cursor: pointer;
     }
 
-    /* NAVBAR FLAT */
-    .nav-flat {
-      background: #ffffff;
-      border: 1px solid var(--border-flat);
-      border-radius: 9999px;
+    .brand-logo-vertical {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-dark);
     }
 
-    input[type="date"] {
-      text-align: left;
+    /* Main Content Wrapper */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 60px;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 0;
+    }
+
+    .hero-title {
+      font-size: 110px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: var(--text-light);
+      text-shadow: 0 4px 0 rgba(0,0,0,0.05);
+      line-height: 1;
+      margin-bottom: -30px;
+    }
+
+    .hero-illustration {
+      width: 280px;
+      height: 220px;
+      background: #eef1f6;
+      border-radius: 50% 50% 40% 40%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+
+    .mascot-face {
+      font-size: 80px;
+    }
+
+    .hero-actions {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: var(--radius-pill);
+      font-weight: 600;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-dark {
+      background-color: var(--text-dark);
+      color: var(--text-light);
+    }
+
+    .btn-white {
+      background-color: var(--pill-white);
+      color: var(--text-dark);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .hero-subtitle {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    /* Bento Grid Section (Blue Theme) */
+    .bento-section {
+      background-color: var(--bg-blue);
+      margin-top: 60px;
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      color: var(--text-light);
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .bento-card {
+      background-color: var(--card-blue);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 240px;
+    }
+
+    .bento-card h3 {
+      font-size: 24px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .bento-card p {
+      font-size: 15px;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    /* Interactive Elements inside Cards */
+    .control-pill {
+      background-color: var(--pill-white);
+      color: var(--text-dark);
+      padding: 12px 20px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+      margin-top: 10px;
+      max-width: 260px;
+    }
+
+    .gauge-container {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(var(--pill-white) 0% 79%, var(--card-blue-dark) 79% 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto;
+    }
+
+    .gauge-inner {
+      width: 90px;
+      height: 90px;
+      background-color: var(--card-blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
     }
   </style>
 </head>
+<body>
 
-<body class="pt-6 pb-28 select-none" x-data="alshApp()">
-
-  <!-- HEADER BRANDING FLAT -->
-  <header class="max-w-md mx-auto px-4 mb-4 flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
-      <div class="w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center text-lg font-bold">
-        ⚡
-      </div>
-      <h1 class="text-xl font-bold tracking-tight text-slate-800">
-        ALSH<span class="text-blue-600">Flow</span>
-      </h1>
+  <!-- Top Announcement Bar -->
+  <div class="top-banner">
+    <div class="banner-track">
+      <span>Sign up for the waiting list, and let's make learning fun and exciting! <b>LESA will be released in the fall of 2026.</b> Get ready to dive into something exciting!</span>
+      <span>Sign up for the waiting list, and let's make learning fun and exciting! <b>LESA will be released in the fall of 2026.</b> Get ready to dive into something exciting!</span>
     </div>
-    <span class="bg-amber-100 text-amber-800 font-semibold text-xs px-3 py-1 rounded-full border border-amber-300">
-      Anims Zone
-    </span>
-  </header>
-
-  <!-- TOAST NOTIFICATION FLAT -->
-  <div x-show="toast.show" 
-       x-transition:enter="transition ease-out duration-150"
-       x-transition:enter-start="opacity-0 -translate-y-2"
-       x-transition:enter-end="opacity-100 translate-y-0"
-       x-transition:leave="transition ease-in duration-100"
-       x-transition:leave-start="opacity-100"
-       x-transition:leave-end="opacity-0"
-       class="fixed top-4 right-4 left-4 z-50 max-w-md mx-auto card-flat bg-emerald-600 text-white p-3.5 flex items-center justify-between"
-       style="display: none;">
-    <div class="flex items-center space-x-2.5">
-      <i class="fa-solid fa-circle-check text-lg"></i>
-      <span class="text-xs font-semibold" x-text="toast.message"></span>
-    </div>
-    <button type="button" @click="toast.show = false" class="text-white opacity-80 hover:opacity-100"><i class="fa-solid fa-xmark text-lg"></i></button>
   </div>
 
-  <main class="max-w-md mx-auto px-4 space-y-4">
-
-    <!-- 1. ONGLET : FICHE D'ACTIVITÉ -->
-    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4">
-      <div class="card-flat p-5 space-y-4">
-        
-        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-            <span>🎨</span> Fiche d'Activité
-          </h2>
-          <span class="bg-purple-100 text-purple-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-purple-200">
-            Express
-          </span>
-        </div>
-
-        <form @submit.prevent="submitFiche()" class="space-y-3.5">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Nom de l'activité</label>
-            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu Chasse au Trésor" class="input-ui w-full px-3 py-2 text-xs" required>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Tranche d'âge</label>
-              <select x-model="fiche.age" class="input-ui w-full px-3 py-2 text-xs font-medium">
-                <option value="-6 ans">-6 ans</option>
-                <option value="+6 ans">+6 ans</option>
-                <option value="Inter-tranches">Inter-tranches</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Lieu</label>
-              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="input-ui w-full px-3 py-2 text-xs">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Objectif Pédagogique</label>
-            <input type="text" x-model="fiche.objectif" placeholder="ex: Coopérer en équipe" class="input-ui w-full px-3 py-2 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Déroulement / Consignes</label>
-            <textarea x-model="fiche.deroulement" placeholder="Explication des étapes du jeu..." class="input-ui w-full px-3 py-2 text-xs h-20 resize-none"></textarea>
-          </div>
-
-          <!-- SECTION MATÉRIEL -->
-          <div class="card-item p-3 bg-slate-50 space-y-2">
-            <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
-              <i class="fa-solid fa-boxes-packing"></i> Matériel & Quantités
-            </span>
-            <div class="grid grid-cols-5 gap-1.5">
-              <input type="text" x-model="newMatosNom" placeholder="Article" class="col-span-3 input-ui px-2.5 py-1.5 text-xs">
-              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-1.5 text-xs text-center">
-              <button type="button" @click="addMatos()" class="col-span-1 btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 rounded-md text-base font-bold">+</button>
-            </div>
-            <ul class="space-y-1 pt-1">
-              <template x-for="(item, index) in fiche.materiel" :key="index">
-                <li class="flex items-center justify-between text-xs card-item px-3 py-1.5 bg-white">
-                  <span class="font-medium text-slate-700" x-text="item.nom + ' — Quantité : ' + item.qte"></span>
-                  <button type="button" @click="removeMatos(index)" class="text-rose-500 hover:text-rose-700 ml-2"><i class="fa-solid fa-xmark text-sm"></i></button>
-                </li>
-              </template>
-            </ul>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5 pt-1">
-            <button type="button" @click="exportPDF()" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 border border-slate-300">
-              <i class="fa-solid fa-file-pdf text-rose-500 text-sm"></i> Export PDF
-            </button>
-            <button type="submit" class="btn-flat bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-paper-plane text-xs"></i> Envoi Courses
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF -->
-    <div id="pdf-template" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 700px;">
-      <div style="padding: 30px; font-family: 'Inter', sans-serif; color: #1e293b; background: #ffffff;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px;">
-          <div>
-            <h1 style="margin: 0; font-size: 20px; color: #2563eb;" id="pdf-titre">Fiche d'Activité</h1>
-            <p style="margin: 4px 0 0 0; font-size: 11px; font-weight: 600; color: #64748b;">Accueil de Loisirs ALSH Flow</p>
-          </div>
-          <span style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 11px;" id="pdf-age">Age</span>
-        </div>
-
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-          <tr>
-            <td style="padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; font-weight: 600; width: 30%;">Lieu :</td>
-            <td style="padding: 8px; border: 1px solid #cbd5e1;" id="pdf-lieu">-</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; font-weight: 600;">Objectif Pédagogique :</td>
-            <td style="padding: 8px; border: 1px solid #cbd5e1;" id="pdf-objectif">-</td>
-          </tr>
-        </table>
-
-        <div style="margin-bottom: 20px;">
-          <h3 style="color: #2563eb; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; font-size: 14px;">📜 Déroulement</h3>
-          <p style="font-size: 12px; line-height: 1.5; white-space: pre-line;" id="pdf-deroulement">-</p>
-        </div>
-
-        <div>
-          <h3 style="color: #2563eb; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; font-size: 14px;">📦 Matériel & Quantités</h3>
-          <ul style="font-size: 12px; padding-left: 20px;" id="pdf-materiel"></ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. ONGLET : CAHIER DE SOINS NUMÉRIQUE -->
-    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4" style="display: none;">
-      <div class="card-flat p-5 space-y-4">
-        
-        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-            <span>🩹</span> Cahier de Soins
-          </h2>
-          <span class="bg-rose-100 text-rose-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-rose-200">
-            Santé
-          </span>
-        </div>
-
-        <form @submit.prevent="submitSoin()" class="space-y-3.5">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Prénom & Nom de l'enfant</label>
-            <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-ui w-full px-3 py-2 text-xs" required>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Symptôme / Incident</label>
-            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure au genou" class="input-ui w-full px-3 py-2 text-xs" required>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Soin apporté</label>
-            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant..." class="input-ui w-full px-3 py-2 text-xs h-20 resize-none"></textarea>
-          </div>
-
-          <div class="flex items-center space-x-2.5 card-item p-3 bg-amber-50 border-amber-200">
-            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-amber-600 rounded cursor-pointer">
-            <label for="famille" class="text-xs font-semibold text-slate-800 cursor-pointer">Avertir les parents ce soir 🔔</label>
-          </div>
-
-          <button type="submit" class="btn-flat bg-emerald-600 hover:bg-emerald-700 text-white w-full py-2 rounded-lg text-xs font-semibold">
-            Enregistrer le soin
-          </button>
-        </form>
-
-        <hr class="border-slate-200 my-2">
-
-        <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide">Registre des soins</h3>
-        <div class="space-y-2">
-          <template x-for="item in registreSoins" :key="item.id">
-            <div class="card-item p-3 flex items-start justify-between bg-white">
-              <div class="space-y-0.5">
-                <p class="font-bold text-xs text-blue-600" x-text="item.enfant"></p>
-                <p class="text-xs font-semibold text-slate-800" x-text="item.incident"></p>
-                <p class="text-[11px] text-slate-500" x-text="item.heure + ' • Soin : ' + item.action"></p>
-                <span x-show="item.prevenirFamille" class="inline-block px-2 py-0.5 bg-rose-100 text-rose-700 text-[10px] font-semibold rounded mt-1 border border-rose-200">
-                  ⚠️ Prévenir la famille
-                </span>
-              </div>
-              <button type="button" @click="deleteSoin(item.id)" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash text-xs"></i></button>
-            </div>
-          </template>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. ONGLET : GOÛTERS & RECETTES -->
-    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4" style="display: none;">
-      <div class="card-flat p-5 space-y-4">
-        
-        <div class="space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span>🍪</span> Goûters & Recettes
-            </h2>
-            <div class="flex gap-1.5">
-              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1 rounded-md border border-slate-300">
-                + Recette
-              </button>
-              <button type="button" @click="showPlanifModal = true" class="btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs px-2.5 py-1 rounded-md font-semibold">
-                Planifier
-              </button>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between card-item px-3 py-2 bg-slate-50">
-            <button type="button" @click="changerSemaine(-1)" class="text-slate-600 hover:text-slate-900"><i class="fa-solid fa-chevron-left text-sm"></i></button>
-            <div class="text-center">
-              <p class="text-xs font-bold text-blue-600" x-text="getLibelleSemaine()"></p>
-            </div>
-            <button type="button" @click="changerSemaine(1)" class="text-slate-600 hover:text-slate-900"><i class="fa-solid fa-chevron-right text-sm"></i></button>
-          </div>
-        </div>
-
-        <!-- MODAL CRÉER UNE RECETTE -->
-        <div x-show="showAddRecetteModal" x-transition class="card-item p-4 space-y-3 bg-purple-50 border-purple-200" style="display: none;">
-          <div class="flex justify-between items-center border-b border-purple-200 pb-2">
-            <h3 class="text-xs font-bold text-purple-900">
-              🍰 Nouvelle Recette (Base 8 enfants)
-            </h3>
-            <button type="button" @click="showAddRecetteModal = false"><i class="fa-solid fa-xmark text-sm text-purple-700"></i></button>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nom de la recette</label>
-            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="input-ui w-full px-3 py-1.5 text-xs">
-          </div>
-
-          <div class="space-y-2 pt-1">
-            <label class="block text-[11px] font-bold text-slate-700">Ingrédients :</label>
-            
-            <div class="grid grid-cols-6 gap-1.5">
-              <input type="text" x-model="tempIng.nom" placeholder="Nom" class="col-span-3 input-ui px-2 py-1.5 text-xs">
-              <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-ui px-2 py-1.5 text-xs text-center">
-              <input type="text" x-model="tempIng.unite" placeholder="Unité" class="col-span-1.5 input-ui px-2 py-1.5 text-xs">
-            </div>
-            
-            <button type="button" @click="ajouterIngredierntRecette()" class="btn-flat bg-white text-slate-700 w-full py-1.5 text-xs font-semibold rounded border border-slate-300">
-              + Ajouter l'ingrédient
-            </button>
-
-            <div class="space-y-1 pt-1">
-              <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
-                <div class="flex justify-between items-center text-xs card-item px-2.5 py-1 bg-white">
-                  <span class="font-medium" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
-                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-rose-500"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-              </template>
-            </div>
-          </div>
-
-          <button type="button" @click="enregistrerNouvelleRecette()" class="btn-flat bg-purple-600 hover:bg-purple-700 text-white w-full py-1.5 text-xs font-semibold rounded">
-            Enregistrer la recette
-          </button>
-        </div>
-
-        <!-- LISTE DES GOÛTERS PROGRAMMÉS -->
-        <div class="space-y-2">
-          <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide flex justify-between items-center">
-            <span>Planning Goûters</span>
-            <span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded border border-amber-200" x-text="getGoutersDeLaSemaine().length + ' prévu(s)'"></span>
-          </h3>
-
-          <template x-if="getGoutersDeLaSemaine().length === 0">
-            <div class="card-item p-4 text-center bg-slate-50">
-              <p class="text-xs font-medium text-slate-500">Aucun goûter planifié cette semaine.</p>
-            </div>
-          </template>
-
-          <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
-            <div class="card-item p-3 space-y-2 bg-white">
-              <div class="flex justify-between items-start">
-                <div>
-                  <span class="text-[10px] font-bold text-rose-600 uppercase" x-text="formatDateLisible(g.date)"></span>
-                  <h4 class="text-sm font-bold text-slate-800" x-text="getNomRecette(g.recetteId)"></h4>
-                </div>
-                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="text-slate-400 hover:text-rose-600">
-                  <i class="fa-solid fa-trash text-xs"></i>
-                </button>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="card-item p-2 bg-slate-50">
-                  <span class="text-[10px] text-slate-400 block">Animateur</span>
-                  <span class="font-bold text-blue-600" x-text="g.anim || 'Non assigné'"></span>
-                </div>
-                <div class="card-item p-2 bg-slate-50">
-                  <span class="text-[10px] text-slate-400 block">Quantité</span>
-                  <span class="font-bold text-slate-800" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-
-        <hr class="border-slate-200 my-3">
-
-        <!-- LISTE DE COURSES GOÛTER -->
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide flex items-center gap-1.5">
-              🛒 Courses Goûter
-            </h3>
-            <span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded border border-emerald-200" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
-          </div>
-
-          <div class="space-y-1.5">
-            <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
-              <div class="card-item p-2.5 flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 bg-slate-100 line-through' : ''">
-                <div class="flex items-center space-x-2.5">
-                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer">
-                  <span class="text-xs font-semibold text-slate-800" x-text="item.nom"></span>
-                </div>
-                <span class="font-bold text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200" x-text="item.qte + ' ' + item.unite"></span>
-              </div>
-            </template>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- MODAL : PLANIFIER UN GOÛTER -->
-    <div x-show="showPlanifModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40" style="display: none;">
-      <div class="card-flat p-5 max-w-sm w-full space-y-3 bg-white">
-        <h3 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">
-          📅 Planifier un Goûter
-        </h3>
-
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Date du goûter</label>
-            <input type="date" x-model="saisieGouter.date" class="input-ui w-full px-3 py-1.5 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Choisir la recette</label>
-            <select x-model="saisieGouter.recetteId" class="input-ui w-full px-3 py-1.5 text-xs font-semibold">
-              <template x-for="r in recettesGouter" :key="r.id">
-                <option :value="r.id" x-text="r.nom + ' (base 8 enfants)'"></option>
-              </template>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Animateur responsable</label>
-            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-ui w-full px-3 py-1.5 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre d'enfants prévus</label>
-            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-ui w-full px-3 py-1.5 text-xs text-center font-bold">
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-slate-200">
-          <button type="button" @click="showPlanifModal = false" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 py-1.5 rounded text-xs font-semibold">Annuler</button>
-          <button type="button" @click="enregistrerGouterPlanifie()" class="btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 flex-1 py-1.5 rounded text-xs font-semibold">Valider</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 4. ONGLET : COURSES MATÉRIEL -->
-    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4" style="display: none;">
-      <div class="card-flat p-5 space-y-4">
-        
-        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-            <span>🛍️</span> Courses Matériel
-          </h2>
-          <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-200">
-            Activités
-          </span>
-        </div>
-
-        <div class="grid grid-cols-5 gap-1.5">
-          <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-ui px-3 py-2 text-xs">
-          <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-2 text-xs text-center">
-          <button type="button" @click="addCourseDirecte()" class="col-span-1 btn-flat bg-blue-600 hover:bg-blue-700 text-white rounded-md text-base font-bold">+</button>
-        </div>
-
-        <div class="space-y-2">
-          <template x-for="item in listeCourses" :key="item.id">
-            <div class="card-item p-3 flex items-center justify-between transition-opacity" :class="item.achete ? 'opacity-40 bg-slate-100 line-through' : ''">
-              <div class="flex items-center space-x-3">
-                <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-blue-600 rounded cursor-pointer">
-                <div>
-                  <p class="text-xs font-bold text-slate-800" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
-                  <p class="text-[11px] text-slate-500" x-text="'Pour : ' + item.activite"></p>
-                </div>
-              </div>
-              <button type="button" @click="deleteCourse(item.id)" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash text-xs"></i></button>
-            </div>
-          </template>
-        </div>
-
-        <button type="button" @click="viderAchetes()" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 w-full py-2 text-xs font-semibold rounded-md border border-slate-300">
-          Nettoyer les articles achetés
-        </button>
-      </div>
-    </div>
-
-    <!-- 5. ONGLET : PLANNING & ORGANISATION -->
-    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4" style="display: none;">
-      <div class="card-flat p-5 space-y-4">
-        
-        <div class="space-y-3 border-b border-slate-200 pb-3">
-          <div class="flex items-center justify-between">
-            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-              <span>📅</span> Planning Équipe
-            </h2>
-            <div class="flex gap-1.5">
-              <button type="button" @click="ouvrirModalOrg()" class="btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs px-2.5 py-1 rounded-md font-semibold">
-                🚌 Sortie
-              </button>
-              <button type="button" @click="nouveauCreneauVierge()" class="btn-flat bg-blue-600 hover:bg-blue-700 text-white text-xs px-2.5 py-1 rounded-md font-semibold">
-                + Créneau
-              </button>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between card-item px-3 py-2 bg-slate-50">
-            <button type="button" @click="changerJour(-1)" class="text-slate-600 hover:text-slate-900"><i class="fa-solid fa-chevron-left text-sm"></i></button>
-            <div class="text-center">
-              <p class="text-xs font-bold text-blue-600" x-text="formatDateLisible(dateAffichee)"></p>
-            </div>
-            <button type="button" @click="changerJour(1)" class="text-slate-600 hover:text-slate-900"><i class="fa-solid fa-chevron-right text-sm"></i></button>
-          </div>
-        </div>
-
-        <!-- ENCADRÉ SORTIES SPECIALE -->
-        <template x-if="getOrgDuJour()">
-          <div class="card-item p-4 space-y-2 bg-amber-50 border-amber-300">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="inline-block px-2 py-0.5 rounded bg-amber-200 text-amber-900 text-[10px] font-bold uppercase mb-1">
-                  🚨 SORTIE SPÉCIALE
-                </span>
-                <h3 class="text-sm font-bold text-slate-800" x-text="getOrgDuJour().titre"></h3>
-              </div>
-              <button type="button" @click="effacerOrgDuJour()" class="text-slate-400 hover:text-rose-600">
-                <i class="fa-solid fa-trash text-xs"></i>
-              </button>
-            </div>
-
-            <p class="text-xs text-slate-700" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
-            
-            <div class="grid grid-cols-2 gap-2 text-xs card-item p-2 bg-white">
-              <div>
-                <span class="text-[10px] text-slate-400 block">Bus Aller</span>
-                <span class="font-bold text-blue-600" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
-              </div>
-              <div>
-                <span class="text-[10px] text-slate-400 block">Bus Retour</span>
-                <span class="font-bold text-blue-600" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
-              </div>
-            </div>
-          </div>
-        </template>
-
-        <div class="space-y-2.5">
-          <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide">Planning des Animateurs</h3>
-
-          <template x-for="p in planningGlobal" :key="p.id">
-            <div class="card-item p-3 space-y-2 bg-white">
-              
-              <div class="flex justify-between items-center">
-                <button type="button" @click="ouvrirDetailAnim(p)" class="text-xs font-bold text-blue-600 flex items-center gap-1.5 hover:underline">
-                  <span x-text="p.nom"></span>
-                  <i class="fa-solid fa-circle-info text-[10px]"></i>
-                </button>
-                
-                <div class="flex items-center space-x-1">
-                  <button type="button" @click="editerPlanningDuJour(p)" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 text-[10px] font-semibold rounded border border-slate-300">
-                    Modifier
-                  </button>
-                  <button type="button" @click="supprimerAnim(p.id)" class="text-slate-400 hover:text-rose-600 p-1">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="card-item p-2 bg-slate-50">
-                  <span class="text-[10px] text-slate-400 block mb-0.5">☀️ Matin</span>
-                  <p class="font-medium text-slate-800 truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
-                </div>
-                <div class="card-item p-2 bg-slate-50">
-                  <span class="text-[10px] text-slate-400 block mb-0.5">🌆 Après-midi</span>
-                  <p class="font-medium text-slate-800 truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
-                </div>
-              </div>
-
-            </div>
-          </template>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- MODAL : ORGANISATION / SORTIES -->
-    <div x-show="showOrgModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40" style="display: none;">
-      <div class="card-flat p-5 max-w-sm w-full space-y-3 bg-white max-h-[90vh] overflow-y-auto">
-        <h3 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">
-          🚌 Programmation d'une Sortie
-        </h3>
-
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Date</label>
-            <input type="date" x-model="saisieOrg.date" class="input-ui w-full px-3 py-1.5 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Titre de la sortie</label>
-            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-ui w-full px-3 py-1.5 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Lieu</label>
-            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo" class="input-ui w-full px-3 py-1.5 text-xs">
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Bus Départ</label>
-              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-ui w-full px-3 py-1.5 text-xs">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Bus Retour</label>
-              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-ui w-full px-3 py-1.5 text-xs">
-            </div>
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-slate-200">
-          <button type="button" @click="showOrgModal = false" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 py-1.5 rounded text-xs font-semibold">Annuler</button>
-          <button type="button" @click="sauvegarderOrg()" class="btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 flex-1 py-1.5 rounded text-xs font-semibold">Enregistrer</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL : DETAIL ANIMATEUR -->
-    <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40" style="display: none;">
-      <div class="card-flat p-5 max-w-sm w-full space-y-4 bg-white max-h-[85vh] overflow-y-auto">
-        
-        <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-          <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-              <span x-text="animSelectionne?.nom ? animSelectionne.nom.charAt(0) : 'A'"></span>
-            </div>
-            <div>
-              <h3 class="text-sm font-bold text-slate-800" x-text="animSelectionne?.nom"></h3>
-              <p class="text-[10px] text-slate-400 uppercase font-semibold">Planning Animateur</p>
-            </div>
-          </div>
-          <button type="button" @click="animSelectionne = null" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-        </div>
-
-        <div class="space-y-2.5">
-          <template x-for="(planningDate, dateKey) in animSelectionne?.dates" :key="dateKey">
-            <div class="card-item p-3 space-y-2 bg-slate-50">
-              <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
-                <span class="text-xs font-bold text-blue-600" x-text="formatDateLisible(dateKey)"></span>
-                <button type="button" @click="allerADate(dateKey)" class="btn-flat bg-amber-400 text-slate-900 text-[10px] font-semibold px-2 py-0.5 rounded">
-                  Voir jour
-                </button>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="card-item p-2 bg-white">
-                  <span class="text-[10px] text-slate-400 block">☀️ Matin</span>
-                  <p class="font-medium text-slate-800" x-text="planningDate.matin || 'Repos'"></p>
-                </div>
-                <div class="card-item p-2 bg-white">
-                  <span class="text-[10px] text-slate-400 block">🌆 Après-midi</span>
-                  <p class="font-medium text-slate-800" x-text="planningDate.aprem || 'Repos'"></p>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-
-        <button type="button" @click="animSelectionne = null" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 w-full py-1.5 rounded text-xs font-semibold border border-slate-300">Fermer</button>
-      </div>
-    </div>
-
-    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
-    <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40" style="display: none;">
-      <div class="card-flat p-5 max-w-sm w-full space-y-3 bg-white">
-        <h3 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">
-          ✏️ Créneau Animateur
-        </h3>
-        
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nom de l'animateur</label>
-            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-ui w-full px-3 py-1.5 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">Date</label>
-            <input type="date" x-model="saisiePlanning.date" class="input-ui w-full px-3 py-1.5 text-xs">
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Créneau Matin</label>
-              <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu -6a" class="input-ui w-full px-3 py-1.5 text-xs">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-700 mb-1">Créneau A-M</label>
-              <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu" class="input-ui w-full px-3 py-1.5 text-xs">
-            </div>
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-slate-200">
-          <button type="button" @click="showAddAnimModal = false" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 py-1.5 rounded text-xs font-semibold">Annuler</button>
-          <button type="button" @click="validerPlanning()" class="btn-flat bg-blue-600 hover:bg-blue-700 text-white flex-1 py-1.5 rounded text-xs font-semibold">Valider</button>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- NAVBAR FLOTTANTE FLAT -->
-  <nav class="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40 nav-flat p-1.5 flex justify-around items-center">
+  <div class="app-container">
     
-    <button type="button" @click="currentTab = 'fiche'" 
-            :class="currentTab === 'fiche' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'" 
-            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
-      <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
-      <span class="text-[9px] font-medium mt-0.5">Fiches</span>
-    </button>
+    <!-- Left Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <button class="menu-btn" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="lang-picker">
+          <div class="lang-flag">🇩🇰</div>
+          <div class="lang-flag">🇺🇸</div>
+        </div>
+      </div>
+      <div class="brand-logo-vertical">LESA</div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Hero Section -->
+      <section class="hero">
+        <h1 class="hero-title">LESA</h1>
+        <div class="hero-illustration">
+          <span class="mascot-face">🦊</span>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn btn-dark">Get in touch</button>
+          <p class="hero-subtitle">We're about to create the most fun reading game in the world!</p>
+          <button class="btn btn-white">Join the waitlist</button>
+        </div>
+      </section>
+
+      <!-- Bento Features Section -->
+      <section class="bento-section">
+        <div class="bento-grid">
+          
+          <!-- Card 1 -->
+          <div class="bento-card">
+            <div>
+              <h3>Build the Habit</h3>
+              <p>We focus on consistency, not just vocabulary. Set a daily reading goal and watch your streak grow.</p>
+            </div>
+            <div style="margin-top: 20px;">
+              <div class="control-pill">
+                <span>Reminder time!</span>
+                <span>5:00 PM ▾</span>
+              </div>
+              <div class="control-pill">
+                <span>Frequency</span>
+                <span>Every day ▾</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="bento-card">
+            <div>
+              <h3>Express Yourself</h3>
+              <p>Unlock unique combinations of outfits. Read more to earn rewards and upgrade your style.</p>
+            </div>
+            <div style="font-size: 48px; text-align: center; margin-top: 10px;">
+              🧙‍♂️ 🦊 👩‍🚀
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="bento-card">
+            <div>
+              <h3>Track Their Growth</h3>
+              <p>Monitor progress effortlessly with clear visual metrics.</p>
+            </div>
+            <div class="gauge-container">
+              <div class="gauge-inner">79</div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="bento-card">
+            <div>
+              <h3>The Perfect Pace</h3>
+              <p>Adapts automatically to the reader's level.</p>
+            </div>
+            <div class="control-pill" style="margin: 20px auto 0 auto; width: 100%;">
+              <span>Points:</span>
+              <span><strong>Hard</strong></span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
 
-    <button type="button" @click="currentTab = 'soins'" 
-            :class="currentTab === 'soins' ? 'bg-rose-600 text-white' : 'text-slate-600 hover:bg-slate-100'" 
-            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
-      <i class="fa-solid fa-kit-medical text-sm"></i>
-      <span class="text-[9px] font-medium mt-0.5">Soins</span>
-    </button>
-
-    <button type="button" @click="currentTab = 'gouter'" 
-            :class="currentTab === 'gouter' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-100'" 
-            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
-      <i class="fa-solid fa-cookie-bite text-sm"></i>
-      <span class="text-[9px] font-medium mt-0.5">Goûter</span>
-    </button>
-
-    <button type="button" @click="currentTab = 'courses'" 
-            :class="currentTab === 'courses' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100'" 
-            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
-      <i class="fa-solid fa-cart-shopping text-sm"></i>
-      <span class="text-[9px] font-medium mt-0.5">Matériel</span>
-    </button>
-
-    <button type="button" @click="currentTab = 'planning'" 
-            :class="currentTab === 'planning' ? 'bg-purple-600 text-white' : 'text-slate-600 hover:bg-slate-100'" 
-            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
-      <i class="fa-solid fa-calendar-days text-sm"></i>
-      <span class="text-[9px] font-medium mt-0.5">Planning</span>
-    </button>
-
-  </nav>
-
-  <!-- LOGIQUE ALPINE JS -->
-  <script>
-    function alshApp() {
-      const today = new Date();
-      const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-      return {
-        currentTab: 'fiche',
-        dateAffichee: todayISO,
-        newMatosNom: '',
-        newMatosQte: '',
-        nouvelleCourseNom: '',
-        nouvelleCourseQte: '',
-        showAddAnimModal: false,
-        showOrgModal: false,
-        showAddRecetteModal: false,
-        showPlanifModal: false,
-        animSelectionne: null,
-        toast: { show: false, message: '' },
-
-        semaineActiveOffset: 0,
-
-        nouvelleRecette: { nom: '', ingredients: [] },
-        tempIng: { nom: '', qte: '', unite: '' },
-
-        recettesGouter: [
-          {
-            id: 'recette-chocolat',
-            nom: 'Gâteau au Chocolat 🍫',
-            ingredients: [
-              { nom: 'Farine', qte: 100, unite: 'g' },
-              { nom: 'Chocolat noir', qte: 200, unite: 'g' },
-              { nom: 'Beurre', qte: 125, unite: 'g' },
-              { nom: 'Sucre', qte: 100, unite: 'g' },
-              { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }
-            ]
-          },
-          {
-            id: 'recette-pommes',
-            nom: 'Gâteau aux Pommes 🍏',
-            ingredients: [
-              { nom: 'Farine', qte: 150, unite: 'g' },
-              { nom: 'Pommes', qte: 3, unite: 'pièce(s)' },
-              { nom: 'Sucre', qte: 80, unite: 'g' },
-              { nom: 'Beurre', qte: 80, unite: 'g' },
-              { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }
-            ]
-          }
-        ],
-
-        saisieGouter: {
-          date: todayISO,
-          recetteId: 'recette-chocolat',
-          anim: '',
-          nbEnfants: 32
-        },
-
-        goutersPlanifies: [],
-        coursesAchetesGouter: {},
-
-        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
-        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
-        registreSoins: [],
-        listeCourses: [],
-        saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
-        organisations: {},
-        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] },
-        tempGroupe: { anim: '', enfantsTxt: '' },
-        planningGlobal: [],
-
-        init() {
-          const lundi = this.getLundiDeLaSemaine(new Date());
-          const mardiStr = this.addDaysISO(lundi, 1);
-          const jeudiStr = this.addDaysISO(lundi, 3);
-
-          this.goutersPlanifies = [
-            { id: 'g1', date: mardiStr, recetteId: 'recette-chocolat', anim: 'Sarah', nbEnfants: 35 },
-            { id: 'g2', date: jeudiStr, recetteId: 'recette-pommes', anim: 'Thomas', nbEnfants: 24 }
-          ];
-
-          this.planningGlobal = [
-            {
-              id: 101,
-              nom: 'Sarah',
-              dates: {
-                [todayISO]: { matin: 'Jeux d\'expression (-6a)', aprem: 'Atelier Pâtisserie' }
-              }
-            },
-            {
-              id: 102,
-              nom: 'Thomas',
-              dates: {
-                [todayISO]: { matin: 'Sport Co (+6a)', aprem: 'Grand Jeu Forêt' }
-              }
-            }
-          ];
-        },
-
-        getLundiDeLaSemaine(d) {
-          const date = new Date(d);
-          const day = date.getDay();
-          const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-          return new Date(date.setDate(diff));
-        },
-
-        addDaysISO(dateObj, days) {
-          const res = new Date(dateObj);
-          res.setDate(res.getDate() + days);
-          return `${res.getFullYear()}-${String(res.getMonth() + 1).padStart(2, '0')}-${String(res.getDate()).padStart(2, '0')}`;
-        },
-
-        changerSemaine(delta) {
-          this.semaineActiveOffset += delta;
-        },
-
-        getDatesSemaineActive() {
-          const lundiCourant = this.getLundiDeLaSemaine(new Date());
-          lundiCourant.setDate(lundiCourant.getDate() + (this.semaineActiveOffset * 7));
-
-          const dates = [];
-          for (let i = 0; i < 7; i++) {
-            dates.push(this.addDaysISO(lundiCourant, i));
-          }
-          return dates;
-        },
-
-        getLibelleSemaine() {
-          const dates = this.getDatesSemaineActive();
-          const dDeb = new Date(dates[0]);
-          const dFin = new Date(dates[6]);
-          const options = { day: 'numeric', month: 'short' };
-          return `Semaine du ${dDeb.toLocaleDateString('fr-FR', options)} au ${dFin.toLocaleDateString('fr-FR', options)}`;
-        },
-
-        getGoutersDeLaSemaine() {
-          const datesSemaine = this.getDatesSemaineActive();
-          return this.goutersPlanifies.filter(g => datesSemaine.includes(g.date))
-                                     .sort((a,b) => a.date.localeCompare(b.date));
-        },
-
-        getNomRecette(id) {
-          const r = this.recettesGouter.find(item => item.id === id);
-          return r ? r.nom : 'Recette inconnue';
-        },
-
-        ajouterIngredierntRecette() {
-          if (this.tempIng.nom.trim() !== '' && this.tempIng.qte > 0) {
-            this.nouvelleRecette.ingredients.push({
-              nom: this.tempIng.nom.trim(),
-              qte: this.tempIng.qte,
-              unite: this.tempIng.unite.trim() || 'u'
-            });
-            this.tempIng = { nom: '', qte: '', unite: '' };
-          }
-        },
-
-        enregistrerNouvelleRecette() {
-          if (this.nouvelleRecette.nom.trim() === '') {
-            this.showToast('Indique le nom de la recette !');
-            return;
-          }
-          if (this.nouvelleRecette.ingredients.length === 0) {
-            this.showToast('Ajoute au moins 1 ingrédient.');
-            return;
-          }
-
-          const newId = 'recette-' + Date.now();
-          this.recettesGouter.push({
-            id: newId,
-            nom: this.nouvelleRecette.nom.trim(),
-            ingredients: JSON.parse(JSON.stringify(this.nouvelleRecette.ingredients))
-          });
-
-          this.saisieGouter.recetteId = newId;
-          this.nouvelleRecette = { nom: '', ingredients: [] };
-          this.showAddRecetteModal = false;
-          this.showToast('Recette ajoutée au livre ! 🎉');
-        },
-
-        enregistrerGouterPlanifie() {
-          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) {
-            this.showToast('Oups ! Choisis une date et une recette.');
-            return;
-          }
-
-          this.goutersPlanifies.push({
-            id: 'gouter-' + Date.now(),
-            date: this.saisieGouter.date,
-            recetteId: this.saisieGouter.recetteId,
-            anim: this.saisieGouter.anim.trim() || 'Animateur',
-            nbEnfants: this.saisieGouter.nbEnfants || 8
-          });
-
-          this.showPlanifModal = false;
-          this.showToast('Goûter planifié ! 🍰');
-        },
-
-        supprimerGouterPlanifie(id) {
-          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
-          this.showToast('Goûter supprimé !');
-        },
-
-        getListeCoursesAgregeeSemaine() {
-          const gouters = this.getGoutersDeLaSemaine();
-          const cumule = {};
-
-          gouters.forEach(g => {
-            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
-            if (recette) {
-              const nbGateaux = Math.ceil((g.nbEnfants || 8) / 8);
-
-              recette.ingredients.forEach(ing => {
-                const key = `${ing.nom.toLowerCase().trim()}_${ing.unite.toLowerCase().trim()}`;
-                if (!cumule[key]) {
-                  cumule[key] = {
-                    key: key,
-                    nom: ing.nom,
-                    qte: 0,
-                    unite: ing.unite
-                  };
-                }
-                cumule[key].qte += (ing.qte * nbGateaux);
-              });
-            }
-          });
-
-          return Object.values(cumule).map(item => ({
-            ...item,
-            qte: Number(item.qte.toFixed(2))
-          }));
-        },
-
-        estAcheteCourseGouter(key) {
-          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
-          return !!this.coursesAchetesGouter[semaineKey];
-        },
-
-        toggleAcheteCourseGouter(key) {
-          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
-          this.coursesAchetesGouter[semaineKey] = !this.coursesAchetesGouter[semaineKey];
-        },
-
-        changerJour(deltaDays) {
-          const parts = this.dateAffichee.split('-');
-          const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          d.setDate(d.getDate() + deltaDays);
-          this.dateAffichee = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        },
-
-        formatDateLisible(dateStr) {
-          if(!dateStr) return '';
-          const parts = dateStr.split('-');
-          if(parts.length !== 3) return dateStr;
-          const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          const options = { weekday: 'long', day: 'numeric', month: 'long' };
-          const txt = d.toLocaleDateString('fr-FR', options);
-          return txt.charAt(0).toUpperCase() + txt.slice(1);
-        },
-
-        getPlanningDuJour(anim, dateKey) {
-          if (anim && anim.dates && anim.dates[dateKey]) {
-            return anim.dates[dateKey];
-          }
-          return { matin: 'Repos / Libre', aprem: 'Repos / Libre' };
-        },
-
-        editerPlanningDuJour(anim) {
-          const pJour = this.getPlanningDuJour(anim, this.dateAffichee);
-          this.saisiePlanning = {
-            nom: anim.nom,
-            date: this.dateAffichee,
-            matin: pJour.matin === 'Repos / Libre' ? '' : pJour.matin,
-            aprem: pJour.aprem === 'Repos / Libre' ? '' : pJour.aprem
-          };
-          this.showAddAnimModal = true;
-        },
-
-        nouveauCreneauVierge() {
-          this.saisiePlanning = {
-            nom: '',
-            date: this.dateAffichee,
-            matin: '',
-            aprem: ''
-          };
-          this.showAddAnimModal = true;
-        },
-
-        getOrgDuJour() {
-          return this.organisations[this.dateAffichee] || null;
-        },
-
-        ouvrirModalOrg() {
-          const orgCourante = this.getOrgDuJour();
-          if (orgCourante) {
-            this.saisieOrg = JSON.parse(JSON.stringify(orgCourante));
-          } else {
-            this.saisieOrg = { date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] };
-          }
-          this.showOrgModal = true;
-        },
-
-        sauvegarderOrg() {
-          if (this.saisieOrg.titre.trim() !== '' && this.saisieOrg.date) {
-            this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
-            this.dateAffichee = this.saisieOrg.date;
-            this.showOrgModal = false;
-            this.showToast('Sortie enregistrée ! 🚌');
-          }
-        },
-
-        effacerOrgDuJour() {
-          delete this.organisations[this.dateAffichee];
-          this.showToast('Sortie effacée.');
-        },
-
-        addMatos() {
-          if (this.newMatosNom.trim() !== '') {
-            this.fiche.materiel.push({
-              nom: this.newMatosNom.trim(),
-              qte: this.newMatosQte.trim() || '1'
-            });
-            this.newMatosNom = '';
-            this.newMatosQte = '';
-          }
-        },
-
-        removeMatos(index) {
-          this.fiche.materiel.splice(index, 1);
-        },
-
-        submitFiche() {
-          this.fiche.materiel.forEach(item => {
-            this.listeCourses.push({
-              id: Date.now() + Math.random(),
-              nom: item.nom,
-              qte: item.qte,
-              activite: this.fiche.titre || 'Activité',
-              achete: false
-            });
-          });
-          this.showToast('Fiche validée & matériel transféré ! 📦');
-        },
-
-        exportPDF() {
-          document.getElementById('pdf-titre').innerText = this.fiche.titre || 'Fiche d\'Activité Sans Titre';
-          document.getElementById('pdf-age').innerText = this.fiche.age;
-          document.getElementById('pdf-lieu').innerText = this.fiche.lieu || 'Non spécifié';
-          document.getElementById('pdf-objectif').innerText = this.fiche.objectif || 'Non spécifié';
-          document.getElementById('pdf-deroulement').innerText = this.fiche.deroulement || 'Aucun déroulement renseigné.';
-
-          const listEl = document.getElementById('pdf-materiel');
-          listEl.innerHTML = '';
-          if(this.fiche.materiel.length === 0) {
-            listEl.innerHTML = '<li>Aucun matériel particulier</li>';
-          } else {
-            this.fiche.materiel.forEach(item => {
-              const li = document.createElement('li');
-              li.innerText = `${item.nom} — Quantité : ${item.qte}`;
-              listEl.appendChild(li);
-            });
-          }
-
-          const element = document.getElementById('pdf-template');
-          element.style.display = 'block';
-
-          const opt = {
-            margin:       0.5,
-            filename:     `fiche_${(this.fiche.titre || 'activite').replace(/\s+/g, '_')}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, logging: false },
-            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-          };
-
-          html2pdf().set(opt).from(element).save().then(() => {
-            element.style.display = 'none';
-          }).catch(err => {
-            element.style.display = 'none';
-            console.error(err);
-          });
-
-          this.showToast('Génération du PDF en cours... 📄');
-        },
-
-        submitSoin() {
-          const now = new Date();
-          const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-          this.registreSoins.unshift({
-            id: Date.now(),
-            enfant: this.soin.enfant,
-            incident: this.soin.incident,
-            action: this.soin.action || 'Soin apporté',
-            heure: timeStr,
-            prevenirFamille: this.soin.prevenirFamille
-          });
-          this.showToast('Soin enregistré ! 🩺');
-          this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = ''; this.soin.prevenirFamille = false;
-        },
-
-        deleteSoin(id) {
-          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-          this.showToast('Soin supprimé.');
-        },
-
-        addCourseDirecte() {
-          if(this.nouvelleCourseNom.trim() !== '') {
-            this.listeCourses.unshift({
-              id: Date.now(),
-              nom: this.nouvelleCourseNom.trim(),
-              qte: this.nouvelleCourseQte.trim() || '1',
-              activite: 'Achat direct',
-              achete: false
-            });
-            this.nouvelleCourseNom = '';
-            this.nouvelleCourseQte = '';
-          }
-        },
-
-        deleteCourse(id) {
-          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
-        },
-
-        viderAchetes() {
-          this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.showToast('Liste nettoyée ! ✨');
-        },
-
-        ouvrirDetailAnim(p) {
-          this.animSelectionne = p;
-        },
-
-        allerADate(dateKey) {
-          this.dateAffichee = dateKey;
-          this.animSelectionne = null;
-        },
-
-        validerPlanning() {
-          if(this.saisiePlanning.nom.trim() !== '' && this.saisiePlanning.date) {
-            let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
-            
-            if (!anim) {
-              anim = {
-                id: Date.now(),
-                nom: this.saisiePlanning.nom.trim(),
-                dates: {}
-              };
-              this.planningGlobal.push(anim);
-            }
-
-            if(!anim.dates) anim.dates = {};
-
-            anim.dates[this.saisiePlanning.date] = {
-              matin: this.saisiePlanning.matin.trim() || 'Repos / Libre',
-              aprem: this.saisiePlanning.aprem.trim() || 'Repos / Libre'
-            };
-
-            this.showAddAnimModal = false;
-            this.showToast(`Créneau de ${anim.nom} à jour ! 👍`);
-          }
-        },
-
-        supprimerAnim(id) {
-          this.planningGlobal = this.planningGlobal.filter(p => p.id !== id);
-          this.showToast('Animateur retiré.');
-        },
-
-        showToast(msg) {
-          this.toast.message = msg;
-          this.toast.show = true;
-          setTimeout(() => { this.toast.show = false; }, 3000);
-        }
-      }
-    }
-  </script>
 </body>
 </html>
