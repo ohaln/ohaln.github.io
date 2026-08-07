@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
 <meta name="theme-color" content="#09090E">
-<title>Calculateur — Taux d'encadrement SDJES</title>
+<title>Calculateur ALSH — Taux d'encadrement SDJES</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,7 +86,7 @@
     width: 100%;
   }
 
-  /* Header avec marges de sécurité anti-débordement */
+  /* Header */
   .header-wrap {
     display: flex;
     flex-direction: column;
@@ -125,16 +125,17 @@
     gap: 12px;
   }
 
+  /* Titre stricte sur 2 lignes */
   h1 {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(24px, 7.5vw, 36px);
+    font-size: clamp(26px, 8vw, 36px);
     font-weight: 800;
-    line-height: 1.1;
+    line-height: 1.05;
     letter-spacing: -0.02em;
     margin: 0;
     text-transform: lowercase;
     color: var(--text-main);
-    word-break: break-word;
+    word-break: normal;
   }
   h1 span {
     color: var(--purple-bright);
@@ -167,17 +168,20 @@
     align-items: center;
     gap: 8px;
   }
+
+  /* Pastilles JAUNES NÉON */
   .section-num {
-    background: var(--purple-bright);
-    color: #FFFFFF;
+    background: var(--yellow);
+    color: var(--text-dark);
     width: 20px;
     height: 20px;
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 800;
+    box-shadow: 0 0 10px var(--yellow-glow);
   }
 
   .info-pop {
@@ -218,8 +222,10 @@
   .regime-card .r-title {
     display: block; font-weight: 800; font-size: 13px; color: var(--text-main);
   }
+  /* Sous-titres JAUNES */
   .regime-card .r-sub {
-    display: block; font-size: 10.5px; font-weight: 600; margin-top: 2px; opacity: 0.8;
+    display: block; font-size: 10.5px; font-weight: 700; margin-top: 2px;
+    color: var(--yellow);
   }
 
   .regime-card.active {
@@ -228,7 +234,8 @@
     color: #fff !important;
     box-shadow: 0 8px 20px var(--purple-glow);
   }
-  .regime-card.active .r-title, .regime-card.active .r-sub { color: #fff !important; }
+  .regime-card.active .r-title { color: #fff !important; }
+  .regime-card.active .r-sub { color: var(--yellow) !important; }
 
   .pedt-note {
     font-size: 11.5px;
@@ -306,6 +313,7 @@
   .stepper-box input::-webkit-outer-spin-button,
   .stepper-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
+  /* Effectif total avec Chiffre JAUNE NÉON */
   .total-kids-pill {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -317,7 +325,7 @@
     color: var(--text-muted);
     margin-top: 10px;
   }
-  .total-kids-pill strong { color: var(--purple-bright); font-weight: 800; }
+  .total-kids-pill strong { color: var(--yellow); font-weight: 800; text-shadow: 0 0 10px var(--yellow-glow); }
 
   .alert-box {
     display: none; align-items: center; gap: 8px;
@@ -329,7 +337,7 @@
   }
   .alert-box.visible { display: flex; }
 
-  /* Mode Mutualisation Selector */
+  /* Mode Mutualisation Selector (Actif en JAUNE) */
   .mutual-selector {
     display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
     background: var(--card-bg); padding: 4px;
@@ -343,12 +351,12 @@
     font-size: 11.5px; font-weight: 800; text-align: center;
   }
   .mutual-btn.active {
-    background: var(--purple);
-    color: #FFFFFF;
-    box-shadow: 0 4px 12px var(--purple-glow);
+    background: var(--yellow);
+    color: var(--text-dark);
+    box-shadow: 0 4px 15px var(--yellow-glow);
   }
 
-  /* Toggle Row */
+  /* Toggle Row avec Switch JAUNE */
   .toggle-row {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     cursor: pointer; padding-top: 12px; margin-top: 12px;
@@ -368,10 +376,11 @@
     transition: transform 0.3s var(--ease-spring), background 0.3s ease;
   }
   .toggle-row input:checked + .switch-track {
-    background: var(--purple); border-color: var(--purple);
+    background: var(--yellow); border-color: var(--yellow);
+    box-shadow: 0 0 12px var(--yellow-glow);
   }
   .toggle-row input:checked + .switch-track::after {
-    transform: translateX(20px); background: #FFFFFF;
+    transform: translateX(20px); background: var(--text-dark);
   }
   .toggle-row.disabled { opacity: 0.35; pointer-events: none; }
 
@@ -503,7 +512,7 @@
     background: var(--purple); color: #fff; padding: 5px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800;
   }
 
-  /* POPUP / TOAST UNIFIÉ SUR 1 SEULE LIGNE */
+  /* POPUP / TOAST UNIFIÉ */
   .toast {
     position: fixed; bottom: max(20px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
     transform: translateX(-50%) translateY(80px);
@@ -550,7 +559,7 @@
       </div>
 
       <div class="brand-title-wrap">
-        <h1>taux <span>d'encadrement</span></h1>
+        <h1>taux<br><span>d'encadrement</span></h1>
         
         <svg class="flower-motif" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <path d="M50 34C53 20 67 20 67 34C81 34 81 48 67 48C81 48 81 62 67 62C67 76 53 76 50 62C47 76 33 76 33 62C19 62 19 48 33 48C19 48 19 34 33 34C33 20 47 20 50 34Z" />
