@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALSH Flow - Modèle Pop & Dynamic</title>
+  <title>ALSH Flow - Modèle Pure Flat Design</title>
 
-  <!-- Google Fonts: Fredoka (Titres Pop/Chunky) & Nunito (Interface) -->
+  <!-- Google Fonts: Inter (Pureté Flat Design) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,93 +23,66 @@
     *, ::before, ::after { box-sizing: border-box; }
 
     :root {
-      --font-title: 'Fredoka', cursive, sans-serif;
-      --font-body: 'Nunito', sans-serif;
-      --primary: #5256E8;
-      --pink: #FF528F;
-      --yellow: #FFE600;
-      --mint: #3DEB9A;
-      --lavender: #B483FF;
-      --dark: #101322;
-      --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f4f4ff 50%, #ffe4e6 100%);
+      --font-main: 'Inter', sans-serif;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --pink: #ec4899;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --purple: #8b5cf6;
+      --dark: #1e293b;
+      --bg-flat: #f1f5f9;
+      --border-flat: #cbd5e1;
     }
 
     body {
-      font-family: var(--font-body);
-      background: var(--bg-gradient);
-      background-attachment: fixed;
+      font-family: var(--font-main);
+      background-color: var(--bg-flat);
       color: var(--dark);
       min-height: 100vh;
     }
 
-    .font-title {
-      font-family: var(--font-title);
-    }
-
-    /* MOTIF CONFETTIS / FORMES FLOTTANTES */
-    .bg-pattern {
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 82, 143, 0.15) 0%, transparent 20%),
-        radial-gradient(circle at 80% 15%, rgba(255, 230, 0, 0.2) 0%, transparent 25%),
-        radial-gradient(circle at 90% 75%, rgba(61, 235, 154, 0.2) 0%, transparent 20%),
-        radial-gradient(circle at 15% 85%, rgba(82, 86, 232, 0.15) 0%, transparent 25%);
-    }
-
-    /* CARTES & PANNEAUX CHUNKY */
-    .card-panel {
-      background-color: rgba(255, 255, 255, 0.9);
-      border: 3px solid var(--dark);
-      box-shadow: 6px 6px 0px var(--dark);
-      border-radius: 2rem;
+    /* CARTE FLAT (Pas d'ombres, juste bordure et fond blanc) */
+    .card-flat {
+      background-color: #ffffff;
+      border: 1px solid var(--border-flat);
+      border-radius: 12px;
     }
 
     .card-item {
       background-color: #ffffff;
-      border: 2.5px solid var(--dark);
-      box-shadow: 3px 3px 0px var(--dark);
-      border-radius: 1.25rem;
+      border: 1px solid var(--border-flat);
+      border-radius: 8px;
     }
 
-    /* INPUTS LUDIQUES ET ÉPAIS */
+    /* INPUTS FLAT */
     .input-ui {
       background-color: #ffffff;
-      border: 2.5px solid var(--dark);
-      border-radius: 1rem;
+      border: 1px solid #94a3b8;
+      border-radius: 6px;
       color: var(--dark);
-      font-weight: 700;
-      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      font-weight: 500;
+      transition: border-color 0.15s ease;
     }
 
     .input-ui:focus {
       outline: none;
-      box-shadow: 3px 3px 0px var(--primary);
       border-color: var(--primary);
     }
 
-    /* BOUTONS CHUNKY & FLOTTANTS */
-    .btn-pop {
-      border: 2.5px solid var(--dark);
-      box-shadow: 4px 4px 0px var(--dark);
-      font-family: var(--font-title);
-      transition: all 0.1s ease;
+    /* BOUTONS FLAT (Couleur unie, pas d'ombre) */
+    .btn-flat {
+      border: none;
+      font-weight: 600;
+      transition: background-color 0.15s ease;
+      cursor: pointer;
     }
 
-    .btn-pop:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 6px 6px 0px var(--dark);
-    }
-
-    .btn-pop:active {
-      transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0px var(--dark);
-    }
-
-    /* NAVBAR GÉANTE EN CAPSULE */
-    .nav-capsule {
-      background: rgba(255, 255, 255, 0.95);
-      border: 3px solid var(--dark);
-      box-shadow: 0px 10px 25px rgba(16, 19, 34, 0.15), 4px 4px 0px var(--dark);
-      backdrop-filter: blur(10px);
+    /* NAVBAR FLAT */
+    .nav-flat {
+      background: #ffffff;
+      border: 1px solid var(--border-flat);
+      border-radius: 9999px;
     }
 
     input[type="date"] {
@@ -118,112 +91,112 @@
   </style>
 </head>
 
-<body class="bg-pattern pt-6 pb-32 select-none" x-data="alshApp()">
+<body class="pt-6 pb-28 select-none" x-data="alshApp()">
 
-  <!-- HEADER BRANDING -->
+  <!-- HEADER BRANDING FLAT -->
   <header class="max-w-md mx-auto px-4 mb-4 flex items-center justify-between">
-    <div class="flex items-center gap-2">
-      <div class="w-10 h-10 bg-[#FF528F] border-2 border-[#101322] rounded-2xl flex items-center justify-center shadow-[3px_3px_0px_#101322] text-white text-xl font-black rotate-[-6deg]">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 bg-blue-600 text-white rounded-lg flex items-center justify-center text-lg font-bold">
         ⚡
       </div>
-      <h1 class="font-title text-2xl font-bold tracking-wide text-[#101322]">
-        ALSH<span class="text-[#5256E8]">Flow</span>
+      <h1 class="text-xl font-bold tracking-tight text-slate-800">
+        ALSH<span class="text-blue-600">Flow</span>
       </h1>
     </div>
-    <span class="bg-[#FFE600] border-2 border-[#101322] text-[#101322] font-title font-bold text-xs px-3 py-1 rounded-full shadow-[2px_2px_0px_#101322] rotate-[3deg]">
-      Anims Zone 🚀
+    <span class="bg-amber-100 text-amber-800 font-semibold text-xs px-3 py-1 rounded-full border border-amber-300">
+      Anims Zone
     </span>
   </header>
 
-  <!-- TOAST NOTIFICATION POP -->
+  <!-- TOAST NOTIFICATION FLAT -->
   <div x-show="toast.show" 
-       x-transition:enter="transition ease-out duration-200"
-       x-transition:enter-start="opacity-0 -translate-y-4 scale-90"
-       x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-       x-transition:leave="transition ease-in duration-150"
-       x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-       x-transition:leave-end="opacity-0 -translate-y-4 scale-90"
-       class="fixed top-4 right-4 left-4 z-50 max-w-md mx-auto card-panel bg-[#3DEB9A] p-4 flex items-center justify-between"
+       x-transition:enter="transition ease-out duration-150"
+       x-transition:enter-start="opacity-0 -translate-y-2"
+       x-transition:enter-end="opacity-100 translate-y-0"
+       x-transition:leave="transition ease-in duration-100"
+       x-transition:leave-start="opacity-100"
+       x-transition:leave-end="opacity-0"
+       class="fixed top-4 right-4 left-4 z-50 max-w-md mx-auto card-flat bg-emerald-600 text-white p-3.5 flex items-center justify-between"
        style="display: none;">
-    <div class="flex items-center space-x-3">
-      <i class="fa-solid fa-face-smile text-[#101322] text-2xl"></i>
-      <span class="text-xs font-black text-[#101322]" x-text="toast.message"></span>
+    <div class="flex items-center space-x-2.5">
+      <i class="fa-solid fa-circle-check text-lg"></i>
+      <span class="text-xs font-semibold" x-text="toast.message"></span>
     </div>
-    <button type="button" @click="toast.show = false" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-xmark text-lg"></i></button>
+    <button type="button" @click="toast.show = false" class="text-white opacity-80 hover:opacity-100"><i class="fa-solid fa-xmark text-lg"></i></button>
   </div>
 
   <main class="max-w-md mx-auto px-4 space-y-4">
 
     <!-- 1. ONGLET : FICHE D'ACTIVITÉ -->
-    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4">
-      <div class="card-panel p-5 space-y-4">
+    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4">
+      <div class="card-flat p-5 space-y-4">
         
-        <div class="flex items-center justify-between border-b-2 border-[#101322] pb-3">
-          <h2 class="font-title text-lg font-bold flex items-center gap-2">
-            <span class="text-2xl">🎨</span> Fiche d'Activité
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <span>🎨</span> Fiche d'Activité
           </h2>
-          <span class="bg-[#B483FF] text-[#101322] border-2 border-[#101322] font-title text-[11px] font-bold px-3 py-0.5 rounded-full shadow-[2px_2px_0px_#101322]">
+          <span class="bg-purple-100 text-purple-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-purple-200">
             Express
           </span>
         </div>
 
         <form @submit.prevent="submitFiche()" class="space-y-3.5">
           <div>
-            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Nom de l'activité</label>
-            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu Chasse au Trésor" class="input-ui w-full px-3.5 py-2.5 text-xs" required>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Nom de l'activité</label>
+            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu Chasse au Trésor" class="input-ui w-full px-3 py-2 text-xs" required>
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
-              <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Tranche d'âge</label>
-              <select x-model="fiche.age" class="input-ui w-full px-3 py-2.5 text-xs font-bold">
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Tranche d'âge</label>
+              <select x-model="fiche.age" class="input-ui w-full px-3 py-2 text-xs font-medium">
                 <option value="-6 ans">-6 ans</option>
                 <option value="+6 ans">+6 ans</option>
                 <option value="Inter-tranches">Inter-tranches</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Lieu</label>
-              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="input-ui w-full px-3 py-2.5 text-xs">
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Lieu</label>
+              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="input-ui w-full px-3 py-2 text-xs">
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Objectif Pédagogique</label>
-            <input type="text" x-model="fiche.objectif" placeholder="ex: Coopérer en équipe" class="input-ui w-full px-3.5 py-2.5 text-xs">
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Objectif Pédagogique</label>
+            <input type="text" x-model="fiche.objectif" placeholder="ex: Coopérer en équipe" class="input-ui w-full px-3 py-2 text-xs">
           </div>
 
           <div>
-            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Déroulement / Consignes</label>
-            <textarea x-model="fiche.deroulement" placeholder="Explication des étapes du jeu..." class="input-ui w-full px-3.5 py-2.5 text-xs h-20 resize-none"></textarea>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Déroulement / Consignes</label>
+            <textarea x-model="fiche.deroulement" placeholder="Explication des étapes du jeu..." class="input-ui w-full px-3 py-2 text-xs h-20 resize-none"></textarea>
           </div>
 
           <!-- SECTION MATÉRIEL -->
-          <div class="card-item p-3.5 bg-[#f8fafc] space-y-2">
-            <span class="font-title text-xs font-bold text-[#5256E8] flex items-center gap-1.5">
+          <div class="card-item p-3 bg-slate-50 space-y-2">
+            <span class="text-xs font-bold text-blue-600 flex items-center gap-1.5">
               <i class="fa-solid fa-boxes-packing"></i> Matériel & Quantités
             </span>
             <div class="grid grid-cols-5 gap-1.5">
-              <input type="text" x-model="newMatosNom" placeholder="Article" class="col-span-3 input-ui px-2.5 py-2 text-xs">
-              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-2 text-xs text-center">
-              <button type="button" @click="addMatos()" class="col-span-1 btn-pop bg-[#FFE600] text-[#101322] rounded-xl text-lg font-black">+</button>
+              <input type="text" x-model="newMatosNom" placeholder="Article" class="col-span-3 input-ui px-2.5 py-1.5 text-xs">
+              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-1.5 text-xs text-center">
+              <button type="button" @click="addMatos()" class="col-span-1 btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 rounded-md text-base font-bold">+</button>
             </div>
-            <ul class="space-y-1.5 pt-1">
+            <ul class="space-y-1 pt-1">
               <template x-for="(item, index) in fiche.materiel" :key="index">
-                <li class="flex items-center justify-between text-xs card-item px-3 py-1.5">
-                  <span class="font-bold" x-text="item.nom + ' — Quantité : ' + item.qte"></span>
-                  <button type="button" @click="removeMatos(index)" class="text-[#FF528F] hover:scale-125 transition-transform ml-2"><i class="fa-solid fa-circle-xmark text-base"></i></button>
+                <li class="flex items-center justify-between text-xs card-item px-3 py-1.5 bg-white">
+                  <span class="font-medium text-slate-700" x-text="item.nom + ' — Quantité : ' + item.qte"></span>
+                  <button type="button" @click="removeMatos(index)" class="text-rose-500 hover:text-rose-700 ml-2"><i class="fa-solid fa-xmark text-sm"></i></button>
                 </li>
               </template>
             </ul>
           </div>
 
-          <div class="grid grid-cols-2 gap-2.5 pt-2">
-            <button type="button" @click="exportPDF()" class="btn-pop bg-white text-[#101322] py-2.5 rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-file-pdf text-[#FF528F] text-base"></i> Export PDF
+          <div class="grid grid-cols-2 gap-2.5 pt-1">
+            <button type="button" @click="exportPDF()" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 border border-slate-300">
+              <i class="fa-solid fa-file-pdf text-rose-500 text-sm"></i> Export PDF
             </button>
-            <button type="submit" class="btn-pop bg-[#5256E8] text-white py-2.5 rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-paper-plane text-base"></i> Envoi Courses
+            <button type="submit" class="btn-flat bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-paper-plane text-xs"></i> Envoi Courses
             </button>
           </div>
         </form>
@@ -232,92 +205,92 @@
 
     <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF -->
     <div id="pdf-template" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 700px;">
-      <div style="padding: 30px; font-family: 'Nunito', sans-serif; color: #101322; background: #ffffff;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #101322; padding-bottom: 12px; margin-bottom: 20px;">
+      <div style="padding: 30px; font-family: 'Inter', sans-serif; color: #1e293b; background: #ffffff;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 20px;">
           <div>
-            <h1 style="margin: 0; font-size: 24px; font-family: 'Fredoka', cursive; color: #5256E8;" id="pdf-titre">Fiche d'Activité</h1>
-            <p style="margin: 4px 0 0 0; font-size: 12px; font-weight: bold; color: #64748b;">Accueil de Loisirs ALSH Flow</p>
+            <h1 style="margin: 0; font-size: 20px; color: #2563eb;" id="pdf-titre">Fiche d'Activité</h1>
+            <p style="margin: 4px 0 0 0; font-size: 11px; font-weight: 600; color: #64748b;">Accueil de Loisirs ALSH Flow</p>
           </div>
-          <span style="background: #FFE600; color: #101322; border: 2px solid #101322; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 12px;" id="pdf-age">Age</span>
+          <span style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 20px; font-weight: 600; font-size: 11px;" id="pdf-age">Age</span>
         </div>
 
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
           <tr>
-            <td style="padding: 8px; background: #f8fafc; border: 2px solid #101322; font-weight: bold; width: 30%;">Lieu :</td>
-            <td style="padding: 8px; border: 2px solid #101322;" id="pdf-lieu">-</td>
+            <td style="padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; font-weight: 600; width: 30%;">Lieu :</td>
+            <td style="padding: 8px; border: 1px solid #cbd5e1;" id="pdf-lieu">-</td>
           </tr>
           <tr>
-            <td style="padding: 8px; background: #f8fafc; border: 2px solid #101322; font-weight: bold;">Objectif Pédagogique :</td>
-            <td style="padding: 8px; border: 2px solid #101322;" id="pdf-objectif">-</td>
+            <td style="padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; font-weight: 600;">Objectif Pédagogique :</td>
+            <td style="padding: 8px; border: 1px solid #cbd5e1;" id="pdf-objectif">-</td>
           </tr>
         </table>
 
         <div style="margin-bottom: 20px;">
-          <h3 style="color: #5256E8; font-family: 'Fredoka', cursive; border-bottom: 2px solid #101322; padding-bottom: 4px; font-size: 16px;">📜 Déroulement</h3>
+          <h3 style="color: #2563eb; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; font-size: 14px;">📜 Déroulement</h3>
           <p style="font-size: 12px; line-height: 1.5; white-space: pre-line;" id="pdf-deroulement">-</p>
         </div>
 
         <div>
-          <h3 style="color: #5256E8; font-family: 'Fredoka', cursive; border-bottom: 2px solid #101322; padding-bottom: 4px; font-size: 16px;">📦 Matériel & Quantités</h3>
+          <h3 style="color: #2563eb; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; font-size: 14px;">📦 Matériel & Quantités</h3>
           <ul style="font-size: 12px; padding-left: 20px;" id="pdf-materiel"></ul>
         </div>
       </div>
     </div>
 
     <!-- 2. ONGLET : CAHIER DE SOINS NUMÉRIQUE -->
-    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-panel p-5 space-y-4">
+    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4" style="display: none;">
+      <div class="card-flat p-5 space-y-4">
         
-        <div class="flex items-center justify-between border-b-2 border-[#101322] pb-3">
-          <h2 class="font-title text-lg font-bold flex items-center gap-2">
-            <span class="text-2xl">🩹</span> Cahier de Soins
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <span>🩹</span> Cahier de Soins
           </h2>
-          <span class="bg-[#FF528F] text-white border-2 border-[#101322] font-title text-[11px] font-bold px-3 py-0.5 rounded-full shadow-[2px_2px_0px_#101322]">
+          <span class="bg-rose-100 text-rose-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-rose-200">
             Santé
           </span>
         </div>
 
         <form @submit.prevent="submitSoin()" class="space-y-3.5">
           <div>
-            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Prénom & Nom de l'enfant</label>
-            <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-ui w-full px-3.5 py-2.5 text-xs" required>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Prénom & Nom de l'enfant</label>
+            <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-ui w-full px-3 py-2 text-xs" required>
           </div>
 
           <div>
-            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Symptôme / Incident</label>
-            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure au genou" class="input-ui w-full px-3.5 py-2.5 text-xs" required>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Symptôme / Incident</label>
+            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure au genou" class="input-ui w-full px-3 py-2 text-xs" required>
           </div>
 
           <div>
-            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Soin apporté</label>
-            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant..." class="input-ui w-full px-3.5 py-2.5 text-xs h-20 resize-none"></textarea>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-1">Soin apporté</label>
+            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant..." class="input-ui w-full px-3 py-2 text-xs h-20 resize-none"></textarea>
           </div>
 
-          <div class="flex items-center space-x-2.5 card-item p-3 bg-[#FFE600]/20">
-            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-5 h-5 accent-[#FF528F] rounded cursor-pointer">
-            <label for="famille" class="text-xs font-bold text-[#101322] cursor-pointer">Avertir les parents ce soir 🔔</label>
+          <div class="flex items-center space-x-2.5 card-item p-3 bg-amber-50 border-amber-200">
+            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-amber-600 rounded cursor-pointer">
+            <label for="famille" class="text-xs font-semibold text-slate-800 cursor-pointer">Avertir les parents ce soir 🔔</label>
           </div>
 
-          <button type="submit" class="btn-pop bg-[#3DEB9A] text-[#101322] w-full py-2.5 rounded-2xl text-xs font-bold">
+          <button type="submit" class="btn-flat bg-emerald-600 hover:bg-emerald-700 text-white w-full py-2 rounded-lg text-xs font-semibold">
             Enregistrer le soin
           </button>
         </form>
 
-        <hr class="border-b-2 border-[#101322] my-2">
+        <hr class="border-slate-200 my-2">
 
-        <h3 class="font-title text-xs font-bold text-[#101322] uppercase tracking-wider">Registre des soins</h3>
+        <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide">Registre des soins</h3>
         <div class="space-y-2">
           <template x-for="item in registreSoins" :key="item.id">
-            <div class="card-item p-3.5 flex items-start justify-between">
-              <div class="space-y-1">
-                <p class="font-black text-xs text-[#5256E8]" x-text="item.enfant"></p>
-                <p class="text-xs font-bold text-[#101322]" x-text="item.incident"></p>
-                <p class="text-[11px] font-bold text-gray-500" x-text="item.heure + ' • Soin : ' + item.action"></p>
-                <span x-show="item.prevenirFamille" class="inline-block px-2.5 py-0.5 bg-[#FF528F] text-white border-2 border-[#101322] text-[10px] font-bold rounded-full mt-1">
+            <div class="card-item p-3 flex items-start justify-between bg-white">
+              <div class="space-y-0.5">
+                <p class="font-bold text-xs text-blue-600" x-text="item.enfant"></p>
+                <p class="text-xs font-semibold text-slate-800" x-text="item.incident"></p>
+                <p class="text-[11px] text-slate-500" x-text="item.heure + ' • Soin : ' + item.action"></p>
+                <span x-show="item.prevenirFamille" class="inline-block px-2 py-0.5 bg-rose-100 text-rose-700 text-[10px] font-semibold rounded mt-1 border border-rose-200">
                   ⚠️ Prévenir la famille
                 </span>
               </div>
-              <button type="button" @click="deleteSoin(item.id)" class="text-[#FF528F] hover:scale-125 transition-transform"><i class="fa-solid fa-trash text-sm"></i></button>
+              <button type="button" @click="deleteSoin(item.id)" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash text-xs"></i></button>
             </div>
           </template>
         </div>
@@ -325,49 +298,49 @@
     </div>
 
     <!-- 3. ONGLET : GOÛTERS & RECETTES -->
-    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-panel p-5 space-y-4">
+    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4" style="display: none;">
+      <div class="card-flat p-5 space-y-4">
         
         <div class="space-y-3">
-          <div class="flex items-center justify-between border-b-2 border-[#101322] pb-3">
-            <h2 class="font-title text-lg font-bold flex items-center gap-2">
-              <span class="text-2xl">🍪</span> Goûters & Recettes
+          <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+              <span>🍪</span> Goûters & Recettes
             </h2>
             <div class="flex gap-1.5">
-              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="btn-pop bg-white text-[#101322] text-xs px-2.5 py-1 rounded-xl font-bold">
+              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1 rounded-md border border-slate-300">
                 + Recette
               </button>
-              <button type="button" @click="showPlanifModal = true" class="btn-pop bg-[#FFE600] text-[#101322] text-xs px-2.5 py-1 rounded-xl font-bold">
+              <button type="button" @click="showPlanifModal = true" class="btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs px-2.5 py-1 rounded-md font-semibold">
                 Planifier
               </button>
             </div>
           </div>
 
-          <div class="flex items-center justify-between card-item px-3 py-2 bg-[#f8fafc]">
-            <button type="button" @click="changerSemaine(-1)" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-chevron-left text-lg"></i></button>
+          <div class="flex items-center justify-between card-item px-3 py-2 bg-slate-50">
+            <button type="button" @click="changerSemaine(-1)" class="text-slate-600 hover:text-slate-900"><i class="fa-solid fa-chevron-left text-sm"></i></button>
             <div class="text-center">
-              <p class="font-title text-xs font-bold text-[#5256E8]" x-text="getLibelleSemaine()"></p>
+              <p class="text-xs font-bold text-blue-600" x-text="getLibelleSemaine()"></p>
             </div>
-            <button type="button" @click="changerSemaine(1)" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-chevron-right text-lg"></i></button>
+            <button type="button" @click="changerSemaine(1)" class="text-slate-600 hover:text-slate-900"><i class="fa-solid fa-chevron-right text-sm"></i></button>
           </div>
         </div>
 
         <!-- MODAL CRÉER UNE RECETTE -->
-        <div x-show="showAddRecetteModal" x-transition class="card-item p-4 space-y-3 bg-[#B483FF]/20" style="display: none;">
-          <div class="flex justify-between items-center border-b-2 border-[#101322] pb-2">
-            <h3 class="font-title text-xs font-bold text-[#101322]">
+        <div x-show="showAddRecetteModal" x-transition class="card-item p-4 space-y-3 bg-purple-50 border-purple-200" style="display: none;">
+          <div class="flex justify-between items-center border-b border-purple-200 pb-2">
+            <h3 class="text-xs font-bold text-purple-900">
               🍰 Nouvelle Recette (Base 8 enfants)
             </h3>
-            <button type="button" @click="showAddRecetteModal = false"><i class="fa-solid fa-circle-xmark text-lg text-[#FF528F]"></i></button>
+            <button type="button" @click="showAddRecetteModal = false"><i class="fa-solid fa-xmark text-sm text-purple-700"></i></button>
           </div>
 
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Nom de la recette</label>
-            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="input-ui w-full px-3 py-2 text-xs">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nom de la recette</label>
+            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="input-ui w-full px-3 py-1.5 text-xs">
           </div>
 
           <div class="space-y-2 pt-1">
-            <label class="block text-[11px] font-black text-[#101322]">Ingrédients :</label>
+            <label class="block text-[11px] font-bold text-slate-700">Ingrédients :</label>
             
             <div class="grid grid-cols-6 gap-1.5">
               <input type="text" x-model="tempIng.nom" placeholder="Nom" class="col-span-3 input-ui px-2 py-1.5 text-xs">
@@ -375,83 +348,83 @@
               <input type="text" x-model="tempIng.unite" placeholder="Unité" class="col-span-1.5 input-ui px-2 py-1.5 text-xs">
             </div>
             
-            <button type="button" @click="ajouterIngredierntRecette()" class="btn-pop bg-white text-[#101322] w-full py-1.5 text-xs font-bold rounded-xl">
+            <button type="button" @click="ajouterIngredierntRecette()" class="btn-flat bg-white text-slate-700 w-full py-1.5 text-xs font-semibold rounded border border-slate-300">
               + Ajouter l'ingrédient
             </button>
 
             <div class="space-y-1 pt-1">
               <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
-                <div class="flex justify-between items-center text-xs card-item px-2.5 py-1">
-                  <span class="font-bold" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
-                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-[#FF528F]"><i class="fa-solid fa-xmark"></i></button>
+                <div class="flex justify-between items-center text-xs card-item px-2.5 py-1 bg-white">
+                  <span class="font-medium" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
+                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-rose-500"><i class="fa-solid fa-xmark"></i></button>
                 </div>
               </template>
             </div>
           </div>
 
-          <button type="button" @click="enregistrerNouvelleRecette()" class="btn-pop bg-[#3DEB9A] text-[#101322] w-full py-2 text-xs font-bold rounded-xl">
+          <button type="button" @click="enregistrerNouvelleRecette()" class="btn-flat bg-purple-600 hover:bg-purple-700 text-white w-full py-1.5 text-xs font-semibold rounded">
             Enregistrer la recette
           </button>
         </div>
 
         <!-- LISTE DES GOÛTERS PROGRAMMÉS -->
         <div class="space-y-2">
-          <h3 class="font-title text-xs font-bold text-[#101322] uppercase tracking-wider flex justify-between items-center">
+          <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide flex justify-between items-center">
             <span>Planning Goûters</span>
-            <span class="bg-[#FFE600] border-2 border-[#101322] px-2 py-0.5 rounded-full text-[10px]" x-text="getGoutersDeLaSemaine().length + ' prévu(s)'"></span>
+            <span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded border border-amber-200" x-text="getGoutersDeLaSemaine().length + ' prévu(s)'"></span>
           </h3>
 
           <template x-if="getGoutersDeLaSemaine().length === 0">
-            <div class="card-item p-4 text-center space-y-1 bg-[#f8fafc]">
-              <p class="text-xs font-bold text-gray-500">Aucun goûter planifié cette semaine.</p>
+            <div class="card-item p-4 text-center bg-slate-50">
+              <p class="text-xs font-medium text-slate-500">Aucun goûter planifié cette semaine.</p>
             </div>
           </template>
 
           <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
-            <div class="card-item p-3.5 space-y-2 bg-gradient-to-r from-white to-[#f4f4ff]">
+            <div class="card-item p-3 space-y-2 bg-white">
               <div class="flex justify-between items-start">
                 <div>
-                  <span class="font-title text-[10px] font-bold text-[#FF528F] uppercase" x-text="formatDateLisible(g.date)"></span>
-                  <h4 class="font-title text-sm font-bold text-[#101322]" x-text="getNomRecette(g.recetteId)"></h4>
+                  <span class="text-[10px] font-bold text-rose-600 uppercase" x-text="formatDateLisible(g.date)"></span>
+                  <h4 class="text-sm font-bold text-slate-800" x-text="getNomRecette(g.recetteId)"></h4>
                 </div>
-                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="text-[#FF528F] hover:scale-125 transition-transform">
-                  <i class="fa-solid fa-trash text-sm"></i>
+                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="text-slate-400 hover:text-rose-600">
+                  <i class="fa-solid fa-trash text-xs"></i>
                 </button>
               </div>
 
               <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="card-item p-2 bg-white">
-                  <span class="text-[10px] font-bold text-gray-400 block">Animateur</span>
-                  <span class="font-black text-[#5256E8]" x-text="g.anim || 'Non assigné'"></span>
+                <div class="card-item p-2 bg-slate-50">
+                  <span class="text-[10px] text-slate-400 block">Animateur</span>
+                  <span class="font-bold text-blue-600" x-text="g.anim || 'Non assigné'"></span>
                 </div>
-                <div class="card-item p-2 bg-white">
-                  <span class="text-[10px] font-bold text-gray-400 block">Quantité</span>
-                  <span class="font-black text-[#101322]" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
+                <div class="card-item p-2 bg-slate-50">
+                  <span class="text-[10px] text-slate-400 block">Quantité</span>
+                  <span class="font-bold text-slate-800" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
                 </div>
               </div>
             </div>
           </template>
         </div>
 
-        <hr class="border-b-2 border-[#101322] my-3">
+        <hr class="border-slate-200 my-3">
 
         <!-- LISTE DE COURSES GOÛTER -->
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h3 class="font-title text-xs font-bold text-[#101322] uppercase tracking-wider flex items-center gap-1.5">
+            <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide flex items-center gap-1.5">
               🛒 Courses Goûter
             </h3>
-            <span class="bg-[#3DEB9A] border-2 border-[#101322] text-[#101322] font-title text-[10px] font-bold px-2 py-0.5 rounded-full" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
+            <span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded border border-emerald-200" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
           </div>
 
           <div class="space-y-1.5">
             <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
-              <div class="card-item p-2.5 flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 bg-gray-100 line-through' : ''">
+              <div class="card-item p-2.5 flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 bg-slate-100 line-through' : ''">
                 <div class="flex items-center space-x-2.5">
-                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-5 h-5 accent-[#3DEB9A] rounded cursor-pointer">
-                  <span class="text-xs font-bold text-[#101322]" x-text="item.nom"></span>
+                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer">
+                  <span class="text-xs font-semibold text-slate-800" x-text="item.nom"></span>
                 </div>
-                <span class="font-black text-xs text-[#5256E8] bg-[#5256E8]/10 px-2.5 py-1 rounded-xl border-2 border-[#101322]" x-text="item.qte + ' ' + item.unite"></span>
+                <span class="font-bold text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200" x-text="item.qte + ' ' + item.unite"></span>
               </div>
             </template>
           </div>
@@ -461,21 +434,21 @@
     </div>
 
     <!-- MODAL : PLANIFIER UN GOÛTER -->
-    <div x-show="showPlanifModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101322]/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 max-w-sm w-full space-y-3 bg-white">
-        <h3 class="font-title text-sm font-bold text-[#101322] border-b-2 border-[#101322] pb-2">
+    <div x-show="showPlanifModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40" style="display: none;">
+      <div class="card-flat p-5 max-w-sm w-full space-y-3 bg-white">
+        <h3 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">
           📅 Planifier un Goûter
         </h3>
 
         <div class="space-y-2.5">
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Date du goûter</label>
-            <input type="date" x-model="saisieGouter.date" class="input-ui w-full px-3 py-2 text-xs">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Date du goûter</label>
+            <input type="date" x-model="saisieGouter.date" class="input-ui w-full px-3 py-1.5 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Choisir la recette</label>
-            <select x-model="saisieGouter.recetteId" class="input-ui w-full px-3 py-2 text-xs font-bold">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Choisir la recette</label>
+            <select x-model="saisieGouter.recetteId" class="input-ui w-full px-3 py-1.5 text-xs font-semibold">
               <template x-for="r in recettesGouter" :key="r.id">
                 <option :value="r.id" x-text="r.nom + ' (base 8 enfants)'"></option>
               </template>
@@ -483,32 +456,32 @@
           </div>
 
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Animateur responsable</label>
-            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-ui w-full px-3 py-2 text-xs">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Animateur responsable</label>
+            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-ui w-full px-3 py-1.5 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Nombre d'enfants prévus</label>
-            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-ui w-full px-3 py-2 text-xs text-center font-bold">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre d'enfants prévus</label>
+            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-ui w-full px-3 py-1.5 text-xs text-center font-bold">
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t-2 border-[#101322]">
-          <button type="button" @click="showPlanifModal = false" class="btn-pop bg-gray-200 text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Annuler</button>
-          <button type="button" @click="enregistrerGouterPlanifie()" class="btn-pop bg-[#FFE600] text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Valider</button>
+        <div class="flex gap-2 pt-2 border-t border-slate-200">
+          <button type="button" @click="showPlanifModal = false" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 py-1.5 rounded text-xs font-semibold">Annuler</button>
+          <button type="button" @click="enregistrerGouterPlanifie()" class="btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 flex-1 py-1.5 rounded text-xs font-semibold">Valider</button>
         </div>
       </div>
     </div>
 
     <!-- 4. ONGLET : COURSES MATÉRIEL -->
-    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-panel p-5 space-y-4">
+    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4" style="display: none;">
+      <div class="card-flat p-5 space-y-4">
         
-        <div class="flex items-center justify-between border-b-2 border-[#101322] pb-3">
-          <h2 class="font-title text-lg font-bold flex items-center gap-2">
-            <span class="text-2xl">🛍️</span> Courses Matériel
+        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <span>🛍️</span> Courses Matériel
           </h2>
-          <span class="bg-[#FFE600] text-[#101322] border-2 border-[#101322] font-title text-[11px] font-bold px-3 py-0.5 rounded-full shadow-[2px_2px_0px_#101322]">
+          <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-200">
             Activités
           </span>
         </div>
@@ -516,118 +489,118 @@
         <div class="grid grid-cols-5 gap-1.5">
           <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-ui px-3 py-2 text-xs">
           <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-2 text-xs text-center">
-          <button type="button" @click="addCourseDirecte()" class="col-span-1 btn-pop bg-[#5256E8] text-white rounded-xl text-lg font-black">+</button>
+          <button type="button" @click="addCourseDirecte()" class="col-span-1 btn-flat bg-blue-600 hover:bg-blue-700 text-white rounded-md text-base font-bold">+</button>
         </div>
 
         <div class="space-y-2">
           <template x-for="item in listeCourses" :key="item.id">
-            <div class="card-item p-3 flex items-center justify-between transition-opacity" :class="item.achete ? 'opacity-40 bg-gray-100 line-through' : ''">
+            <div class="card-item p-3 flex items-center justify-between transition-opacity" :class="item.achete ? 'opacity-40 bg-slate-100 line-through' : ''">
               <div class="flex items-center space-x-3">
-                <input type="checkbox" x-model="item.achete" class="w-5 h-5 accent-[#5256E8] rounded cursor-pointer">
+                <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-blue-600 rounded cursor-pointer">
                 <div>
-                  <p class="text-xs font-black text-[#101322]" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
-                  <p class="text-[11px] font-bold text-gray-400" x-text="'Pour : ' + item.activite"></p>
+                  <p class="text-xs font-bold text-slate-800" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
+                  <p class="text-[11px] text-slate-500" x-text="'Pour : ' + item.activite"></p>
                 </div>
               </div>
-              <button type="button" @click="deleteCourse(item.id)" class="text-[#FF528F] hover:scale-125 transition-transform"><i class="fa-solid fa-trash text-sm"></i></button>
+              <button type="button" @click="deleteCourse(item.id)" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash text-xs"></i></button>
             </div>
           </template>
         </div>
 
-        <button type="button" @click="viderAchetes()" class="btn-pop bg-white text-[#101322] w-full py-2 text-xs font-bold rounded-xl">
+        <button type="button" @click="viderAchetes()" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 w-full py-2 text-xs font-semibold rounded-md border border-slate-300">
           Nettoyer les articles achetés
         </button>
       </div>
     </div>
 
     <!-- 5. ONGLET : PLANNING & ORGANISATION -->
-    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-panel p-5 space-y-4">
+    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4" style="display: none;">
+      <div class="card-flat p-5 space-y-4">
         
-        <div class="space-y-3 border-b-2 border-[#101322] pb-3">
+        <div class="space-y-3 border-b border-slate-200 pb-3">
           <div class="flex items-center justify-between">
-            <h2 class="font-title text-lg font-bold flex items-center gap-2">
-              <span class="text-2xl">📅</span> Planning Équipe
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+              <span>📅</span> Planning Équipe
             </h2>
             <div class="flex gap-1.5">
-              <button type="button" @click="ouvrirModalOrg()" class="btn-pop bg-[#FFE600] text-[#101322] text-xs px-2.5 py-1 rounded-xl font-bold">
+              <button type="button" @click="ouvrirModalOrg()" class="btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs px-2.5 py-1 rounded-md font-semibold">
                 🚌 Sortie
               </button>
-              <button type="button" @click="nouveauCreneauVierge()" class="btn-pop bg-[#5256E8] text-white text-xs px-2.5 py-1 rounded-xl font-bold">
+              <button type="button" @click="nouveauCreneauVierge()" class="btn-flat bg-blue-600 hover:bg-blue-700 text-white text-xs px-2.5 py-1 rounded-md font-semibold">
                 + Créneau
               </button>
             </div>
           </div>
 
-          <div class="flex items-center justify-between card-item px-3 py-2 bg-[#f8fafc]">
-            <button type="button" @click="changerJour(-1)" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-chevron-left text-lg"></i></button>
+          <div class="flex items-center justify-between card-item px-3 py-2 bg-slate-50">
+            <button type="button" @click="changerJour(-1)" class="text-slate-600 hover:text-slate-900"><i class="fa-solid fa-chevron-left text-sm"></i></button>
             <div class="text-center">
-              <p class="font-title text-xs font-bold text-[#5256E8]" x-text="formatDateLisible(dateAffichee)"></p>
+              <p class="text-xs font-bold text-blue-600" x-text="formatDateLisible(dateAffichee)"></p>
             </div>
-            <button type="button" @click="changerJour(1)" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-chevron-right text-lg"></i></button>
+            <button type="button" @click="changerJour(1)" class="text-slate-600 hover:text-slate-900"><i class="fa-solid fa-chevron-right text-sm"></i></button>
           </div>
         </div>
 
         <!-- ENCADRÉ SORTIES SPECIALE -->
         <template x-if="getOrgDuJour()">
-          <div class="card-item p-4 space-y-3 bg-[#FFE600] border-3">
+          <div class="card-item p-4 space-y-2 bg-amber-50 border-amber-300">
             <div class="flex justify-between items-start">
               <div>
-                <span class="inline-block px-2.5 py-0.5 rounded-full bg-white border-2 border-[#101322] font-title text-[10px] font-bold text-[#FF528F] mb-1">
+                <span class="inline-block px-2 py-0.5 rounded bg-amber-200 text-amber-900 text-[10px] font-bold uppercase mb-1">
                   🚨 SORTIE SPÉCIALE
                 </span>
-                <h3 class="font-title text-base font-bold text-[#101322]" x-text="getOrgDuJour().titre"></h3>
+                <h3 class="text-sm font-bold text-slate-800" x-text="getOrgDuJour().titre"></h3>
               </div>
-              <button type="button" @click="effacerOrgDuJour()" class="text-[#FF528F] hover:scale-125 transition-transform">
-                <i class="fa-solid fa-trash text-sm"></i>
+              <button type="button" @click="effacerOrgDuJour()" class="text-slate-400 hover:text-rose-600">
+                <i class="fa-solid fa-trash text-xs"></i>
               </button>
             </div>
 
-            <p class="text-xs font-bold text-[#101322]" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
+            <p class="text-xs text-slate-700" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
             
-            <div class="grid grid-cols-2 gap-2 text-xs card-item p-2.5 bg-white">
+            <div class="grid grid-cols-2 gap-2 text-xs card-item p-2 bg-white">
               <div>
-                <span class="text-[10px] font-bold text-gray-400 block">Bus Aller</span>
-                <span class="font-black text-[#5256E8]" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
+                <span class="text-[10px] text-slate-400 block">Bus Aller</span>
+                <span class="font-bold text-blue-600" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
               </div>
               <div>
-                <span class="text-[10px] font-bold text-gray-400 block">Bus Retour</span>
-                <span class="font-black text-[#5256E8]" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
+                <span class="text-[10px] text-slate-400 block">Bus Retour</span>
+                <span class="font-bold text-blue-600" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
               </div>
             </div>
           </div>
         </template>
 
         <div class="space-y-2.5">
-          <h3 class="font-title text-xs font-bold text-[#101322] uppercase tracking-wider">Planning des Animateurs</h3>
+          <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide">Planning des Animateurs</h3>
 
           <template x-for="p in planningGlobal" :key="p.id">
-            <div class="card-item p-3.5 space-y-2.5 bg-white">
+            <div class="card-item p-3 space-y-2 bg-white">
               
               <div class="flex justify-between items-center">
-                <button type="button" @click="ouvrirDetailAnim(p)" class="font-title text-sm font-bold text-[#5256E8] flex items-center gap-1.5">
+                <button type="button" @click="ouvrirDetailAnim(p)" class="text-xs font-bold text-blue-600 flex items-center gap-1.5 hover:underline">
                   <span x-text="p.nom"></span>
-                  <i class="fa-solid fa-circle-info text-xs"></i>
+                  <i class="fa-solid fa-circle-info text-[10px]"></i>
                 </button>
                 
                 <div class="flex items-center space-x-1">
-                  <button type="button" @click="editerPlanningDuJour(p)" class="btn-pop bg-[#f8fafc] text-[#101322] px-2 py-0.5 text-[10px] font-bold rounded-lg">
+                  <button type="button" @click="editerPlanningDuJour(p)" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 text-[10px] font-semibold rounded border border-slate-300">
                     Modifier
                   </button>
-                  <button type="button" @click="supprimerAnim(p.id)" class="text-[#FF528F] hover:scale-125 transition-transform p-1">
-                    <i class="fa-solid fa-circle-xmark text-sm"></i>
+                  <button type="button" @click="supprimerAnim(p.id)" class="text-slate-400 hover:text-rose-600 p-1">
+                    <i class="fa-solid fa-xmark text-sm"></i>
                   </button>
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="card-item p-2 bg-[#f8fafc]">
-                  <span class="text-[10px] font-bold text-gray-400 block mb-0.5">☀️ Matin</span>
-                  <p class="font-bold text-[#101322] truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
+                <div class="card-item p-2 bg-slate-50">
+                  <span class="text-[10px] text-slate-400 block mb-0.5">☀️ Matin</span>
+                  <p class="font-medium text-slate-800 truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
                 </div>
-                <div class="card-item p-2 bg-[#f8fafc]">
-                  <span class="text-[10px] font-bold text-gray-400 block mb-0.5">🌆 Après-midi</span>
-                  <p class="font-bold text-[#101322] truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
+                <div class="card-item p-2 bg-slate-50">
+                  <span class="text-[10px] text-slate-400 block mb-0.5">🌆 Après-midi</span>
+                  <p class="font-medium text-slate-800 truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
                 </div>
               </div>
 
@@ -639,167 +612,167 @@
     </div>
 
     <!-- MODAL : ORGANISATION / SORTIES -->
-    <div x-show="showOrgModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101322]/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 max-w-sm w-full space-y-3 bg-white max-h-[90vh] overflow-y-auto">
-        <h3 class="font-title text-sm font-bold text-[#101322] border-b-2 border-[#101322] pb-2">
+    <div x-show="showOrgModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40" style="display: none;">
+      <div class="card-flat p-5 max-w-sm w-full space-y-3 bg-white max-h-[90vh] overflow-y-auto">
+        <h3 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">
           🚌 Programmation d'une Sortie
         </h3>
 
         <div class="space-y-2.5">
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Date</label>
-            <input type="date" x-model="saisieOrg.date" class="input-ui w-full px-3 py-2 text-xs">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Date</label>
+            <input type="date" x-model="saisieOrg.date" class="input-ui w-full px-3 py-1.5 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Titre de la sortie</label>
-            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-ui w-full px-3 py-2 text-xs">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Titre de la sortie</label>
+            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-ui w-full px-3 py-1.5 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Lieu</label>
-            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo" class="input-ui w-full px-3 py-2 text-xs">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Lieu</label>
+            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo" class="input-ui w-full px-3 py-1.5 text-xs">
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] font-black text-[#101322] mb-1">Bus Départ</label>
-              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-ui w-full px-3 py-2 text-xs">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Bus Départ</label>
+              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-ui w-full px-3 py-1.5 text-xs">
             </div>
             <div>
-              <label class="block text-[11px] font-black text-[#101322] mb-1">Bus Retour</label>
-              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-ui w-full px-3 py-2 text-xs">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Bus Retour</label>
+              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-ui w-full px-3 py-1.5 text-xs">
             </div>
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t-2 border-[#101322]">
-          <button type="button" @click="showOrgModal = false" class="btn-pop bg-gray-200 text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Annuler</button>
-          <button type="button" @click="sauvegarderOrg()" class="btn-pop bg-[#FFE600] text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Enregistrer</button>
+        <div class="flex gap-2 pt-2 border-t border-slate-200">
+          <button type="button" @click="showOrgModal = false" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 py-1.5 rounded text-xs font-semibold">Annuler</button>
+          <button type="button" @click="sauvegarderOrg()" class="btn-flat bg-amber-400 hover:bg-amber-500 text-slate-900 flex-1 py-1.5 rounded text-xs font-semibold">Enregistrer</button>
         </div>
       </div>
     </div>
 
     <!-- MODAL : DETAIL ANIMATEUR -->
-    <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101322]/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 max-w-sm w-full space-y-4 bg-white max-h-[85vh] overflow-y-auto">
+    <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40" style="display: none;">
+      <div class="card-flat p-5 max-w-sm w-full space-y-4 bg-white max-h-[85vh] overflow-y-auto">
         
-        <div class="flex justify-between items-center border-b-2 border-[#101322] pb-3">
+        <div class="flex justify-between items-center border-b border-slate-200 pb-3">
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-2xl bg-[#5256E8] border-2 border-[#101322] text-white flex items-center justify-center font-title font-bold text-lg shadow-[2px_2px_0px_#101322]">
+            <div class="w-8 h-8 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
               <span x-text="animSelectionne?.nom ? animSelectionne.nom.charAt(0) : 'A'"></span>
             </div>
             <div>
-              <h3 class="font-title text-base font-bold text-[#101322]" x-text="animSelectionne?.nom"></h3>
-              <p class="text-[10px] font-black text-gray-400 uppercase">Planning Animateur</p>
+              <h3 class="text-sm font-bold text-slate-800" x-text="animSelectionne?.nom"></h3>
+              <p class="text-[10px] text-slate-400 uppercase font-semibold">Planning Animateur</p>
             </div>
           </div>
-          <button type="button" @click="animSelectionne = null" class="text-[#FF528F]"><i class="fa-solid fa-circle-xmark text-xl"></i></button>
+          <button type="button" @click="animSelectionne = null" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
         </div>
 
         <div class="space-y-2.5">
           <template x-for="(planningDate, dateKey) in animSelectionne?.dates" :key="dateKey">
-            <div class="card-item p-3 space-y-2 bg-[#f8fafc]">
-              <div class="flex justify-between items-center border-b-2 border-[#101322] pb-1.5">
-                <span class="font-title text-xs font-bold text-[#5256E8]" x-text="formatDateLisible(dateKey)"></span>
-                <button type="button" @click="allerADate(dateKey)" class="btn-pop bg-[#FFE600] text-[#101322] text-[10px] font-bold px-2 py-0.5 rounded-lg">
+            <div class="card-item p-3 space-y-2 bg-slate-50">
+              <div class="flex justify-between items-center border-b border-slate-200 pb-1.5">
+                <span class="text-xs font-bold text-blue-600" x-text="formatDateLisible(dateKey)"></span>
+                <button type="button" @click="allerADate(dateKey)" class="btn-flat bg-amber-400 text-slate-900 text-[10px] font-semibold px-2 py-0.5 rounded">
                   Voir jour
                 </button>
               </div>
 
               <div class="grid grid-cols-2 gap-2 text-xs">
                 <div class="card-item p-2 bg-white">
-                  <span class="text-[10px] font-bold text-gray-400 block">☀️ Matin</span>
-                  <p class="font-bold text-[#101322]" x-text="planningDate.matin || 'Repos'"></p>
+                  <span class="text-[10px] text-slate-400 block">☀️ Matin</span>
+                  <p class="font-medium text-slate-800" x-text="planningDate.matin || 'Repos'"></p>
                 </div>
                 <div class="card-item p-2 bg-white">
-                  <span class="text-[10px] font-bold text-gray-400 block">🌆 Après-midi</span>
-                  <p class="font-bold text-[#101322]" x-text="planningDate.aprem || 'Repos'"></p>
+                  <span class="text-[10px] text-slate-400 block">🌆 Après-midi</span>
+                  <p class="font-medium text-slate-800" x-text="planningDate.aprem || 'Repos'"></p>
                 </div>
               </div>
             </div>
           </template>
         </div>
 
-        <button type="button" @click="animSelectionne = null" class="btn-pop bg-gray-200 text-[#101322] w-full py-2 rounded-xl text-xs font-bold">Fermer</button>
+        <button type="button" @click="animSelectionne = null" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 w-full py-1.5 rounded text-xs font-semibold border border-slate-300">Fermer</button>
       </div>
     </div>
 
     <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
-    <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101322]/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-panel p-5 max-w-sm w-full space-y-3 bg-white">
-        <h3 class="font-title text-sm font-bold text-[#101322] border-b-2 border-[#101322] pb-2">
+    <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40" style="display: none;">
+      <div class="card-flat p-5 max-w-sm w-full space-y-3 bg-white">
+        <h3 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">
           ✏️ Créneau Animateur
         </h3>
         
         <div class="space-y-2.5">
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Nom de l'animateur</label>
-            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-ui w-full px-3 py-2 text-xs">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nom de l'animateur</label>
+            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-ui w-full px-3 py-1.5 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-black text-[#101322] mb-1">Date</label>
-            <input type="date" x-model="saisiePlanning.date" class="input-ui w-full px-3 py-2 text-xs">
+            <label class="block text-[11px] font-bold text-slate-700 mb-1">Date</label>
+            <input type="date" x-model="saisiePlanning.date" class="input-ui w-full px-3 py-1.5 text-xs">
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] font-black text-[#101322] mb-1">Créneau Matin</label>
-              <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu -6a" class="input-ui w-full px-3 py-2 text-xs">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Créneau Matin</label>
+              <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu -6a" class="input-ui w-full px-3 py-1.5 text-xs">
             </div>
             <div>
-              <label class="block text-[11px] font-black text-[#101322] mb-1">Créneau A-M</label>
-              <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu" class="input-ui w-full px-3 py-2 text-xs">
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Créneau A-M</label>
+              <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu" class="input-ui w-full px-3 py-1.5 text-xs">
             </div>
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t-2 border-[#101322]">
-          <button type="button" @click="showAddAnimModal = false" class="btn-pop bg-gray-200 text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Annuler</button>
-          <button type="button" @click="validerPlanning()" class="btn-pop bg-[#5256E8] text-white flex-1 py-2 rounded-xl text-xs font-bold">Valider</button>
+        <div class="flex gap-2 pt-2 border-t border-slate-200">
+          <button type="button" @click="showAddAnimModal = false" class="btn-flat bg-slate-100 hover:bg-slate-200 text-slate-700 flex-1 py-1.5 rounded text-xs font-semibold">Annuler</button>
+          <button type="button" @click="validerPlanning()" class="btn-flat bg-blue-600 hover:bg-blue-700 text-white flex-1 py-1.5 rounded text-xs font-semibold">Valider</button>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- NAVBAR FLOTTANTE DE STYLE CAPSULE POP -->
-  <nav class="fixed bottom-5 left-4 right-4 max-w-md mx-auto z-40 nav-capsule rounded-full p-2 flex justify-around items-center">
+  <!-- NAVBAR FLOTTANTE FLAT -->
+  <nav class="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40 nav-flat p-1.5 flex justify-around items-center">
     
     <button type="button" @click="currentTab = 'fiche'" 
-            :class="currentTab === 'fiche' ? 'bg-[#5256E8] text-white shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
-            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
-      <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
-      <span class="font-title text-[9px] font-bold mt-0.5">Fiches</span>
+            :class="currentTab === 'fiche' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'" 
+            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
+      <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+      <span class="text-[9px] font-medium mt-0.5">Fiches</span>
     </button>
 
     <button type="button" @click="currentTab = 'soins'" 
-            :class="currentTab === 'soins' ? 'bg-[#FF528F] text-white shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
-            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
-      <i class="fa-solid fa-kit-medical text-base"></i>
-      <span class="font-title text-[9px] font-bold mt-0.5">Soins</span>
+            :class="currentTab === 'soins' ? 'bg-rose-600 text-white' : 'text-slate-600 hover:bg-slate-100'" 
+            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
+      <i class="fa-solid fa-kit-medical text-sm"></i>
+      <span class="text-[9px] font-medium mt-0.5">Soins</span>
     </button>
 
     <button type="button" @click="currentTab = 'gouter'" 
-            :class="currentTab === 'gouter' ? 'bg-[#FFE600] text-[#101322] shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
-            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
-      <i class="fa-solid fa-cookie-bite text-base"></i>
-      <span class="font-title text-[9px] font-bold mt-0.5">Goûter</span>
+            :class="currentTab === 'gouter' ? 'bg-amber-500 text-white' : 'text-slate-600 hover:bg-slate-100'" 
+            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
+      <i class="fa-solid fa-cookie-bite text-sm"></i>
+      <span class="text-[9px] font-medium mt-0.5">Goûter</span>
     </button>
 
     <button type="button" @click="currentTab = 'courses'" 
-            :class="currentTab === 'courses' ? 'bg-[#3DEB9A] text-[#101322] shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
-            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
-      <i class="fa-solid fa-cart-shopping text-base"></i>
-      <span class="font-title text-[9px] font-bold mt-0.5">Matériel</span>
+            :class="currentTab === 'courses' ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100'" 
+            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
+      <i class="fa-solid fa-cart-shopping text-sm"></i>
+      <span class="text-[9px] font-medium mt-0.5">Matériel</span>
     </button>
 
     <button type="button" @click="currentTab = 'planning'" 
-            :class="currentTab === 'planning' ? 'bg-[#B483FF] text-[#101322] shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
-            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
-      <i class="fa-solid fa-calendar-days text-base"></i>
-      <span class="font-title text-[9px] font-bold mt-0.5">Planning</span>
+            :class="currentTab === 'planning' ? 'bg-purple-600 text-white' : 'text-slate-600 hover:bg-slate-100'" 
+            class="flex flex-col items-center py-1.5 px-3 rounded-full transition-colors">
+      <i class="fa-solid fa-calendar-days text-sm"></i>
+      <span class="text-[9px] font-medium mt-0.5">Planning</span>
     </button>
 
   </nav>
