@@ -85,6 +85,16 @@
       -webkit-appearance: none;
       min-height: 42px;
     }
+
+    /* Badges de couleurs pour les tranches d'âge */
+    .badge-moins6 {
+      background-color: #fcd307;
+      color: #111111;
+    }
+    .badge-plus6 {
+      background-color: #3b82f6;
+      color: #ffffff;
+    }
   </style>
 </head>
 
@@ -104,7 +114,6 @@
       </div>
     </div>
     
-    <!-- Bouton Réinitialiser utile -->
     <button type="button" @click="reinitialiserApp()" class="bg-black hover:bg-gray-900 text-yellow-400 font-bold text-xs px-3.5 py-2 rounded-full shadow-md transition-transform active:scale-95 flex items-center gap-1.5">
       <i class="fa-solid fa-rotate-left"></i> Réinit.
     </button>
@@ -534,15 +543,15 @@
             </div>
           </div>
 
-          <!-- FILTRES INTERACTIFS : ANIM, -6 ANS, +6 ANS -->
+          <!-- FILTRES INTERACTIFS AVEC COULEURS CONSERVÉES -->
           <div class="flex gap-1.5 pt-1">
             <button type="button" @click="filtrePlanning = 'anim'" :class="filtrePlanning === 'anim' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
               Animateurs
             </button>
-            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'badge-moins6 font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
               -6 ans
             </button>
-            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'badge-plus6 font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
               +6 ans
             </button>
           </div>
@@ -556,7 +565,7 @@
           </div>
         </div>
 
-        <!-- ENCADRÉ SORTIE SPÉCIALE (AVEC ENCADRÉS INDIVIDUELS POUR CHAQUE ENFANT DANS LE BLOC DE L'ANIMATEUR) -->
+        <!-- ENCADRÉ SORTIE SPÉCIALE -->
         <template x-if="getOrgDuJour()">
           <div class="card-item-bento p-4 space-y-3 bg-yellow-400 text-black">
             <div class="flex justify-between items-start border-b border-black/10 pb-2">
@@ -584,7 +593,7 @@
               </div>
             </div>
 
-            <!-- ENCADRÉS DES ANIMATEURS ET PETITS ENCADRÉS DES ENFANTS -->
+            <!-- GROUPES D'ENFANTS DANS LA SORTIE -->
             <div class="space-y-2 pt-1">
               <span class="text-[11px] font-black text-black uppercase block">Groupes d'enfants affectés :</span>
               <template x-for="g in getOrgDuJour().groupes" :key="g.id">
@@ -631,15 +640,18 @@
                 </div>
               </div>
 
-              <!-- AFFICHAGE DES CRÉNEAUX ET ÂGE SANS MENTION DE COULEUR -->
+              <!-- AFFICHAGE DES CRÉNEAUX AVEC COULEUR DYNAMIQUE SELON L'ÂGE -->
               <div class="grid grid-cols-2 gap-2 text-xs">
                 
                 <!-- MATIN -->
                 <div class="bg-black/20 p-2.5 rounded-xl border-l-4 border-yellow-400">
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-[10px] text-white/60 block">☀️ Matin</span>
-                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageMatin)" class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-white/20 hover:bg-yellow-400 hover:text-black text-white transition-colors"
-                          x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></button>
+                    <button type="button" 
+                            @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageMatin)" 
+                            :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'badge-moins6' : 'badge-plus6'"
+                            class="text-[9px] font-black px-2 py-0.5 rounded-md transition-transform active:scale-95"
+                            x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></button>
                   </div>
                   <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
                 </div>
@@ -648,8 +660,11 @@
                 <div class="bg-black/20 p-2.5 rounded-xl border-l-4 border-yellow-400">
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
-                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageAprem)" class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-white/20 hover:bg-yellow-400 hover:text-black text-white transition-colors"
-                          x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></button>
+                    <button type="button" 
+                            @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageAprem)" 
+                            :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'badge-moins6' : 'badge-plus6'"
+                            class="text-[9px] font-black px-2 py-0.5 rounded-md transition-transform active:scale-95"
+                            x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></button>
                   </div>
                   <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
                 </div>
@@ -697,7 +712,6 @@
             </div>
           </div>
 
-          <!-- AJOUT ANIMATEURS ET ENFANTS POUR LA SORTIE -->
           <div class="card-item-bento p-3 space-y-2.5 bg-white/10">
             <span class="text-xs font-bold text-yellow-300 block">👥 Animateurs & Enfants attribués</span>
             
@@ -728,7 +742,7 @@
       </div>
     </div>
 
-    <!-- MODAL : DETAIL ANIMATEUR -->
+    <!-- MODAL : DETAIL ANIMATEUR AVEC COULEURS DES TRANCHES D'ÂGE -->
     <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
       <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[85vh] overflow-y-auto">
         
@@ -757,12 +771,22 @@
 
               <div class="grid grid-cols-2 gap-2 text-xs">
                 <div class="bg-black/20 p-2 rounded-xl">
-                  <span class="text-[10px] text-white/60 block">☀️ Matin</span>
-                  <p class="font-bold text-white" x-text="(planningDate.matin || 'Repos') + ' (' + (planningDate.ageMatin || '-6 ans') + ')'"></p>
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-[10px] text-white/60 block">☀️ Matin</span>
+                    <span :class="(planningDate.ageMatin || '-6 ans') === '-6 ans' ? 'badge-moins6' : 'badge-plus6'" 
+                          class="text-[9px] font-black px-1.5 py-0.5 rounded-md" 
+                          x-text="planningDate.ageMatin || '-6 ans'"></span>
+                  </div>
+                  <p class="font-bold text-white" x-text="planningDate.matin || 'Repos'"></p>
                 </div>
                 <div class="bg-black/20 p-2 rounded-xl">
-                  <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
-                  <p class="font-bold text-white" x-text="(planningDate.aprem || 'Repos') + ' (' + (planningDate.ageAprem || '-6 ans') + ')'"></p>
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
+                    <span :class="(planningDate.ageAprem || '+6 ans') === '-6 ans' ? 'badge-moins6' : 'badge-plus6'" 
+                          class="text-[9px] font-black px-1.5 py-0.5 rounded-md" 
+                          x-text="planningDate.ageAprem || '+6 ans'"></span>
+                  </div>
+                  <p class="font-bold text-white" x-text="planningDate.aprem || 'Repos'"></p>
                 </div>
               </div>
             </div>
@@ -773,7 +797,7 @@
       </div>
     </div>
 
-    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU SANS CORRESPONDANCE DE COULEURS -->
+    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU (SÉLECTION SANS MENTION DE COULEURS EN TEXTE) -->
     <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
       <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20">
         <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
@@ -970,7 +994,6 @@
           ];
         },
 
-        // PURGE TOTALE DES DONNÉES DE L'APPLICATION
         reinitialiserApp() {
           if (confirm("Réinitialiser TOUTES les données ? (Cette action supprimera l'intégralité des informations)")) {
             this.fiche = { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] };
