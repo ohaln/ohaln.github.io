@@ -14,7 +14,7 @@
 
 <style>
   :root {
-    /* Mode Dark (Sombre) Unique */
+    /* Mode Dark Sombre Unique */
     --bg-main: #09090E;
     --card-bg: rgba(255, 255, 255, 0.04);
     --card-border: rgba(255, 255, 255, 0.1);
@@ -125,13 +125,13 @@
     gap: 12px;
   }
 
-  /* Titre stricte sur 2 lignes */
+  /* Titre stricte sur 2 lignes, taille réduite pour éviter la coupe */
   h1 {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(26px, 8vw, 36px);
+    font-size: clamp(22px, 6vw, 30px); /* Taille réduite */
     font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
     margin: 0;
     text-transform: lowercase;
     color: var(--text-main);
@@ -143,8 +143,8 @@
   }
 
   .flower-motif {
-    width: clamp(34px, 9vw, 44px);
-    height: clamp(34px, 9vw, 44px);
+    width: clamp(30px, 8vw, 40px);
+    height: clamp(30px, 8vw, 40px);
     flex-shrink: 0;
     fill: var(--pink);
     animation: rotateSlow 25s linear infinite;
@@ -194,11 +194,12 @@
   }
   .info-pop:hover::after, .info-pop:focus::after {
     content: attr(data-tooltip);
-    position: absolute; bottom: 130%; right: 0; width: min(240px, 80vw);
+    position: absolute; bottom: 130%; right: 0; width: min(280px, 85vw); /* Légèrement plus large */
     background: var(--tooltip-bg); border: 1px solid var(--purple-bright);
-    color: #fff; padding: 10px 14px; border-radius: 12px;
-    font-size: 11.5px; font-weight: 600; line-height: 1.4;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.25); z-index: 100; pointer-events: none;
+    color: #fff; padding: 12px 16px; border-radius: 14px;
+    font-size: 11.5px; font-weight: 600; line-height: 1.5;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4); z-index: 100; pointer-events: none;
+    text-align: left;
   }
 
   /* Grille des Régimes */
@@ -451,7 +452,7 @@
   }
   .big-num {
     font-family: 'Syne', sans-serif;
-    font-size: clamp(44px, 11vw, 58px);
+    font-size: clamp(40px, 10vw, 54px); /* Taille réduite */
     font-weight: 800;
     line-height: 1;
     color: #E2FF38;
@@ -479,9 +480,10 @@
   .q-max .q-num { color: var(--pink); }
   .q-flex .q-num { color: var(--purple-bright); }
 
-  /* Bouton d'action Principal */
+  /* Bouton d'action Principal unifié */
   .btn-cta {
-    width: 100%; margin-top: 16px; padding: 15px;
+    width: 100%; margin-top: 16px; 
+    height: 50px; /* Hauteur fixe pour éviter le changement de taille */
     border-radius: var(--radius-pill); border: none;
     background: var(--purple); color: #FFFFFF;
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -489,10 +491,17 @@
     display: flex; align-items: center; justify-content: center; gap: 8px;
     transition: all var(--transition-fast);
     box-shadow: 0 8px 20px var(--purple-glow);
+    padding: 0 20px; /* Marges internes */
   }
   .btn-cta:hover { transform: translateY(-1px); filter: brightness(1.1); }
   .btn-cta:active { transform: scale(0.98); }
-  .btn-cta.copied { background: #10B981; box-shadow: none; color: #fff; }
+  
+  /* État copié en JAUNE NÉON, même taille */
+  .btn-cta.copied { 
+    background: var(--yellow); 
+    box-shadow: 0 8px 20px var(--yellow-glow); 
+    color: var(--text-dark); 
+  }
 
   /* Sticky Mini Bar */
   .sticky-bar {
@@ -573,7 +582,8 @@
     <section class="fluid-section">
       <div class="section-head">
         <span class="section-title"><span class="section-num">1</span> Régime d'accueil</span>
-        <span class="info-pop" tabindex="0" role="button" data-tooltip="Modifie les ratios réglementaires d'encadrement selon la présence d'un PEDT.">ⓘ</span>
+        <!-- Définition PEDT améliorée dans l'infobulle -->
+        <span class="info-pop" tabindex="0" role="button" data-tooltip="Le Projet Éducatif de Territoire (PEDT) est une démarche partenariale (communes, EPCI, Éducation Nationale, CAF, etc.) qui définit un cadre d'organisation pour les temps périscolaires. Il permet de bénéficier de taux d'encadrement allégés conformes à la réglementation SDJES.">ⓘ</span>
       </div>
 
       <div class="regime-grid">
@@ -596,7 +606,7 @@
       </div>
 
       <div class="pedt-note">
-        <strong>💡 PEDT :</strong> Le Projet Éducatif de Territoire adapte les ratios légaux d'encadrement sur votre commune.
+        <strong>💡 PEDT :</strong> Le Projet Éducatif de Territoire adapte les ratios légaux d'encadrement sur votre territoire.
       </div>
     </section>
 
@@ -703,6 +713,7 @@
         </div>
       </div>
 
+      <!-- Bouton unifié en taille et en couleur ambre au clic -->
       <button type="button" class="btn-cta" id="copyBtn">
         <span id="copyBtnIcon">📋</span> <span id="copyBtnText">Copier le bilan complet</span>
       </button>
