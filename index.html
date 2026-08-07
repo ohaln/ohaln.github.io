@@ -1,1135 +1,1281 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Calculateur instantané du taux d'encadrement en Accueil de Loisirs (ALSH) selon la réglementation SDJES et PEDT.">
-<meta name="theme-color" content="#09090E">
-<title>Calculateur ALSH — Taux d'encadrement SDJES</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALSH Flow - Modèle Pop & Dynamic</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Fredoka (Titres Pop/Chunky) & Nunito (Interface) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 
-<style>
-  :root {
-    --bg-main: #09090E;
-    --card-bg: rgba(255, 255, 255, 0.04);
-    --card-border: rgba(255, 255, 255, 0.1);
-    
-    --yellow: #E2FF38;
-    --yellow-dark: #b8d41e;
-    --yellow-glow: rgba(226, 255, 56, 0.25);
-    
-    --purple: #8B5CF6;
-    --purple-bright: #A78BFA;
-    --purple-glow: rgba(139, 92, 246, 0.3);
-    
-    --pink: #FF52A2;
-    
-    --text-main: #FFFFFF;
-    --text-muted: #94A3B8;
-    --text-dark: #09090E;
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    --hero-bg: linear-gradient(145deg, #1A132C 0%, #110D1F 100%);
-    --tooltip-bg: #181824;
+  <style>
+    *, ::before, ::after { box-sizing: border-box; }
 
-    --radius-pill: 999px;
-    --radius-box: 20px;
+    :root {
+      --font-title: 'Fredoka', cursive, sans-serif;
+      --font-body: 'Nunito', sans-serif;
+      --primary: #5256E8;
+      --pink: #FF528F;
+      --yellow: #FFE600;
+      --mint: #3DEB9A;
+      --lavender: #B483FF;
+      --dark: #101322;
+      --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f4f4ff 50%, #ffe4e6 100%);
+    }
 
-    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-fast: 0.22s var(--ease-out);
-  }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--dark);
+      min-height: 100vh;
+    }
 
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    .font-title {
+      font-family: var(--font-title);
+    }
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    overflow-x: hidden;
-  }
+    /* MOTIF CONFETTIS / FORMES FLOTTANTES */
+    .bg-pattern {
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 82, 143, 0.15) 0%, transparent 20%),
+        radial-gradient(circle at 80% 15%, rgba(255, 230, 0, 0.2) 0%, transparent 25%),
+        radial-gradient(circle at 90% 75%, rgba(61, 235, 154, 0.2) 0%, transparent 20%),
+        radial-gradient(circle at 15% 85%, rgba(82, 86, 232, 0.15) 0%, transparent 25%);
+    }
 
-  body {
-    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    color: var(--text-main);
-    background: var(--bg-main);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    padding: 24px 16px max(90px, calc(40px + env(safe-area-inset-bottom)));
-  }
+    /* CARTES & PANNEAUX CHUNKY */
+    .card-panel {
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 3px solid var(--dark);
+      box-shadow: 6px 6px 0px var(--dark);
+      border-radius: 2rem;
+    }
 
-  .bg-decorations {
-    position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
-  }
-  .bg-blob {
-    position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.25;
-  }
-  .bg-blob-1 { width: 380px; height: 380px; top: -80px; right: -80px; background: var(--purple); }
-  .bg-blob-2 { width: 300px; height: 300px; bottom: -50px; left: -80px; background: var(--yellow); opacity: 0.15; }
+    .card-item {
+      background-color: #ffffff;
+      border: 2.5px solid var(--dark);
+      box-shadow: 3px 3px 0px var(--dark);
+      border-radius: 1.25rem;
+    }
 
-  main {
-    width: 100%;
-    max-width: 460px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    animation: fadeIn 0.6s var(--ease-out);
-  }
+    /* INPUTS LUDIQUES ET ÉPAIS */
+    .input-ui {
+      background-color: #ffffff;
+      border: 2.5px solid var(--dark);
+      border-radius: 1rem;
+      color: var(--dark);
+      font-weight: 700;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+    .input-ui:focus {
+      outline: none;
+      box-shadow: 3px 3px 0px var(--primary);
+      border-color: var(--primary);
+    }
 
-  .fluid-section {
-    position: relative;
-    width: 100%;
-  }
+    /* BOUTONS CHUNKY & FLOTTANTS */
+    .btn-pop {
+      border: 2.5px solid var(--dark);
+      box-shadow: 4px 4px 0px var(--dark);
+      font-family: var(--font-title);
+      transition: all 0.1s ease;
+    }
 
-  /* Header */
-  .header-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 0 8px;
-  }
+    .btn-pop:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--dark);
+    }
 
-  .header-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
+    .btn-pop:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px var(--dark);
+    }
 
-  .btn-reset {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    color: var(--text-muted);
-    padding: 6px 14px;
-    border-radius: var(--radius-pill);
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    transition: all var(--transition-fast);
-  }
-  .btn-reset:hover {
-    background: var(--pink);
-    color: #fff;
-    border-color: var(--pink);
-    transform: translateY(-1px);
-  }
-  .btn-reset:active {
-    transform: scale(0.95);
-  }
+    /* NAVBAR GÉANTE EN CAPSULE */
+    .nav-capsule {
+      background: rgba(255, 255, 255, 0.95);
+      border: 3px solid var(--dark);
+      box-shadow: 0px 10px 25px rgba(16, 19, 34, 0.15), 4px 4px 0px var(--dark);
+      backdrop-filter: blur(10px);
+    }
 
-  .brand-title-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(22px, 6vw, 30px);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    margin: 0;
-    text-transform: lowercase;
-    color: var(--text-main);
-    word-break: normal;
-  }
-  h1 span {
-    color: var(--purple-bright);
-    display: block;
-  }
-
-  .flower-motif {
-    width: clamp(30px, 8vw, 40px);
-    height: clamp(30px, 8vw, 40px);
-    flex-shrink: 0;
-    fill: var(--pink);
-    animation: rotateSlow 25s linear infinite;
-    transition: transform 0.3s var(--ease-spring);
-  }
-  .flower-motif:hover {
-    transform: scale(1.15) rotate(45deg);
-  }
-  @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-  /* En-têtes de sections */
-  .section-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .section-title {
-    font-size: 11.5px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .section-num {
-    background: var(--yellow);
-    color: var(--text-dark);
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 800;
-    box-shadow: 0 0 10px var(--yellow-glow);
-    transition: transform 0.3s var(--ease-spring);
-  }
-
-  .fluid-section:hover .section-num {
-    transform: scale(1.1);
-  }
-
-  .info-pop {
-    width: 20px; height: 20px; border-radius: 50%;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    color: var(--text-muted); font-size: 11px; font-weight: 800;
-    display: flex; align-items: center; justify-content: center;
-    cursor: help; position: relative;
-    transition: all var(--transition-fast);
-  }
-  .info-pop:hover, .info-pop:focus {
-    background: var(--purple);
-    color: #fff;
-    border-color: var(--purple-bright);
-    transform: scale(1.1);
-  }
-  .info-pop:hover::after, .info-pop:focus::after {
-    content: attr(data-tooltip);
-    position: absolute; bottom: 130%; right: 0; width: min(280px, 85vw);
-    background: var(--tooltip-bg); border: 1px solid var(--purple-bright);
-    color: #fff; padding: 12px 16px; border-radius: 14px;
-    font-size: 11.5px; font-weight: 600; line-height: 1.5;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.4); z-index: 100; pointer-events: none;
-    text-align: left;
-    animation: popIn 0.2s var(--ease-spring);
-  }
-
-  @keyframes popIn {
-    from { opacity: 0; transform: translateY(6px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  /* Grille des Régimes */
-  .regime-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 8px;
-  }
-
-  .regime-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-box);
-    padding: 12px;
-    text-align: left;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    transition: all var(--transition-fast);
-    color: var(--text-muted);
-  }
-  .regime-card:hover {
-    border-color: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-  }
-  .regime-card:active {
-    transform: scale(0.97);
-  }
-  .regime-card .r-title {
-    display: block; font-weight: 800; font-size: 13px; color: var(--text-main);
-  }
-  .regime-card .r-sub {
-    display: block; font-size: 10.5px; font-weight: 700; margin-top: 2px;
-    color: var(--yellow);
-  }
-
-  .regime-card.active {
-    background: var(--purple);
-    border-color: var(--purple);
-    color: #fff !important;
-    box-shadow: 0 8px 20px var(--purple-glow);
-  }
-  .regime-card.active .r-title { color: #fff !important; }
-  .regime-card.active .r-sub { color: var(--yellow) !important; }
-
-  /* Input Steppers */
-  .input-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  @media (max-width: 360px) {
-    .input-group { grid-template-columns: 1fr; }
-  }
-
-  .field-label {
-    font-size: 12px; font-weight: 800; display: block; margin-bottom: 6px;
-  }
-
-  .stepper-box {
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-pill);
-    padding: 4px 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    transition: all var(--transition-fast);
-  }
-
-  .stepper-box.st-36:focus-within, .stepper-box.st-36:hover {
-    border-color: var(--yellow);
-    box-shadow: 0 0 14px var(--yellow-glow);
-  }
-  .stepper-box.st-36 input { color: var(--yellow); }
-  .stepper-box.st-36 .stepper-btn:hover { background: var(--yellow); color: var(--text-dark); }
-
-  .stepper-box.st-612:focus-within, .stepper-box.st-612:hover {
-    border-color: var(--purple-bright) !important;
-    box-shadow: 0 0 14px var(--purple-glow) !important;
-  }
-  .stepper-box.st-612 input { color: var(--purple-bright) !important; }
-  .stepper-box.st-612 .stepper-btn:hover { background: var(--purple-bright) !important; color: #FFFFFF !important; }
-
-  .stepper-btn {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    border: none;
-    background: var(--card-bg);
-    color: var(--text-main);
-    font-size: 18px;
-    font-weight: 800;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all var(--transition-fast);
-    flex-shrink: 0;
-  }
-  .stepper-btn:active { transform: scale(0.85); }
-
-  .stepper-box input {
-    width: 100%; border: none; background: transparent;
-    font-family: 'Syne', sans-serif;
-    font-size: 20px; font-weight: 800; text-align: center;
-    outline: none; font-variant-numeric: tabular-nums; min-width: 0;
-  }
-  .stepper-box input::-webkit-outer-spin-button,
-  .stepper-box input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-  .total-kids-pill {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-pill);
-    text-align: center;
-    padding: 10px 16px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-top: 10px;
-    transition: all var(--transition-fast);
-  }
-  .total-kids-pill strong { color: var(--yellow); font-weight: 800; text-shadow: 0 0 10px var(--yellow-glow); }
-
-  .alert-box {
-    display: none; align-items: center; gap: 8px;
-    background: rgba(255, 82, 162, 0.12);
-    border: 1px solid var(--pink);
-    border-radius: var(--radius-box);
-    padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--pink);
-    margin-top: 10px;
-    animation: shake 0.4s var(--ease-spring);
-  }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-4px); }
-    40%, 80% { transform: translateX(4px); }
-  }
-  .alert-box.visible { display: flex; }
-
-  /* Mutualisation Selector */
-  .mutual-selector {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-    background: var(--card-bg); padding: 4px;
-    border-radius: var(--radius-pill); border: 1px solid var(--card-border);
-  }
-  .mutual-btn {
-    background: transparent; border: none;
-    border-radius: var(--radius-pill); padding: 8px 10px;
-    color: var(--text-muted); cursor: pointer;
-    transition: all var(--transition-fast);
-    font-size: 11.5px; font-weight: 800; text-align: center;
-  }
-  .mutual-btn.active {
-    background: var(--yellow);
-    color: var(--text-dark);
-    box-shadow: 0 4px 15px var(--yellow-glow);
-  }
-
-  /* Toggle Row */
-  .toggle-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    cursor: pointer; padding-top: 12px; margin-top: 12px;
-    transition: opacity var(--transition-fast);
-  }
-  .toggle-label { font-size: 12.5px; font-weight: 700; color: var(--text-main); }
-  .toggle-label small { display: block; font-weight: 500; color: var(--text-muted); font-size: 10.5px; margin-top: 2px; }
-  .toggle-row input { display: none; }
-
-  .switch-track {
-    width: 46px; height: 26px; border-radius: var(--radius-pill);
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    position: relative; flex-shrink: 0; transition: background 0.3s ease;
-  }
-  .switch-track::after {
-    content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px;
-    border-radius: 50%; background: var(--text-muted);
-    transition: transform 0.3s var(--ease-spring), background 0.3s ease;
-  }
-  .toggle-row input:checked + .switch-track {
-    background: var(--yellow); border-color: var(--yellow);
-    box-shadow: 0 0 12px var(--yellow-glow);
-  }
-  .toggle-row input:checked + .switch-track::after {
-    transform: translateX(20px); background: var(--text-dark);
-  }
-  .toggle-row.disabled { opacity: 0.35; pointer-events: none; }
-
-  /* Carte Résultat / Hero */
-  .result-hero-card {
-    background: var(--hero-bg);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 24px;
-    padding: 20px;
-    position: relative;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-    transition: transform 0.3s var(--ease-spring);
-  }
-
-  .pool-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px;
-  }
-  .pool-badge {
-    background: #E2FF38; color: #09090E;
-    font-size: 10.5px; font-weight: 800; padding: 4px 10px;
-    border-radius: var(--radius-pill); opacity: 0; transform: scale(0.9);
-    transition: all 0.3s var(--ease-spring); flex-shrink: 0;
-  }
-  .pool-badge.visible { opacity: 1; transform: scale(1); }
-
-  .pool-track { display: flex; gap: 6px; flex-wrap: wrap; }
-
-  .segment {
-    flex: 1; min-width: 40px; height: 38px; border-radius: var(--radius-pill);
-    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
-    overflow: hidden; position: relative; display: flex;
-    animation: popIn 0.3s var(--ease-spring);
-  }
-  .segment .fillA, .segment .fillB {
-    height: 100%; width: 0%; transition: width 0.4s var(--ease-out); position: relative;
-  }
-  .fillA { background: #E2FF38; }
-  .fillB { background: #A78BFA; }
-
-  .gauge-label {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800; color: #FFFFFF;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8);
-    z-index: 2; font-variant-numeric: tabular-nums;
-  }
-
-  .segment.ghost { opacity: 0.25; width: 100%; }
-  .segment.ghost::after {
-    content: "–"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 16px;
-  }
-
-  .pool-split-container { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-  .pool-subgroup { display: flex; flex-direction: column; gap: 6px; }
-  .subgroup-label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-  .subgroup-label.lbl-a { color: #E2FF38; }
-  .subgroup-label.lbl-b { color: #A78BFA; }
-
-  .pool-legend { display: flex; gap: 14px; margin-top: 12px; }
-  .pool-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.8); }
-  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-  .dot-a { background: #E2FF38; }
-  .dot-b { background: #A78BFA; }
-
-  /* Grand Affichage Chiffre */
-  .hero-result-wrap {
-    display: flex; align-items: center; gap: 14px; margin-top: 16px; padding-top: 14px;
-    border-top: 1px solid rgba(255,255,255,0.15);
-  }
-  .big-num {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(40px, 10vw, 54px);
-    font-weight: 800;
-    line-height: 1;
-    color: #E2FF38;
-    text-shadow: 0 0 20px rgba(226, 255, 56, 0.3);
-    font-variant-numeric: tabular-nums;
-    transition: transform 0.25s var(--ease-spring);
-    display: inline-block;
-  }
-  .big-num.pulse {
-    animation: numPulse 0.35s var(--ease-spring);
-  }
-  @keyframes numPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.25); color: #FFF; }
-    100% { transform: scale(1); }
-  }
-
-  .big-label {
-    font-size: clamp(13px, 4vw, 15px); font-weight: 800; line-height: 1.25; color: #FFFFFF;
-  }
-
-  /* Compteurs Diplômes */
-  .q-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
-  .q-card {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: var(--radius-box); padding: 12px 6px; text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    transition: all var(--transition-fast);
-  }
-  .q-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(255,255,255,0.2);
-  }
-  .q-num {
-    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; display: block;
-    transition: transform 0.25s var(--ease-spring);
-  }
-  .q-label { display: block; margin-top: 2px; font-size: 10px; font-weight: 700; color: var(--text-muted); line-height: 1.2; }
-  .q-label small { font-size: 9px; opacity: 0.75; display: block; }
-
-  .q-min .q-num { color: #10B981; }
-  .q-max .q-num { color: var(--pink); }
-  .q-flex .q-num { color: var(--purple-bright); }
-
-  /* Bouton d'action Principal */
-  .btn-cta {
-    width: 100%; margin-top: 16px; 
-    height: 50px;
-    border-radius: var(--radius-pill); border: none;
-    background: var(--purple); color: #FFFFFF;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 13.5px; font-weight: 800; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: all var(--transition-fast);
-    box-shadow: 0 8px 20px var(--purple-glow);
-    padding: 0 20px;
-  }
-  .btn-cta:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 12px 25px var(--purple-glow); }
-  .btn-cta:active { transform: scale(0.97); }
-  
-  .btn-cta.copied { 
-    background: var(--yellow); 
-    box-shadow: 0 8px 20px var(--yellow-glow); 
-    color: var(--text-dark); 
-    animation: popIn 0.3s var(--ease-spring);
-  }
-
-  /* Sticky Mini Bar */
-  .sticky-bar {
-    position: fixed; bottom: max(16px, env(safe-area-inset-bottom)); left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    width: calc(100% - 32px); max-width: 420px;
-    background: #0F172A; border: 1px solid var(--purple-bright);
-    border-radius: var(--radius-pill); padding: 8px 18px;
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 16px 35px rgba(0,0,0,0.4); z-index: 100; cursor: pointer;
-    opacity: 0; transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
-  }
-  .sticky-bar.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
-  .sticky-bar:hover { transform: translateX(-50%) translateY(-3px); }
-  .mini-count { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: #E2FF38; }
-  .mini-txt { font-size: 12px; font-weight: 800; color: #fff; margin-left: 8px; }
-  .mini-pill {
-    background: var(--purple); color: #fff; padding: 5px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: 800;
-  }
-
-  /* Toast Popup */
-  .toast {
-    position: fixed; bottom: max(20px, calc(10px + env(safe-area-inset-bottom))); left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: #0F172A; color: #FFFFFF;
-    border: 1px solid var(--purple-bright);
-    padding: 10px 20px; border-radius: var(--radius-pill);
-    font-size: 12px; font-weight: 800;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 15px var(--purple-glow); opacity: 0;
-    transition: all 0.35s var(--ease-spring); z-index: 9999; pointer-events: none;
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    white-space: nowrap;
-    max-width: calc(100vw - 32px);
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  footer.legal-note {
-    font-size: 12px; font-weight: 700; color: var(--text-muted); text-align: center;
-    letter-spacing: 0.02em;
-  }
-
-  .divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, var(--card-border) 50%, transparent 100%);
-    width: 100%;
-    margin: 4px 0;
-  }
-</style>
+    input[type="date"] {
+      text-align: left;
+    }
+  </style>
 </head>
-<body>
 
-  <div class="bg-decorations">
-    <div class="bg-blob bg-blob-1"></div>
-    <div class="bg-blob bg-blob-2"></div>
+<body class="bg-pattern pt-6 pb-32 select-none" x-data="alshApp()">
+
+  <!-- HEADER BRANDING -->
+  <header class="max-w-md mx-auto px-4 mb-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-10 h-10 bg-[#FF528F] border-2 border-[#101322] rounded-2xl flex items-center justify-center shadow-[3px_3px_0px_#101322] text-white text-xl font-black rotate-[-6deg]">
+        ⚡
+      </div>
+      <h1 class="font-title text-2xl font-bold tracking-wide text-[#101322]">
+        ALSH<span class="text-[#5256E8]">Flow</span>
+      </h1>
+    </div>
+    <span class="bg-[#FFE600] border-2 border-[#101322] text-[#101322] font-title font-bold text-xs px-3 py-1 rounded-full shadow-[2px_2px_0px_#101322] rotate-[3deg]">
+      Anims Zone 🚀
+    </span>
+  </header>
+
+  <!-- TOAST NOTIFICATION POP -->
+  <div x-show="toast.show" 
+       x-transition:enter="transition ease-out duration-200"
+       x-transition:enter-start="opacity-0 -translate-y-4 scale-90"
+       x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+       x-transition:leave-end="opacity-0 -translate-y-4 scale-90"
+       class="fixed top-4 right-4 left-4 z-50 max-w-md mx-auto card-panel bg-[#3DEB9A] p-4 flex items-center justify-between"
+       style="display: none;">
+    <div class="flex items-center space-x-3">
+      <i class="fa-solid fa-face-smile text-[#101322] text-2xl"></i>
+      <span class="text-xs font-black text-[#101322]" x-text="toast.message"></span>
+    </div>
+    <button type="button" @click="toast.show = false" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-xmark text-lg"></i></button>
   </div>
 
-  <main>
+  <main class="max-w-md mx-auto px-4 space-y-4">
 
-    <!-- Header -->
-    <header class="fluid-section header-wrap">
-      <div class="header-actions">
-        <button type="button" class="btn-reset" id="resetBtn">
-          réinitialiser
-        </button>
-      </div>
-
-      <div class="brand-title-wrap">
-        <h1>taux<br><span>d'encadrement</span></h1>
+    <!-- 1. ONGLET : FICHE D'ACTIVITÉ -->
+    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4">
+      <div class="card-panel p-5 space-y-4">
         
-        <svg class="flower-motif" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M50 34C53 20 67 20 67 34C81 34 81 48 67 48C81 48 81 62 67 62C67 76 53 76 50 62C47 76 33 76 33 62C19 62 19 48 33 48C19 48 19 34 33 34C33 20 47 20 50 34Z" />
-        </svg>
+        <div class="flex items-center justify-between border-b-2 border-[#101322] pb-3">
+          <h2 class="font-title text-lg font-bold flex items-center gap-2">
+            <span class="text-2xl">🎨</span> Fiche d'Activité
+          </h2>
+          <span class="bg-[#B483FF] text-[#101322] border-2 border-[#101322] font-title text-[11px] font-bold px-3 py-0.5 rounded-full shadow-[2px_2px_0px_#101322]">
+            Express
+          </span>
+        </div>
+
+        <form @submit.prevent="submitFiche()" class="space-y-3.5">
+          <div>
+            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Nom de l'activité</label>
+            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu Chasse au Trésor" class="input-ui w-full px-3.5 py-2.5 text-xs" required>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Tranche d'âge</label>
+              <select x-model="fiche.age" class="input-ui w-full px-3 py-2.5 text-xs font-bold">
+                <option value="-6 ans">-6 ans</option>
+                <option value="+6 ans">+6 ans</option>
+                <option value="Inter-tranches">Inter-tranches</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Lieu</label>
+              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="input-ui w-full px-3 py-2.5 text-xs">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Objectif Pédagogique</label>
+            <input type="text" x-model="fiche.objectif" placeholder="ex: Coopérer en équipe" class="input-ui w-full px-3.5 py-2.5 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Déroulement / Consignes</label>
+            <textarea x-model="fiche.deroulement" placeholder="Explication des étapes du jeu..." class="input-ui w-full px-3.5 py-2.5 text-xs h-20 resize-none"></textarea>
+          </div>
+
+          <!-- SECTION MATÉRIEL -->
+          <div class="card-item p-3.5 bg-[#f8fafc] space-y-2">
+            <span class="font-title text-xs font-bold text-[#5256E8] flex items-center gap-1.5">
+              <i class="fa-solid fa-boxes-packing"></i> Matériel & Quantités
+            </span>
+            <div class="grid grid-cols-5 gap-1.5">
+              <input type="text" x-model="newMatosNom" placeholder="Article" class="col-span-3 input-ui px-2.5 py-2 text-xs">
+              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-2 text-xs text-center">
+              <button type="button" @click="addMatos()" class="col-span-1 btn-pop bg-[#FFE600] text-[#101322] rounded-xl text-lg font-black">+</button>
+            </div>
+            <ul class="space-y-1.5 pt-1">
+              <template x-for="(item, index) in fiche.materiel" :key="index">
+                <li class="flex items-center justify-between text-xs card-item px-3 py-1.5">
+                  <span class="font-bold" x-text="item.nom + ' — Quantité : ' + item.qte"></span>
+                  <button type="button" @click="removeMatos(index)" class="text-[#FF528F] hover:scale-125 transition-transform ml-2"><i class="fa-solid fa-circle-xmark text-base"></i></button>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5 pt-2">
+            <button type="button" @click="exportPDF()" class="btn-pop bg-white text-[#101322] py-2.5 rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-file-pdf text-[#FF528F] text-base"></i> Export PDF
+            </button>
+            <button type="submit" class="btn-pop bg-[#5256E8] text-white py-2.5 rounded-2xl text-xs font-bold flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-paper-plane text-base"></i> Envoi Courses
+            </button>
+          </div>
+        </form>
       </div>
-    </header>
+    </div>
 
-    <div class="divider"></div>
+    <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF -->
+    <div id="pdf-template" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 700px;">
+      <div style="padding: 30px; font-family: 'Nunito', sans-serif; color: #101322; background: #ffffff;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #101322; padding-bottom: 12px; margin-bottom: 20px;">
+          <div>
+            <h1 style="margin: 0; font-size: 24px; font-family: 'Fredoka', cursive; color: #5256E8;" id="pdf-titre">Fiche d'Activité</h1>
+            <p style="margin: 4px 0 0 0; font-size: 12px; font-weight: bold; color: #64748b;">Accueil de Loisirs ALSH Flow</p>
+          </div>
+          <span style="background: #FFE600; color: #101322; border: 2px solid #101322; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 12px;" id="pdf-age">Age</span>
+        </div>
 
-    <!-- Régimes -->
-    <section class="fluid-section">
-      <div class="section-head">
-        <span class="section-title"><span class="section-num">1</span> Régime d'accueil</span>
-        <span class="info-pop" tabindex="0" role="button" data-tooltip="Le Projet Éducatif de Territoire (PEDT) est une démarche partenariale (communes, EPCI, Éducation Nationale, CAF, etc.) qui définit un cadre d'organisation pour les temps périscolaires. Il permet de bénéficier de taux d'encadrement allégés conformes à la réglementation SDJES.">ⓘ</span>
-      </div>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <tr>
+            <td style="padding: 8px; background: #f8fafc; border: 2px solid #101322; font-weight: bold; width: 30%;">Lieu :</td>
+            <td style="padding: 8px; border: 2px solid #101322;" id="pdf-lieu">-</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; background: #f8fafc; border: 2px solid #101322; font-weight: bold;">Objectif Pédagogique :</td>
+            <td style="padding: 8px; border: 2px solid #101322;" id="pdf-objectif">-</td>
+          </tr>
+        </table>
 
-      <div class="regime-grid">
-        <button type="button" class="regime-card active" data-regime="hors_p5">
-          <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">+5h par jour</span>
-        </button>
-        <button type="button" class="regime-card" data-regime="hors_m5">
-          <span class="r-title">Hors PEDT</span>
-          <span class="r-sub">≤ 5h par jour</span>
-        </button>
-        <button type="button" class="regime-card" data-regime="avec_p5">
-          <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">+5h par jour</span>
-        </button>
-        <button type="button" class="regime-card" data-regime="avec_m5">
-          <span class="r-title">Avec PEDT</span>
-          <span class="r-sub">≤ 5h par jour</span>
-        </button>
-      </div>
-    </section>
+        <div style="margin-bottom: 20px;">
+          <h3 style="color: #5256E8; font-family: 'Fredoka', cursive; border-bottom: 2px solid #101322; padding-bottom: 4px; font-size: 16px;">📜 Déroulement</h3>
+          <p style="font-size: 12px; line-height: 1.5; white-space: pre-line;" id="pdf-deroulement">-</p>
+        </div>
 
-    <!-- Effectifs -->
-    <section class="fluid-section">
-      <div class="section-head">
-        <span class="section-title"><span class="section-num">2</span> Effectifs inscrits</span>
-      </div>
-
-      <div class="input-group">
         <div>
-          <label class="field-label" for="n36" style="color: var(--yellow);">Moins de 6 ans (-6 ans)</label>
-          <div class="stepper-box st-36">
-            <button class="stepper-btn" data-target="n36" data-delta="-1" aria-label="Moins 1">–</button>
-            <input id="n36" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-            <button class="stepper-btn" data-target="n36" data-delta="1" aria-label="Plus 1">+</button>
+          <h3 style="color: #5256E8; font-family: 'Fredoka', cursive; border-bottom: 2px solid #101322; padding-bottom: 4px; font-size: 16px;">📦 Matériel & Quantités</h3>
+          <ul style="font-size: 12px; padding-left: 20px;" id="pdf-materiel"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. ONGLET : CAHIER DE SOINS NUMÉRIQUE -->
+    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-panel p-5 space-y-4">
+        
+        <div class="flex items-center justify-between border-b-2 border-[#101322] pb-3">
+          <h2 class="font-title text-lg font-bold flex items-center gap-2">
+            <span class="text-2xl">🩹</span> Cahier de Soins
+          </h2>
+          <span class="bg-[#FF528F] text-white border-2 border-[#101322] font-title text-[11px] font-bold px-3 py-0.5 rounded-full shadow-[2px_2px_0px_#101322]">
+            Santé
+          </span>
+        </div>
+
+        <form @submit.prevent="submitSoin()" class="space-y-3.5">
+          <div>
+            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Prénom & Nom de l'enfant</label>
+            <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-ui w-full px-3.5 py-2.5 text-xs" required>
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Symptôme / Incident</label>
+            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure au genou" class="input-ui w-full px-3.5 py-2.5 text-xs" required>
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-[#101322] uppercase tracking-wider mb-1">Soin apporté</label>
+            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant..." class="input-ui w-full px-3.5 py-2.5 text-xs h-20 resize-none"></textarea>
+          </div>
+
+          <div class="flex items-center space-x-2.5 card-item p-3 bg-[#FFE600]/20">
+            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-5 h-5 accent-[#FF528F] rounded cursor-pointer">
+            <label for="famille" class="text-xs font-bold text-[#101322] cursor-pointer">Avertir les parents ce soir 🔔</label>
+          </div>
+
+          <button type="submit" class="btn-pop bg-[#3DEB9A] text-[#101322] w-full py-2.5 rounded-2xl text-xs font-bold">
+            Enregistrer le soin
+          </button>
+        </form>
+
+        <hr class="border-b-2 border-[#101322] my-2">
+
+        <h3 class="font-title text-xs font-bold text-[#101322] uppercase tracking-wider">Registre des soins</h3>
+        <div class="space-y-2">
+          <template x-for="item in registreSoins" :key="item.id">
+            <div class="card-item p-3.5 flex items-start justify-between">
+              <div class="space-y-1">
+                <p class="font-black text-xs text-[#5256E8]" x-text="item.enfant"></p>
+                <p class="text-xs font-bold text-[#101322]" x-text="item.incident"></p>
+                <p class="text-[11px] font-bold text-gray-500" x-text="item.heure + ' • Soin : ' + item.action"></p>
+                <span x-show="item.prevenirFamille" class="inline-block px-2.5 py-0.5 bg-[#FF528F] text-white border-2 border-[#101322] text-[10px] font-bold rounded-full mt-1">
+                  ⚠️ Prévenir la famille
+                </span>
+              </div>
+              <button type="button" @click="deleteSoin(item.id)" class="text-[#FF528F] hover:scale-125 transition-transform"><i class="fa-solid fa-trash text-sm"></i></button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. ONGLET : GOÛTERS & RECETTES -->
+    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-panel p-5 space-y-4">
+        
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border-b-2 border-[#101322] pb-3">
+            <h2 class="font-title text-lg font-bold flex items-center gap-2">
+              <span class="text-2xl">🍪</span> Goûters & Recettes
+            </h2>
+            <div class="flex gap-1.5">
+              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="btn-pop bg-white text-[#101322] text-xs px-2.5 py-1 rounded-xl font-bold">
+                + Recette
+              </button>
+              <button type="button" @click="showPlanifModal = true" class="btn-pop bg-[#FFE600] text-[#101322] text-xs px-2.5 py-1 rounded-xl font-bold">
+                Planifier
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between card-item px-3 py-2 bg-[#f8fafc]">
+            <button type="button" @click="changerSemaine(-1)" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-chevron-left text-lg"></i></button>
+            <div class="text-center">
+              <p class="font-title text-xs font-bold text-[#5256E8]" x-text="getLibelleSemaine()"></p>
+            </div>
+            <button type="button" @click="changerSemaine(1)" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-chevron-right text-lg"></i></button>
           </div>
         </div>
 
-        <div>
-          <label class="field-label" for="n612" style="color: var(--purple-bright);">6 ans et plus (+6 ans)</label>
-          <div class="stepper-box st-612">
-            <button class="stepper-btn" data-target="n612" data-delta="-1" aria-label="Moins 1">–</button>
-            <input id="n612" type="number" min="0" value="0" inputmode="numeric" onfocus="this.select()">
-            <button class="stepper-btn" data-target="n612" data-delta="1" aria-label="Plus 1">+</button>
+        <!-- MODAL CRÉER UNE RECETTE -->
+        <div x-show="showAddRecetteModal" x-transition class="card-item p-4 space-y-3 bg-[#B483FF]/20" style="display: none;">
+          <div class="flex justify-between items-center border-b-2 border-[#101322] pb-2">
+            <h3 class="font-title text-xs font-bold text-[#101322]">
+              🍰 Nouvelle Recette (Base 8 enfants)
+            </h3>
+            <button type="button" @click="showAddRecetteModal = false"><i class="fa-solid fa-circle-xmark text-lg text-[#FF528F]"></i></button>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Nom de la recette</label>
+            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="input-ui w-full px-3 py-2 text-xs">
+          </div>
+
+          <div class="space-y-2 pt-1">
+            <label class="block text-[11px] font-black text-[#101322]">Ingrédients :</label>
+            
+            <div class="grid grid-cols-6 gap-1.5">
+              <input type="text" x-model="tempIng.nom" placeholder="Nom" class="col-span-3 input-ui px-2 py-1.5 text-xs">
+              <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-ui px-2 py-1.5 text-xs text-center">
+              <input type="text" x-model="tempIng.unite" placeholder="Unité" class="col-span-1.5 input-ui px-2 py-1.5 text-xs">
+            </div>
+            
+            <button type="button" @click="ajouterIngredierntRecette()" class="btn-pop bg-white text-[#101322] w-full py-1.5 text-xs font-bold rounded-xl">
+              + Ajouter l'ingrédient
+            </button>
+
+            <div class="space-y-1 pt-1">
+              <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
+                <div class="flex justify-between items-center text-xs card-item px-2.5 py-1">
+                  <span class="font-bold" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
+                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-[#FF528F]"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <button type="button" @click="enregistrerNouvelleRecette()" class="btn-pop bg-[#3DEB9A] text-[#101322] w-full py-2 text-xs font-bold rounded-xl">
+            Enregistrer la recette
+          </button>
+        </div>
+
+        <!-- LISTE DES GOÛTERS PROGRAMMÉS -->
+        <div class="space-y-2">
+          <h3 class="font-title text-xs font-bold text-[#101322] uppercase tracking-wider flex justify-between items-center">
+            <span>Planning Goûters</span>
+            <span class="bg-[#FFE600] border-2 border-[#101322] px-2 py-0.5 rounded-full text-[10px]" x-text="getGoutersDeLaSemaine().length + ' prévu(s)'"></span>
+          </h3>
+
+          <template x-if="getGoutersDeLaSemaine().length === 0">
+            <div class="card-item p-4 text-center space-y-1 bg-[#f8fafc]">
+              <p class="text-xs font-bold text-gray-500">Aucun goûter planifié cette semaine.</p>
+            </div>
+          </template>
+
+          <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
+            <div class="card-item p-3.5 space-y-2 bg-gradient-to-r from-white to-[#f4f4ff]">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="font-title text-[10px] font-bold text-[#FF528F] uppercase" x-text="formatDateLisible(g.date)"></span>
+                  <h4 class="font-title text-sm font-bold text-[#101322]" x-text="getNomRecette(g.recetteId)"></h4>
+                </div>
+                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="text-[#FF528F] hover:scale-125 transition-transform">
+                  <i class="fa-solid fa-trash text-sm"></i>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="card-item p-2 bg-white">
+                  <span class="text-[10px] font-bold text-gray-400 block">Animateur</span>
+                  <span class="font-black text-[#5256E8]" x-text="g.anim || 'Non assigné'"></span>
+                </div>
+                <div class="card-item p-2 bg-white">
+                  <span class="text-[10px] font-bold text-gray-400 block">Quantité</span>
+                  <span class="font-black text-[#101322]" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <hr class="border-b-2 border-[#101322] my-3">
+
+        <!-- LISTE DE COURSES GOÛTER -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-title text-xs font-bold text-[#101322] uppercase tracking-wider flex items-center gap-1.5">
+              🛒 Courses Goûter
+            </h3>
+            <span class="bg-[#3DEB9A] border-2 border-[#101322] text-[#101322] font-title text-[10px] font-bold px-2 py-0.5 rounded-full" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
+          </div>
+
+          <div class="space-y-1.5">
+            <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
+              <div class="card-item p-2.5 flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 bg-gray-100 line-through' : ''">
+                <div class="flex items-center space-x-2.5">
+                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-5 h-5 accent-[#3DEB9A] rounded cursor-pointer">
+                  <span class="text-xs font-bold text-[#101322]" x-text="item.nom"></span>
+                </div>
+                <span class="font-black text-xs text-[#5256E8] bg-[#5256E8]/10 px-2.5 py-1 rounded-xl border-2 border-[#101322]" x-text="item.qte + ' ' + item.unite"></span>
+              </div>
+            </template>
           </div>
         </div>
-      </div>
 
-      <div class="total-kids-pill" id="totalKidsIndicator">
-        Effectif total : <strong>0 enfant</strong>
       </div>
+    </div>
 
-      <div class="alert-box" id="safetyAlert">
-        <span>⚠️ <strong>Règle de sécurité :</strong> Minimum 2 Anim' requis sur tout ALSH actif.</span>
+    <!-- MODAL : PLANIFIER UN GOÛTER -->
+    <div x-show="showPlanifModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101322]/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-panel p-5 max-w-sm w-full space-y-3 bg-white">
+        <h3 class="font-title text-sm font-bold text-[#101322] border-b-2 border-[#101322] pb-2">
+          📅 Planifier un Goûter
+        </h3>
+
+        <div class="space-y-2.5">
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Date du goûter</label>
+            <input type="date" x-model="saisieGouter.date" class="input-ui w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Choisir la recette</label>
+            <select x-model="saisieGouter.recetteId" class="input-ui w-full px-3 py-2 text-xs font-bold">
+              <template x-for="r in recettesGouter" :key="r.id">
+                <option :value="r.id" x-text="r.nom + ' (base 8 enfants)'"></option>
+              </template>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Animateur responsable</label>
+            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-ui w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Nombre d'enfants prévus</label>
+            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-ui w-full px-3 py-2 text-xs text-center font-bold">
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t-2 border-[#101322]">
+          <button type="button" @click="showPlanifModal = false" class="btn-pop bg-gray-200 text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Annuler</button>
+          <button type="button" @click="enregistrerGouterPlanifie()" class="btn-pop bg-[#FFE600] text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Valider</button>
+        </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Mutualisation -->
-    <section class="fluid-section">
-      <div class="section-head">
-        <span class="section-title"><span class="section-num">3</span> Mutualisation</span>
-        <span class="info-pop" tabindex="0" role="button" data-tooltip="Permet de combiner les restes de groupes (-6ans et +6ans) pour optimiser l'effectif d'encadrement.">ⓘ</span>
-      </div>
+    <!-- 4. ONGLET : COURSES MATÉRIEL -->
+    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-panel p-5 space-y-4">
+        
+        <div class="flex items-center justify-between border-b-2 border-[#101322] pb-3">
+          <h2 class="font-title text-lg font-bold flex items-center gap-2">
+            <span class="text-2xl">🛍️</span> Courses Matériel
+          </h2>
+          <span class="bg-[#FFE600] text-[#101322] border-2 border-[#101322] font-title text-[11px] font-bold px-3 py-0.5 rounded-full shadow-[2px_2px_0px_#101322]">
+            Activités
+          </span>
+        </div>
 
-      <div class="mutual-selector">
-        <button type="button" class="mutual-btn active" data-mode="avec">
-          Avec mutualisation
+        <div class="grid grid-cols-5 gap-1.5">
+          <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-ui px-3 py-2 text-xs">
+          <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-ui px-2 py-2 text-xs text-center">
+          <button type="button" @click="addCourseDirecte()" class="col-span-1 btn-pop bg-[#5256E8] text-white rounded-xl text-lg font-black">+</button>
+        </div>
+
+        <div class="space-y-2">
+          <template x-for="item in listeCourses" :key="item.id">
+            <div class="card-item p-3 flex items-center justify-between transition-opacity" :class="item.achete ? 'opacity-40 bg-gray-100 line-through' : ''">
+              <div class="flex items-center space-x-3">
+                <input type="checkbox" x-model="item.achete" class="w-5 h-5 accent-[#5256E8] rounded cursor-pointer">
+                <div>
+                  <p class="text-xs font-black text-[#101322]" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
+                  <p class="text-[11px] font-bold text-gray-400" x-text="'Pour : ' + item.activite"></p>
+                </div>
+              </div>
+              <button type="button" @click="deleteCourse(item.id)" class="text-[#FF528F] hover:scale-125 transition-transform"><i class="fa-solid fa-trash text-sm"></i></button>
+            </div>
+          </template>
+        </div>
+
+        <button type="button" @click="viderAchetes()" class="btn-pop bg-white text-[#101322] w-full py-2 text-xs font-bold rounded-xl">
+          Nettoyer les articles achetés
         </button>
-        <button type="button" class="mutual-btn" data-mode="sans">
-          Calcul séparé
-        </button>
       </div>
+    </div>
 
-      <label class="toggle-row" id="dirRow" for="dirToggle">
-        <span class="toggle-label">
-          Directeur inclus dans l'encadrement
-          <small>Possible si effectif total ≤ 50 enfants</small>
-        </span>
-        <input type="checkbox" id="dirToggle">
-        <span class="switch-track"></span>
-      </label>
-    </section>
+    <!-- 5. ONGLET : PLANNING & ORGANISATION -->
+    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-panel p-5 space-y-4">
+        
+        <div class="space-y-3 border-b-2 border-[#101322] pb-3">
+          <div class="flex items-center justify-between">
+            <h2 class="font-title text-lg font-bold flex items-center gap-2">
+              <span class="text-2xl">📅</span> Planning Équipe
+            </h2>
+            <div class="flex gap-1.5">
+              <button type="button" @click="ouvrirModalOrg()" class="btn-pop bg-[#FFE600] text-[#101322] text-xs px-2.5 py-1 rounded-xl font-bold">
+                🚌 Sortie
+              </button>
+              <button type="button" @click="nouveauCreneauVierge()" class="btn-pop bg-[#5256E8] text-white text-xs px-2.5 py-1 rounded-xl font-bold">
+                + Créneau
+              </button>
+            </div>
+          </div>
 
-    <!-- Carte Hero Néon -->
-    <section class="result-hero-card" id="resultCard">
-      <div class="pool-header">
-        <span class="section-title" style="color: #fff;">Postes requis</span>
-        <span class="pool-badge" id="mutualBadge">⚡ MUTUALISÉ</span>
-      </div>
-
-      <!-- Jauge de Pilules -->
-      <div class="pool-track" id="poolTrack"></div>
-
-      <div class="pool-legend">
-        <span><i class="dot dot-a"></i>-6 ans</span>
-        <span><i class="dot dot-b"></i>+6 ans</span>
-      </div>
-
-      <div class="hero-result-wrap">
-        <span class="big-num" id="totalAnim">0</span>
-        <span class="big-label" id="totalAnimLabel">Anim' sur le terrain</span>
-      </div>
-    </section>
-
-    <!-- Composition & Export -->
-    <section class="fluid-section">
-      <div class="section-head">
-        <span class="section-title">Composition réglementaire</span>
-      </div>
-      
-      <div class="q-grid">
-        <div class="q-card q-min">
-          <span class="q-num" id="qDiplomes">0</span>
-          <span class="q-label">Diplômé·es<small>Min. 50%</small></span>
+          <div class="flex items-center justify-between card-item px-3 py-2 bg-[#f8fafc]">
+            <button type="button" @click="changerJour(-1)" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-chevron-left text-lg"></i></button>
+            <div class="text-center">
+              <p class="font-title text-xs font-bold text-[#5256E8]" x-text="formatDateLisible(dateAffichee)"></p>
+            </div>
+            <button type="button" @click="changerJour(1)" class="text-[#101322] hover:scale-125 transition-transform"><i class="fa-solid fa-circle-chevron-right text-lg"></i></button>
+          </div>
         </div>
-        <div class="q-card q-max">
-          <span class="q-num" id="qNonDiplomes">0</span>
-          <span class="q-label">Non-diplômé·es<small>Max. 20%</small></span>
+
+        <!-- ENCADRÉ SORTIES SPECIALE -->
+        <template x-if="getOrgDuJour()">
+          <div class="card-item p-4 space-y-3 bg-[#FFE600] border-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="inline-block px-2.5 py-0.5 rounded-full bg-white border-2 border-[#101322] font-title text-[10px] font-bold text-[#FF528F] mb-1">
+                  🚨 SORTIE SPÉCIALE
+                </span>
+                <h3 class="font-title text-base font-bold text-[#101322]" x-text="getOrgDuJour().titre"></h3>
+              </div>
+              <button type="button" @click="effacerOrgDuJour()" class="text-[#FF528F] hover:scale-125 transition-transform">
+                <i class="fa-solid fa-trash text-sm"></i>
+              </button>
+            </div>
+
+            <p class="text-xs font-bold text-[#101322]" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
+            
+            <div class="grid grid-cols-2 gap-2 text-xs card-item p-2.5 bg-white">
+              <div>
+                <span class="text-[10px] font-bold text-gray-400 block">Bus Aller</span>
+                <span class="font-black text-[#5256E8]" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold text-gray-400 block">Bus Retour</span>
+                <span class="font-black text-[#5256E8]" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <div class="space-y-2.5">
+          <h3 class="font-title text-xs font-bold text-[#101322] uppercase tracking-wider">Planning des Animateurs</h3>
+
+          <template x-for="p in planningGlobal" :key="p.id">
+            <div class="card-item p-3.5 space-y-2.5 bg-white">
+              
+              <div class="flex justify-between items-center">
+                <button type="button" @click="ouvrirDetailAnim(p)" class="font-title text-sm font-bold text-[#5256E8] flex items-center gap-1.5">
+                  <span x-text="p.nom"></span>
+                  <i class="fa-solid fa-circle-info text-xs"></i>
+                </button>
+                
+                <div class="flex items-center space-x-1">
+                  <button type="button" @click="editerPlanningDuJour(p)" class="btn-pop bg-[#f8fafc] text-[#101322] px-2 py-0.5 text-[10px] font-bold rounded-lg">
+                    Modifier
+                  </button>
+                  <button type="button" @click="supprimerAnim(p.id)" class="text-[#FF528F] hover:scale-125 transition-transform p-1">
+                    <i class="fa-solid fa-circle-xmark text-sm"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="card-item p-2 bg-[#f8fafc]">
+                  <span class="text-[10px] font-bold text-gray-400 block mb-0.5">☀️ Matin</span>
+                  <p class="font-bold text-[#101322] truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
+                </div>
+                <div class="card-item p-2 bg-[#f8fafc]">
+                  <span class="text-[10px] font-bold text-gray-400 block mb-0.5">🌆 Après-midi</span>
+                  <p class="font-bold text-[#101322] truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
+                </div>
+              </div>
+
+            </div>
+          </template>
         </div>
-        <div class="q-card q-flex">
-          <span class="q-num" id="qStagiaires">0</span>
-          <span class="q-label">Stagiaires<small>BAFA</small></span>
+
+      </div>
+    </div>
+
+    <!-- MODAL : ORGANISATION / SORTIES -->
+    <div x-show="showOrgModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101322]/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-panel p-5 max-w-sm w-full space-y-3 bg-white max-h-[90vh] overflow-y-auto">
+        <h3 class="font-title text-sm font-bold text-[#101322] border-b-2 border-[#101322] pb-2">
+          🚌 Programmation d'une Sortie
+        </h3>
+
+        <div class="space-y-2.5">
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Date</label>
+            <input type="date" x-model="saisieOrg.date" class="input-ui w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Titre de la sortie</label>
+            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-ui w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Lieu</label>
+            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo" class="input-ui w-full px-3 py-2 text-xs">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-black text-[#101322] mb-1">Bus Départ</label>
+              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-ui w-full px-3 py-2 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] font-black text-[#101322] mb-1">Bus Retour</label>
+              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-ui w-full px-3 py-2 text-xs">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t-2 border-[#101322]">
+          <button type="button" @click="showOrgModal = false" class="btn-pop bg-gray-200 text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Annuler</button>
+          <button type="button" @click="sauvegarderOrg()" class="btn-pop bg-[#FFE600] text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Enregistrer</button>
         </div>
       </div>
+    </div>
 
-      <button type="button" class="btn-cta" id="copyBtn">
-        <span id="copyBtnIcon">📋</span> <span id="copyBtnText">Copier le bilan complet</span>
-      </button>
-    </section>
+    <!-- MODAL : DETAIL ANIMATEUR -->
+    <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101322]/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-panel p-5 max-w-sm w-full space-y-4 bg-white max-h-[85vh] overflow-y-auto">
+        
+        <div class="flex justify-between items-center border-b-2 border-[#101322] pb-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl bg-[#5256E8] border-2 border-[#101322] text-white flex items-center justify-center font-title font-bold text-lg shadow-[2px_2px_0px_#101322]">
+              <span x-text="animSelectionne?.nom ? animSelectionne.nom.charAt(0) : 'A'"></span>
+            </div>
+            <div>
+              <h3 class="font-title text-base font-bold text-[#101322]" x-text="animSelectionne?.nom"></h3>
+              <p class="text-[10px] font-black text-gray-400 uppercase">Planning Animateur</p>
+            </div>
+          </div>
+          <button type="button" @click="animSelectionne = null" class="text-[#FF528F]"><i class="fa-solid fa-circle-xmark text-xl"></i></button>
+        </div>
 
-    <!-- Pied de Page Personnalisé -->
-    <footer class="legal-note">
-      par Allan.H - 2026
-    </footer>
+        <div class="space-y-2.5">
+          <template x-for="(planningDate, dateKey) in animSelectionne?.dates" :key="dateKey">
+            <div class="card-item p-3 space-y-2 bg-[#f8fafc]">
+              <div class="flex justify-between items-center border-b-2 border-[#101322] pb-1.5">
+                <span class="font-title text-xs font-bold text-[#5256E8]" x-text="formatDateLisible(dateKey)"></span>
+                <button type="button" @click="allerADate(dateKey)" class="btn-pop bg-[#FFE600] text-[#101322] text-[10px] font-bold px-2 py-0.5 rounded-lg">
+                  Voir jour
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="card-item p-2 bg-white">
+                  <span class="text-[10px] font-bold text-gray-400 block">☀️ Matin</span>
+                  <p class="font-bold text-[#101322]" x-text="planningDate.matin || 'Repos'"></p>
+                </div>
+                <div class="card-item p-2 bg-white">
+                  <span class="text-[10px] font-bold text-gray-400 block">🌆 Après-midi</span>
+                  <p class="font-bold text-[#101322]" x-text="planningDate.aprem || 'Repos'"></p>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <button type="button" @click="animSelectionne = null" class="btn-pop bg-gray-200 text-[#101322] w-full py-2 rounded-xl text-xs font-bold">Fermer</button>
+      </div>
+    </div>
+
+    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
+    <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#101322]/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-panel p-5 max-w-sm w-full space-y-3 bg-white">
+        <h3 class="font-title text-sm font-bold text-[#101322] border-b-2 border-[#101322] pb-2">
+          ✏️ Créneau Animateur
+        </h3>
+        
+        <div class="space-y-2.5">
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Nom de l'animateur</label>
+            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-ui w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-black text-[#101322] mb-1">Date</label>
+            <input type="date" x-model="saisiePlanning.date" class="input-ui w-full px-3 py-2 text-xs">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-black text-[#101322] mb-1">Créneau Matin</label>
+              <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu -6a" class="input-ui w-full px-3 py-2 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] font-black text-[#101322] mb-1">Créneau A-M</label>
+              <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu" class="input-ui w-full px-3 py-2 text-xs">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t-2 border-[#101322]">
+          <button type="button" @click="showAddAnimModal = false" class="btn-pop bg-gray-200 text-[#101322] flex-1 py-2 rounded-xl text-xs font-bold">Annuler</button>
+          <button type="button" @click="validerPlanning()" class="btn-pop bg-[#5256E8] text-white flex-1 py-2 rounded-xl text-xs font-bold">Valider</button>
+        </div>
+      </div>
+    </div>
 
   </main>
 
-  <!-- Sticky Mini Bar -->
-  <div class="sticky-bar" id="stickyMiniBar">
-    <div style="display: flex; align-items: center;">
-      <span class="mini-count" id="miniAnimCount">0</span>
-      <span class="mini-txt" id="miniAnimLabel">Anim' requis</span>
-    </div>
-    <span class="mini-pill">Détails ➔</span>
-  </div>
-
-  <!-- Toast Notification -->
-  <div class="toast" id="toast">⚡ Effectif réinitialisé !</div>
-
-<script>
-  const STORAGE_KEY = 'alsh_calc_fluid_state_v3';
-
-  const n36input = document.getElementById('n36');
-  const n612input = document.getElementById('n612');
-  const totalKidsIndicator = document.getElementById('totalKidsIndicator');
-  const safetyAlert = document.getElementById('safetyAlert');
-  const dirToggle = document.getElementById('dirToggle');
-  const dirRow = document.getElementById('dirRow');
-  const mutualBadge = document.getElementById('mutualBadge');
-  const resetBtn = document.getElementById('resetBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const copyBtnIcon = document.getElementById('copyBtnIcon');
-  const copyBtnText = document.getElementById('copyBtnText');
-  const toast = document.getElementById('toast');
-
-  const resultCard = document.getElementById('resultCard');
-  const stickyMiniBar = document.getElementById('stickyMiniBar');
-  const miniAnimCount = document.getElementById('miniAnimCount');
-
-  const poolTrack = document.getElementById('poolTrack');
-  const totalAnimEl = document.getElementById('totalAnim');
-  const totalAnimLabelEl = document.getElementById('totalAnimLabel');
-
-  const qDiplomes = document.getElementById('qDiplomes');
-  const qNonDiplomes = document.getElementById('qNonDiplomes');
-  const qStagiaires = document.getElementById('qStagiaires');
-
-  let activeRegimeKey = 'hors_p5';
-  let activeMutualMode = 'avec';
-  let lastAnimValue = -1;
-
-  const REGIMES = {
-    hors_p5: { ratio36: 8,  ratio612: 12, tag: "Hors PEDT · > 5h / jour" },
-    hors_m5: { ratio36: 10, ratio612: 14, tag: "Hors PEDT · ≤ 5h / jour" },
-    avec_p5: { ratio36: 10, ratio612: 14, tag: "Avec PEDT · > 5h / jour" },
-    avec_m5: { ratio36: 14, ratio612: 18, tag: "Avec PEDT · ≤ 5h / jour" }
-  };
-
-  /* --- Persistence --- */
-  function saveState() {
-    const state = {
-      regime: activeRegimeKey,
-      mutualMode: activeMutualMode,
-      n36: n36input.value,
-      n612: n612input.value,
-      dir: dirToggle.checked
-    };
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
-  }
-
-  function loadState() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return;
-      const state = JSON.parse(saved);
-
-      if (state.regime && REGIMES[state.regime]) {
-        activeRegimeKey = state.regime;
-        document.querySelectorAll('.regime-card').forEach(b => {
-          b.classList.toggle('active', b.dataset.regime === activeRegimeKey);
-        });
-      }
-      if (state.mutualMode) {
-        activeMutualMode = state.mutualMode;
-        document.querySelectorAll('.mutual-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.mode === activeMutualMode);
-        });
-      }
-      if (state.n36 !== undefined) n36input.value = clampInt(state.n36);
-      if (state.n612 !== undefined) n612input.value = clampInt(state.n612);
-      if (state.dir !== undefined) dirToggle.checked = Boolean(state.dir);
-    } catch(e) {}
-  }
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      stickyMiniBar.classList.toggle('visible', !entry.isIntersecting);
-    });
-  }, { threshold: 0.15 });
-
-  observer.observe(resultCard);
-
-  stickyMiniBar.addEventListener('click', () => {
-    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  function hapticFeedback() {
-    if ('vibrate' in navigator) { try { navigator.vibrate(8); } catch(e){} }
-  }
-
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); }, 2500);
-  }
-
-  document.querySelectorAll('.regime-card').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      document.querySelectorAll('.regime-card').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      activeRegimeKey = btn.dataset.regime;
-      recalc();
-    });
-  });
-
-  document.querySelectorAll('.mutual-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      document.querySelectorAll('.mutual-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeMutualMode = btn.dataset.mode;
-      recalc();
-    });
-  });
-
-  function clampInt(v){
-    v = parseInt(v, 10);
-    return (isNaN(v) || v < 0) ? 0 : v;
-  }
-
-  document.querySelectorAll('.stepper-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      hapticFeedback();
-      const target = document.getElementById(btn.dataset.target);
-      const delta = parseInt(btn.dataset.delta, 10);
-      target.value = clampInt(clampInt(target.value) + delta);
-      recalc();
-    });
-  });
-
-  [n36input, n612input].forEach(inp => {
-    inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^0-9]/g,''); recalc(); });
-    inp.addEventListener('blur', () => { inp.value = clampInt(inp.value); recalc(); });
-  });
-
-  dirToggle.addEventListener('change', () => { hapticFeedback(); recalc(); });
-
-  resetBtn.addEventListener('click', () => {
-    hapticFeedback();
-    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
-    n36input.value = 0;
-    n612input.value = 0;
-    dirToggle.checked = false;
-    recalc();
-    showToast("⚡ Effectifs réinitialisés !");
-  });
-
-  /* Rendu Jauge avec animations fluides */
-  function renderPool(totalNeeded, n36, n612, r1, r2, isSplitMode){
-    poolTrack.innerHTML = '';
-
-    if (totalNeeded === 0){
-      poolTrack.innerHTML = '<div class="segment ghost"></div>';
-      return;
-    }
-
-    if (isSplitMode) {
-      const container = document.createElement('div');
-      container.className = 'pool-split-container';
-      poolTrack.appendChild(container);
-
-      const count36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
-      const count612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
-
-      function renderSubTrack(labelText, count, maxRatio, currentKids, fillClass, labelColorClass) {
-        if (count === 0) return;
-        const group = document.createElement('div');
-        group.className = 'pool-subgroup';
-        group.innerHTML = `<span class="subgroup-label ${labelColorClass}">${labelText}</span><div class="pool-track"></div>`;
-        const track = group.querySelector('.pool-track');
-
-        for (let i = 0; i < count; i++) {
-          const seg = document.createElement('div');
-          seg.className = 'segment';
-          const fill = document.createElement('div');
-          fill.className = fillClass;
-          
-          const kidsForAnim = Math.min(maxRatio, currentKids - (i * maxRatio));
-          const fillPercent = (kidsForAnim / maxRatio) * 100;
-          fill.style.width = fillPercent + '%';
-          
-          seg.appendChild(fill);
-
-          const label = document.createElement('span');
-          label.className = 'gauge-label';
-          label.textContent = `${kidsForAnim}/${maxRatio}`;
-          seg.appendChild(label);
-
-          track.appendChild(seg);
-        }
-        container.appendChild(group);
-      }
-
-      renderSubTrack(`- de 6 ans (${count36} Anim' / ${n36} enf.)`, count36, r1, n36, 'fillA', 'lbl-a');
-      renderSubTrack(`+ de 6 ans (${count612} Anim' / ${n612} enf.)`, count612, r2, n612, 'fillB', 'lbl-b');
-
-    } else {
-      const total36Anims = n36 / r1;
-      const total612Anims = n612 / r2;
-
-      for (let i = 0; i < totalNeeded; i++) {
-        const seg = document.createElement('div');
-        seg.className = 'segment';
-        
-        const fillA = document.createElement('div');
-        fillA.className = 'fillA';
-        const fillB = document.createElement('div');
-        fillB.className = 'fillB';
-
-        const segStart = i;
-        const segEnd = i + 1;
-        const aEnd = Math.min(segEnd, total36Anims);
-        const aStart = Math.max(segStart, 0);
-        const fillAPct = Math.max(0, aEnd - aStart) * 100;
-
-        const bStart = Math.max(segStart, total36Anims);
-        const bEnd = Math.min(segEnd, total36Anims + total612Anims);
-        const fillBPct = Math.max(0, bEnd - bStart) * 100;
-
-        fillA.style.width = Math.min(100, Math.max(0, fillAPct)) + '%';
-        fillB.style.width = Math.min(100, Math.max(0, fillBPct)) + '%';
-
-        seg.appendChild(fillA);
-        seg.appendChild(fillB);
-        poolTrack.appendChild(seg);
-      }
-    }
-  }
-
-  function recalc(){
-    const currentRegime = REGIMES[activeRegimeKey];
-
-    const n36 = clampInt(n36input.value);
-    const n612 = clampInt(n612input.value);
-    const effectif = n36 + n612;
-
-    totalKidsIndicator.innerHTML = `Effectif total : <strong>${effectif} enfant${effectif > 1 ? 's' : ''}</strong>`;
-
-    const r1 = currentRegime.ratio36;
-    const r2 = currentRegime.ratio612;
-
-    const naive36 = n36 > 0 ? Math.ceil(n36 / r1) : 0;
-    const naive612 = n612 > 0 ? Math.ceil(n612 / r2) : 0;
-    const naiveSum = naive36 + naive612;
-
-    let totalNeeded = 0;
-
-    if (effectif > 0) {
-      if (activeMutualMode === 'avec') {
-        const fullGroups = Math.floor(n36 / r1) + Math.floor(n612 / r2);
-        const rem36 = n36 % r1;
-        const rem612 = n612 % r2;
-        const remTotal = rem36 + rem612;
-
-        if (remTotal === 0) totalNeeded = fullGroups;
-        else if (remTotal <= r1) totalNeeded = fullGroups + 1;
-        else totalNeeded = fullGroups + 2;
-      } else {
-        totalNeeded = naiveSum;
-      }
-
-      if (totalNeeded < 2) {
-        totalNeeded = 2;
-        safetyAlert.classList.add('visible');
-      } else {
-        safetyAlert.classList.remove('visible');
-      }
-    } else {
-      safetyAlert.classList.remove('visible');
-    }
-
-    renderPool(totalNeeded, n36, n612, r1, r2, (activeMutualMode === 'sans'));
-
-    const directorEligible = effectif > 0 && effectif <= 50;
-    dirRow.classList.toggle('disabled', !directorEligible);
-    if (!directorEligible) dirToggle.checked = false;
-
-    let displayed = totalNeeded;
-    if (dirToggle.checked && directorEligible){
-      displayed = Math.max(totalNeeded - 1, 0);
-      totalAnimLabelEl.textContent = "Anim' sur le terrain (+ le directeur)";
-    } else {
-      totalAnimLabelEl.textContent = "Anim' sur le terrain";
-    }
+  <!-- NAVBAR FLOTTANTE DE STYLE CAPSULE POP -->
+  <nav class="fixed bottom-5 left-4 right-4 max-w-md mx-auto z-40 nav-capsule rounded-full p-2 flex justify-around items-center">
     
-    // Animation d'impulsion si le chiffre change
-    if (lastAnimValue !== -1 && lastAnimValue !== displayed) {
-      totalAnimEl.classList.remove('pulse');
-      void totalAnimEl.offsetWidth; // Force reflow
-      totalAnimEl.classList.add('pulse');
+    <button type="button" @click="currentTab = 'fiche'" 
+            :class="currentTab === 'fiche' ? 'bg-[#5256E8] text-white shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
+            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
+      <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+      <span class="font-title text-[9px] font-bold mt-0.5">Fiches</span>
+    </button>
+
+    <button type="button" @click="currentTab = 'soins'" 
+            :class="currentTab === 'soins' ? 'bg-[#FF528F] text-white shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
+            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
+      <i class="fa-solid fa-kit-medical text-base"></i>
+      <span class="font-title text-[9px] font-bold mt-0.5">Soins</span>
+    </button>
+
+    <button type="button" @click="currentTab = 'gouter'" 
+            :class="currentTab === 'gouter' ? 'bg-[#FFE600] text-[#101322] shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
+            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
+      <i class="fa-solid fa-cookie-bite text-base"></i>
+      <span class="font-title text-[9px] font-bold mt-0.5">Goûter</span>
+    </button>
+
+    <button type="button" @click="currentTab = 'courses'" 
+            :class="currentTab === 'courses' ? 'bg-[#3DEB9A] text-[#101322] shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
+            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
+      <i class="fa-solid fa-cart-shopping text-base"></i>
+      <span class="font-title text-[9px] font-bold mt-0.5">Matériel</span>
+    </button>
+
+    <button type="button" @click="currentTab = 'planning'" 
+            :class="currentTab === 'planning' ? 'bg-[#B483FF] text-[#101322] shadow-[2px_2px_0px_#101322]' : 'text-[#101322] hover:bg-gray-100'" 
+            class="flex flex-col items-center py-2 px-3.5 rounded-full border-2 border-transparent transition-all active:scale-95">
+      <i class="fa-solid fa-calendar-days text-base"></i>
+      <span class="font-title text-[9px] font-bold mt-0.5">Planning</span>
+    </button>
+
+  </nav>
+
+  <!-- LOGIQUE ALPINE JS -->
+  <script>
+    function alshApp() {
+      const today = new Date();
+      const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+      return {
+        currentTab: 'fiche',
+        dateAffichee: todayISO,
+        newMatosNom: '',
+        newMatosQte: '',
+        nouvelleCourseNom: '',
+        nouvelleCourseQte: '',
+        showAddAnimModal: false,
+        showOrgModal: false,
+        showAddRecetteModal: false,
+        showPlanifModal: false,
+        animSelectionne: null,
+        toast: { show: false, message: '' },
+
+        semaineActiveOffset: 0,
+
+        nouvelleRecette: { nom: '', ingredients: [] },
+        tempIng: { nom: '', qte: '', unite: '' },
+
+        recettesGouter: [
+          {
+            id: 'recette-chocolat',
+            nom: 'Gâteau au Chocolat 🍫',
+            ingredients: [
+              { nom: 'Farine', qte: 100, unite: 'g' },
+              { nom: 'Chocolat noir', qte: 200, unite: 'g' },
+              { nom: 'Beurre', qte: 125, unite: 'g' },
+              { nom: 'Sucre', qte: 100, unite: 'g' },
+              { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }
+            ]
+          },
+          {
+            id: 'recette-pommes',
+            nom: 'Gâteau aux Pommes 🍏',
+            ingredients: [
+              { nom: 'Farine', qte: 150, unite: 'g' },
+              { nom: 'Pommes', qte: 3, unite: 'pièce(s)' },
+              { nom: 'Sucre', qte: 80, unite: 'g' },
+              { nom: 'Beurre', qte: 80, unite: 'g' },
+              { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }
+            ]
+          }
+        ],
+
+        saisieGouter: {
+          date: todayISO,
+          recetteId: 'recette-chocolat',
+          anim: '',
+          nbEnfants: 32
+        },
+
+        goutersPlanifies: [],
+        coursesAchetesGouter: {},
+
+        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
+        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
+        registreSoins: [],
+        listeCourses: [],
+        saisiePlanning: { nom: '', date: todayISO, matin: '', aprem: '' },
+        organisations: {},
+        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] },
+        tempGroupe: { anim: '', enfantsTxt: '' },
+        planningGlobal: [],
+
+        init() {
+          const lundi = this.getLundiDeLaSemaine(new Date());
+          const mardiStr = this.addDaysISO(lundi, 1);
+          const jeudiStr = this.addDaysISO(lundi, 3);
+
+          this.goutersPlanifies = [
+            { id: 'g1', date: mardiStr, recetteId: 'recette-chocolat', anim: 'Sarah', nbEnfants: 35 },
+            { id: 'g2', date: jeudiStr, recetteId: 'recette-pommes', anim: 'Thomas', nbEnfants: 24 }
+          ];
+
+          this.planningGlobal = [
+            {
+              id: 101,
+              nom: 'Sarah',
+              dates: {
+                [todayISO]: { matin: 'Jeux d\'expression (-6a)', aprem: 'Atelier Pâtisserie' }
+              }
+            },
+            {
+              id: 102,
+              nom: 'Thomas',
+              dates: {
+                [todayISO]: { matin: 'Sport Co (+6a)', aprem: 'Grand Jeu Forêt' }
+              }
+            }
+          ];
+        },
+
+        getLundiDeLaSemaine(d) {
+          const date = new Date(d);
+          const day = date.getDay();
+          const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+          return new Date(date.setDate(diff));
+        },
+
+        addDaysISO(dateObj, days) {
+          const res = new Date(dateObj);
+          res.setDate(res.getDate() + days);
+          return `${res.getFullYear()}-${String(res.getMonth() + 1).padStart(2, '0')}-${String(res.getDate()).padStart(2, '0')}`;
+        },
+
+        changerSemaine(delta) {
+          this.semaineActiveOffset += delta;
+        },
+
+        getDatesSemaineActive() {
+          const lundiCourant = this.getLundiDeLaSemaine(new Date());
+          lundiCourant.setDate(lundiCourant.getDate() + (this.semaineActiveOffset * 7));
+
+          const dates = [];
+          for (let i = 0; i < 7; i++) {
+            dates.push(this.addDaysISO(lundiCourant, i));
+          }
+          return dates;
+        },
+
+        getLibelleSemaine() {
+          const dates = this.getDatesSemaineActive();
+          const dDeb = new Date(dates[0]);
+          const dFin = new Date(dates[6]);
+          const options = { day: 'numeric', month: 'short' };
+          return `Semaine du ${dDeb.toLocaleDateString('fr-FR', options)} au ${dFin.toLocaleDateString('fr-FR', options)}`;
+        },
+
+        getGoutersDeLaSemaine() {
+          const datesSemaine = this.getDatesSemaineActive();
+          return this.goutersPlanifies.filter(g => datesSemaine.includes(g.date))
+                                     .sort((a,b) => a.date.localeCompare(b.date));
+        },
+
+        getNomRecette(id) {
+          const r = this.recettesGouter.find(item => item.id === id);
+          return r ? r.nom : 'Recette inconnue';
+        },
+
+        ajouterIngredierntRecette() {
+          if (this.tempIng.nom.trim() !== '' && this.tempIng.qte > 0) {
+            this.nouvelleRecette.ingredients.push({
+              nom: this.tempIng.nom.trim(),
+              qte: this.tempIng.qte,
+              unite: this.tempIng.unite.trim() || 'u'
+            });
+            this.tempIng = { nom: '', qte: '', unite: '' };
+          }
+        },
+
+        enregistrerNouvelleRecette() {
+          if (this.nouvelleRecette.nom.trim() === '') {
+            this.showToast('Indique le nom de la recette !');
+            return;
+          }
+          if (this.nouvelleRecette.ingredients.length === 0) {
+            this.showToast('Ajoute au moins 1 ingrédient.');
+            return;
+          }
+
+          const newId = 'recette-' + Date.now();
+          this.recettesGouter.push({
+            id: newId,
+            nom: this.nouvelleRecette.nom.trim(),
+            ingredients: JSON.parse(JSON.stringify(this.nouvelleRecette.ingredients))
+          });
+
+          this.saisieGouter.recetteId = newId;
+          this.nouvelleRecette = { nom: '', ingredients: [] };
+          this.showAddRecetteModal = false;
+          this.showToast('Recette ajoutée au livre ! 🎉');
+        },
+
+        enregistrerGouterPlanifie() {
+          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) {
+            this.showToast('Oups ! Choisis une date et une recette.');
+            return;
+          }
+
+          this.goutersPlanifies.push({
+            id: 'gouter-' + Date.now(),
+            date: this.saisieGouter.date,
+            recetteId: this.saisieGouter.recetteId,
+            anim: this.saisieGouter.anim.trim() || 'Animateur',
+            nbEnfants: this.saisieGouter.nbEnfants || 8
+          });
+
+          this.showPlanifModal = false;
+          this.showToast('Goûter planifié ! 🍰');
+        },
+
+        supprimerGouterPlanifie(id) {
+          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
+          this.showToast('Goûter supprimé !');
+        },
+
+        getListeCoursesAgregeeSemaine() {
+          const gouters = this.getGoutersDeLaSemaine();
+          const cumule = {};
+
+          gouters.forEach(g => {
+            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
+            if (recette) {
+              const nbGateaux = Math.ceil((g.nbEnfants || 8) / 8);
+
+              recette.ingredients.forEach(ing => {
+                const key = `${ing.nom.toLowerCase().trim()}_${ing.unite.toLowerCase().trim()}`;
+                if (!cumule[key]) {
+                  cumule[key] = {
+                    key: key,
+                    nom: ing.nom,
+                    qte: 0,
+                    unite: ing.unite
+                  };
+                }
+                cumule[key].qte += (ing.qte * nbGateaux);
+              });
+            }
+          });
+
+          return Object.values(cumule).map(item => ({
+            ...item,
+            qte: Number(item.qte.toFixed(2))
+          }));
+        },
+
+        estAcheteCourseGouter(key) {
+          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
+          return !!this.coursesAchetesGouter[semaineKey];
+        },
+
+        toggleAcheteCourseGouter(key) {
+          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
+          this.coursesAchetesGouter[semaineKey] = !this.coursesAchetesGouter[semaineKey];
+        },
+
+        changerJour(deltaDays) {
+          const parts = this.dateAffichee.split('-');
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          d.setDate(d.getDate() + deltaDays);
+          this.dateAffichee = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        },
+
+        formatDateLisible(dateStr) {
+          if(!dateStr) return '';
+          const parts = dateStr.split('-');
+          if(parts.length !== 3) return dateStr;
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          const options = { weekday: 'long', day: 'numeric', month: 'long' };
+          const txt = d.toLocaleDateString('fr-FR', options);
+          return txt.charAt(0).toUpperCase() + txt.slice(1);
+        },
+
+        getPlanningDuJour(anim, dateKey) {
+          if (anim && anim.dates && anim.dates[dateKey]) {
+            return anim.dates[dateKey];
+          }
+          return { matin: 'Repos / Libre', aprem: 'Repos / Libre' };
+        },
+
+        editerPlanningDuJour(anim) {
+          const pJour = this.getPlanningDuJour(anim, this.dateAffichee);
+          this.saisiePlanning = {
+            nom: anim.nom,
+            date: this.dateAffichee,
+            matin: pJour.matin === 'Repos / Libre' ? '' : pJour.matin,
+            aprem: pJour.aprem === 'Repos / Libre' ? '' : pJour.aprem
+          };
+          this.showAddAnimModal = true;
+        },
+
+        nouveauCreneauVierge() {
+          this.saisiePlanning = {
+            nom: '',
+            date: this.dateAffichee,
+            matin: '',
+            aprem: ''
+          };
+          this.showAddAnimModal = true;
+        },
+
+        getOrgDuJour() {
+          return this.organisations[this.dateAffichee] || null;
+        },
+
+        ouvrirModalOrg() {
+          const orgCourante = this.getOrgDuJour();
+          if (orgCourante) {
+            this.saisieOrg = JSON.parse(JSON.stringify(orgCourante));
+          } else {
+            this.saisieOrg = { date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', consignes: '', groupes: [] };
+          }
+          this.showOrgModal = true;
+        },
+
+        sauvegarderOrg() {
+          if (this.saisieOrg.titre.trim() !== '' && this.saisieOrg.date) {
+            this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
+            this.dateAffichee = this.saisieOrg.date;
+            this.showOrgModal = false;
+            this.showToast('Sortie enregistrée ! 🚌');
+          }
+        },
+
+        effacerOrgDuJour() {
+          delete this.organisations[this.dateAffichee];
+          this.showToast('Sortie effacée.');
+        },
+
+        addMatos() {
+          if (this.newMatosNom.trim() !== '') {
+            this.fiche.materiel.push({
+              nom: this.newMatosNom.trim(),
+              qte: this.newMatosQte.trim() || '1'
+            });
+            this.newMatosNom = '';
+            this.newMatosQte = '';
+          }
+        },
+
+        removeMatos(index) {
+          this.fiche.materiel.splice(index, 1);
+        },
+
+        submitFiche() {
+          this.fiche.materiel.forEach(item => {
+            this.listeCourses.push({
+              id: Date.now() + Math.random(),
+              nom: item.nom,
+              qte: item.qte,
+              activite: this.fiche.titre || 'Activité',
+              achete: false
+            });
+          });
+          this.showToast('Fiche validée & matériel transféré ! 📦');
+        },
+
+        exportPDF() {
+          document.getElementById('pdf-titre').innerText = this.fiche.titre || 'Fiche d\'Activité Sans Titre';
+          document.getElementById('pdf-age').innerText = this.fiche.age;
+          document.getElementById('pdf-lieu').innerText = this.fiche.lieu || 'Non spécifié';
+          document.getElementById('pdf-objectif').innerText = this.fiche.objectif || 'Non spécifié';
+          document.getElementById('pdf-deroulement').innerText = this.fiche.deroulement || 'Aucun déroulement renseigné.';
+
+          const listEl = document.getElementById('pdf-materiel');
+          listEl.innerHTML = '';
+          if(this.fiche.materiel.length === 0) {
+            listEl.innerHTML = '<li>Aucun matériel particulier</li>';
+          } else {
+            this.fiche.materiel.forEach(item => {
+              const li = document.createElement('li');
+              li.innerText = `${item.nom} — Quantité : ${item.qte}`;
+              listEl.appendChild(li);
+            });
+          }
+
+          const element = document.getElementById('pdf-template');
+          element.style.display = 'block';
+
+          const opt = {
+            margin:       0.5,
+            filename:     `fiche_${(this.fiche.titre || 'activite').replace(/\s+/g, '_')}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, logging: false },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+          };
+
+          html2pdf().set(opt).from(element).save().then(() => {
+            element.style.display = 'none';
+          }).catch(err => {
+            element.style.display = 'none';
+            console.error(err);
+          });
+
+          this.showToast('Génération du PDF en cours... 📄');
+        },
+
+        submitSoin() {
+          const now = new Date();
+          const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+          this.registreSoins.unshift({
+            id: Date.now(),
+            enfant: this.soin.enfant,
+            incident: this.soin.incident,
+            action: this.soin.action || 'Soin apporté',
+            heure: timeStr,
+            prevenirFamille: this.soin.prevenirFamille
+          });
+          this.showToast('Soin enregistré ! 🩺');
+          this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = ''; this.soin.prevenirFamille = false;
+        },
+
+        deleteSoin(id) {
+          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
+          this.showToast('Soin supprimé.');
+        },
+
+        addCourseDirecte() {
+          if(this.nouvelleCourseNom.trim() !== '') {
+            this.listeCourses.unshift({
+              id: Date.now(),
+              nom: this.nouvelleCourseNom.trim(),
+              qte: this.nouvelleCourseQte.trim() || '1',
+              activite: 'Achat direct',
+              achete: false
+            });
+            this.nouvelleCourseNom = '';
+            this.nouvelleCourseQte = '';
+          }
+        },
+
+        deleteCourse(id) {
+          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
+        },
+
+        viderAchetes() {
+          this.listeCourses = this.listeCourses.filter(c => !c.achete);
+          this.showToast('Liste nettoyée ! ✨');
+        },
+
+        ouvrirDetailAnim(p) {
+          this.animSelectionne = p;
+        },
+
+        allerADate(dateKey) {
+          this.dateAffichee = dateKey;
+          this.animSelectionne = null;
+        },
+
+        validerPlanning() {
+          if(this.saisiePlanning.nom.trim() !== '' && this.saisiePlanning.date) {
+            let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
+            
+            if (!anim) {
+              anim = {
+                id: Date.now(),
+                nom: this.saisiePlanning.nom.trim(),
+                dates: {}
+              };
+              this.planningGlobal.push(anim);
+            }
+
+            if(!anim.dates) anim.dates = {};
+
+            anim.dates[this.saisiePlanning.date] = {
+              matin: this.saisiePlanning.matin.trim() || 'Repos / Libre',
+              aprem: this.saisiePlanning.aprem.trim() || 'Repos / Libre'
+            };
+
+            this.showAddAnimModal = false;
+            this.showToast(`Créneau de ${anim.nom} à jour ! 👍`);
+          }
+        },
+
+        supprimerAnim(id) {
+          this.planningGlobal = this.planningGlobal.filter(p => p.id !== id);
+          this.showToast('Animateur retiré.');
+        },
+
+        showToast(msg) {
+          this.toast.message = msg;
+          this.toast.show = true;
+          setTimeout(() => { this.toast.show = false; }, 3000);
+        }
+      }
     }
-    lastAnimValue = displayed;
-
-    totalAnimEl.textContent = displayed;
-    miniAnimCount.textContent = displayed;
-
-    const saved = naiveSum - totalNeeded;
-    if (activeMutualMode === 'avec' && saved > 0 && effectif > 0){
-      mutualBadge.textContent = `⚡ -${saved} ANIM' MUTUALISÉ${saved > 1 ? 'S' : ''}`;
-      mutualBadge.classList.add('visible');
-    } else {
-      mutualBadge.classList.remove('visible');
-    }
-
-    const base = displayed;
-    qDiplomes.textContent = Math.ceil(base * 0.5);
-    qNonDiplomes.textContent = Math.floor(base * 0.2);
-    qStagiaires.textContent = Math.max(base - Math.ceil(base * 0.5) - Math.floor(base * 0.2), 0);
-
-    saveState();
-  }
-
-  copyBtn.addEventListener('click', () => {
-    hapticFeedback();
-    const currentRegime = REGIMES[activeRegimeKey];
-    const n36 = clampInt(n36input.value);
-    const n612 = clampInt(n612input.value);
-
-    const textSummary = 
-`📋 BILAN TAUX D'ENCADREMENT ALSH
------------------------------------
-- Régime : ${currentRegime.tag}
-- Effectifs : ${n36 + n612} enfants (-6ans: ${n36} | +6ans: ${n612})
-- Mode : ${activeMutualMode === 'avec' ? "Avec mutualisation" : "Calcul séparé"}
-- Directeur sur le terrain : ${dirToggle.checked ? "Oui" : "Non"}
------------------------------------
-> ANIM' REQUIS : ${totalAnimEl.textContent}
-
-Composition recommandée :
-• Diplômé·e·s (Min. 50%) : ${qDiplomes.textContent}
-• Non-diplômé·e·s (Max. 20%) : ${qNonDiplomes.textContent}
-• Stagiaires BAFA : ${qStagiaires.textContent}`;
-
-    navigator.clipboard.writeText(textSummary).then(() => {
-      copyBtn.classList.add('copied');
-      copyBtnIcon.textContent = "✓";
-      copyBtnText.textContent = "Bilan copié !";
-      showToast("⚡ Bilan copié dans le presse-papier !");
-
-      setTimeout(() => {
-        copyBtn.classList.remove('copied');
-        copyBtnIcon.textContent = "📋";
-        copyBtnText.textContent = "Copier le bilan complet";
-      }, 2000);
-    });
-  });
-
-  loadState();
-  recalc();
-</script>
-
+  </script>
 </body>
 </html>
