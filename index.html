@@ -183,7 +183,7 @@
           </div>
           <div>
             <h3 class="font-bold text-base text-white leading-tight">Goûters & Recettes</h3>
-            <p class="text-[11px] text-white/70">Menus, Ingrédients & Planning</p>
+            <p class="text-[11px] text-white/70">Menus, Recettes & Planning</p>
           </div>
         </button>
 
@@ -193,8 +193,8 @@
             🛍️
           </div>
           <div>
-            <h3 class="font-bold text-base text-white leading-tight">Courses Matériel</h3>
-            <p class="text-[11px] text-white/70">Achats & Listes d'activités</p>
+            <h3 class="font-bold text-base text-white leading-tight">Courses & Matériel</h3>
+            <p class="text-[11px] text-white/70">Achats activités & goûters</p>
           </div>
         </button>
 
@@ -213,7 +213,7 @@
     </div>
 
 
-    <!-- ==================== 1. ONGLET : FICHES SANITAIRES (NOUVEAU) ==================== -->
+    <!-- ==================== 1. ONGLET : FICHES SANITAIRES ==================== -->
     <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-bento p-6 space-y-4">
         
@@ -221,7 +221,7 @@
           <h2 class="text-lg font-bold text-white flex items-center gap-2">
             <span>🩺</span> Fiches Sanitaires
           </h2>
-          <button type="button" @click="showAddEnfantModal = true" class="bg-yellow-400 hover:bg-yellow-300 text-black text-xs px-3.5 py-1.5 rounded-full font-black transition-transform active:scale-95 shadow-md">
+          <button type="button" @click="ouvrirModalAddEnfant()" class="bg-yellow-400 hover:bg-yellow-300 text-black text-xs px-3.5 py-1.5 rounded-full font-black transition-transform active:scale-95 shadow-md">
             + Enfant
           </button>
         </div>
@@ -245,21 +245,22 @@
               <div class="space-y-1">
                 <div class="flex items-center gap-2">
                   <h4 class="font-bold text-sm text-white" x-text="e.prenom + ' ' + e.nom"></h4>
-                  <!-- BADGE TRANCHE ÂGE -->
+                  <!-- BADGE TRANCHE ÂGE AVEC COULEUR DÉDIÉE -->
                   <span class="text-[10px] font-black px-2 py-0.5 rounded-full" :class="getAgeEnfant(e.dateNaissance) < 6 ? 'bg-amber-400 text-black' : 'bg-sky-400 text-black'" x-text="getAgeEnfant(e.dateNaissance) < 6 ? '-6 ans' : '+6 ans'"></span>
                 </div>
                 <p class="text-[11px] text-white/70" x-text="getAgeEnfant(e.dateNaissance) + ' ans (' + formatDateLisible(e.dateNaissance) + ')'"></p>
               </div>
 
-              <!-- ICÔNES DE RAPPEL RAPIDES -->
-              <div class="flex items-center space-x-2">
-                <span x-show="e.pai" title="PAI / Médical" class="w-7 h-7 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold animate-pulse">
+              <!-- ICÔNES DE RAPPEL RAPIDES CORRIGÉES -->
+              <div class="flex items-center space-x-1.5">
+                <span x-show="e.pai" title="PAI / Médical" class="w-8 h-8 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold animate-pulse">
                   ⚠️
                 </span>
-                <span x-show="!e.droitImage" title="REFUS Droit à l'image" class="w-7 h-7 bg-black text-yellow-400 rounded-full flex items-center justify-center text-xs shadow-sm">
+                <!-- TAILLE ET PADDING FIXÉS POUR ÉVITER LE DÉPASSEMENT -->
+                <span x-show="!e.droitImage" title="REFUS Droit à l'image" class="w-8 h-8 px-1 bg-black text-yellow-400 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm shrink-0">
                   🚫📸
                 </span>
-                <span x-show="e.droitImage" title="Droit à l'image OK" class="w-7 h-7 bg-white/20 text-emerald-300 rounded-full flex items-center justify-center text-xs">
+                <span x-show="e.droitImage" title="Droit à l'image OK" class="w-8 h-8 bg-white/20 text-emerald-300 rounded-full flex items-center justify-center text-xs shrink-0">
                   📸
                 </span>
                 <i class="fa-solid fa-chevron-right text-white/40 text-xs pl-1"></i>
@@ -295,9 +296,29 @@
             <input type="date" x-model="nouvelEnfant.dateNaissance" class="input-chubby w-full px-3 py-2 text-xs" required>
           </div>
 
-          <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Téléphone(s) Responsable(s) Légaux</label>
-            <input type="text" x-model="nouvelEnfant.telephone" placeholder="ex: Mom: 0612345678" class="input-chubby w-full px-3 py-2 text-xs" required>
+          <!-- SECTION RESPONSABLES LÉGAUX MULTIPLES -->
+          <div class="card-item-bento p-3 space-y-2 bg-white/10">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-yellow-300">👥 Responsables Légaux</label>
+              <button type="button" @click="ajouterResponsableModal()" class="text-[10px] font-bold bg-white/20 hover:bg-white/30 text-white px-2 py-1 rounded-full border border-white/20">
+                + Ajouter
+              </button>
+            </div>
+
+            <template x-for="(resp, idx) in nouvelEnfant.responsables" :key="idx">
+              <div class="space-y-1.5 pt-1 border-t border-white/10 first:border-0 first:pt-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-white/70" x-text="'Responsable ' + (idx + 1)"></span>
+                  <button type="button" x-show="nouvelEnfant.responsables.length > 1" @click="nouvelEnfant.responsables.splice(idx, 1)" class="text-rose-300 hover:text-rose-500 text-[10px]">
+                    Supprimer
+                  </button>
+                </div>
+                <div class="grid grid-cols-2 gap-1.5">
+                  <input type="text" x-model="resp.nom" placeholder="Nom & Prénom" class="input-chubby px-2.5 py-1.5 text-xs">
+                  <input type="text" x-model="resp.telephone" placeholder="Téléphone" class="input-chubby px-2.5 py-1.5 text-xs">
+                </div>
+              </div>
+            </template>
           </div>
 
           <div class="card-item-bento p-3 space-y-2 bg-white/10">
@@ -344,9 +365,15 @@
             <p class="font-bold text-white" x-text="formatDateLisible(enfantSelectionne?.dateNaissance)"></p>
           </div>
 
-          <div class="bg-black/20 p-3 rounded-2xl space-y-1">
-            <span class="text-[10px] text-white/60 font-bold uppercase block">📞 Téléphones Responsables Légaux</span>
-            <p class="font-bold text-yellow-300 text-sm" x-text="enfantSelectionne?.telephone"></p>
+          <!-- AFFICHAGE RESPONSABLES LÉGAUX -->
+          <div class="bg-black/20 p-3 rounded-2xl space-y-2">
+            <span class="text-[10px] text-white/60 font-bold uppercase block">📞 Responsables Légaux</span>
+            <template x-for="(r, i) in (enfantSelectionne?.responsables || [])" :key="i">
+              <div class="flex items-center justify-between border-b border-white/10 last:border-0 pb-1 last:pb-0">
+                <span class="font-bold text-white" x-text="r.nom || 'Responsable'"></span>
+                <a :href="'tel:' + r.telephone" class="font-black text-yellow-300 text-xs bg-white/10 px-2 py-0.5 rounded-md hover:underline" x-text="r.telephone || 'Non renseigné'"></a>
+              </div>
+            </template>
           </div>
 
           <!-- ENCADRÉ PAI -->
@@ -656,28 +683,10 @@
           </template>
         </div>
 
-        <hr class="border-white/20 my-3">
-
-        <!-- LISTE DE COURSES GOÛTER -->
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider flex items-center gap-1.5">
-              🛒 Courses Goûter
-            </h3>
-            <span class="bg-emerald-500 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
-          </div>
-
-          <div class="space-y-2">
-            <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
-              <div class="card-item-bento p-3 flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 line-through' : ''">
-                <div class="flex items-center space-x-3">
-                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
-                  <span class="text-xs font-bold text-white" x-text="item.nom"></span>
-                </div>
-                <span class="font-bold text-xs text-black bg-yellow-400 px-2.5 py-1 rounded-full" x-text="item.qte + ' ' + item.unite"></span>
-              </div>
-            </template>
-          </div>
+        <div class="pt-2 text-center">
+          <button type="button" @click="currentTab = 'courses'; subTabCourses = 'gouter'" class="bg-white/10 hover:bg-white/20 text-white text-xs px-4 py-2 rounded-full font-bold border border-white/20 transition-transform active:scale-95 inline-flex items-center gap-2">
+            <span>🛒</span> Voir la liste de courses des goûters
+          </button>
         </div>
 
       </div>
@@ -724,43 +733,90 @@
     </div>
 
 
-    <!-- ==================== 5. ONGLET : COURSES MATÉRIEL ==================== -->
+    <!-- ==================== 5. ONGLET : COURSES MATÉRIEL & GOÛTERS (RÉORGANISÉ) ==================== -->
     <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-bento p-6 space-y-4">
         
         <div class="flex items-center justify-between border-b border-white/20 pb-3">
           <h2 class="text-lg font-bold text-white flex items-center gap-2">
-            <span>🛍️</span> Courses Matériel
+            <span>🛍️</span> Courses & Matériel
           </h2>
-          <span class="bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full">
-            Activités
-          </span>
         </div>
 
-        <div class="grid grid-cols-5 gap-2">
-          <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-chubby px-3 py-2.5 text-xs">
-          <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-chubby px-2 py-2.5 text-xs text-center">
-          <button type="button" @click="addCourseDirecte()" class="col-span-1 bg-yellow-400 hover:bg-yellow-300 text-black rounded-2xl text-base font-black flex items-center justify-center transition-transform active:scale-95 shadow-md">+</button>
+        <!-- NAVIGATION SOUS-ONGLETS COURSES -->
+        <div class="flex gap-2 p-1 bg-black/20 rounded-2xl border border-white/10">
+          <button type="button" @click="subTabCourses = 'activites'" :class="subTabCourses === 'activites' ? 'bg-yellow-400 text-black font-black shadow' : 'text-white font-bold hover:bg-white/10'" class="flex-1 py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+            📦 Matériel Activités
+          </button>
+          <button type="button" @click="subTabCourses = 'gouter'" :class="subTabCourses === 'gouter' ? 'bg-yellow-400 text-black font-black shadow' : 'text-white font-bold hover:bg-white/10'" class="flex-1 py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+            🍪 Courses Goûters
+          </button>
         </div>
 
-        <div class="space-y-2.5">
-          <template x-for="item in listeCourses" :key="item.id">
-            <div class="card-item-bento p-3.5 flex items-center justify-between transition-opacity bg-white/10" :class="item.achete ? 'opacity-40 line-through' : ''">
-              <div class="flex items-center space-x-3">
-                <input type="checkbox" x-model="item.achete" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
-                <div>
-                  <p class="text-xs font-bold text-white" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
-                  <p class="text-[11px] text-yellow-300" x-text="'Pour : ' + item.activite"></p>
+        <!-- SOUS-ONGLET 1 : MATÉRIEL ACTIVITÉS -->
+        <div x-show="subTabCourses === 'activites'" class="space-y-4">
+          <div class="grid grid-cols-5 gap-2">
+            <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-chubby px-3 py-2.5 text-xs">
+            <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-chubby px-2 py-2.5 text-xs text-center">
+            <button type="button" @click="addCourseDirecte()" class="col-span-1 bg-yellow-400 hover:bg-yellow-300 text-black rounded-2xl text-base font-black flex items-center justify-center transition-transform active:scale-95 shadow-md">+</button>
+          </div>
+
+          <div class="space-y-2.5">
+            <template x-for="item in listeCourses" :key="item.id">
+              <div class="card-item-bento p-3.5 flex items-center justify-between transition-opacity bg-white/10" :class="item.achete ? 'opacity-40 line-through' : ''">
+                <div class="flex items-center space-x-3">
+                  <input type="checkbox" x-model="item.achete" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
+                  <div>
+                    <p class="text-xs font-bold text-white" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
+                    <p class="text-[11px] text-yellow-300" x-text="'Pour : ' + item.activite"></p>
+                  </div>
                 </div>
+                <button type="button" @click="deleteCourse(item.id)" class="text-white/60 hover:text-rose-400"><i class="fa-solid fa-trash text-xs"></i></button>
               </div>
-              <button type="button" @click="deleteCourse(item.id)" class="text-white/60 hover:text-rose-400"><i class="fa-solid fa-trash text-xs"></i></button>
-            </div>
-          </template>
+            </template>
+          </div>
+
+          <button type="button" @click="viderAchetes()" class="bg-white/10 hover:bg-white/20 text-white w-full py-3 text-xs font-bold rounded-full border border-white/20 transition-transform active:scale-95">
+            Nettoyer les articles achetés
+          </button>
         </div>
 
-        <button type="button" @click="viderAchetes()" class="bg-white/10 hover:bg-white/20 text-white w-full py-3 text-xs font-bold rounded-full border border-white/20 transition-transform active:scale-95">
-          Nettoyer les articles achetés
-        </button>
+        <!-- SOUS-ONGLET 2 : COURSES GOÛTERS (DÉPLACÉ ICI) -->
+        <div x-show="subTabCourses === 'gouter'" class="space-y-4">
+          <div class="flex items-center justify-between card-item-bento px-4 py-2">
+            <button type="button" @click="changerSemaine(-1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-left text-sm"></i></button>
+            <div class="text-center">
+              <p class="text-xs font-bold text-yellow-300" x-text="getLibelleSemaine()"></p>
+            </div>
+            <button type="button" @click="changerSemaine(1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-right text-sm"></i></button>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider">
+              🛒 Ingrédients cumulés
+            </h3>
+            <span class="bg-emerald-500 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
+          </div>
+
+          <div class="space-y-2">
+            <template x-if="getListeCoursesAgregeeSemaine().length === 0">
+              <div class="card-item-bento p-4 text-center">
+                <p class="text-xs font-medium text-white/70">Aucun goûter prévu cette semaine.</p>
+              </div>
+            </template>
+
+            <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
+              <div class="card-item-bento p-3 flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 line-through' : ''">
+                <div class="flex items-center space-x-3">
+                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
+                  <span class="text-xs font-bold text-white" x-text="item.nom"></span>
+                </div>
+                <span class="font-bold text-xs text-black bg-yellow-400 px-2.5 py-1 rounded-full" x-text="item.qte + ' ' + item.unite"></span>
+              </div>
+            </template>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -784,16 +840,16 @@
             </div>
           </div>
 
-          <!-- FILTRES INTERACTIFS : ANIM, -6 ANS, +6 ANS -->
+          <!-- FILTRES INTERACTIFS ET CODE COULEUR AVEC COULEURS DÉDIÉES -->
           <div class="flex gap-1.5 pt-1">
             <button type="button" @click="filtrePlanning = 'anim'" :class="filtrePlanning === 'anim' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
               Animateurs
             </button>
-            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
-              -6 ans
+            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'bg-amber-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+              🟡 -6 ans
             </button>
-            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
-              +6 ans
+            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'bg-sky-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+              🟦 +6 ans
             </button>
           </div>
 
@@ -857,7 +913,7 @@
           </div>
         </template>
 
-        <!-- LISTE PLANNING DES ANIMATEURS -->
+        <!-- LISTE PLANNING DES ANIMATEURS AVEC COULEURS PAR TRANCHE D'ÂGE -->
         <div class="space-y-3">
           <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider" x-text="filtrePlanning === 'anim' ? 'Planning des Animateurs' : 'Groupes concernés (' + filtrePlanning + ')'"></h3>
 
@@ -880,21 +936,29 @@
                 </div>
               </div>
 
+              <!-- BLOCS MATIN / APREM AVEC COULEURS SPECIFIQUES (-6ans = Jaune/Ambre, +6ans = Bleu Sky) -->
               <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="bg-black/20 p-2.5 rounded-xl border-l-4 border-yellow-400">
+                
+                <!-- MATIN -->
+                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'border-amber-400' : 'border-sky-400'">
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-[10px] text-white/60 block">☀️ Matin</span>
-                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageMatin)" class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-white/20 hover:bg-yellow-400 hover:text-black text-white transition-colors"
-                          x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></button>
+                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageMatin)" 
+                            class="text-[9px] font-black px-1.5 py-0.5 rounded-md transition-colors"
+                            :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'bg-amber-400 text-black' : 'bg-sky-400 text-black'"
+                            x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></button>
                   </div>
                   <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
                 </div>
 
-                <div class="bg-black/20 p-2.5 rounded-xl border-l-4 border-yellow-400">
+                <!-- APRÈS-MIDI -->
+                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'border-amber-400' : 'border-sky-400'">
                   <div class="flex justify-between items-center mb-1">
                     <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
-                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageAprem)" class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-white/20 hover:bg-yellow-400 hover:text-black text-white transition-colors"
-                          x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></button>
+                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageAprem)" 
+                            class="text-[9px] font-black px-1.5 py-0.5 rounded-md transition-colors"
+                            :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'bg-amber-400 text-black' : 'bg-sky-400 text-black'"
+                            x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></button>
                   </div>
                   <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
                 </div>
@@ -1077,6 +1141,7 @@
 
       return {
         currentTab: 'hub', // 'hub', 'sanitaire', 'fiche', 'soins', 'gouter', 'courses', 'planning'
+        subTabCourses: 'activites', // 'activites' ou 'gouter'
         dateAffichee: todayISO,
         filtrePlanning: 'anim', 
         newMatosNom: '',
@@ -1095,14 +1160,17 @@
 
         semaineActiveOffset: 0,
 
-        // BASE DE DONNÉES ENFANTS / SANITAIRE
+        // BASE DE DONNÉES ENFANTS / SANITAIRE (AVEC STRUCTURE MULTI-RESPONSABLES)
         enfants: [
           {
             id: 1,
             nom: 'Dupont',
             prenom: 'Lucas',
             dateNaissance: '2019-05-14',
-            telephone: 'Maman: 06 11 22 33 44',
+            responsables: [
+              { nom: 'Maman Dupont', telephone: '06 11 22 33 44' },
+              { nom: 'Papa Dupont', telephone: '06 55 66 77 88' }
+            ],
             pai: 'Allergie sévère aux arachides',
             droitImage: true
           },
@@ -1111,7 +1179,9 @@
             nom: 'Martin',
             prenom: 'Zoé',
             dateNaissance: '2016-11-20',
-            telephone: 'Papa: 06 99 88 77 66',
+            responsables: [
+              { nom: 'Papa Martin', telephone: '06 99 88 77 66' }
+            ],
             pai: '',
             droitImage: false
           }
@@ -1121,7 +1191,7 @@
           nom: '',
           prenom: '',
           dateNaissance: '',
-          telephone: '',
+          responsables: [],
           aPAI: false,
           pai: '',
           droitImage: true
@@ -1207,6 +1277,23 @@
         },
 
         // FONCTIONS FICHE SANITAIRE
+        ouvrirModalAddEnfant() {
+          this.nouvelEnfant = {
+            nom: '',
+            prenom: '',
+            dateNaissance: '',
+            responsables: [{ nom: '', telephone: '' }],
+            aPAI: false,
+            pai: '',
+            droitImage: true
+          };
+          this.showAddEnfantModal = true;
+        },
+
+        ajouterResponsableModal() {
+          this.nouvelEnfant.responsables.push({ nom: '', telephone: '' });
+        },
+
         getEnfantsFiltres() {
           if (!this.searchEnfant.trim()) return this.enfants;
           const q = this.searchEnfant.toLowerCase();
@@ -1230,18 +1317,19 @@
         },
 
         enregistrerEnfant() {
+          const respsFiltres = this.nouvelEnfant.responsables.filter(r => r.nom.trim() !== '' || r.telephone.trim() !== '');
+
           this.enfants.push({
             id: Date.now(),
             nom: this.nouvelEnfant.nom.trim(),
             prenom: this.nouvelEnfant.prenom.trim(),
             dateNaissance: this.nouvelEnfant.dateNaissance,
-            telephone: this.nouvelEnfant.telephone.trim(),
+            responsables: respsFiltres.length > 0 ? respsFiltres : [{ nom: 'Non spécifié', telephone: '-' }],
             pai: this.nouvelEnfant.aPAI ? this.nouvelEnfant.pai.trim() : '',
             droitImage: this.nouvelEnfant.droitImage
           });
 
           this.showAddEnfantModal = false;
-          this.nouvelEnfant = { nom: '', prenom: '', dateNaissance: '', telephone: '', aPAI: false, pai: '', droitImage: true };
           this.showToast('Enfant enregistré ! 👶');
         },
 
