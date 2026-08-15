@@ -3,440 +3,1844 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestion de Centre d'Aération</title>
+  <title>ALSHFlow - Animation Hub</title>
+
+  <!-- Google Fonts: Fredoka -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <style>
     :root {
-      --primary: #4A90E2;
-      --secondary: #50E3C2;
-      --danger: #E74C3C;
-      --success: #2ECC71;
-      --bg: #F5F7FA;
-      --card-bg: #FFFFFF;
-      --text: #333333;
+      --bg-yellow: #fcd307;
+      --bg-blue: #4d53ed;
+      --card-blue: #5b61f6;
+      --text-dark: #111111;
+      --text-light: #ffffff;
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-pill: 999px;
     }
+
+    *, ::before, ::after { box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 20px;
+      font-family: 'Fredoka', sans-serif;
+      background-color: var(--bg-yellow);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    header {
-      text-align: center;
-      margin-bottom: 30px;
+    /* Carte Style Bento */
+    .card-bento {
+      background-color: var(--card-blue);
+      color: var(--text-light);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 25px rgba(77, 83, 237, 0.25);
     }
 
-    .tabs {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
+    .card-item-bento {
+      background-color: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: var(--radius-md);
+      color: var(--text-light);
     }
 
-    .tab-btn {
-      padding: 10px 20px;
-      border: none;
-      background-color: #E0E0E0;
-      cursor: pointer;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background 0.3s;
+    /* Inputs arrondis */
+    .input-chubby {
+      background-color: #ffffff;
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      color: var(--text-dark);
+      font-weight: 600;
+      transition: all 0.2s ease;
+      max-width: 100%;
     }
 
-    .tab-btn.active {
-      background-color: var(--primary);
-      color: white;
+    .input-chubby:focus {
+      outline: none;
+      border-color: var(--text-dark);
     }
 
-    .tab-content {
-      display: none;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .card {
-      background-color: var(--card-bg);
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #CCC;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-
-    button.btn-submit {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    /* Grille Enfants */
-    .children-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .child-card {
-      background: white;
-      border-left: 5px solid var(--primary);
-      padding: 15px;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      position: relative;
-    }
-
-    .badge-container {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-      align-items: center;
-    }
-
-    .badge-icon {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 0.85em;
-      font-weight: bold;
-    }
-
-    .badge-photo-yes {
-      background-color: #E8F8F5;
-      color: #117A65;
-      border: 1px solid var(--success);
-    }
-
-    .badge-photo-no {
-      background-color: #FDEDEC;
-      color: #78281F;
-      border: 1px solid var(--danger);
-    }
-
-    .status-dot {
-      height: 10px;
-      width: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .dot-green { background-color: var(--success); }
-    .dot-red { background-color: var(--danger); }
-
-    .card-actions {
-      margin-top: 15px;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .btn-edit {
-      background-color: #F39C12;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-
-    /* Controls du planning */
-    .date-picker-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-    }
-
-    .date-picker-container input {
-      width: auto;
-    }
-
-    .planning-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-    }
-
-    .planning-table th, .planning-table td {
-      border: 1px solid #DDD;
-      padding: 12px;
-      text-align: left;
-    }
-
-    .planning-table th {
-      background-color: var(--primary);
-      color: white;
+    /* Correctif pour les inputs date sur mobile/popups */
+    input[type="date"] {
+      appearance: none;
+      -webkit-appearance: none;
+      min-height: 42px;
     }
   </style>
 </head>
-<body>
 
-  <header>
-    <h1>Gestion du Centre d'Aération</h1>
+<body class="pb-10 select-none flex flex-col min-h-screen" x-data="alshApp()">
+
+  <!-- HEADER BRANDING AVEC RETOUR HUB & RÉINITIALISER -->
+  <header class="max-w-md mx-auto w-full px-4 pt-5 mb-2 flex items-center justify-between">
+    <div class="flex items-center gap-3 cursor-pointer" @click="currentTab = 'hub'">
+      <div class="w-11 h-11 bg-black text-yellow-400 rounded-2xl flex items-center justify-center text-xl font-black shadow-md">
+        ⚡
+      </div>
+      <div>
+        <h1 class="text-2xl font-black tracking-wide text-black leading-none">
+          ALSH<span class="text-white drop-shadow-sm">Flow</span>
+        </h1>
+        <p class="text-[11px] font-semibold text-black/70 uppercase tracking-wider">Les 3 z'ailes</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <!-- Bouton Retour au Hub s'il n'est pas déjà dessus -->
+      <button x-show="currentTab !== 'hub'" type="button" @click="currentTab = 'hub'" class="bg-white hover:bg-gray-100 text-black font-extrabold text-xs px-3.5 py-2 rounded-full shadow-md transition-transform active:scale-95 flex items-center gap-1.5">
+        <i class="fa-solid fa-house"></i> Hub
+      </button>
+
+      <!-- Bouton Réinitialiser -->
+      <button type="button" @click="reinitialiserApp()" class="bg-black hover:bg-gray-900 text-yellow-400 font-bold text-xs px-3.5 py-2 rounded-full shadow-md transition-transform active:scale-95 flex items-center gap-1.5">
+        <i class="fa-solid fa-rotate-left"></i>
+      </button>
+    </div>
   </header>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('sanitaire')">Fiches Sanitaires</button>
-    <button class="tab-btn" onclick="switchTab('planning')">Planning d'Équipe</button>
+  <!-- TOAST NOTIFICATION STYLISÉE -->
+  <div x-show="toast.show" 
+       x-transition:enter="transition ease-out duration-200"
+       x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
+       x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave-start="opacity-100 scale-100"
+       x-transition:leave-end="opacity-0 scale-95"
+       class="fixed top-5 right-4 left-4 z-50 max-w-md mx-auto bg-black text-white p-4 rounded-3xl shadow-2xl flex items-center justify-between border border-white/20"
+       style="display: none;">
+    <div class="flex items-center space-x-3">
+      <i class="fa-solid fa-circle-check text-yellow-400 text-xl"></i>
+      <span class="text-sm font-semibold" x-text="toast.message"></span>
+    </div>
+    <button type="button" @click="toast.show = false" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
   </div>
 
-  <!-- ONGLET 1: FICHES SANITAIRES -->
-  <div id="sanitaire" class="tab-content active">
-    <div class="card">
-      <h2 id="form-title">Ajouter/Modifier une Fiche Sanitaire</h2>
-      <form id="health-form" onsubmit="saveChild(event)">
-        <input type="hidden" id="child-id">
-        <div class="form-group">
-          <label for="child-name">Nom et Prénom de l'enfant :</label>
-          <input type="text" id="child-name" required>
-        </div>
-        <div class="form-group">
-          <label for="child-allergies">Allergies / Régimes alimentaires :</label>
-          <textarea id="child-allergies" rows="2" placeholder="Ex: PAI Arachides, Porc..."></textarea>
-        </div>
-        <div class="form-group">
-          <label for="child-photo">Droit à l'image :</label>
-          <select id="child-photo">
-            <option value="true">Autorisé</option>
-            <option value="false">Refusé</option>
-          </select>
-        </div>
-        <button type="submit" class="btn-submit">Enregistrer la fiche</button>
-      </form>
-    </div>
+  <main class="max-w-md mx-auto w-full px-4 space-y-4 mt-2 flex-1">
 
-    <h2>Annuaire des Enfants</h2>
-    <div class="children-grid" id="children-list">
-      <!-- Les cartes d'enfants s'afficheront ici -->
-    </div>
-  </div>
-
-  <!-- ONGLET 2: PLANNING D'ÉQUIPE -->
-  <div id="planning" class="tab-content">
-    <div class="card">
-      <h2>Programmer une Animation</h2>
-      <form id="anim-form" onsubmit="saveAnimation(event)">
-        <div class="form-group">
-          <label for="anim-date">Date :</label>
-          <input type="date" id="anim-date" required>
-        </div>
-        <div class="form-group">
-          <label for="anim-animator">Animateur(s) :</label>
-          <input type="text" id="anim-animator" placeholder="Ex: Marc & Julie" required>
-        </div>
-        <div class="form-group">
-          <label for="anim-title">Activité / Animation :</label>
-          <input type="text" id="anim-title" placeholder="Ex: Grand jeu de piste" required>
-        </div>
-        <button type="submit" class="btn-submit">Ajouter au planning</button>
-      </form>
-    </div>
-
-    <div class="date-picker-container">
-      <label for="selected-date"><strong>Afficher le planning du :</strong></label>
-      <input type="date" id="selected-date" onchange="renderPlanning()">
-      <button onclick="setToToday()" class="btn-submit" style="padding: 8px 12px; font-size: 0.9em;">Aujourd'hui</button>
-    </div>
-
-    <table class="planning-table">
-      <thead>
-        <tr>
-          <th>Animateur(s)</th>
-          <th>Animation prévue</th>
-        </tr>
-      </thead>
-      <tbody id="planning-list">
-        <!-- Les anims de la date sélectionnée s'afficheront ici -->
-      </tbody>
-    </table>
-  </div>
-
-  <script>
-    // --- GESTION DES ONGLETS ---
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    <!-- ==================== 0. HUB PRINCIPAL (MENU DE NAVIGATION) ==================== -->
+    <div x-show="currentTab === 'hub'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4">
       
-      document.getElementById(tabId).classList.add('active');
-      event.currentTarget.classList.add('active');
-    }
+      <div class="bg-black text-white p-5 rounded-[28px] shadow-lg flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-black text-yellow-400">Tableau de bord 🚀</h2>
+          <p class="text-xs text-white/70">Sélectionne un outil pour commencer</p>
+        </div>
+        <span class="text-2xl">📋</span>
+      </div>
 
-    // --- BASE DE DONNÉES LOCALES (LocalStorage) ---
-    let children = JSON.parse(localStorage.getItem('center_children')) || [];
-    let animations = JSON.parse(localStorage.getItem('center_anims')) || [];
-
-    // Obtenir la date d'aujourd'hui au format YYYY-MM-DD
-    function getTodayString() {
-      const today = new Date();
-      return today.toISOString().split('T')[0];
-    }
-
-    // Initialize la page
-    window.onload = function() {
-      // Définir la date du jour par défaut dans le sélecteur du planning
-      document.getElementById('selected-date').value = getTodayString();
-      document.getElementById('anim-date').value = getTodayString();
-      
-      cleanPastAnimations();
-      renderChildren();
-      renderPlanning();
-    };
-
-    // --- VOLET 1: FICHES SANITAIRES ---
-    function renderChildren() {
-      const container = document.getElementById('children-list');
-      container.innerHTML = '';
-
-      children.forEach(child => {
-        const photoBadge = child.photo 
-          ? `<span class="badge-icon badge-photo-yes">📸 <span class="status-dot dot-green"></span> Autorisé</span>`
-          : `<span class="badge-icon badge-photo-no">📸 <span class="status-dot dot-red"></span> Refusé</span>`;
-
-        const card = document.createElement('div');
-        card.className = 'child-card';
-        card.innerHTML = `
-          <h3>${child.name}</h3>
-          <p><strong>Santé/Régime:</strong> ${child.allergies || 'Rien à signaler'}</p>
-          <div class="badge-container">
-            ${photoBadge}
-          </div>
-          <div class="card-actions">
-            <button class="btn-edit" onclick="editChild('${child.id}')">✏️ Modifier</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function saveChild(event) {
-      event.preventDefault();
-      const id = document.getElementById('child-id').value;
-      const name = document.getElementById('child-name').value;
-      const allergies = document.getElementById('child-allergies').value;
-      const photo = document.getElementById('child-photo').value === 'true';
-
-      if (id) {
-        // Mode Modification
-        const index = children.findIndex(c => c.id === id);
-        if (index !== -1) {
-          children[index] = { id, name, allergies, photo };
-        }
-      } else {
-        // Mode Création
-        const newChild = {
-          id: Date.now().toString(),
-          name,
-          allergies,
-          photo
-        };
-        children.push(newChild);
-      }
-
-      localStorage.setItem('center_children', JSON.stringify(children));
-      resetChildForm();
-      renderChildren();
-    }
-
-    function editChild(id) {
-      const child = children.find(c => c.id === id);
-      if (child) {
-        document.getElementById('child-id').value = child.id;
-        document.getElementById('child-name').value = child.name;
-        document.getElementById('child-allergies').value = child.allergies;
-        document.getElementById('child-photo').value = child.photo.toString();
+      <!-- GRID DES BOUTONS HUB -->
+      <div class="grid grid-cols-2 gap-3.5">
         
-        document.getElementById('form-title').innerText = "Modifier la Fiche Sanitaire";
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        <!-- Fiches Sanitaires -->
+        <button type="button" @click="currentTab = 'sanitaire'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
+          <div class="w-10 h-10 rounded-2xl bg-rose-500 text-white flex items-center justify-center text-lg font-black shadow-md">
+            🩺
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white leading-tight">Fiches Sanitaires</h3>
+            <p class="text-[11px] text-white/70">PAI, Droit image, Enfants</p>
+          </div>
+        </button>
+
+        <!-- Fiche d'activité -->
+        <button type="button" @click="currentTab = 'fiche'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
+          <div class="w-10 h-10 rounded-2xl bg-yellow-400 text-black flex items-center justify-center text-lg font-black shadow-md">
+            🎨
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white leading-tight">Fiche d'Activité</h3>
+            <p class="text-[11px] text-white/70">Création, Matériel & PDF</p>
+          </div>
+        </button>
+
+        <!-- Cahier de soins -->
+        <button type="button" @click="currentTab = 'soins'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-400 text-black flex items-center justify-center text-lg font-black shadow-md">
+            🩹
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white leading-tight">Cahier de Soins</h3>
+            <p class="text-[11px] text-white/70">Suivi blessures & parents</p>
+          </div>
+        </button>
+
+        <!-- Goûters & Recettes -->
+        <button type="button" @click="currentTab = 'gouter'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg font-black shadow-md">
+            🍪
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white leading-tight">Goûters & Recettes</h3>
+            <p class="text-[11px] text-white/70">Menus, Recettes & Planning</p>
+          </div>
+        </button>
+
+        <!-- Courses Matériel -->
+        <button type="button" @click="currentTab = 'courses'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
+          <div class="w-10 h-10 rounded-2xl bg-purple-500 text-white flex items-center justify-center text-lg font-black shadow-md">
+            🛍️
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white leading-tight">Courses & Matériel</h3>
+            <p class="text-[11px] text-white/70">Achats activités & goûters</p>
+          </div>
+        </button>
+
+        <!-- Planning & Équipe -->
+        <button type="button" @click="currentTab = 'planning'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
+          <div class="w-10 h-10 rounded-2xl bg-sky-400 text-black flex items-center justify-center text-lg font-black shadow-md">
+            📅
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-white leading-tight">Planning Équipe</h3>
+            <p class="text-[11px] text-white/70">Animateurs, Groupes & Sorties</p>
+          </div>
+        </button>
+
+      </div>
+    </div>
+
+
+    <!-- ==================== 1. ONGLET : FICHES SANITAIRES ==================== -->
+    <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-bento p-6 space-y-4">
+        
+        <div class="flex items-center justify-between border-b border-white/20 pb-3">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>🩺</span> Fiches Sanitaires
+          </h2>
+          <button type="button" @click="ouvrirModalAddEnfant()" class="bg-yellow-400 hover:bg-yellow-300 text-black text-xs px-3.5 py-1.5 rounded-full font-black transition-transform active:scale-95 shadow-md">
+            + Enfant
+          </button>
+        </div>
+
+        <!-- RECHERCHE ENFANT -->
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
+          <input type="text" x-model="searchEnfant" placeholder="Rechercher par nom ou prénom..." class="input-chubby w-full pl-9 pr-4 py-2.5 text-xs">
+        </div>
+
+        <!-- LISTE DES ENFANTS -->
+        <div class="space-y-2.5 pt-1">
+          <template x-if="getEnfantsFiltres().length === 0">
+            <div class="card-item-bento p-4 text-center">
+              <p class="text-xs font-medium text-white/70">Aucun enfant trouvé.</p>
+            </div>
+          </template>
+
+          <template x-for="e in getEnfantsFiltres()" :key="e.id">
+            <div @click="selectionnerEnfant(e)" class="card-item-bento p-3.5 flex items-center justify-between bg-white/10 cursor-pointer hover:bg-white/20 transition-colors">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <h4 class="font-bold text-sm text-white" x-text="e.prenom + ' ' + e.nom"></h4>
+                  <!-- BADGE TRANCHE ÂGE AVEC COULEUR DÉDIÉE -->
+                  <span class="text-[10px] font-black px-2 py-0.5 rounded-full" :class="getAgeEnfant(e.dateNaissance) < 6 ? 'bg-amber-400 text-black' : 'bg-sky-400 text-black'" x-text="getAgeEnfant(e.dateNaissance) < 6 ? '-6 ans' : '+6 ans'"></span>
+                </div>
+                <p class="text-[11px] text-white/70" x-text="getAgeEnfant(e.dateNaissance) + ' ans (' + formatDateLisible(e.dateNaissance) + ')'"></p>
+              </div>
+
+              <!-- ICÔNES DE RAPPEL RAPIDES CORRIGÉES (PASTILLES VERTES / ROUGES) -->
+              <div class="flex items-center space-x-1.5">
+                <span x-show="e.pai" title="PAI / Médical" class="w-8 h-8 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold animate-pulse">
+                  ⚠️
+                </span>
+                <!-- PASTILLE VERTE (AUTORISÉ) OU ROUGE (REFUSÉ) -->
+                <span x-show="e.droitImage" title="Droit à l'image AUTORISÉ" class="w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold shrink-0">
+                  📸
+                </span>
+                <span x-show="!e.droitImage" title="Droit à l'image REFUSÉ" class="w-8 h-8 bg-rose-600 text-white rounded-full flex items-center justify-center text-[10px] shadow-sm font-bold shrink-0">
+                  🚫📸
+                </span>
+                <i class="fa-solid fa-chevron-right text-white/40 text-xs pl-1"></i>
+              </div>
+            </div>
+          </template>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL : AJOUTER / MODIFIER UN ENFANT -->
+    <div x-show="showAddEnfantModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[90vh] overflow-y-auto">
+        <h3 class="text-base font-bold text-white border-b border-white/20 pb-2" x-text="isEditingEnfant ? '✏️ Modifier la Fiche Sanitaire' : '👶 Ajouter une Fiche Sanitaire'">
+        </h3>
+
+        <form @submit.prevent="enregistrerEnfant()" class="space-y-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-bold text-white/80 mb-1">Prénom</label>
+              <input type="text" x-model="nouvelEnfant.prenom" placeholder="ex: Lucas" class="input-chubby w-full px-3 py-2 text-xs" required>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-white/80 mb-1">Nom</label>
+              <input type="text" x-model="nouvelEnfant.nom" placeholder="ex: Dupont" class="input-chubby w-full px-3 py-2 text-xs" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Date de naissance</label>
+            <input type="date" x-model="nouvelEnfant.dateNaissance" class="input-chubby w-full px-3 py-2 text-xs" required>
+          </div>
+
+          <!-- SECTION RESPONSABLES LÉGAUX MULTIPLES -->
+          <div class="card-item-bento p-3 space-y-2 bg-white/10">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-yellow-300">👥 Responsables Légaux</label>
+              <button type="button" @click="ajouterResponsableModal()" class="text-[10px] font-bold bg-white/20 hover:bg-white/30 text-white px-2 py-1 rounded-full border border-white/20">
+                + Ajouter
+              </button>
+            </div>
+
+            <template x-for="(resp, idx) in nouvelEnfant.responsables" :key="idx">
+              <div class="space-y-1.5 pt-1 border-t border-white/10 first:border-0 first:pt-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-bold text-white/70" x-text="'Responsable ' + (idx + 1)"></span>
+                  <button type="button" x-show="nouvelEnfant.responsables.length > 1" @click="nouvelEnfant.responsables.splice(idx, 1)" class="text-rose-300 hover:text-rose-500 text-[10px]">
+                    Supprimer
+                  </button>
+                </div>
+                <div class="grid grid-cols-2 gap-1.5">
+                  <input type="text" x-model="resp.nom" placeholder="Nom & Prénom" class="input-chubby px-2.5 py-1.5 text-xs">
+                  <input type="text" x-model="resp.telephone" placeholder="Téléphone" class="input-chubby px-2.5 py-1.5 text-xs">
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <div class="card-item-bento p-3 space-y-2 bg-white/10">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-white">PAI / Traitement / Allergies ?</label>
+              <input type="checkbox" x-model="nouvelEnfant.aPAI" class="w-4 h-4 accent-yellow-400">
+            </div>
+            <textarea x-show="nouvelEnfant.aPAI" x-model="nouvelEnfant.pai" placeholder="Précisez le traitement, PAI, allergie..." class="input-chubby w-full px-3 py-2 text-xs h-16 resize-none mt-1"></textarea>
+          </div>
+
+          <div class="flex items-center space-x-3 card-item-bento p-3 bg-white/10">
+            <input type="checkbox" x-model="nouvelEnfant.droitImage" id="addDroitImg" class="w-4 h-4 accent-yellow-400 rounded cursor-pointer">
+            <label for="addDroitImg" class="text-xs font-bold text-white cursor-pointer">Autorisation Droit à l'Image OK 📸</label>
+          </div>
+
+          <div class="flex gap-2 pt-2 border-t border-white/20">
+            <button type="button" @click="showAddEnfantModal = false" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold transition-transform active:scale-95 border border-white/20">Annuler</button>
+            <button type="submit" class="bg-yellow-400 hover:bg-yellow-300 text-black flex-1 py-2.5 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL : FICHE SANITAIRE DÉTAILLÉE D'UN ENFANT -->
+    <div x-show="enfantSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[85vh] overflow-y-auto">
+        
+        <div class="flex justify-between items-center border-b border-white/20 pb-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl bg-yellow-400 text-black flex items-center justify-center font-black text-lg shadow-sm">
+              <span x-text="enfantSelectionne?.prenom ? enfantSelectionne.prenom.charAt(0) : 'E'"></span>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white" x-text="enfantSelectionne?.prenom + ' ' + enfantSelectionne?.nom"></h3>
+              <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/20 text-yellow-300" x-text="getAgeEnfant(enfantSelectionne?.dateNaissance) + ' ans (' + (getAgeEnfant(enfantSelectionne?.dateNaissance) < 6 ? '-6 ans' : '+6 ans') + ')'"></span>
+            </div>
+          </div>
+          <button type="button" @click="enfantSelectionne = null" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div class="bg-black/20 p-3 rounded-2xl space-y-1">
+            <span class="text-[10px] text-white/60 font-bold uppercase block">Date de naissance</span>
+            <p class="font-bold text-white" x-text="formatDateLisible(enfantSelectionne?.dateNaissance)"></p>
+          </div>
+
+          <!-- AFFICHAGE RESPONSABLES LÉGAUX -->
+          <div class="bg-black/20 p-3 rounded-2xl space-y-2">
+            <span class="text-[10px] text-white/60 font-bold uppercase block">📞 Responsables Légaux</span>
+            <template x-for="(r, i) in (enfantSelectionne?.responsables || [])" :key="i">
+              <div class="flex items-center justify-between border-b border-white/10 last:border-0 pb-1 last:pb-0">
+                <span class="font-bold text-white" x-text="r.nom || 'Responsable'"></span>
+                <a :href="'tel:' + r.telephone" class="font-black text-yellow-300 text-xs bg-white/10 px-2 py-0.5 rounded-md hover:underline" x-text="r.telephone || 'Non renseigné'"></a>
+              </div>
+            </template>
+          </div>
+
+          <!-- ENCADRÉ PAI -->
+          <div class="p-3.5 rounded-2xl space-y-1 border" :class="enfantSelectionne?.pai ? 'bg-rose-500/20 border-rose-500 text-white' : 'bg-black/20 border-white/10 text-white/70'">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase">⚠️ PAI / Médical / Allergies</span>
+              <span x-text="enfantSelectionne?.pai ? 'OUI' : 'AUCUN'" class="font-black px-2 py-0.5 rounded-md text-[9px]" :class="enfantSelectionne?.pai ? 'bg-rose-500 text-white' : 'bg-white/10'"></span>
+            </div>
+            <p class="font-bold text-xs pt-1" x-text="enfantSelectionne?.pai || 'Aucun traitement ou PAI renseigné.'"></p>
+          </div>
+
+          <!-- ENCADRÉ DROIT A L'IMAGE (AVEC PASTILLE VERTE / ROUGE) -->
+          <div class="p-3 rounded-2xl flex items-center justify-between bg-black/20">
+            <span class="text-[10px] text-white/60 font-bold uppercase">📸 Droit à l'Image</span>
+            <span class="font-bold px-3 py-1 rounded-full text-[10px] flex items-center gap-1" :class="enfantSelectionne?.droitImage ? 'bg-emerald-500 text-white' : 'bg-rose-600 text-white'">
+              <span x-text="enfantSelectionne?.droitImage ? '📸 AUTORISÉ' : '🚫📸 REFUSÉ'"></span>
+            </span>
+          </div>
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" @click="editerEnfant(enfantSelectionne)" class="bg-yellow-400 hover:bg-yellow-300 text-black py-2.5 px-3 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">
+            ✏️ Modifier
+          </button>
+          <button type="button" @click="supprimerEnfant(enfantSelectionne?.id)" class="bg-rose-500/20 hover:bg-rose-500 text-rose-200 hover:text-white py-2.5 px-3 rounded-full text-xs font-bold border border-rose-500/30 transition-all">
+            Supprimer
+          </button>
+          <button type="button" @click="enfantSelectionne = null" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold border border-white/20 transition-transform active:scale-95">
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== 2. ONGLET : FICHE D'ACTIVITÉ ==================== -->
+    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-bento p-6 space-y-4">
+        
+        <div class="flex items-center justify-between border-b border-white/20 pb-3">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>🎨</span> Fiche d'Activité
+          </h2>
+          <span class="bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full">
+            Express
+          </span>
+        </div>
+
+        <form @submit.prevent="submitFiche()" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Nom de l'activité</label>
+            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu Chasse au Trésor" class="input-chubby w-full px-4 py-2.5 text-xs" required>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Tranche d'âge</label>
+              <select x-model="fiche.age" class="input-chubby w-full px-3 py-2.5 text-xs font-bold">
+                <option value="-6 ans">-6 ans</option>
+                <option value="+6 ans">+6 ans</option>
+                <option value="Inter-tranches">Inter-tranches</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Lieu</label>
+              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="input-chubby w-full px-4 py-2.5 text-xs">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Objectif Pédagogique</label>
+            <input type="text" x-model="fiche.objectif" placeholder="ex: Coopérer en équipe" class="input-chubby w-full px-4 py-2.5 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Déroulement / Consignes</label>
+            <textarea x-model="fiche.deroulement" placeholder="Explication des étapes du jeu..." class="input-chubby w-full px-4 py-2.5 text-xs h-20 resize-none"></textarea>
+          </div>
+
+          <!-- SECTION MATÉRIEL -->
+          <div class="card-item-bento p-3.5 space-y-2.5">
+            <span class="text-xs font-bold text-yellow-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-boxes-packing"></i> Matériel & Quantités
+            </span>
+            <div class="grid grid-cols-5 gap-2">
+              <input type="text" x-model="newMatosNom" placeholder="Article" class="col-span-3 input-chubby px-3 py-1.5 text-xs">
+              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-chubby px-2 py-1.5 text-xs text-center">
+              <button type="button" @click="addMatos()" class="col-span-1 bg-yellow-400 hover:bg-yellow-300 text-black rounded-xl text-base font-black flex items-center justify-center transition-transform active:scale-95">+</button>
+            </div>
+            <ul class="space-y-1.5 pt-1">
+              <template x-for="(item, index) in fiche.materiel" :key="index">
+                <li class="flex items-center justify-between text-xs bg-white/20 px-3 py-2 rounded-xl">
+                  <span class="font-semibold text-white" x-text="item.nom + ' — Qté : ' + item.qte"></span>
+                  <button type="button" @click="removeMatos(index)" class="text-yellow-300 hover:text-white ml-2"><i class="fa-solid fa-xmark text-sm"></i></button>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 pt-2">
+            <button type="button" @click="exportPDF()" class="bg-white/10 hover:bg-white/20 text-white py-3 rounded-full text-xs font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 border border-white/20">
+              <i class="fa-solid fa-file-pdf text-yellow-300 text-sm"></i> Export PDF
+            </button>
+            <button type="submit" class="bg-yellow-400 hover:bg-yellow-300 text-black py-3 rounded-full text-xs font-black flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-md">
+              <i class="fa-solid fa-paper-plane text-xs"></i> Envoi Courses
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF -->
+    <div id="pdf-template" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 700px;">
+      <div style="padding: 30px; font-family: 'Fredoka', sans-serif; color: #111111; background: #ffffff;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #4d53ed; padding-bottom: 12px; margin-bottom: 20px;">
+          <div>
+            <h1 style="margin: 0; font-size: 22px; color: #4d53ed; font-weight: bold;" id="pdf-titre">Fiche d'Activité</h1>
+            <p style="margin: 4px 0 0 0; font-size: 11px; font-weight: 600; color: #64748b;">Accueil de Loisirs ALSH Flow</p>
+          </div>
+          <span style="background: #fcd307; color: #111111; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 12px;" id="pdf-age">Age</span>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <tr>
+            <td style="padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; font-weight: 700; width: 30%;">Lieu :</td>
+            <td style="padding: 10px; border: 1px solid #cbd5e1;" id="pdf-lieu">-</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; font-weight: 700;">Objectif Pédagogique :</td>
+            <td style="padding: 10px; border: 1px solid #cbd5e1;" id="pdf-objectif">-</td>
+          </tr>
+        </table>
+
+        <div style="margin-bottom: 20px;">
+          <h3 style="color: #4d53ed; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; font-size: 15px;">📜 Déroulement</h3>
+          <p style="font-size: 12px; line-height: 1.6; white-space: pre-line;" id="pdf-deroulement">-</p>
+        </div>
+
+        <div>
+          <h3 style="color: #4d53ed; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; font-size: 15px;">📦 Matériel & Quantités</h3>
+          <ul style="font-size: 12px; padding-left: 20px;" id="pdf-materiel"></ul>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== 3. ONGLET : CAHIER DE SOINS NUMÉRIQUE ==================== -->
+    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-bento p-6 space-y-4">
+        
+        <div class="flex items-center justify-between border-b border-white/20 pb-3">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>🩹</span> Cahier de Soins
+          </h2>
+          <span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+            Santé
+          </span>
+        </div>
+
+        <form @submit.prevent="submitSoin()" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Prénom & Nom de l'enfant</label>
+            <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-chubby w-full px-4 py-2.5 text-xs" required>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Symptôme / Incident</label>
+            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure au genou" class="input-chubby w-full px-4 py-2.5 text-xs" required>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Soin apporté</label>
+            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant..." class="input-chubby w-full px-4 py-2.5 text-xs h-20 resize-none"></textarea>
+          </div>
+
+          <div class="flex items-center space-x-3 card-item-bento p-3.5 bg-white/10">
+            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
+            <label for="famille" class="text-xs font-bold text-white cursor-pointer">Avertir les parents ce soir 🔔</label>
+          </div>
+
+          <button type="submit" class="bg-yellow-400 hover:bg-yellow-300 text-black w-full py-3 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">
+            Enregistrer le soin
+          </button>
+        </form>
+
+        <hr class="border-white/20 my-2">
+
+        <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider">Registre des soins</h3>
+        <div class="space-y-2.5">
+          <template x-for="item in registreSoins" :key="item.id">
+            <div class="card-item-bento p-3.5 flex items-start justify-between bg-white/10">
+              <div class="space-y-1">
+                <p class="font-bold text-sm text-yellow-300" x-text="item.enfant"></p>
+                <p class="text-xs font-bold text-white" x-text="item.incident"></p>
+                <p class="text-[11px] text-white/70" x-text="item.heure + ' • Soin : ' + item.action"></p>
+                <span x-show="item.prevenirFamille" class="inline-block px-2.5 py-0.5 bg-rose-500 text-white text-[10px] font-bold rounded-full mt-1">
+                  ⚠️ Prévenir la famille
+                </span>
+              </div>
+              <button type="button" @click="deleteSoin(item.id)" class="text-white/60 hover:text-rose-400"><i class="fa-solid fa-trash text-xs"></i></button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== 4. ONGLET : GOÛTERS & RECETTES ==================== -->
+    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-bento p-6 space-y-4">
+        
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border-b border-white/20 pb-3">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span>🍪</span> Goûters & Recettes
+            </h2>
+            <div class="flex gap-2">
+              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1.5 rounded-full font-bold border border-white/20 transition-transform active:scale-95">
+                + Recette
+              </button>
+              <button type="button" @click="showPlanifModal = true" class="bg-yellow-400 hover:bg-yellow-300 text-black text-xs px-3 py-1.5 rounded-full font-black transition-transform active:scale-95 shadow-md">
+                Planifier
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between card-item-bento px-4 py-2.5">
+            <button type="button" @click="changerSemaine(-1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-left text-sm"></i></button>
+            <div class="text-center">
+              <p class="text-xs font-bold text-yellow-300" x-text="getLibelleSemaine()"></p>
+            </div>
+            <button type="button" @click="changerSemaine(1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-right text-sm"></i></button>
+          </div>
+        </div>
+
+        <!-- MODAL CRÉER UNE RECETTE -->
+        <div x-show="showAddRecetteModal" x-transition class="card-item-bento p-4 space-y-3 bg-black/20" style="display: none;">
+          <div class="flex justify-between items-center border-b border-white/20 pb-2">
+            <h3 class="text-xs font-bold text-yellow-300">
+              🍰 Nouvelle Recette (Base 8 enfants)
+            </h3>
+            <button type="button" @click="showAddRecetteModal = false"><i class="fa-solid fa-xmark text-sm text-white"></i></button>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Nom de la recette</label>
+            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="input-chubby w-full px-3 py-2 text-xs">
+          </div>
+
+          <div class="space-y-2 pt-1">
+            <label class="block text-[11px] font-bold text-white/80">Ingrédients :</label>
+            
+            <div class="grid grid-cols-6 gap-1.5">
+              <input type="text" x-model="tempIng.nom" placeholder="Nom" class="col-span-3 input-chubby px-2.5 py-1.5 text-xs">
+              <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-chubby px-2 py-1.5 text-xs text-center">
+              <input type="text" x-model="tempIng.unite" placeholder="Unité" class="col-span-1.5 input-chubby px-2 py-1.5 text-xs">
+            </div>
+            
+            <button type="button" @click="ajouterIngredierntRecette()" class="bg-white/20 hover:bg-white/30 text-white w-full py-2 text-xs font-bold rounded-xl border border-white/20 transition-transform active:scale-95">
+              + Ajouter l'ingrédient
+            </button>
+
+            <div class="space-y-1 pt-1">
+              <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
+                <div class="flex justify-between items-center text-xs bg-white/10 px-3 py-1.5 rounded-xl">
+                  <span class="font-medium text-white" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
+                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-yellow-300"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <button type="button" @click="enregistrerNouvelleRecette()" class="bg-yellow-400 hover:bg-yellow-300 text-black w-full py-2.5 text-xs font-black rounded-full transition-transform active:scale-95 shadow-md">
+            Enregistrer la recette
+          </button>
+        </div>
+
+        <!-- LISTE DES GOÛTERS PROGRAMMÉS -->
+        <div class="space-y-2.5">
+          <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider flex justify-between items-center">
+            <span>Planning Goûters</span>
+            <span class="bg-yellow-400 text-black text-[10px] px-2.5 py-0.5 rounded-full font-bold" x-text="getGoutersDeLaSemaine().length + ' prévu(s)'"></span>
+          </h3>
+
+          <template x-if="getGoutersDeLaSemaine().length === 0">
+            <div class="card-item-bento p-4 text-center">
+              <p class="text-xs font-medium text-white/70">Aucun goûter planifié cette semaine.</p>
+            </div>
+          </template>
+
+          <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
+            <div class="card-item-bento p-3.5 space-y-2 bg-white/10">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] font-bold text-yellow-300 uppercase" x-text="formatDateLisible(g.date)"></span>
+                  <h4 class="text-sm font-bold text-white" x-text="getNomRecette(g.recetteId)"></h4>
+                </div>
+                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="text-white/60 hover:text-rose-400">
+                  <i class="fa-solid fa-trash text-xs"></i>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-black/20 p-2 rounded-xl">
+                  <span class="text-[10px] text-white/60 block">Animateur</span>
+                  <span class="font-bold text-yellow-300" x-text="g.anim || 'Non assigné'"></span>
+                </div>
+                <div class="bg-black/20 p-2 rounded-xl">
+                  <span class="text-[10px] text-white/60 block">Quantité</span>
+                  <span class="font-bold text-white" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <div class="pt-2 text-center">
+          <button type="button" @click="currentTab = 'courses'; subTabCourses = 'gouter'" class="bg-white/10 hover:bg-white/20 text-white text-xs px-4 py-2 rounded-full font-bold border border-white/20 transition-transform active:scale-95 inline-flex items-center gap-2">
+            <span>🛒</span> Voir la liste de courses des goûters
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL : PLANIFIER UN GOÛTER -->
+    <div x-show="showPlanifModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20">
+        <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
+          📅 Planifier un Goûter
+        </h3>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Date du goûter</label>
+            <input type="date" x-model="saisieGouter.date" class="input-chubby w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Choisir la recette</label>
+            <select x-model="saisieGouter.recetteId" class="input-chubby w-full px-3 py-2 text-xs font-bold">
+              <template x-for="r in recettesGouter" :key="r.id">
+                <option :value="r.id" x-text="r.nom + ' (base 8 enfants)'"></option>
+              </template>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Animateur responsable</label>
+            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-chubby w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Nombre d'enfants prévus</label>
+            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-chubby w-full px-3 py-2 text-xs text-center font-bold">
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t border-white/20">
+          <button type="button" @click="showPlanifModal = false" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold transition-transform active:scale-95 border border-white/20">Annuler</button>
+          <button type="button" @click="enregistrerGouterPlanifie()" class="bg-yellow-400 hover:bg-yellow-300 text-black flex-1 py-2.5 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">Valider</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== 5. ONGLET : COURSES MATÉRIEL & GOÛTERS ==================== -->
+    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-bento p-6 space-y-4">
+        
+        <div class="flex items-center justify-between border-b border-white/20 pb-3">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>🛍️</span> Courses & Matériel
+          </h2>
+        </div>
+
+        <!-- NAVIGATION SOUS-ONGLETS COURSES -->
+        <div class="flex gap-2 p-1 bg-black/20 rounded-2xl border border-white/10">
+          <button type="button" @click="subTabCourses = 'activites'" :class="subTabCourses === 'activites' ? 'bg-yellow-400 text-black font-black shadow' : 'text-white font-bold hover:bg-white/10'" class="flex-1 py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+            📦 Matériel Activités
+          </button>
+          <button type="button" @click="subTabCourses = 'gouter'" :class="subTabCourses === 'gouter' ? 'bg-yellow-400 text-black font-black shadow' : 'text-white font-bold hover:bg-white/10'" class="flex-1 py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+            🍪 Courses Goûters
+          </button>
+        </div>
+
+        <!-- SOUS-ONGLET 1 : MATÉRIEL ACTIVITÉS -->
+        <div x-show="subTabCourses === 'activites'" class="space-y-4">
+          <div class="grid grid-cols-5 gap-2">
+            <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-chubby px-3 py-2.5 text-xs">
+            <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-chubby px-2 py-2.5 text-xs text-center">
+            <button type="button" @click="addCourseDirecte()" class="col-span-1 bg-yellow-400 hover:bg-yellow-300 text-black rounded-2xl text-base font-black flex items-center justify-center transition-transform active:scale-95 shadow-md">+</button>
+          </div>
+
+          <div class="space-y-2.5">
+            <template x-for="item in listeCourses" :key="item.id">
+              <div class="card-item-bento p-3.5 flex items-center justify-between transition-opacity bg-white/10" :class="item.achete ? 'opacity-40 line-through' : ''">
+                <div class="flex items-center space-x-3">
+                  <input type="checkbox" x-model="item.achete" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
+                  <div>
+                    <p class="text-xs font-bold text-white" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
+                    <p class="text-[11px] text-yellow-300" x-text="'Pour : ' + item.activite"></p>
+                  </div>
+                </div>
+                <button type="button" @click="deleteCourse(item.id)" class="text-white/60 hover:text-rose-400"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </template>
+          </div>
+
+          <button type="button" @click="viderAchetes()" class="bg-white/10 hover:bg-white/20 text-white w-full py-3 text-xs font-bold rounded-full border border-white/20 transition-transform active:scale-95">
+            Nettoyer les articles achetés
+          </button>
+        </div>
+
+        <!-- SOUS-ONGLET 2 : COURSES GOÛTERS -->
+        <div x-show="subTabCourses === 'gouter'" class="space-y-4">
+          <div class="flex items-center justify-between card-item-bento px-4 py-2">
+            <button type="button" @click="changerSemaine(-1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-left text-sm"></i></button>
+            <div class="text-center">
+              <p class="text-xs font-bold text-yellow-300" x-text="getLibelleSemaine()"></p>
+            </div>
+            <button type="button" @click="changerSemaine(1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-right text-sm"></i></button>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider">
+              🛒 Ingrédients cumulés
+            </h3>
+            <span class="bg-emerald-500 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
+          </div>
+
+          <div class="space-y-2">
+            <template x-if="getListeCoursesAgregeeSemaine().length === 0">
+              <div class="card-item-bento p-4 text-center">
+                <p class="text-xs font-medium text-white/70">Aucun goûter prévu cette semaine.</p>
+              </div>
+            </template>
+
+            <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
+              <div class="card-item-bento p-3 flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 line-through' : ''">
+                <div class="flex items-center space-x-3">
+                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
+                  <span class="text-xs font-bold text-white" x-text="item.nom"></span>
+                </div>
+                <span class="font-bold text-xs text-black bg-yellow-400 px-2.5 py-1 rounded-full" x-text="item.qte + ' ' + item.unite"></span>
+              </div>
+            </template>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ==================== 6. ONGLET : PLANNING & ORGANISATION ==================== -->
+    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+      <div class="card-bento p-6 space-y-4">
+        
+        <div class="space-y-3 border-b border-white/20 pb-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              <span>📅</span> Planning Équipe
+            </h2>
+            <div class="flex gap-2">
+              <button type="button" @click="ouvrirModalOrg()" class="bg-yellow-400 hover:bg-yellow-300 text-black text-xs px-3 py-1.5 rounded-full font-black transition-transform active:scale-95 shadow-md">
+                🚌 Sortie
+              </button>
+              <button type="button" @click="nouveauCreneauVierge()" class="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1.5 rounded-full font-bold border border-white/20 transition-transform active:scale-95">
+                + Créneau
+              </button>
+            </div>
+          </div>
+
+          <!-- FILTRES INTERACTIFS ET CODE COULEUR -->
+          <div class="flex gap-1.5 pt-1">
+            <button type="button" @click="filtrePlanning = 'anim'" :class="filtrePlanning === 'anim' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+              Animateurs
+            </button>
+            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'bg-amber-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+              🟡 -6 ans
+            </button>
+            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'bg-sky-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
+              🟦 +6 ans
+            </button>
+          </div>
+
+          <!-- SÉLECTEUR DE DATE INTERACTIF AVEC BOUTONS & CALENDRIER -->
+          <div class="flex items-center justify-between card-item-bento px-3 py-2 gap-2">
+            <button type="button" @click="changerJour(-1)" class="text-white/80 hover:text-white px-2 py-1"><i class="fa-solid fa-chevron-left text-sm"></i></button>
+            
+            <div class="flex items-center gap-2">
+              <input type="date" x-model="dateAffichee" @change="nettoyerCreneauxPasses()" class="bg-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-lg border border-white/20 focus:outline-none cursor-pointer">
+            </div>
+
+            <button type="button" @click="changerJour(1)" class="text-white/80 hover:text-white px-2 py-1"><i class="fa-solid fa-chevron-right text-sm"></i></button>
+          </div>
+          <div class="text-center text-[11px] font-bold text-yellow-300" x-text="formatDateLisible(dateAffichee)"></div>
+        </div>
+
+        <!-- ENCADRÉ SORTIE SPÉCIALE -->
+        <template x-if="getOrgDuJour()">
+          <div class="card-item-bento p-4 space-y-3 bg-yellow-400 text-black">
+            <div class="flex justify-between items-start border-b border-black/10 pb-2">
+              <div>
+                <span class="inline-block px-2.5 py-0.5 rounded-full bg-black text-yellow-400 text-[10px] font-black uppercase mb-1">
+                  🚨 SORTIE SPÉCIALE
+                </span>
+                <h3 class="text-base font-bold leading-tight" x-text="getOrgDuJour().titre"></h3>
+              </div>
+              <button type="button" @click="effacerOrgDuJour()" class="text-black/60 hover:text-black">
+                <i class="fa-solid fa-trash text-xs"></i>
+              </button>
+            </div>
+
+            <p class="text-xs font-semibold" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
+            
+            <div class="grid grid-cols-2 gap-2 text-xs bg-white/40 p-2 rounded-xl">
+              <div>
+                <span class="text-[10px] text-black/60 font-bold block">Bus Départ</span>
+                <span class="font-black text-black" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
+              </div>
+              <div>
+                <span class="text-[10px] text-black/60 font-bold block">Bus Retour</span>
+                <span class="font-black text-black" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
+              </div>
+            </div>
+
+            <div class="space-y-2 pt-1">
+              <span class="text-[11px] font-black text-black uppercase block">Groupes d'enfants affectés :</span>
+              <template x-for="g in getOrgDuJour().groupes" :key="g.id">
+                <div class="bg-black/10 p-3 rounded-2xl border border-black/10 space-y-2">
+                  <div class="font-black text-xs text-black flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Animateur : <span x-text="g.anim"></span></span>
+                  </div>
+                  
+                  <div class="grid grid-cols-2 gap-1.5">
+                    <template x-for="(ef, index) in parseEnfantsList(g.enfants)" :key="index">
+                      <div class="bg-white/80 p-2 rounded-xl text-[11px] font-bold text-black shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-child text-yellow-600 text-[10px]"></i>
+                        <span x-text="ef"></span>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+
+        <!-- LISTE PLANNING DES ANIMATEURS -->
+        <div class="space-y-3">
+          <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider" x-text="filtrePlanning === 'anim' ? 'Planning des Animateurs' : 'Groupes concernés (' + filtrePlanning + ')'"></h3>
+
+          <template x-for="p in getPlanningFiltre()" :key="p.id">
+            <div class="card-item-bento p-4 space-y-3 bg-white/10">
+              
+              <div class="flex justify-between items-center">
+                <button type="button" @click="ouvrirDetailAnim(p)" class="text-xs font-bold text-yellow-300 flex items-center gap-1.5 hover:underline">
+                  <span x-text="p.nom"></span>
+                  <i class="fa-solid fa-circle-info text-[10px]"></i>
+                </button>
+                
+                <div class="flex items-center space-x-1.5">
+                  <button type="button" @click="editerPlanningDuJour(p)" class="bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 text-[10px] font-bold rounded-full border border-white/20 transition-transform active:scale-95">
+                    Modifier
+                  </button>
+                  <button type="button" @click="supprimerAnim(p.id)" class="text-white/60 hover:text-rose-400 p-1">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- BLOCS MATIN / APREM -->
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                
+                <!-- MATIN -->
+                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'border-amber-400' : 'border-sky-400'">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-[10px] text-white/60 block">☀️ Matin</span>
+                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageMatin)" 
+                            class="text-[9px] font-black px-1.5 py-0.5 rounded-md transition-colors"
+                            :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'bg-amber-400 text-black' : 'bg-sky-400 text-black'"
+                            x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></button>
+                  </div>
+                  <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
+                </div>
+
+                <!-- APRÈS-MIDI -->
+                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'border-amber-400' : 'border-sky-400'">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
+                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageAprem)" 
+                            class="text-[9px] font-black px-1.5 py-0.5 rounded-md transition-colors"
+                            :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'bg-amber-400 text-black' : 'bg-sky-400 text-black'"
+                            x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></button>
+                  </div>
+                  <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
+                </div>
+              </div>
+
+            </div>
+          </template>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL : ORGANISATION / SORTIES -->
+    <div x-show="showOrgModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[90vh] overflow-y-auto">
+        <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
+          🚌 Programmation d'une Sortie
+        </h3>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Date</label>
+            <input type="date" x-model="saisieOrg.date" class="input-chubby w-full px-3 py-2 text-xs overflow-hidden">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Titre de la sortie</label>
+            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-chubby w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Lieu</label>
+            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo" class="input-chubby w-full px-3 py-2 text-xs">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[11px] font-bold text-white/80 mb-1">Bus Départ</label>
+              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-chubby w-full px-3 py-2 text-xs">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-white/80 mb-1">Bus Retour</label>
+              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-chubby w-full px-3 py-2 text-xs">
+            </div>
+          </div>
+
+          <div class="card-item-bento p-3 space-y-2.5 bg-white/10">
+            <span class="text-xs font-bold text-yellow-300 block">👥 Animateurs & Enfants attribués</span>
+            
+            <div class="space-y-1.5">
+              <input type="text" x-model="tempGroupe.anim" placeholder="Nom Animateur (ex: Sarah)" class="input-chubby w-full px-2.5 py-1.5 text-xs">
+              <input type="text" x-model="tempGroupe.enfants" placeholder="Enfants (ex: Lucas, Nathan, Zoé...)" class="input-chubby w-full px-2.5 py-1.5 text-xs">
+              <button type="button" @click="ajouterGroupeSortie()" class="bg-yellow-400 hover:bg-yellow-300 text-black w-full py-1.5 text-xs font-black rounded-xl transition-transform active:scale-95">+ Ajouter ce groupe</button>
+            </div>
+
+            <div class="space-y-1 pt-1">
+              <template x-for="(grp, idx) in saisieOrg.groupes" :key="idx">
+                <div class="flex justify-between items-center text-xs bg-black/20 p-2 rounded-xl">
+                  <div>
+                    <p class="font-bold text-yellow-300" x-text="grp.anim"></p>
+                    <p class="text-[11px] text-white/80" x-text="grp.enfants"></p>
+                  </div>
+                  <button type="button" @click="saisieOrg.groupes.splice(idx, 1)" class="text-rose-400"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t border-white/20">
+          <button type="button" @click="showOrgModal = false" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold border border-white/20 transition-transform active:scale-95">Annuler</button>
+          <button type="button" @click="sauvegarderOrg()" class="bg-yellow-400 hover:bg-yellow-300 text-black flex-1 py-2.5 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL : DETAIL ANIMATEUR -->
+    <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[85vh] overflow-y-auto">
+        
+        <div class="flex justify-between items-center border-b border-white/20 pb-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-full bg-yellow-400 text-black flex items-center justify-center font-black text-base shadow-sm">
+              <span x-text="animSelectionne?.nom ? animSelectionne.nom.charAt(0) : 'A'"></span>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white" x-text="animSelectionne?.nom"></h3>
+              <p class="text-[10px] text-yellow-300 uppercase font-bold">Planning Animateur</p>
+            </div>
+          </div>
+          <button type="button" @click="animSelectionne = null" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <div class="space-y-3">
+          <template x-for="(planningDate, dateKey) in animSelectionne?.dates" :key="dateKey">
+            <div class="card-item-bento p-3.5 space-y-2 bg-white/10">
+              <div class="flex justify-between items-center border-b border-white/20 pb-2">
+                <span class="text-xs font-bold text-yellow-300" x-text="formatDateLisible(dateKey)"></span>
+                <button type="button" @click="allerADate(dateKey)" class="bg-yellow-400 text-black text-[10px] font-black px-2.5 py-1 rounded-full transition-transform active:scale-95">
+                  Voir jour
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-black/20 p-2 rounded-xl">
+                  <span class="text-[10px] text-white/60 block">☀️ Matin</span>
+                  <p class="font-bold text-white" x-text="(planningDate.matin || 'Repos') + ' (' + (planningDate.ageMatin || '-6 ans') + ')'"></p>
+                </div>
+                <div class="bg-black/20 p-2 rounded-xl">
+                  <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
+                  <p class="font-bold text-white" x-text="(planningDate.aprem || 'Repos') + ' (' + (planningDate.ageAprem || '-6 ans') + ')'"></p>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <button type="button" @click="animSelectionne = null" class="bg-white/10 hover:bg-white/20 text-white w-full py-2.5 rounded-full text-xs font-bold border border-white/20 transition-transform active:scale-95">Fermer</button>
+      </div>
+    </div>
+
+    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
+    <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
+      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20">
+        <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
+          ✏️ Créneau Animateur
+        </h3>
+        
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Nom de l'animateur</label>
+            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-chubby w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-white/80 mb-1">Date</label>
+            <input type="date" x-model="saisiePlanning.date" class="input-chubby w-full px-3 py-2 text-xs overflow-hidden">
+          </div>
+
+          <div class="space-y-1 bg-black/20 p-2.5 rounded-xl border border-white/10">
+            <span class="text-[11px] font-bold text-yellow-300 block">☀️ Créneau Matin</span>
+            <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu de piste" class="input-chubby w-full px-3 py-1.5 text-xs">
+            <div class="flex items-center gap-2 pt-1">
+              <span class="text-[10px] text-white/80">Tranche d'âge :</span>
+              <select x-model="saisiePlanning.ageMatin" class="input-chubby px-2 py-1 text-[11px] font-bold flex-1">
+                <option value="-6 ans">-6 ans</option>
+                <option value="+6 ans">+6 ans</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-y-1 bg-black/20 p-2.5 rounded-xl border border-white/10">
+            <span class="text-[11px] font-bold text-yellow-300 block">🌆 Créneau Après-midi</span>
+            <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu Forêt" class="input-chubby w-full px-3 py-1.5 text-xs">
+            <div class="flex items-center gap-2 pt-1">
+              <span class="text-[10px] text-white/80">Tranche d'âge :</span>
+              <select x-model="saisiePlanning.ageAprem" class="input-chubby px-2 py-1 text-[11px] font-bold flex-1">
+                <option value="-6 ans">-6 ans</option>
+                <option value="+6 ans">+6 ans</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t border-white/20">
+          <button type="button" @click="showAddAnimModal = false" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold border border-white/20 transition-transform active:scale-95">Annuler</button>
+          <button type="button" @click="validerPlanning()" class="bg-yellow-400 hover:bg-yellow-300 text-black flex-1 py-2.5 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">Valider</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- LOGIQUE ALPINE JS -->
+  <script>
+    function alshApp() {
+      const today = new Date();
+      const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+      return {
+        currentTab: 'hub', 
+        subTabCourses: 'activites', 
+        dateAffichee: todayISO,
+        todayDateISO: todayISO,
+        filtrePlanning: 'anim', 
+        newMatosNom: '',
+        newMatosQte: '',
+        nouvelleCourseNom: '',
+        nouvelleCourseQte: '',
+        showAddAnimModal: false,
+        showOrgModal: false,
+        showAddRecetteModal: false,
+        showPlanifModal: false,
+        showAddEnfantModal: false,
+        isEditingEnfant: false,
+        enfantEditingId: null,
+        animSelectionne: null,
+        enfantSelectionne: null,
+        searchEnfant: '',
+        toast: { show: false, message: '' },
+
+        semaineActiveOffset: 0,
+
+        // BASE DE DONNÉES ENFANTS / SANITAIRE
+        enfants: [
+          {
+            id: 1,
+            nom: 'Dupont',
+            prenom: 'Lucas',
+            dateNaissance: '2019-05-14',
+            responsables: [
+              { nom: 'Maman Dupont', telephone: '06 11 22 33 44' },
+              { nom: 'Papa Dupont', telephone: '06 55 66 77 88' }
+            ],
+            pai: 'Allergie sévère aux arachides',
+            droitImage: true
+          },
+          {
+            id: 2,
+            nom: 'Martin',
+            prenom: 'Zoé',
+            dateNaissance: '2016-11-20',
+            responsables: [
+              { nom: 'Papa Martin', telephone: '06 99 88 77 66' }
+            ],
+            pai: '',
+            droitImage: false
+          }
+        ],
+
+        nouvelEnfant: {
+          nom: '',
+          prenom: '',
+          dateNaissance: '',
+          responsables: [],
+          aPAI: false,
+          pai: '',
+          droitImage: true
+        },
+
+        nouvelleRecette: { nom: '', ingredients: [] },
+        tempIng: { nom: '', qte: '', unite: '' },
+
+        recettesGouter: [
+          {
+            id: 'recette-chocolat',
+            nom: 'Gâteau au Chocolat 🍫',
+            ingredients: [
+              { nom: 'Farine', qte: 100, unite: 'g' },
+              { nom: 'Chocolat noir', qte: 200, unite: 'g' },
+              { nom: 'Beurre', qte: 125, unite: 'g' },
+              { nom: 'Sucre', qte: 100, unite: 'g' },
+              { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }
+            ]
+          },
+          {
+            id: 'recette-pommes',
+            nom: 'Gâteau aux Pommes 🍏',
+            ingredients: [
+              { nom: 'Farine', qte: 150, unite: 'g' },
+              { nom: 'Pommes', qte: 3, unite: 'pièce(s)' },
+              { nom: 'Sucre', qte: 80, unite: 'g' },
+              { nom: 'Beurre', qte: 80, unite: 'g' },
+              { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }
+            ]
+          }
+        ],
+
+        saisieGouter: {
+          date: todayISO,
+          recetteId: 'recette-chocolat',
+          anim: '',
+          nbEnfants: 32
+        },
+
+        goutersPlanifies: [],
+        coursesAchetesGouter: {},
+
+        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
+        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
+        registreSoins: [],
+        listeCourses: [],
+        
+        saisiePlanning: { nom: '', date: todayISO, matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' },
+        
+        organisations: {},
+        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] },
+        tempGroupe: { anim: '', enfants: '' },
+        
+        planningGlobal: [],
+
+        init() {
+          const lundi = this.getLundiDeLaSemaine(new Date());
+          const mardiStr = this.addDaysISO(lundi, 1);
+          const jeudiStr = this.addDaysISO(lundi, 3);
+
+          this.goutersPlanifies = [
+            { id: 'g1', date: mardiStr, recetteId: 'recette-chocolat', anim: 'Sarah', nbEnfants: 35 },
+            { id: 'g2', date: jeudiStr, recetteId: 'recette-pommes', anim: 'Thomas', nbEnfants: 24 }
+          ];
+
+          this.planningGlobal = [
+            {
+              id: 101,
+              nom: 'Sarah',
+              dates: {
+                [todayISO]: { matin: 'Jeux d\'expression', ageMatin: '-6 ans', aprem: 'Atelier Pâtisserie', ageAprem: '-6 ans' }
+              }
+            },
+            {
+              id: 102,
+              nom: 'Thomas',
+              dates: {
+                [todayISO]: { matin: 'Sport Co', ageMatin: '+6 ans', aprem: 'Grand Jeu Forêt', ageAprem: '+6 ans' }
+              }
+            }
+          ];
+
+          // Nettoyage automatique au démarrage
+          this.nettoyerCreneauxPasses();
+        },
+
+        // FONCTION DE NETTOYAGE DES CRÉNEAUX PASSÉS
+        nettoyerCreneauxPasses() {
+          const aujourdhui = this.todayDateISO;
+          
+          this.planningGlobal.forEach(anim => {
+            if (anim.dates) {
+              Object.keys(anim.dates).forEach(dateKey => {
+                if (dateKey < aujourdhui) {
+                  delete anim.dates[dateKey];
+                }
+              });
+            }
+          });
+        },
+
+        // FONCTIONS FICHE SANITAIRE
+        ouvrirModalAddEnfant() {
+          this.isEditingEnfant = false;
+          this.enfantEditingId = null;
+          this.nouvelEnfant = {
+            nom: '',
+            prenom: '',
+            dateNaissance: '',
+            responsables: [{ nom: '', telephone: '' }],
+            aPAI: false,
+            pai: '',
+            droitImage: true
+          };
+          this.showAddEnfantModal = true;
+        },
+
+        editerEnfant(enfant) {
+          this.isEditingEnfant = true;
+          this.enfantEditingId = enfant.id;
+          this.nouvelEnfant = {
+            nom: enfant.nom,
+            prenom: enfant.prenom,
+            dateNaissance: enfant.dateNaissance,
+            responsables: JSON.parse(JSON.stringify(enfant.responsables || [{ nom: '', telephone: '' }])),
+            aPAI: !!enfant.pai,
+            pai: enfant.pai || '',
+            droitImage: enfant.droitImage
+          };
+          this.showAddEnfantModal = true;
+        },
+
+        ajouterResponsableModal() {
+          this.nouvelEnfant.responsables.push({ nom: '', telephone: '' });
+        },
+
+        getEnfantsFiltres() {
+          if (!this.searchEnfant.trim()) return this.enfants;
+          const q = this.searchEnfant.toLowerCase();
+          return this.enfants.filter(e => e.nom.toLowerCase().includes(q) || e.prenom.toLowerCase().includes(q));
+        },
+
+        getAgeEnfant(dateNaissStr) {
+          if (!dateNaissStr) return 0;
+          const birth = new Date(dateNaissStr);
+          const today = new Date();
+          let age = today.getFullYear() - birth.getFullYear();
+          const m = today.getMonth() - birth.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+            age--;
+          }
+          return age;
+        },
+
+        selectionnerEnfant(enfant) {
+          this.enfantSelectionne = enfant;
+        },
+
+        enregistrerEnfant() {
+          const respsFiltres = this.nouvelEnfant.responsables.filter(r => r.nom.trim() !== '' || r.telephone.trim() !== '');
+
+          if (this.isEditingEnfant) {
+            // Modification d'un enfant existant
+            const idx = this.enfants.findIndex(e => e.id === this.enfantEditingId);
+            if (idx !== -1) {
+              this.enfants[idx] = {
+                id: this.enfantEditingId,
+                nom: this.nouvelEnfant.nom.trim(),
+                prenom: this.nouvelEnfant.prenom.trim(),
+                dateNaissance: this.nouvelEnfant.dateNaissance,
+                responsables: respsFiltres.length > 0 ? respsFiltres : [{ nom: 'Non spécifié', telephone: '-' }],
+                pai: this.nouvelEnfant.aPAI ? this.nouvelEnfant.pai.trim() : '',
+                droitImage: this.nouvelEnfant.droitImage
+              };
+              this.enfantSelectionne = this.enfants[idx];
+              this.showToast('Fiche sanitaire mise à jour ! ✏️');
+            }
+          } else {
+            // Création d'un nouvel enfant
+            const nouveau = {
+              id: Date.now(),
+              nom: this.nouvelEnfant.nom.trim(),
+              prenom: this.nouvelEnfant.prenom.trim(),
+              dateNaissance: this.nouvelEnfant.dateNaissance,
+              responsables: respsFiltres.length > 0 ? respsFiltres : [{ nom: 'Non spécifié', telephone: '-' }],
+              pai: this.nouvelEnfant.aPAI ? this.nouvelEnfant.pai.trim() : '',
+              droitImage: this.nouvelEnfant.droitImage
+            };
+            this.enfants.push(nouveau);
+            this.showToast('Enfant enregistré ! 👶');
+          }
+
+          this.showAddEnfantModal = false;
+        },
+
+        supprimerEnfant(id) {
+          if(confirm('Supprimer cette fiche sanitaire ?')) {
+            this.enfants = this.enfants.filter(e => e.id !== id);
+            this.enfantSelectionne = null;
+            this.showToast('Fiche sanitaire supprimée.');
+          }
+        },
+
+        // PURGE TOTALE
+        reinitialiserApp() {
+          if (confirm("Réinitialiser TOUTES les données ?")) {
+            this.fiche = { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] };
+            this.registreSoins = [];
+            this.listeCourses = [];
+            this.organisations = {};
+            this.planningGlobal = [];
+            this.goutersPlanifies = [];
+            this.coursesAchetesGouter = {};
+            this.enfants = [];
+            this.animSelectionne = null;
+            this.enfantSelectionne = null;
+            this.currentTab = 'hub';
+            this.showToast("Application réinitialisée ! 🗑️");
+          }
+        },
+
+        getPlanningFiltre() {
+          if (this.filtrePlanning === 'anim') {
+            return this.planningGlobal;
+          }
+          return this.planningGlobal.filter(p => {
+            const pJour = this.getPlanningDuJour(p, this.dateAffichee);
+            return pJour.ageMatin === this.filtrePlanning || pJour.ageAprem === this.filtrePlanning;
+          });
+        },
+
+        filtrerParAge(age) {
+          if (age) {
+            this.filtrePlanning = age;
+          }
+        },
+
+        parseEnfantsList(chaine) {
+          if (!chaine) return [];
+          return chaine.split(',').map(item => item.trim()).filter(item => item.length > 0);
+        },
+
+        getLundiDeLaSemaine(d) {
+          const date = new Date(d);
+          const day = date.getDay();
+          const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+          return new Date(date.setDate(diff));
+        },
+
+        addDaysISO(dateObj, days) {
+          const res = new Date(dateObj);
+          res.setDate(res.getDate() + days);
+          return `${res.getFullYear()}-${String(res.getMonth() + 1).padStart(2, '0')}-${String(res.getDate()).padStart(2, '0')}`;
+        },
+
+        changerSemaine(delta) {
+          this.semaineActiveOffset += delta;
+        },
+
+        getDatesSemaineActive() {
+          const lundiCourant = this.getLundiDeLaSemaine(new Date());
+          lundiCourant.setDate(lundiCourant.getDate() + (this.semaineActiveOffset * 7));
+
+          const dates = [];
+          for (let i = 0; i < 7; i++) {
+            dates.push(this.addDaysISO(lundiCourant, i));
+          }
+          return dates;
+        },
+
+        getLibelleSemaine() {
+          const dates = this.getDatesSemaineActive();
+          const dDeb = new Date(dates[0]);
+          const dFin = new Date(dates[6]);
+          const options = { day: 'numeric', month: 'short' };
+          return `Semaine du ${dDeb.toLocaleDateString('fr-FR', options)} au ${dFin.toLocaleDateString('fr-FR', options)}`;
+        },
+
+        getGoutersDeLaSemaine() {
+          const datesSemaine = this.getDatesSemaineActive();
+          return this.goutersPlanifies.filter(g => datesSemaine.includes(g.date))
+                                     .sort((a,b) => a.date.localeCompare(b.date));
+        },
+
+        getNomRecette(id) {
+          const r = this.recettesGouter.find(item => item.id === id);
+          return r ? r.nom : 'Recette inconnue';
+        },
+
+        ajouterIngredierntRecette() {
+          if (this.tempIng.nom.trim() !== '' && this.tempIng.qte > 0) {
+            this.nouvelleRecette.ingredients.push({
+              nom: this.tempIng.nom.trim(),
+              qte: this.tempIng.qte,
+              unite: this.tempIng.unite.trim() || 'u'
+            });
+            this.tempIng = { nom: '', qte: '', unite: '' };
+          }
+        },
+
+        enregistrerNouvelleRecette() {
+          if (this.nouvelleRecette.nom.trim() === '') {
+            this.showToast('Indique le nom de la recette !');
+            return;
+          }
+          if (this.nouvelleRecette.ingredients.length === 0) {
+            this.showToast('Ajoute au moins 1 ingrédient.');
+            return;
+          }
+
+          const newId = 'recette-' + Date.now();
+          this.recettesGouter.push({
+            id: newId,
+            nom: this.nouvelleRecette.nom.trim(),
+            ingredients: JSON.parse(JSON.stringify(this.nouvelleRecette.ingredients))
+          });
+
+          this.saisieGouter.recetteId = newId;
+          this.nouvelleRecette = { nom: '', ingredients: [] };
+          this.showAddRecetteModal = false;
+          this.showToast('Recette ajoutée ! 🍰');
+        },
+
+        enregistrerGouterPlanifie() {
+          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) {
+            this.showToast('Choisis une date et une recette !');
+            return;
+          }
+
+          this.goutersPlanifies.push({
+            id: 'gouter-' + Date.now(),
+            date: this.saisieGouter.date,
+            recetteId: this.saisieGouter.recetteId,
+            anim: this.saisieGouter.anim.trim() || 'Animateur',
+            nbEnfants: this.saisieGouter.nbEnfants || 8
+          });
+
+          this.showPlanifModal = false;
+          this.showToast('Goûter planifié ! 🍪');
+        },
+
+        supprimerGouterPlanifie(id) {
+          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
+          this.showToast('Goûter supprimé !');
+        },
+
+        getListeCoursesAgregeeSemaine() {
+          const gouters = this.getGoutersDeLaSemaine();
+          const cumule = {};
+
+          gouters.forEach(g => {
+            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
+            if (recette) {
+              const nbGateaux = Math.ceil((g.nbEnfants || 8) / 8);
+
+              recette.ingredients.forEach(ing => {
+                const key = `${ing.nom.toLowerCase().trim()}_${ing.unite.toLowerCase().trim()}`;
+                if (!cumule[key]) {
+                  cumule[key] = {
+                    key: key,
+                    nom: ing.nom,
+                    qte: 0,
+                    unite: ing.unite
+                  };
+                }
+                cumule[key].qte += (ing.qte * nbGateaux);
+              });
+            }
+          });
+
+          return Object.values(cumule).map(item => ({
+            ...item,
+            qte: Number(item.qte.toFixed(2))
+          }));
+        },
+
+        estAcheteCourseGouter(key) {
+          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
+          return !!this.coursesAchetesGouter[semaineKey];
+        },
+
+        toggleAcheteCourseGouter(key) {
+          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
+          this.coursesAchetesGouter[semaineKey] = !this.coursesAchetesGouter[semaineKey];
+        },
+
+        changerJour(deltaDays) {
+          const parts = this.dateAffichee.split('-');
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          d.setDate(d.getDate() + deltaDays);
+          this.dateAffichee = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+          this.nettoyerCreneauxPasses();
+        },
+
+        formatDateLisible(dateStr) {
+          if(!dateStr) return '';
+          const parts = dateStr.split('-');
+          if(parts.length !== 3) return dateStr;
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          const options = { weekday: 'long', day: 'numeric', month: 'long' };
+          const txt = d.toLocaleDateString('fr-FR', options);
+          return txt.charAt(0).toUpperCase() + txt.slice(1);
+        },
+
+        getPlanningDuJour(anim, dateKey) {
+          if (anim && anim.dates && anim.dates[dateKey]) {
+            return anim.dates[dateKey];
+          }
+          return { matin: 'Repos / Libre', ageMatin: '-6 ans', aprem: 'Repos / Libre', ageAprem: '+6 ans' };
+        },
+
+        editerPlanningDuJour(anim) {
+          const pJour = this.getPlanningDuJour(anim, this.dateAffichee);
+          this.saisiePlanning = {
+            nom: anim.nom,
+            date: this.dateAffichee,
+            matin: pJour.matin === 'Repos / Libre' ? '' : pJour.matin,
+            ageMatin: pJour.ageMatin || '-6 ans',
+            aprem: pJour.aprem === 'Repos / Libre' ? '' : pJour.aprem,
+            ageAprem: pJour.ageAprem || '+6 ans'
+          };
+          this.showAddAnimModal = true;
+        },
+
+        nouveauCreneauVierge() {
+          this.saisiePlanning = {
+            nom: '',
+            date: this.dateAffichee,
+            matin: '',
+            ageMatin: '-6 ans',
+            aprem: '',
+            ageAprem: '+6 ans'
+          };
+          this.showAddAnimModal = true;
+        },
+
+        getOrgDuJour() {
+          return this.organisations[this.dateAffichee] || null;
+        },
+
+        ouvrirModalOrg() {
+          const orgCourante = this.getOrgDuJour();
+          if (orgCourante) {
+            this.saisieOrg = JSON.parse(JSON.stringify(orgCourante));
+          } else {
+            this.saisieOrg = { date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] };
+          }
+          this.tempGroupe = { anim: '', enfants: '' };
+          this.showOrgModal = true;
+        },
+
+        ajouterGroupeSortie() {
+          if(this.tempGroupe.anim.trim() !== '' && this.tempGroupe.enfants.trim() !== '') {
+            if(!this.saisieOrg.groupes) this.saisieOrg.groupes = [];
+            this.saisieOrg.groupes.push({
+              id: Date.now(),
+              anim: this.tempGroupe.anim.trim(),
+              enfants: this.tempGroupe.enfants.trim()
+            });
+            this.tempGroupe = { anim: '', enfants: '' };
+          }
+        },
+
+        sauvegarderOrg() {
+          if (this.saisieOrg.titre.trim() !== '' && this.saisieOrg.date) {
+            this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
+            this.dateAffichee = this.saisieOrg.date;
+            this.showOrgModal = false;
+            this.showToast('Sortie programmée ! 🚌');
+          }
+        },
+
+        effacerOrgDuJour() {
+          delete this.organisations[this.dateAffichee];
+          this.showToast('Sortie effacée.');
+        },
+
+        addMatos() {
+          if (this.newMatosNom.trim() !== '') {
+            this.fiche.materiel.push({
+              nom: this.newMatosNom.trim(),
+              qte: this.newMatosQte.trim() || '1'
+            });
+            this.newMatosNom = '';
+            this.newMatosQte = '';
+          }
+        },
+
+        removeMatos(index) {
+          this.fiche.materiel.splice(index, 1);
+        },
+
+        submitFiche() {
+          this.fiche.materiel.forEach(item => {
+            this.listeCourses.push({
+              id: Date.now() + Math.random(),
+              nom: item.nom,
+              qte: item.qte,
+              activite: this.fiche.titre || 'Activité',
+              achete: false
+            });
+          });
+          this.showToast('Fiche créée & Matériel en cours d\'achat ! 📦');
+        },
+
+        exportPDF() {
+          document.getElementById('pdf-titre').innerText = this.fiche.titre || 'Fiche d\'Activité Sans Titre';
+          document.getElementById('pdf-age').innerText = this.fiche.age;
+          document.getElementById('pdf-lieu').innerText = this.fiche.lieu || 'Non spécifié';
+          document.getElementById('pdf-objectif').innerText = this.fiche.objectif || 'Non spécifié';
+          document.getElementById('pdf-deroulement').innerText = this.fiche.deroulement || 'Aucun déroulement renseigné.';
+
+          const listEl = document.getElementById('pdf-materiel');
+          listEl.innerHTML = '';
+          if(this.fiche.materiel.length === 0) {
+            listEl.innerHTML = '<li>Aucun matériel particulier</li>';
+          } else {
+            this.fiche.materiel.forEach(item => {
+              const li = document.createElement('li');
+              li.innerText = `${item.nom} — Quantité : ${item.qte}`;
+              listEl.appendChild(li);
+            });
+          }
+
+          const element = document.getElementById('pdf-template');
+          element.style.display = 'block';
+
+          const opt = {
+            margin:       0.5,
+            filename:     `fiche_${(this.fiche.titre || 'activite').replace(/\s+/g, '_')}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, logging: false },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+          };
+
+          html2pdf().set(opt).from(element).save().then(() => {
+            element.style.display = 'none';
+          }).catch(err => {
+            element.style.display = 'none';
+            console.error(err);
+          });
+
+          this.showToast('PDF en préparation... 📄');
+        },
+
+        submitSoin() {
+          const now = new Date();
+          const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+          this.registreSoins.unshift({
+            id: Date.now(),
+            enfant: this.soin.enfant,
+            incident: this.soin.incident,
+            action: this.soin.action || 'Soin apporté',
+            heure: timeStr,
+            prevenirFamille: this.soin.prevenirFamille
+          });
+          this.showToast('Soin bien enregistré ! 🩺');
+          this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = ''; this.soin.prevenirFamille = false;
+        },
+
+        deleteSoin(id) {
+          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
+          this.showToast('Soin retiré.');
+        },
+
+        addCourseDirecte() {
+          if(this.nouvelleCourseNom.trim() !== '') {
+            this.listeCourses.unshift({
+              id: Date.now(),
+              nom: this.nouvelleCourseNom.trim(),
+              qte: this.nouvelleCourseQte.trim() || '1',
+              activite: 'Achat direct',
+              achete: false
+            });
+            this.nouvelleCourseNom = '';
+            this.nouvelleCourseQte = '';
+          }
+        },
+
+        deleteCourse(id) {
+          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
+        },
+
+        viderAchetes() {
+          this.listeCourses = this.listeCourses.filter(c => !c.achete);
+          this.showToast('Articles achetés nettoyés ! ✨');
+        },
+
+        ouvrirDetailAnim(p) {
+          this.animSelectionne = p;
+        },
+
+        allerADate(dateKey) {
+          this.dateAffichee = dateKey;
+          this.animSelectionne = null;
+        },
+
+        validerPlanning() {
+          if(this.saisiePlanning.nom.trim() !== '' && this.saisiePlanning.date) {
+            let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
+            
+            if (!anim) {
+              anim = {
+                id: Date.now(),
+                nom: this.saisiePlanning.nom.trim(),
+                dates: {}
+              };
+              this.planningGlobal.push(anim);
+            }
+
+            if(!anim.dates) anim.dates = {};
+
+            anim.dates[this.saisiePlanning.date] = {
+              matin: this.saisiePlanning.matin.trim() || 'Repos / Libre',
+              ageMatin: this.saisiePlanning.ageMatin || '-6 ans',
+              aprem: this.saisiePlanning.aprem.trim() || 'Repos / Libre',
+              ageAprem: this.saisiePlanning.ageAprem || '+6 ans'
+            };
+
+            this.showAddAnimModal = false;
+            this.showToast(`Créneau de ${anim.nom} à jour ! 👍`);
+          }
+        },
+
+        supprimerAnim(id) {
+          this.planningGlobal = this.planningGlobal.filter(p => p.id !== id);
+          this.showToast('Animateur retiré.');
+        },
+
+        showToast(msg) {
+          this.toast.message = msg;
+          this.toast.show = true;
+          setTimeout(() => { this.toast.show = false; }, 3000);
+        }
       }
-    }
-
-    function resetChildForm() {
-      document.getElementById('health-form').reset();
-      document.getElementById('child-id').value = '';
-      document.getElementById('form-title').innerText = "Ajouter/Modifier une Fiche Sanitaire";
-    }
-
-    // --- VOLET 2: PLANNING & NETTOYAGE AUTOMATIQUE ---
-    function cleanPastAnimations() {
-      const today = getTodayString();
-      // On conserve uniquement les animations dont la date est supérieure ou égale à aujourd'hui
-      animations = animations.filter(anim => anim.date >= today);
-      localStorage.setItem('center_anims', JSON.stringify(animations));
-    }
-
-    function saveAnimation(event) {
-      event.preventDefault();
-      const date = document.getElementById('anim-date').value;
-      const animator = document.getElementById('anim-animator').value;
-      const title = document.getElementById('anim-title').value;
-
-      const newAnim = { id: Date.now().toString(), date, animator, title };
-      animations.push(newAnim);
-      
-      localStorage.setItem('center_anims', JSON.stringify(animations));
-      
-      // Mettre à jour le sélecteur sur la date qu'on vient d'ajouter pour voir le résultat
-      document.getElementById('selected-date').value = date;
-      
-      document.getElementById('anim-form').reset();
-      document.getElementById('anim-date').value = date;
-      renderPlanning();
-    }
-
-    function renderPlanning() {
-      const selectedDate = document.getElementById('selected-date').value;
-      const container = document.getElementById('planning-list');
-      container.innerHTML = '';
-
-      const filteredAnims = animations.filter(anim => anim.date === selectedDate);
-
-      if (filteredAnims.length === 0) {
-        container.innerHTML = `<tr><td colspan="2" style="text-align:center;">Aucune animation programmée pour cette date.</td></tr>`;
-        return;
-      }
-
-      filteredAnims.forEach(anim => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><strong>${anim.animator}</strong></td>
-          <td>${anim.title}</td>
-        `;
-        container.appendChild(row);
-      });
-    }
-
-    function setToToday() {
-      document.getElementById('selected-date').value = getTodayString();
-      renderPlanning();
     }
   </script>
 </body>
