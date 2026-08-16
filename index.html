@@ -71,7 +71,7 @@
     .font-poster {
       font-family: 'Syne', sans-serif;
       text-transform: uppercase;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.01em;
       line-height: 1.1;
     }
 
@@ -85,21 +85,22 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     }
 
-    /* Hub Card Deluxe */
+    /* Hub Card Deluxe avec Bi-Couleur Dynamique */
     .hub-card {
-      background: rgba(255, 255, 255, 0.65);
+      position: relative;
+      overflow: hidden;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 2px solid rgba(255, 255, 255, 0.9);
+      border: 2.5px solid rgba(255, 255, 255, 0.85);
       border-radius: var(--radius-lg);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
       transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .hub-card:hover {
-      transform: translateY(-4px) scale(1.015);
-      background: rgba(255, 255, 255, 0.85);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.15);
+      border-color: #ffffff;
     }
 
     .hub-card:active {
@@ -231,103 +232,109 @@
 
   <main class="max-w-5xl mx-auto w-full px-4 flex-1 flex flex-col justify-start">
 
-    <!-- ==================== 0. HUB PRINCIPAL (2 COL x 3 LIGNES OPTIMISÉ ET DESIGNÉ) ==================== -->
+    <!-- ==================== 0. HUB PRINCIPAL (2 COL x 3 LIGNES AVEC CARTES BI-COULEURS ET TITRES SOIGNÉS) ==================== -->
     <div x-show="currentTab === 'hub'" 
          x-transition:enter="transition ease-out duration-150" 
          x-transition:enter-start="opacity-0 scale-95" 
          x-transition:enter-end="opacity-100 scale-100" 
-         class="w-full flex-1 flex flex-col justify-center py-2 h-[calc(100vh-80px)]">
+         class="w-full flex-1 flex flex-col justify-center py-2 min-h-[calc(100vh-80px)]">
       
-      <div class="grid grid-cols-2 grid-rows-3 gap-3 sm:gap-5 w-full h-full">
+      <div class="grid grid-cols-2 grid-rows-3 gap-3 sm:gap-5 w-full flex-1">
         
         <!-- 1. Fiches San' -->
-        <button type="button" @click="currentTab = 'sanitaire'" class="hub-card p-4 sm:p-6 flex items-center justify-between text-left group h-full w-full border-l-8 border-[#1D2A44]">
-          <div class="flex items-center gap-3 sm:gap-5 overflow-hidden">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#A8E6CF] text-[#1D2A44] flex items-center justify-center text-2xl sm:text-4xl font-black shadow-inner shrink-0 group-hover:scale-110 transition-transform">
+        <button type="button" @click="currentTab = 'sanitaire'" 
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
+                style="background: linear-gradient(135deg, #A8E6CF 0%, #ffffff 80%); border-color: #1D2A44;">
+          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#1D2A44] text-[#A8E6CF] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
               🩺
             </div>
-            <div class="overflow-hidden space-y-1">
-              <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#A8E6CF]/50 text-[#1D2A44]">Médical & Enfants</span>
-              <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate text-[#1D2A44]">Fiches San'</h3>
-              <p class="text-[10px] sm:text-xs font-extrabold opacity-75 truncate hidden xs:block">PAI, Urgences & Droit image</p>
+            <div class="overflow-hidden min-w-0 flex-1">
+              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#1D2A44] truncate">Fiches San'</h3>
+              <p class="text-[9px] sm:text-xs font-bold text-[#1D2A44]/75 truncate">PAI, Urgences & Droit image</p>
             </div>
           </div>
-          <i class="fa-solid fa-arrow-right text-base sm:text-xl opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#1D2A44] hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#1D2A44]/40 group-hover:text-[#1D2A44] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 2. Fiche d'activité -->
-        <button type="button" @click="currentTab = 'fiche'" class="hub-card p-4 sm:p-6 flex items-center justify-between text-left group h-full w-full border-l-8 border-[#2A385B]">
-          <div class="flex items-center gap-3 sm:gap-5 overflow-hidden">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FFB703] text-[#2A385B] flex items-center justify-center text-2xl sm:text-4xl font-black shadow-inner shrink-0 group-hover:scale-110 transition-transform">
+        <button type="button" @click="currentTab = 'fiche'" 
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
+                style="background: linear-gradient(135deg, #FFB703 0%, #ffffff 80%); border-color: #2A385B;">
+          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#2A385B] text-[#FFB703] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
               🎨
             </div>
-            <div class="overflow-hidden space-y-1">
-              <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#FFB703]/50 text-[#2A385B]">Animation</span>
-              <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate text-[#2A385B]">Fiche d'Activité</h3>
-              <p class="text-[10px] sm:text-xs font-extrabold opacity-75 truncate hidden xs:block">Création, Matériel & Export PDF</p>
+            <div class="overflow-hidden min-w-0 flex-1">
+              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#2A385B] truncate">Fiche d'Activité</h3>
+              <p class="text-[9px] sm:text-xs font-bold text-[#2A385B]/75 truncate">Création, Matériel & Export PDF</p>
             </div>
           </div>
-          <i class="fa-solid fa-arrow-right text-base sm:text-xl opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#2A385B] hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#2A385B]/40 group-hover:text-[#2A385B] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 3. Cahier de soins -->
-        <button type="button" @click="currentTab = 'soins'" class="hub-card p-4 sm:p-6 flex items-center justify-between text-left group h-full w-full border-l-8 border-[#E63946]">
-          <div class="flex items-center gap-3 sm:gap-5 overflow-hidden">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FFD1DC] text-[#E63946] flex items-center justify-center text-2xl sm:text-4xl font-black shadow-inner shrink-0 group-hover:scale-110 transition-transform">
+        <button type="button" @click="currentTab = 'soins'" 
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
+                style="background: linear-gradient(135deg, #FFD1DC 0%, #ffffff 80%); border-color: #E63946;">
+          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#E63946] text-[#FFD1DC] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
               🩹
             </div>
-            <div class="overflow-hidden space-y-1">
-              <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#FFD1DC]/50 text-[#E63946]">Infirmerie</span>
-              <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate text-[#E63946]">Cahier de Soins</h3>
-              <p class="text-[10px] sm:text-xs font-extrabold opacity-75 truncate hidden xs:block">Suivi bobos, soins & parents</p>
+            <div class="overflow-hidden min-w-0 flex-1">
+              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#E63946] truncate">Cahier de Soins</h3>
+              <p class="text-[9px] sm:text-xs font-bold text-[#E63946]/75 truncate">Suivi bobos, soins & parents</p>
             </div>
           </div>
-          <i class="fa-solid fa-arrow-right text-base sm:text-xl opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#E63946] hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#E63946]/40 group-hover:text-[#E63946] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 4. Goûter -->
-        <button type="button" @click="currentTab = 'gouter'" class="hub-card p-4 sm:p-6 flex items-center justify-between text-left group h-full w-full border-l-8 border-[#4A2810]">
-          <div class="flex items-center gap-3 sm:gap-5 overflow-hidden">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#FF9F1C] text-[#4A2810] flex items-center justify-center text-2xl sm:text-4xl font-black shadow-inner shrink-0 group-hover:scale-110 transition-transform">
+        <button type="button" @click="currentTab = 'gouter'" 
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
+                style="background: linear-gradient(135deg, #FF9F1C 0%, #ffffff 80%); border-color: #4A2810;">
+          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#4A2810] text-[#FF9F1C] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
               🍪
             </div>
-            <div class="overflow-hidden space-y-1">
-              <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#FF9F1C]/50 text-[#4A2810]">Cuisine & Repas</span>
-              <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate text-[#4A2810]">Goûter</h3>
-              <p class="text-[10px] sm:text-xs font-extrabold opacity-75 truncate hidden xs:block">Menus, Recettes & Quantités</p>
+            <div class="overflow-hidden min-w-0 flex-1">
+              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#4A2810] truncate">Goûter</h3>
+              <p class="text-[9px] sm:text-xs font-bold text-[#4A2810]/75 truncate">Menus, Recettes & Quantités</p>
             </div>
           </div>
-          <i class="fa-solid fa-arrow-right text-base sm:text-xl opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#4A2810] hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#4A2810]/40 group-hover:text-[#4A2810] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 5. Courses & Matériel -->
-        <button type="button" @click="currentTab = 'courses'" class="hub-card p-4 sm:p-6 flex items-center justify-between text-left group h-full w-full border-l-8 border-[#1B4332]">
-          <div class="flex items-center gap-3 sm:gap-5 overflow-hidden">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#B7E4C7] text-[#1B4332] flex items-center justify-center text-2xl sm:text-4xl font-black shadow-inner shrink-0 group-hover:scale-110 transition-transform">
+        <button type="button" @click="currentTab = 'courses'" 
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
+                style="background: linear-gradient(135deg, #B7E4C7 0%, #ffffff 80%); border-color: #1B4332;">
+          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#1B4332] text-[#B7E4C7] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
               🛍️
             </div>
-            <div class="overflow-hidden space-y-1">
-              <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#B7E4C7]/50 text-[#1B4332]">Logistique</span>
-              <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate text-[#1B4332]">Courses & Matos</h3>
-              <p class="text-[10px] sm:text-xs font-extrabold opacity-75 truncate hidden xs:block">Listes d'achats cumulées</p>
+            <div class="overflow-hidden min-w-0 flex-1">
+              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#1B4332] truncate">Courses & Matos</h3>
+              <p class="text-[9px] sm:text-xs font-bold text-[#1B4332]/75 truncate">Listes d'achats cumulées</p>
             </div>
           </div>
-          <i class="fa-solid fa-arrow-right text-base sm:text-xl opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#1B4332] hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#1B4332]/40 group-hover:text-[#1B4332] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 6. Planning -->
-        <button type="button" @click="currentTab = 'planning'" class="hub-card p-4 sm:p-6 flex items-center justify-between text-left group h-full w-full border-l-8 border-[#3A0CA3]">
-          <div class="flex items-center gap-3 sm:gap-5 overflow-hidden">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-[#4CC9F0] text-[#3A0CA3] flex items-center justify-center text-2xl sm:text-4xl font-black shadow-inner shrink-0 group-hover:scale-110 transition-transform">
+        <button type="button" @click="currentTab = 'planning'" 
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
+                style="background: linear-gradient(135deg, #4CC9F0 0%, #ffffff 80%); border-color: #3A0CA3;">
+          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#3A0CA3] text-[#4CC9F0] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
               📅
             </div>
-            <div class="overflow-hidden space-y-1">
-              <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#4CC9F0]/50 text-[#3A0CA3]">Organisation</span>
-              <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate text-[#3A0CA3]">Planning</h3>
-              <p class="text-[10px] sm:text-xs font-extrabold opacity-75 truncate hidden xs:block">Animateurs, Groupes & Sorties</p>
+            <div class="overflow-hidden min-w-0 flex-1">
+              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#3A0CA3] truncate">Planning</h3>
+              <p class="text-[9px] sm:text-xs font-bold text-[#3A0CA3]/75 truncate">Animateurs, Groupes & Sorties</p>
             </div>
           </div>
-          <i class="fa-solid fa-arrow-right text-base sm:text-xl opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#3A0CA3] hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#3A0CA3]/40 group-hover:text-[#3A0CA3] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
       </div>
@@ -347,10 +354,24 @@
           </button>
         </div>
 
-        <!-- RECHERCHE ENFANT -->
-        <div class="relative">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
-          <input type="text" x-model="searchEnfant" placeholder="Rechercher par nom ou prénom..." class="input-pop w-full pl-9 pr-3 py-2 text-xs">
+        <!-- RECHERCHE & FILTRES PAR GROUPES -->
+        <div class="space-y-2">
+          <div class="flex gap-1.5">
+            <button type="button" @click="filtreGroupeSanitaire = 'tous'" :class="filtreGroupeSanitaire === 'tous' ? 'btn-white shadow border border-current/20' : 'bg-white/20 opacity-80 font-extrabold'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all">
+              Tous
+            </button>
+            <button type="button" @click="filtreGroupeSanitaire = '-6ans'" :class="filtreGroupeSanitaire === '-6ans' ? 'bg-emerald-500 text-white font-extrabold shadow' : 'bg-emerald-100 text-emerald-900 font-extrabold opacity-80'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all flex items-center justify-center gap-1">
+              <span>🌱</span> -6 ans
+            </button>
+            <button type="button" @click="filtreGroupeSanitaire = '+6ans'" :class="filtreGroupeSanitaire === '+6ans' ? 'bg-indigo-600 text-white font-extrabold shadow' : 'bg-indigo-100 text-indigo-900 font-extrabold opacity-80'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all flex items-center justify-center gap-1">
+              <span>⚡</span> +6 ans
+            </button>
+          </div>
+
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
+            <input type="text" x-model="searchEnfant" placeholder="Rechercher par nom ou prénom..." class="input-pop w-full pl-9 pr-3 py-2 text-xs">
+          </div>
         </div>
 
         <!-- LISTE DES ENFANTS -->
@@ -366,7 +387,7 @@
               <div class="space-y-0.5 overflow-hidden pr-2">
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <h4 class="font-extrabold text-xs md:text-sm truncate" x-text="e.prenom + ' ' + e.nom"></h4>
-                  <!-- BADGE STYLE PLANNING (-6ans / +6ans) -->
+                  <!-- BADGE DU GROUPE -->
                   <span x-show="getAgeEnfant(e.dateNaissance) < 6" class="bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
                     <span>🌱</span> -6ans
                   </span>
@@ -374,16 +395,19 @@
                     <span>⚡️</span> +6ans
                   </span>
                 </div>
-                <p class="text-[11px] font-bold opacity-75 truncate" x-text="getAgeEnfant(e.dateNaissance) + ' ans (' + formatDateLisible(e.dateNaissance) + ')'"></p>
+                <!-- AGE DE L'ENFANT RESTAURÉ DE FAÇON BIEN VISIBLE -->
+                <p class="text-[11px] font-extrabold opacity-80 truncate">
+                  <span class="text-xs font-black text-emerald-950" x-text="getAgeEnfant(e.dateNaissance) + ' ans'"></span>
+                  <span class="opacity-75" x-text="'(' + formatDateLisible(e.dateNaissance) + ')'"></span>
+                </p>
               </div>
 
-              <!-- ICÔNES DE RAPPEL (SANS CLIGNOTEMENT) -->
+              <!-- ICÔNES DE RAPPEL -->
               <div class="flex items-center space-x-1.5 shrink-0">
                 <span x-show="e.pai" title="PAI / Médical" class="w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
                   ⚠️
                 </span>
                 
-                <!-- PASTILLE VERTE (AUTORISÉ) / ROUGE (REFUSÉ) POUR LE DROIT A L'IMAGE -->
                 <span x-show="e.droitImage" title="Droit à l'image AUTORISÉ" class="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm">
                   <i class="fa-solid fa-camera"></i>
                 </span>
@@ -480,8 +504,9 @@
             </div>
             <div class="truncate">
               <h3 class="font-poster text-base font-black truncate" x-text="enfantSelectionne?.prenom + ' ' + enfantSelectionne?.nom"></h3>
-              <!-- BADGES STYLE PLANNING (-6ans / +6ans) -->
-              <div class="pt-0.5">
+              <!-- BADGES GROUPE ET ÂGE DE L'ENFANT DANS LA MODALE -->
+              <div class="pt-0.5 flex items-center gap-1.5">
+                <span class="text-[10px] font-black bg-white/70 px-2 py-0.5 rounded-full shadow-sm text-current" x-text="getAgeEnfant(enfantSelectionne?.dateNaissance) + ' ans'"></span>
                 <span x-show="getAgeEnfant(enfantSelectionne?.dateNaissance) < 6" class="inline-flex items-center gap-1 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">
                   <span>🌱</span> -6ans
                 </span>
@@ -497,7 +522,7 @@
         <div class="space-y-2.5 text-xs">
           <div class="card-item-pop p-2.5 space-y-0.5">
             <span class="text-[9px] opacity-70 font-extrabold uppercase block">Date de naissance</span>
-            <p class="font-extrabold text-xs" x-text="formatDateLisible(enfantSelectionne?.dateNaissance)"></p>
+            <p class="font-extrabold text-xs" x-text="formatDateLisible(enfantSelectionne?.dateNaissance) + ' (' + getAgeEnfant(enfantSelectionne?.dateNaissance) + ' ans)'"></p>
           </div>
 
           <!-- AFFICHAGE RESPONSABLES LÉGAUX -->
@@ -511,7 +536,7 @@
             </template>
           </div>
 
-          <!-- ENCADRÉ PAI SIMPLE (SANS TEXTES OU PASTILLES INUTILES, SANS CLIGNOTEMENT) -->
+          <!-- ENCADRÉ PAI SIMPLE -->
           <div class="p-3.5 rounded-2xl space-y-1.5 border-2 transition-all" 
                :class="enfantSelectionne?.pai ? 'bg-amber-100 border-amber-500 text-amber-950 shadow-md' : 'bg-white/40 border-current/20'">
             <div class="flex items-center justify-between">
@@ -522,7 +547,7 @@
             <p class="font-black text-xs md:text-sm pt-0.5 break-words" x-text="enfantSelectionne?.pai || 'Aucun traitement ou PAI renseigné.'"></p>
           </div>
 
-          <!-- ENCADRÉ DROIT A L'IMAGE DYNAMIQUE (ROUGE / VERT) -->
+          <!-- ENCADRÉ DROIT A L'IMAGE DYNAMIQUE -->
           <div class="card-item-pop p-2.5 flex items-center justify-between">
             <span class="text-[10px] font-extrabold uppercase opacity-80">📸 Droit à l'Image</span>
             
@@ -539,7 +564,6 @@
           <button type="button" @click="editerEnfant(enfantSelectionne)" class="btn-white py-2 px-3 rounded-full text-xs shadow border border-current/20 flex items-center gap-1">
             ✏️ Modifier
           </button>
-          <!-- BOUTON SUPPRIMER SANS CROIX ❌ -->
           <button type="button" @click="supprimerEnfant(enfantSelectionne?.id)" class="bg-red-600 text-white hover:bg-red-700 font-extrabold py-2 px-3 rounded-full text-xs shadow flex items-center gap-1">
             Supprimer
           </button>
@@ -745,7 +769,7 @@
           </div>
         </div>
 
-        <!-- MODAL CRÉER RECETTE (AVEC SELECTION D'UNITÉS) -->
+        <!-- MODAL CRÉER RECETTE (UNITÉS NETTOYÉES ET SANS PINCÉE OU C. À CAFÉ) -->
         <div x-show="showAddRecetteModal" x-transition class="card-item-pop p-3.5 space-y-2.5" style="display: none;">
           <div class="flex justify-between items-center border-b border-current/20 pb-1.5">
             <h3 class="text-xs font-extrabold uppercase">
@@ -765,7 +789,7 @@
             <div class="grid grid-cols-6 gap-1">
               <input type="text" x-model="tempIng.nom" placeholder="Nom" class="col-span-3 input-pop px-2 py-1 text-xs">
               <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-pop px-1 py-1 text-xs text-center">
-              <!-- SELECTEUR D'UNITÉ INCLUT A LA PLACE DU TEXTE -->
+              <!-- SELECTEUR D'UNITÉ SANS PINCÉE, C. À SOUPE OU C. À CAFÉ -->
               <select x-model="tempIng.unite" class="col-span-1.5 input-pop px-1 py-1 text-xs font-extrabold">
                 <option value="g">g</option>
                 <option value="kg">kg</option>
@@ -774,9 +798,6 @@
                 <option value="L">L</option>
                 <option value="pièce(s)">pièce(s)</option>
                 <option value="sachet(s)">sachet(s)</option>
-                <option value="pincée(s)">pincée(s)</option>
-                <option value="c. à soupe">c. à soupe</option>
-                <option value="c. à café">c. à café</option>
               </select>
             </div>
             
@@ -978,13 +999,13 @@
     </div>
 
 
-    <!-- ==================== 6. ONGLET : PLANNING ==================== -->
+    <!-- ==================== 6. ONGLET : PLANNING (AVEC TITRE CORRIGÉ ET ANTI-DEBORDEMENT) ==================== -->
     <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-2.5 border-b-2 border-current/20 pb-3">
           <div class="flex items-center justify-between gap-1.5">
-            <h2 class="font-poster text-base sm:text-lg md:text-xl flex items-center gap-1.5 truncate">
+            <h2 class="font-poster text-base sm:text-lg md:text-xl font-black flex items-center gap-1.5 truncate shrink min-w-0">
               <span>📅</span> Planning
             </h2>
             <div class="flex gap-1.5 shrink-0">
@@ -1071,7 +1092,7 @@
           </div>
         </template>
 
-        <!-- LISTE PLANNING DES ANIMATEURS (AVEC DISTINCTION PAR COULEURS DES GROUPES) -->
+        <!-- LISTE PLANNING DES ANIMATEURS -->
         <div class="space-y-2.5">
           <h3 class="text-xs font-extrabold uppercase tracking-wider" x-text="filtrePlanning === 'anim' ? 'Planning des Animateurs' : 'Groupes concernés (' + filtrePlanning + ')'"></h3>
 
@@ -1095,7 +1116,7 @@
                   </div>
                 </div>
 
-                <!-- BLOCS MATIN / APREM DYNAMIQUES AVEC COULEURS DE GROUPES -->
+                <!-- BLOCS MATIN / APREM -->
                 <div class="grid grid-cols-2 gap-1.5 text-xs">
                   
                   <!-- MATIN -->
@@ -1201,7 +1222,7 @@
       </div>
     </div>
 
-    <!-- MODAL : DETAIL ANIMATEUR (AVEC COULEURS DES GROUPES CONSERVÉES) -->
+    <!-- MODAL : DETAIL ANIMATEUR -->
     <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-planning border-2 border-white max-h-[85vh] overflow-y-auto shadow-2xl">
         
@@ -1229,7 +1250,7 @@
               </div>
 
               <div class="grid grid-cols-2 gap-1.5 text-xs">
-                <!-- MATIN AVEC PASTILLE ET BORDURES COLORÉES -->
+                <!-- MATIN -->
                 <div class="p-2 rounded-xl border-l-4 transition-all"
                      :class="planningDate.ageMatin === '-6 ans' 
                              ? 'bg-emerald-500/15 border-emerald-600 text-emerald-950' 
@@ -1243,7 +1264,7 @@
                   <p class="font-extrabold text-[11px] truncate" x-text="planningDate.matin || 'Repos / Libre'"></p>
                 </div>
 
-                <!-- APRÈS-MIDI AVEC PASTILLE ET BORDURES COLORÉES -->
+                <!-- APRÈS-MIDI -->
                 <div class="p-2 rounded-xl border-l-4 transition-all"
                      :class="planningDate.ageAprem === '-6 ans' 
                              ? 'bg-emerald-500/15 border-emerald-600 text-emerald-950' 
@@ -1330,6 +1351,7 @@
         dateAffichee: todayISO,
         todayDateISO: todayISO,
         filtrePlanning: 'anim', 
+        filtreGroupeSanitaire: 'tous',
         newMatosNom: '',
         newMatosQte: '',
         nouvelleCourseNom: '',
@@ -1514,9 +1536,20 @@
         },
 
         getEnfantsFiltres() {
-          if (!this.searchEnfant.trim()) return this.enfants;
-          const q = this.searchEnfant.toLowerCase();
-          return this.enfants.filter(e => e.nom.toLowerCase().includes(q) || e.prenom.toLowerCase().includes(q));
+          let liste = this.enfants;
+
+          if (this.filtreGroupeSanitaire === '-6ans') {
+            liste = liste.filter(e => this.getAgeEnfant(e.dateNaissance) < 6);
+          } else if (this.filtreGroupeSanitaire === '+6ans') {
+            liste = liste.filter(e => this.getAgeEnfant(e.dateNaissance) >= 6);
+          }
+
+          if (this.searchEnfant.trim()) {
+            const q = this.searchEnfant.toLowerCase();
+            liste = liste.filter(e => e.nom.toLowerCase().includes(q) || e.prenom.toLowerCase().includes(q));
+          }
+
+          return liste;
         },
 
         getAgeEnfant(dateNaissStr) {
