@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALSHFlow - Animation Hub</title>
 
-  <!-- Google Fonts: Fredoka -->
+  <!-- Google Fonts: Syne (Titres Pop/Bold) & Fredoka (Corps de texte) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -20,59 +20,76 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
-    :root {
-      --bg-yellow: #fcd307;
-      --bg-blue: #4d53ed;
-      --card-blue: #5b61f6;
-      --text-dark: #111111;
-      --text-light: #ffffff;
-      --radius-lg: 28px;
-      --radius-md: 18px;
-      --radius-pill: 999px;
-    }
-
     *, ::before, ::after { box-sizing: border-box; }
 
     body {
       font-family: 'Fredoka', sans-serif;
-      background-color: var(--bg-yellow);
-      color: var(--text-dark);
+      transition: background-color 0.3s ease, color 0.3s ease;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* Carte Style Bento */
-    .card-bento {
-      background-color: var(--card-blue);
-      color: var(--text-light);
-      border-radius: var(--radius-lg);
-      box-shadow: 0 10px 25px rgba(77, 83, 237, 0.25);
+    .font-syne {
+      font-family: 'Syne', sans-serif;
     }
 
-    .card-item-bento {
-      background-color: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: var(--radius-md);
-      color: var(--text-light);
-    }
+    /* COULEURS ET THÈMES PAR ONGLET (Max 3 couleurs) */
+    
+    /* 0. HUB */
+    body.theme-hub { background-color: #f6e6be; color: #1c100b; }
+    .theme-hub .btn-primary { background-color: #ea3926; color: #ffffff; }
+    .theme-hub .card-main { background-color: #ffffff; border: 2px solid #ea3926; }
+    .theme-hub .text-accent { color: #ea3926; }
 
-    /* Inputs arrondis */
-    .input-chubby {
+    /* 1. SANITAIRE */
+    body.theme-sanitaire { background-color: #f3d3ca; color: #22100d; }
+    .theme-sanitaire .btn-primary { background-color: #d93829; color: #ffffff; }
+    .theme-sanitaire .card-main { background-color: #ffffff; border: 2px solid #d93829; }
+    .theme-sanitaire .text-accent { color: #d93829; }
+
+    /* 2. FICHE D'ACTIVITÉ */
+    body.theme-fiche { background-color: #d8d6f0; color: #101333; }
+    .theme-fiche .btn-primary { background-color: #2a3bbf; color: #ffffff; }
+    .theme-fiche .card-main { background-color: #ffffff; border: 2px solid #2a3bbf; }
+    .theme-fiche .text-accent { color: #2a3bbf; }
+
+    /* 3. CAHIER DE SOINS */
+    body.theme-soins { background-color: #cfe3d3; color: #0b1a0f; }
+    .theme-soins .btn-primary { background-color: #1f5f38; color: #ffffff; }
+    .theme-soins .card-main { background-color: #ffffff; border: 2px solid #1f5f38; }
+    .theme-soins .text-accent { color: #1f5f38; }
+
+    /* 4. GOÛTERS & RECETTES */
+    body.theme-gouter { background-color: #fbf0b9; color: #211204; }
+    .theme-gouter .btn-primary { background-color: #d96128; color: #ffffff; }
+    .theme-gouter .card-main { background-color: #ffffff; border: 2px solid #d96128; }
+    .theme-gouter .text-accent { color: #d96128; }
+
+    /* 5. COURSES & MATÉRIEL */
+    body.theme-courses { background-color: #fce1cd; color: #1f0b2e; }
+    .theme-courses .btn-primary { background-color: #592b82; color: #ffffff; }
+    .theme-courses .card-main { background-color: #ffffff; border: 2px solid #592b82; }
+    .theme-courses .text-accent { color: #592b82; }
+
+    /* 6. PLANNING & ÉQUIPE */
+    body.theme-planning { background-color: #d5e8f3; color: #041424; }
+    .theme-planning .btn-primary { background-color: #0f3254; color: #ffffff; }
+    .theme-planning .card-main { background-color: #ffffff; border: 2px solid #0f3254; }
+    .theme-planning .text-accent { color: #0f3254; }
+
+    /* Inputs Épurés Style Éditorial */
+    .input-pop {
       background-color: #ffffff;
-      border: 2px solid transparent;
-      border-radius: var(--radius-md);
-      color: var(--text-dark);
+      border: 2px solid currentColor;
+      border-radius: 12px;
       font-weight: 600;
       transition: all 0.2s ease;
-      max-width: 100%;
     }
-
-    .input-chubby:focus {
+    .input-pop:focus {
       outline: none;
-      border-color: var(--text-dark);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
     }
 
-    /* Correctif pour les inputs date sur mobile/popups */
     input[type="date"] {
       appearance: none;
       -webkit-appearance: none;
@@ -81,30 +98,30 @@
   </style>
 </head>
 
-<body class="pb-10 select-none flex flex-col min-h-screen" x-data="alshApp()">
+<body class="pb-10 select-none flex flex-col min-h-screen" :class="'theme-' + currentTab" x-data="alshApp()">
 
-  <!-- HEADER BRANDING AVEC RETOUR HUB & RÉINITIALISER -->
-  <header class="max-w-md mx-auto w-full px-4 pt-5 mb-2 flex items-center justify-between">
+  <!-- HEADER BRANDING -->
+  <header class="max-w-md mx-auto w-full px-4 pt-6 mb-4 flex items-center justify-between">
     <div class="flex items-center gap-3 cursor-pointer" @click="currentTab = 'hub'">
-      <div class="w-11 h-11 bg-black text-yellow-400 rounded-2xl flex items-center justify-center text-xl font-black shadow-md">
+      <div class="w-10 h-10 btn-primary rounded-xl flex items-center justify-center text-xl font-black shadow-sm">
         ⚡
       </div>
       <div>
-        <h1 class="text-2xl font-black tracking-wide text-black leading-none">
-          ALSH<span class="text-white drop-shadow-sm">Flow</span>
+        <h1 class="text-2xl font-black font-syne tracking-tight leading-none uppercase">
+          ALSH<span class="opacity-70">Flow</span>
         </h1>
-        <p class="text-[11px] font-semibold text-black/70 uppercase tracking-wider">Les 3 z'ailes</p>
+        <p class="text-[10px] font-bold uppercase tracking-widest opacity-80">Les 3 z'ailes</p>
       </div>
     </div>
     
     <div class="flex items-center gap-2">
-      <!-- Bouton Retour au Hub s'il n'est pas déjà dessus -->
-      <button x-show="currentTab !== 'hub'" type="button" @click="currentTab = 'hub'" class="bg-white hover:bg-gray-100 text-black font-extrabold text-xs px-3.5 py-2 rounded-full shadow-md transition-transform active:scale-95 flex items-center gap-1.5">
+      <!-- Bouton Retour au Hub -->
+      <button x-show="currentTab !== 'hub'" type="button" @click="currentTab = 'hub'" class="card-main font-black text-xs px-4 py-2 rounded-xl shadow-sm transition-transform active:scale-95 flex items-center gap-1.5 uppercase tracking-wider">
         <i class="fa-solid fa-house"></i> Hub
       </button>
 
       <!-- Bouton Réinitialiser -->
-      <button type="button" @click="reinitialiserApp()" class="bg-black hover:bg-gray-900 text-yellow-400 font-bold text-xs px-3.5 py-2 rounded-full shadow-md transition-transform active:scale-95 flex items-center gap-1.5">
+      <button type="button" @click="reinitialiserApp()" class="btn-primary font-black text-xs px-3.5 py-2 rounded-xl shadow-sm transition-transform active:scale-95">
         <i class="fa-solid fa-rotate-left"></i>
       </button>
     </div>
@@ -113,99 +130,78 @@
   <!-- TOAST NOTIFICATION STYLISÉE -->
   <div x-show="toast.show" 
        x-transition:enter="transition ease-out duration-200"
-       x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
-       x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+       x-transition:enter-start="opacity-0 -translate-y-4"
+       x-transition:enter-end="opacity-100 translate-y-0"
        x-transition:leave="transition ease-in duration-150"
-       x-transition:leave-start="opacity-100 scale-100"
-       x-transition:leave-end="opacity-0 scale-95"
-       class="fixed top-5 right-4 left-4 z-[70] max-w-md mx-auto bg-black text-white p-4 rounded-3xl shadow-2xl flex items-center justify-between border border-white/20"
+       x-transition:leave-start="opacity-100"
+       x-transition:leave-end="opacity-0"
+       class="fixed top-5 right-4 left-4 z-[70] max-w-md mx-auto btn-primary p-4 rounded-2xl shadow-xl flex items-center justify-between"
        style="display: none;">
     <div class="flex items-center space-x-3">
-      <i class="fa-solid fa-circle-check text-yellow-400 text-xl"></i>
-      <span class="text-sm font-semibold" x-text="toast.message"></span>
+      <i class="fa-solid fa-circle-check text-lg"></i>
+      <span class="text-xs font-bold" x-text="toast.message"></span>
     </div>
-    <button type="button" @click="toast.show = false" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <button type="button" @click="toast.show = false" class="opacity-80 hover:opacity-100"><i class="fa-solid fa-xmark text-base"></i></button>
   </div>
 
-  <main class="max-w-md mx-auto w-full px-4 space-y-4 mt-2 flex-1">
+  <main class="max-w-md mx-auto w-full px-4 space-y-4 flex-1">
 
-    <!-- ==================== 0. HUB PRINCIPAL (MENU DE NAVIGATION) ==================== -->
-    <div x-show="currentTab === 'hub'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4">
+    <!-- ==================== 0. HUB PRINCIPAL ==================== -->
+    <div x-show="currentTab === 'hub'" class="space-y-4">
       
-      <div class="bg-black text-white p-5 rounded-[28px] shadow-lg flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-black text-yellow-400">Tableau de bord 🚀</h2>
-          <p class="text-xs text-white/70">Sélectionne un outil pour commencer</p>
-        </div>
-        <span class="text-2xl">📋</span>
+      <div class="btn-primary p-6 rounded-2xl shadow-sm space-y-1">
+        <h2 class="text-3xl font-black font-syne uppercase tracking-tight">SOLUTIONS & OUTILS</h2>
+        <p class="text-xs font-medium opacity-90">Sélectionne un module pour accéder à la gestion complète.</p>
       </div>
 
       <!-- GRID DES BOUTONS HUB -->
-      <div class="grid grid-cols-2 gap-3.5">
+      <div class="grid grid-cols-2 gap-3">
         
-        <!-- Fiches Sanitaires -->
-        <button type="button" @click="currentTab = 'sanitaire'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
-          <div class="w-10 h-10 rounded-2xl bg-rose-500 text-white flex items-center justify-center text-lg font-black shadow-md">
-            🩺
-          </div>
+        <button type="button" @click="currentTab = 'sanitaire'" class="bg-white p-5 rounded-2xl border-2 border-[#d93829] flex flex-col justify-between text-left h-36 hover:brightness-95 transition-transform active:scale-95">
+          <span class="text-2xl">🩺</span>
           <div>
-            <h3 class="font-bold text-base text-white leading-tight">Fiches Sanitaires</h3>
-            <p class="text-[11px] text-white/70">PAI, Droit image, Enfants</p>
+            <h3 class="font-black font-syne text-lg uppercase text-[#d93829] leading-tight">Fiches Sanitaires</h3>
+            <p class="text-[10px] font-bold opacity-70">PAI & Droit Image</p>
           </div>
         </button>
 
-        <!-- Fiche d'activité -->
-        <button type="button" @click="currentTab = 'fiche'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
-          <div class="w-10 h-10 rounded-2xl bg-yellow-400 text-black flex items-center justify-center text-lg font-black shadow-md">
-            🎨
-          </div>
+        <button type="button" @click="currentTab = 'fiche'" class="bg-white p-5 rounded-2xl border-2 border-[#2a3bbf] flex flex-col justify-between text-left h-36 hover:brightness-95 transition-transform active:scale-95">
+          <span class="text-2xl">🎨</span>
           <div>
-            <h3 class="font-bold text-base text-white leading-tight">Fiche d'Activité</h3>
-            <p class="text-[11px] text-white/70">Création, Matériel & PDF</p>
+            <h3 class="font-black font-syne text-lg uppercase text-[#2a3bbf] leading-tight">Fiche d'Activité</h3>
+            <p class="text-[10px] font-bold opacity-70">Création & Export PDF</p>
           </div>
         </button>
 
-        <!-- Cahier de soins -->
-        <button type="button" @click="currentTab = 'soins'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
-          <div class="w-10 h-10 rounded-2xl bg-emerald-400 text-black flex items-center justify-center text-lg font-black shadow-md">
-            🩹
-          </div>
+        <button type="button" @click="currentTab = 'soins'" class="bg-white p-5 rounded-2xl border-2 border-[#1f5f38] flex flex-col justify-between text-left h-36 hover:brightness-95 transition-transform active:scale-95">
+          <span class="text-2xl">🩹</span>
           <div>
-            <h3 class="font-bold text-base text-white leading-tight">Cahier de Soins</h3>
-            <p class="text-[11px] text-white/70">Suivi blessures & parents</p>
+            <h3 class="font-black font-syne text-lg uppercase text-[#1f5f38] leading-tight">Cahier de Soins</h3>
+            <p class="text-[10px] font-bold opacity-70">Registre des incidents</p>
           </div>
         </button>
 
-        <!-- Goûters & Recettes -->
-        <button type="button" @click="currentTab = 'gouter'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
-          <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg font-black shadow-md">
-            🍪
-          </div>
+        <button type="button" @click="currentTab = 'gouter'" class="bg-white p-5 rounded-2xl border-2 border-[#d96128] flex flex-col justify-between text-left h-36 hover:brightness-95 transition-transform active:scale-95">
+          <span class="text-2xl">🍪</span>
           <div>
-            <h3 class="font-bold text-base text-white leading-tight">Goûters & Recettes</h3>
-            <p class="text-[11px] text-white/70">Menus, Recettes & Planning</p>
+            <h3 class="font-black font-syne text-lg uppercase text-[#d96128] leading-tight">Goûters & Recettes</h3>
+            <p class="text-[10px] font-bold opacity-70">Planning & Menus</p>
           </div>
         </button>
 
-        <!-- Courses Matériel -->
-        <button type="button" @click="currentTab = 'courses'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
-          <div class="w-10 h-10 rounded-2xl bg-purple-500 text-white flex items-center justify-center text-lg font-black shadow-md">
-            🛍️
-          </div>
+        <button type="button" @click="currentTab = 'courses'" class="bg-white p-5 rounded-2xl border-2 border-[#592b82] flex flex-col justify-between text-left h-36 hover:brightness-95 transition-transform active:scale-95">
+          <span class="text-2xl">🛍️</span>
           <div>
-            <h3 class="font-bold text-base text-white leading-tight">Courses & Matériel</h3>
-            <p class="text-[11px] text-white/70">Achats activités & goûters</p>
+            <h3 class="font-black font-syne text-lg uppercase text-[#592b82] leading-tight">Courses & Matériel</h3>
+            <p class="text-[10px] font-bold opacity-70">Achats & Ingrédients</p>
           </div>
         </button>
 
-        <!-- Planning & Équipe -->
-        <button type="button" @click="currentTab = 'planning'" class="card-bento p-5 flex flex-col items-start justify-between text-left h-36 hover:brightness-110 transition-transform active:scale-95 border-2 border-white/20 relative overflow-hidden group">
-          <div class="w-10 h-10 rounded-2xl bg-sky-400 text-black flex items-center justify-center text-lg font-black shadow-md">
-            📅
-          </div>
+        <button type="button" @click="currentTab = 'planning'" class="bg-white p-5 rounded-2xl border-2 border-[#0f3254] flex flex-col justify-between text-left h-36 hover:brightness-95 transition-transform active:scale-95">
+          <span class="text-2xl">📅</span>
           <div>
-            <h3 class="font-bold text-base text-white leading-tight">Planning Équipe</h3>
-            <p class="text-[11px] text-white/70">Animateurs, Groupes & Sorties</p>
+            <h3 class="font-black font-syne text-lg uppercase text-[#0f3254] leading-tight">Planning Équipe</h3>
+            <p class="text-[10px] font-bold opacity-70">Animateurs & Sorties</p>
           </div>
         </button>
 
@@ -214,56 +210,51 @@
 
 
     <!-- ==================== 1. ONGLET : FICHES SANITAIRES ==================== -->
-    <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-bento p-6 space-y-4">
+    <div x-show="currentTab === 'sanitaire'" class="space-y-4">
+      <div class="card-main p-6 rounded-2xl space-y-4">
         
-        <div class="flex items-center justify-between border-b border-white/20 pb-3">
-          <h2 class="text-lg font-bold text-white flex items-center gap-2">
-            <span>🩺</span> Fiches Sanitaires
+        <div class="flex items-center justify-between border-b-2 border-current pb-3">
+          <h2 class="text-2xl font-black font-syne uppercase tracking-tight text-accent flex items-center gap-2">
+            🩺 Fiches Sanitaires
           </h2>
-          <button type="button" @click="ouvrirModalAddEnfant()" class="bg-yellow-400 hover:bg-yellow-300 text-black text-xs px-3.5 py-1.5 rounded-full font-black transition-transform active:scale-95 shadow-md">
+          <button type="button" @click="ouvrirModalAddEnfant()" class="btn-primary text-xs px-3.5 py-1.5 rounded-xl font-bold uppercase tracking-wider transition-transform active:scale-95">
             + Enfant
           </button>
         </div>
 
-        <!-- RECHERCHE ENFANT -->
         <div class="relative">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
-          <input type="text" x-model="searchEnfant" placeholder="Rechercher par nom ou prénom..." class="input-chubby w-full pl-9 pr-4 py-2.5 text-xs">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-400 text-xs"></i>
+          <input type="text" x-model="searchEnfant" placeholder="Rechercher par nom ou prénom..." class="input-pop w-full pl-9 pr-4 py-2.5 text-xs">
         </div>
 
-        <!-- LISTE DES ENFANTS -->
-        <div class="space-y-2.5 pt-1">
+        <div class="space-y-2 pt-1">
           <template x-if="getEnfantsFiltres().length === 0">
-            <div class="card-item-bento p-4 text-center">
-              <p class="text-xs font-medium text-white/70">Aucun enfant trouvé.</p>
+            <div class="p-4 text-center border-2 border-dashed border-current rounded-xl">
+              <p class="text-xs font-bold opacity-70">Aucun enfant trouvé.</p>
             </div>
           </template>
 
           <template x-for="e in getEnfantsFiltres()" :key="e.id">
-            <div @click="selectionnerEnfant(e)" class="card-item-bento p-3.5 flex items-center justify-between bg-white/10 cursor-pointer hover:bg-white/20 transition-colors">
-              <div class="space-y-1">
+            <div @click="selectionnerEnfant(e)" class="p-3.5 rounded-xl border-2 border-current bg-white cursor-pointer hover:bg-gray-50 flex items-center justify-between transition-colors">
+              <div class="space-y-0.5">
                 <div class="flex items-center gap-2">
-                  <h4 class="font-bold text-sm text-white" x-text="e.prenom + ' ' + e.nom"></h4>
-                  <!-- BADGE TRANCHE ÂGE AVEC COULEUR DÉDIÉE -->
-                  <span class="text-[10px] font-black px-2 py-0.5 rounded-full" :class="getAgeEnfant(e.dateNaissance) < 6 ? 'bg-amber-400 text-black' : 'bg-sky-400 text-black'" x-text="getAgeEnfant(e.dateNaissance) < 6 ? '-6 ans' : '+6 ans'"></span>
+                  <h4 class="font-bold text-sm" x-text="e.prenom + ' ' + e.nom"></h4>
+                  <span class="text-[9px] font-black px-2 py-0.5 rounded-md border border-current uppercase" :class="getAgeEnfant(e.dateNaissance) < 6 ? 'bg-amber-100' : 'bg-sky-100'" x-text="getAgeEnfant(e.dateNaissance) < 6 ? '-6 ans' : '+6 ans'"></span>
                 </div>
-                <p class="text-[11px] text-white/70" x-text="getAgeEnfant(e.dateNaissance) + ' ans (' + formatDateLisible(e.dateNaissance) + ')'"></p>
+                <p class="text-[11px] opacity-70 font-medium" x-text="getAgeEnfant(e.dateNaissance) + ' ans (' + formatDateLisible(e.dateNaissance) + ')'"></p>
               </div>
 
-              <!-- ICÔNES DE RAPPEL RAPIDES CORRIGÉES (PASTILLES VERTES / ROUGES SANS LE REFUS DOUBLE) -->
               <div class="flex items-center space-x-1.5">
-                <span x-show="e.pai" title="PAI / Médical" class="w-8 h-8 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold animate-pulse">
+                <span x-show="e.pai" title="PAI / Médical" class="w-7 h-7 bg-red-500 text-white rounded-lg flex items-center justify-center text-xs font-black animate-pulse">
                   ⚠️
                 </span>
-                <!-- PASTILLE VERTE (AUTORISÉ) OU ROUGE (REFUSÉ) -->
-                <span x-show="e.droitImage" title="Droit à l'image AUTORISÉ" class="w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold shrink-0">
+                <span x-show="e.droitImage" title="Droit à l'image AUTORISÉ" class="w-7 h-7 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-xs font-black">
                   📸
                 </span>
-                <span x-show="!e.droitImage" title="Droit à l'image REFUSÉ" class="w-8 h-8 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold shrink-0">
-                  📸
+                <span x-show="!e.droitImage" title="Droit à l'image REFUSÉ" class="w-7 h-7 bg-red-600 text-white rounded-lg flex items-center justify-center text-xs font-black">
+                  🚫
                 </span>
-                <i class="fa-solid fa-chevron-right text-white/40 text-xs pl-1"></i>
+                <i class="fa-solid fa-chevron-right text-xs opacity-40 pl-1"></i>
               </div>
             </div>
           </template>
@@ -273,227 +264,203 @@
     </div>
 
     <!-- MODAL : AJOUTER / MODIFIER UN ENFANT -->
-    <div x-show="showAddEnfantModal" x-transition class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[90vh] overflow-y-auto">
-        <h3 class="text-base font-bold text-white border-b border-white/20 pb-2" x-text="isEditingEnfant ? '✏️ Modifier la Fiche Sanitaire' : '👶 Ajouter une Fiche Sanitaire'">
-        </h3>
+    <div x-show="showAddEnfantModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" style="display: none;">
+      <div class="card-main p-6 max-w-sm w-full space-y-4 rounded-2xl max-h-[90vh] overflow-y-auto">
+        <h3 class="text-lg font-black font-syne uppercase border-b-2 border-current pb-2" x-text="isEditingEnfant ? '✏️ Modifier l\'enfant' : '👶 Ajouter un enfant'"></h3>
 
         <form @submit.prevent="enregistrerEnfant()" class="space-y-3">
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] font-bold text-white/80 mb-1">Prénom</label>
-              <input type="text" x-model="nouvelEnfant.prenom" placeholder="ex: Lucas" class="input-chubby w-full px-3 py-2 text-xs" required>
+              <label class="block text-[10px] font-bold uppercase mb-1">Prénom</label>
+              <input type="text" x-model="nouvelEnfant.prenom" placeholder="Lucas" class="input-pop w-full px-3 py-2 text-xs" required>
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-white/80 mb-1">Nom</label>
-              <input type="text" x-model="nouvelEnfant.nom" placeholder="ex: Dupont" class="input-chubby w-full px-3 py-2 text-xs" required>
+              <label class="block text-[10px] font-bold uppercase mb-1">Nom</label>
+              <input type="text" x-model="nouvelEnfant.nom" placeholder="Dupont" class="input-pop w-full px-3 py-2 text-xs" required>
             </div>
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Date de naissance</label>
-            <input type="date" x-model="nouvelEnfant.dateNaissance" class="input-chubby w-full px-3 py-2 text-xs" required>
+            <label class="block text-[10px] font-bold uppercase mb-1">Date de naissance</label>
+            <input type="date" x-model="nouvelEnfant.dateNaissance" class="input-pop w-full px-3 py-2 text-xs" required>
           </div>
 
-          <!-- SECTION RESPONSABLES LÉGAUX MULTIPLES -->
-          <div class="card-item-bento p-3 space-y-2 bg-white/10">
+          <div class="p-3 border-2 border-current rounded-xl space-y-2 bg-gray-50">
             <div class="flex items-center justify-between">
-              <label class="text-[11px] font-bold text-yellow-300">👥 Responsables Légaux</label>
-              <button type="button" @click="ajouterResponsableModal()" class="text-[10px] font-bold bg-white/20 hover:bg-white/30 text-white px-2 py-1 rounded-full border border-white/20">
+              <label class="text-[10px] font-black uppercase">👥 Responsables Légaux</label>
+              <button type="button" @click="ajouterResponsableModal()" class="text-[9px] font-bold bg-white px-2 py-1 rounded-md border border-current uppercase">
                 + Ajouter
               </button>
             </div>
 
             <template x-for="(resp, idx) in nouvelEnfant.responsables" :key="idx">
-              <div class="space-y-1.5 pt-1 border-t border-white/10 first:border-0 first:pt-0">
+              <div class="space-y-1 pt-1 border-t border-gray-300 first:border-0 first:pt-0">
                 <div class="flex items-center justify-between">
-                  <span class="text-[10px] font-bold text-white/70" x-text="'Responsable ' + (idx + 1)"></span>
-                  <button type="button" x-show="nouvelEnfant.responsables.length > 1" @click="nouvelEnfant.responsables.splice(idx, 1)" class="text-rose-300 hover:text-rose-500 text-[10px]">
-                    Supprimer
-                  </button>
+                  <span class="text-[9px] font-bold opacity-60" x-text="'Responsable ' + (idx + 1)"></span>
+                  <button type="button" x-show="nouvelEnfant.responsables.length > 1" @click="nouvelEnfant.responsables.splice(idx, 1)" class="text-red-600 text-[9px] font-bold">Supprimer</button>
                 </div>
                 <div class="grid grid-cols-2 gap-1.5">
-                  <input type="text" x-model="resp.nom" placeholder="Nom & Prénom" class="input-chubby px-2.5 py-1.5 text-xs">
-                  <input type="text" x-model="resp.telephone" placeholder="Téléphone" class="input-chubby px-2.5 py-1.5 text-xs">
+                  <input type="text" x-model="resp.nom" placeholder="Nom Prénom" class="input-pop px-2 py-1 text-xs">
+                  <input type="text" x-model="resp.telephone" placeholder="Téléphone" class="input-pop px-2 py-1 text-xs">
                 </div>
               </div>
             </template>
           </div>
 
-          <div class="card-item-bento p-3 space-y-2 bg-white/10">
+          <div class="p-3 border-2 border-current rounded-xl space-y-2 bg-gray-50">
             <div class="flex items-center justify-between">
-              <label class="text-xs font-bold text-white">PAI / Traitement / Allergies ?</label>
-              <input type="checkbox" x-model="nouvelEnfant.aPAI" class="w-4 h-4 accent-yellow-400">
+              <label class="text-xs font-bold">PAI / Allergie / Traitement ?</label>
+              <input type="checkbox" x-model="nouvelEnfant.aPAI" class="w-4 h-4 accent-red-600">
             </div>
-            <textarea x-show="nouvelEnfant.aPAI" x-model="nouvelEnfant.pai" placeholder="Précisez le traitement, PAI, allergie..." class="input-chubby w-full px-3 py-2 text-xs h-16 resize-none mt-1"></textarea>
+            <textarea x-show="nouvelEnfant.aPAI" x-model="nouvelEnfant.pai" placeholder="Précisez la condition médicale..." class="input-pop w-full px-3 py-2 text-xs h-16 resize-none mt-1"></textarea>
           </div>
 
-          <div class="flex items-center space-x-3 card-item-bento p-3 bg-white/10">
-            <input type="checkbox" x-model="nouvelEnfant.droitImage" id="addDroitImg" class="w-4 h-4 accent-yellow-400 rounded cursor-pointer">
-            <label for="addDroitImg" class="text-xs font-bold text-white cursor-pointer">Autorisation Droit à l'Image OK 📸</label>
+          <div class="flex items-center space-x-3 p-3 border-2 border-current rounded-xl bg-gray-50">
+            <input type="checkbox" x-model="nouvelEnfant.droitImage" id="addDroitImg" class="w-4 h-4 accent-emerald-600">
+            <label for="addDroitImg" class="text-xs font-bold cursor-pointer">Autorisation Droit à l'Image 📸</label>
           </div>
 
-          <div class="flex gap-2 pt-2 border-t border-white/20">
-            <button type="button" @click="showAddEnfantModal = false" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold transition-transform active:scale-95 border border-white/20">Annuler</button>
-            <button type="submit" class="bg-yellow-400 hover:bg-yellow-300 text-black flex-1 py-2.5 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">Enregistrer</button>
+          <div class="flex gap-2 pt-2 border-t-2 border-current">
+            <button type="button" @click="showAddEnfantModal = false" class="bg-gray-200 hover:bg-gray-300 flex-1 py-2.5 rounded-xl text-xs font-bold uppercase">Annuler</button>
+            <button type="submit" class="btn-primary flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider">Enregistrer</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- MODAL : FICHE SANITAIRE DÉTAILLÉE D'UN ENFANT -->
-    <div x-show="enfantSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[85vh] overflow-y-auto">
+    <!-- MODAL : FICHE SANITAIRE DÉTAILLÉE -->
+    <div x-show="enfantSelectionne !== null" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" style="display: none;">
+      <div class="card-main p-6 max-w-sm w-full space-y-4 rounded-2xl max-h-[85vh] overflow-y-auto">
         
-        <div class="flex justify-between items-center border-b border-white/20 pb-3">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-2xl bg-yellow-400 text-black flex items-center justify-center font-black text-lg shadow-sm">
-              <span x-text="enfantSelectionne?.prenom ? enfantSelectionne.prenom.charAt(0) : 'E'"></span>
-            </div>
-            <div>
-              <h3 class="text-base font-bold text-white" x-text="enfantSelectionne?.prenom + ' ' + enfantSelectionne?.nom"></h3>
-              <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/20 text-yellow-300" x-text="getAgeEnfant(enfantSelectionne?.dateNaissance) + ' ans (' + (getAgeEnfant(enfantSelectionne?.dateNaissance) < 6 ? '-6 ans' : '+6 ans') + ')'"></span>
-            </div>
+        <div class="flex justify-between items-center border-b-2 border-current pb-3">
+          <div>
+            <h3 class="text-xl font-black font-syne uppercase" x-text="enfantSelectionne?.prenom + ' ' + enfantSelectionne?.nom"></h3>
+            <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-md border border-current bg-amber-100" x-text="getAgeEnfant(enfantSelectionne?.dateNaissance) + ' ans (' + (getAgeEnfant(enfantSelectionne?.dateNaissance) < 6 ? '-6 ans' : '+6 ans') + ')'"></span>
           </div>
-          <button type="button" @click="enfantSelectionne = null" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+          <button type="button" @click="enfantSelectionne = null" class="text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
         <div class="space-y-3 text-xs">
-          <div class="bg-black/20 p-3 rounded-2xl space-y-1">
-            <span class="text-[10px] text-white/60 font-bold uppercase block">Date de naissance</span>
-            <p class="font-bold text-white" x-text="formatDateLisible(enfantSelectionne?.dateNaissance)"></p>
+          <div class="p-3 border-2 border-current rounded-xl bg-gray-50">
+            <span class="text-[9px] font-bold uppercase opacity-60 block">Date de naissance</span>
+            <p class="font-bold text-sm" x-text="formatDateLisible(enfantSelectionne?.dateNaissance)"></p>
           </div>
 
-          <!-- AFFICHAGE RESPONSABLES LÉGAUX -->
-          <div class="bg-black/20 p-3 rounded-2xl space-y-2">
-            <span class="text-[10px] text-white/60 font-bold uppercase block">📞 Responsables Légaux</span>
+          <div class="p-3 border-2 border-current rounded-xl space-y-2 bg-gray-50">
+            <span class="text-[9px] font-bold uppercase opacity-60 block">📞 Responsables Légaux</span>
             <template x-for="(r, i) in (enfantSelectionne?.responsables || [])" :key="i">
-              <div class="flex items-center justify-between border-b border-white/10 last:border-0 pb-1 last:pb-0">
-                <span class="font-bold text-white" x-text="r.nom || 'Responsable'"></span>
-                <a :href="'tel:' + r.telephone" class="font-black text-yellow-300 text-xs bg-white/10 px-2 py-0.5 rounded-md hover:underline" x-text="r.telephone || 'Non renseigné'"></a>
+              <div class="flex items-center justify-between border-b border-gray-200 last:border-0 pb-1 last:pb-0">
+                <span class="font-bold" x-text="r.nom || 'Responsable'"></span>
+                <a :href="'tel:' + r.telephone" class="font-black text-accent hover:underline" x-text="r.telephone || 'Non renseigné'"></a>
               </div>
             </template>
           </div>
 
-          <!-- ENCADRÉ PAI -->
-          <div class="p-3.5 rounded-2xl space-y-1 border" :class="enfantSelectionne?.pai ? 'bg-rose-500/20 border-rose-500 text-white' : 'bg-black/20 border-white/10 text-white/70'">
+          <div class="p-3 rounded-xl border-2 border-current space-y-1" :class="enfantSelectionne?.pai ? 'bg-red-50 text-red-900 border-red-600' : 'bg-gray-50'">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-bold uppercase">⚠️ PAI / Médical / Allergies</span>
-              <span x-text="enfantSelectionne?.pai ? 'OUI' : 'AUCUN'" class="font-black px-2 py-0.5 rounded-md text-[9px]" :class="enfantSelectionne?.pai ? 'bg-rose-500 text-white' : 'bg-white/10'"></span>
+              <span class="text-[9px] font-black uppercase">⚠️ PAI / Médical</span>
+              <span x-text="enfantSelectionne?.pai ? 'OUI' : 'AUCUN'" class="font-black px-2 py-0.5 rounded text-[9px] border border-current" :class="enfantSelectionne?.pai ? 'bg-red-600 text-white' : 'bg-gray-200'"></span>
             </div>
             <p class="font-bold text-xs pt-1" x-text="enfantSelectionne?.pai || 'Aucun traitement ou PAI renseigné.'"></p>
           </div>
 
-          <!-- ENCADRÉ DROIT A L'IMAGE -->
-          <div class="p-3 rounded-2xl flex items-center justify-between bg-black/20">
-            <span class="text-[10px] text-white/60 font-bold uppercase">📸 Droit à l'Image</span>
-            <span class="font-bold px-3 py-1 rounded-full text-[10px] flex items-center gap-1.5" :class="enfantSelectionne?.droitImage ? 'bg-emerald-500 text-white' : 'bg-rose-600 text-white'">
-              <i class="fa-solid" :class="enfantSelectionne?.droitImage ? 'fa-camera' : 'fa-camera-retro'"></i>
-              <span x-text="enfantSelectionne?.droitImage ? 'AUTORISÉ' : 'REFUSÉ'"></span>
-            </span>
+          <div class="p-3 rounded-xl border-2 border-current flex items-center justify-between bg-gray-50">
+            <span class="text-[9px] font-bold uppercase opacity-60">📸 Droit à l'Image</span>
+            <span class="font-black px-2.5 py-1 rounded-md text-[10px] uppercase border border-current" :class="enfantSelectionne?.droitImage ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'" x-text="enfantSelectionne?.droitImage ? 'AUTORISÉ' : 'REFUSÉ'"></span>
           </div>
         </div>
 
         <div class="pt-2 flex gap-2">
-          <button type="button" @click="editerEnfant(enfantSelectionne)" class="bg-yellow-400 hover:bg-yellow-300 text-black py-2.5 px-3 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">
-            ✏️ Modifier
-          </button>
-          <button type="button" @click="supprimerEnfant(enfantSelectionne?.id)" class="bg-rose-500/20 hover:bg-rose-500 text-rose-200 hover:text-white py-2.5 px-3 rounded-full text-xs font-bold border border-rose-500/30 transition-all">
-            Supprimer
-          </button>
-          <button type="button" @click="enfantSelectionne = null" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold border border-white/20 transition-transform active:scale-95">
-            Fermer
-          </button>
+          <button type="button" @click="editerEnfant(enfantSelectionne)" class="btn-primary py-2.5 px-3 rounded-xl text-xs font-black uppercase flex-1">✏️ Modifier</button>
+          <button type="button" @click="supprimerEnfant(enfantSelectionne?.id)" class="bg-red-100 text-red-700 border-2 border-red-600 py-2.5 px-3 rounded-xl text-xs font-bold uppercase">Supprimer</button>
+          <button type="button" @click="enfantSelectionne = null" class="bg-gray-200 py-2.5 px-3 rounded-xl text-xs font-bold uppercase">Fermer</button>
         </div>
       </div>
     </div>
 
 
     <!-- ==================== 2. ONGLET : FICHE D'ACTIVITÉ ==================== -->
-    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-bento p-6 space-y-4">
+    <div x-show="currentTab === 'fiche'" class="space-y-4">
+      <div class="card-main p-6 rounded-2xl space-y-4">
         
-        <div class="flex items-center justify-between border-b border-white/20 pb-3">
-          <h2 class="text-lg font-bold text-white flex items-center gap-2">
-            <span>🎨</span> Fiche d'Activité
+        <div class="flex items-center justify-between border-b-2 border-current pb-3">
+          <h2 class="text-2xl font-black font-syne uppercase tracking-tight text-accent flex items-center gap-2">
+            🎨 Fiche d'Activité
           </h2>
-          <span class="bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full">
-            Express
-          </span>
         </div>
 
-        <form @submit.prevent="submitFiche()" class="space-y-4">
+        <form @submit.prevent="submitFiche()" class="space-y-3">
           <div>
-            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Nom de l'activité</label>
-            <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu Chasse au Trésor" class="input-chubby w-full px-4 py-2.5 text-xs" required>
+            <label class="block text-[10px] font-bold uppercase mb-1">Nom de l'activité</label>
+            <input type="text" x-model="fiche.titre" placeholder="Chasse au Trésor" class="input-pop w-full px-3 py-2.5 text-xs" required>
           </div>
 
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Tranche d'âge</label>
-              <select x-model="fiche.age" class="input-chubby w-full px-3 py-2.5 text-xs font-bold">
+              <label class="block text-[10px] font-bold uppercase mb-1">Tranche d'âge</label>
+              <select x-model="fiche.age" class="input-pop w-full px-2 py-2.5 text-xs font-bold">
                 <option value="-6 ans">-6 ans</option>
                 <option value="+6 ans">+6 ans</option>
                 <option value="Inter-tranches">Inter-tranches</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Lieu</label>
-              <input type="text" x-model="fiche.lieu" placeholder="ex: Parc" class="input-chubby w-full px-4 py-2.5 text-xs">
+              <label class="block text-[10px] font-bold uppercase mb-1">Lieu</label>
+              <input type="text" x-model="fiche.lieu" placeholder="Parc municipal" class="input-pop w-full px-3 py-2.5 text-xs">
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Objectif Pédagogique</label>
-            <input type="text" x-model="fiche.objectif" placeholder="ex: Coopérer en équipe" class="input-chubby w-full px-4 py-2.5 text-xs">
+            <label class="block text-[10px] font-bold uppercase mb-1">Objectif Pédagogique</label>
+            <input type="text" x-model="fiche.objectif" placeholder="Développer l'esprit d'équipe" class="input-pop w-full px-3 py-2.5 text-xs">
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Déroulement / Consignes</label>
-            <textarea x-model="fiche.deroulement" placeholder="Explication des étapes du jeu..." class="input-chubby w-full px-4 py-2.5 text-xs h-20 resize-none"></textarea>
+            <label class="block text-[10px] font-bold uppercase mb-1">Déroulement / Consignes</label>
+            <textarea x-model="fiche.deroulement" placeholder="Étapes du jeu..." class="input-pop w-full px-3 py-2.5 text-xs h-20 resize-none"></textarea>
           </div>
 
           <!-- SECTION MATÉRIEL -->
-          <div class="card-item-bento p-3.5 space-y-2.5">
-            <span class="text-xs font-bold text-yellow-300 flex items-center gap-1.5">
-              <i class="fa-solid fa-boxes-packing"></i> Matériel & Quantités
+          <div class="p-3 border-2 border-current rounded-xl space-y-2 bg-gray-50">
+            <span class="text-xs font-black uppercase text-accent flex items-center gap-1.5">
+              📦 Matériel Nécessaire
             </span>
             <div class="grid grid-cols-5 gap-2">
-              <input type="text" x-model="newMatosNom" placeholder="Article" class="col-span-3 input-chubby px-3 py-1.5 text-xs">
-              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-chubby px-2 py-1.5 text-xs text-center">
-              <button type="button" @click="addMatos()" class="col-span-1 bg-yellow-400 hover:bg-yellow-300 text-black rounded-xl text-base font-black flex items-center justify-center transition-transform active:scale-95">+</button>
+              <input type="text" x-model="newMatosNom" placeholder="Article" class="col-span-3 input-pop px-2.5 py-1.5 text-xs">
+              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-pop px-2 py-1.5 text-xs text-center">
+              <button type="button" @click="addMatos()" class="col-span-1 btn-primary rounded-xl font-black text-sm flex items-center justify-center">+</button>
             </div>
-            <ul class="space-y-1.5 pt-1">
+            <ul class="space-y-1 pt-1">
               <template x-for="(item, index) in fiche.materiel" :key="index">
-                <li class="flex items-center justify-between text-xs bg-white/20 px-3 py-2 rounded-xl">
-                  <span class="font-semibold text-white" x-text="item.nom + ' — Qté : ' + item.qte"></span>
-                  <button type="button" @click="removeMatos(index)" class="text-yellow-300 hover:text-white ml-2"><i class="fa-solid fa-xmark text-sm"></i></button>
+                <li class="flex items-center justify-between text-xs bg-white p-2 rounded-lg border border-current">
+                  <span class="font-bold" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></span>
+                  <button type="button" @click="removeMatos(index)" class="text-red-600 font-bold ml-2"><i class="fa-solid fa-xmark"></i></button>
                 </li>
               </template>
             </ul>
           </div>
 
-          <div class="grid grid-cols-2 gap-3 pt-2">
-            <button type="button" @click="exportPDF()" class="bg-white/10 hover:bg-white/20 text-white py-3 rounded-full text-xs font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 border border-white/20">
-              <i class="fa-solid fa-file-pdf text-yellow-300 text-sm"></i> Export PDF
+          <div class="grid grid-cols-2 gap-2 pt-2">
+            <button type="button" @click="exportPDF()" class="bg-gray-100 border-2 border-current py-3 rounded-xl text-xs font-bold uppercase flex items-center justify-center gap-2">
+              <i class="fa-solid fa-file-pdf"></i> Export PDF
             </button>
-            <button type="submit" class="bg-yellow-400 hover:bg-yellow-300 text-black py-3 rounded-full text-xs font-black flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-md">
-              <i class="fa-solid fa-paper-plane text-xs"></i> Envoi Courses
+            <button type="submit" class="btn-primary py-3 rounded-xl text-xs font-black uppercase flex items-center justify-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i> Envoi Courses
             </button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF -->
+    <!-- TEMPLATE CACHÉ POUR EXPORT PDF -->
     <div id="pdf-template" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 700px;">
-      <div style="padding: 30px; font-family: 'Fredoka', sans-serif; color: #111111; background: #ffffff;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #4d53ed; padding-bottom: 12px; margin-bottom: 20px;">
+      <div style="padding: 30px; font-family: 'Fredoka', sans-serif; color: #101333; background: #ffffff;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #2a3bbf; padding-bottom: 12px; margin-bottom: 20px;">
           <div>
-            <h1 style="margin: 0; font-size: 22px; color: #4d53ed; font-weight: bold;" id="pdf-titre">Fiche d'Activité</h1>
-            <p style="margin: 4px 0 0 0; font-size: 11px; font-weight: 600; color: #64748b;">Accueil de Loisirs ALSH Flow</p>
+            <h1 style="margin: 0; font-size: 24px; color: #2a3bbf; font-family: 'Syne', sans-serif; text-transform: uppercase;" id="pdf-titre">Fiche d'Activité</h1>
+            <p style="margin: 4px 0 0 0; font-size: 11px; font-weight: 700; color: #64748b;">Accueil de Loisirs ALSH Flow</p>
           </div>
-          <span style="background: #fcd307; color: #111111; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 12px;" id="pdf-age">Age</span>
+          <span style="background: #2a3bbf; color: #ffffff; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 12px;" id="pdf-age">Age</span>
         </div>
 
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
@@ -508,317 +475,287 @@
         </table>
 
         <div style="margin-bottom: 20px;">
-          <h3 style="color: #4d53ed; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; font-size: 15px;">📜 Déroulement</h3>
+          <h3 style="color: #2a3bbf; border-bottom: 2px solid #cbd5e1; padding-bottom: 4px; font-size: 14px; font-family: 'Syne', sans-serif; text-transform: uppercase;">📜 Déroulement</h3>
           <p style="font-size: 12px; line-height: 1.6; white-space: pre-line;" id="pdf-deroulement">-</p>
         </div>
 
         <div>
-          <h3 style="color: #4d53ed; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; font-size: 15px;">📦 Matériel & Quantités</h3>
+          <h3 style="color: #2a3bbf; border-bottom: 2px solid #cbd5e1; padding-bottom: 4px; font-size: 14px; font-family: 'Syne', sans-serif; text-transform: uppercase;">📦 Matériel</h3>
           <ul style="font-size: 12px; padding-left: 20px;" id="pdf-materiel"></ul>
         </div>
       </div>
     </div>
 
 
-    <!-- ==================== 3. ONGLET : CAHIER DE SOINS NUMÉRIQUE ==================== -->
-    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-bento p-6 space-y-4">
+    <!-- ==================== 3. ONGLET : CAHIER DE SOINS ==================== -->
+    <div x-show="currentTab === 'soins'" class="space-y-4">
+      <div class="card-main p-6 rounded-2xl space-y-4">
         
-        <div class="flex items-center justify-between border-b border-white/20 pb-3">
-          <h2 class="text-lg font-bold text-white flex items-center gap-2">
-            <span>🩹</span> Cahier de Soins
+        <div class="flex items-center justify-between border-b-2 border-current pb-3">
+          <h2 class="text-2xl font-black font-syne uppercase tracking-tight text-accent flex items-center gap-2">
+            🩹 Cahier de Soins
           </h2>
-          <span class="bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-            Santé
-          </span>
         </div>
 
-        <form @submit.prevent="submitSoin()" class="space-y-4">
+        <form @submit.prevent="submitSoin()" class="space-y-3">
           <div>
-            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Prénom & Nom de l'enfant</label>
-            <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-chubby w-full px-4 py-2.5 text-xs" required>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Symptôme / Incident</label>
-            <input type="text" x-model="soin.incident" placeholder="ex: Écorchure au genou" class="input-chubby w-full px-4 py-2.5 text-xs" required>
+            <label class="block text-[10px] font-bold uppercase mb-1">Enfant concerné</label>
+            <input type="text" x-model="soin.enfant" placeholder="Prénom Nom" class="input-pop w-full px-3 py-2 text-xs" required>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-white/80 uppercase tracking-wider mb-1">Soin apporté</label>
-            <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant..." class="input-chubby w-full px-4 py-2.5 text-xs h-20 resize-none"></textarea>
+            <label class="block text-[10px] font-bold uppercase mb-1">Incident / Symptôme</label>
+            <input type="text" x-model="soin.incident" placeholder="Écorchure au genou" class="input-pop w-full px-3 py-2 text-xs" required>
           </div>
 
-          <div class="flex items-center space-x-3 card-item-bento p-3.5 bg-white/10">
-            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
-            <label for="famille" class="text-xs font-bold text-white cursor-pointer">Avertir les parents ce soir 🔔</label>
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Soin apporté</label>
+            <textarea x-model="soin.action" placeholder="Désinfection + Pansement" class="input-pop w-full px-3 py-2 text-xs h-16 resize-none"></textarea>
           </div>
 
-          <button type="submit" class="bg-yellow-400 hover:bg-yellow-300 text-black w-full py-3 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">
+          <div class="flex items-center space-x-3 p-3 border-2 border-current rounded-xl bg-gray-50">
+            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-emerald-700">
+            <label for="famille" class="text-xs font-bold cursor-pointer">Avertir la famille ce soir 🔔</label>
+          </div>
+
+          <button type="submit" class="btn-primary w-full py-3 rounded-xl text-xs font-black uppercase tracking-wider">
             Enregistrer le soin
           </button>
         </form>
 
-        <hr class="border-white/20 my-2">
+        <hr class="border-current opacity-20 my-2">
 
-        <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider">Registre des soins</h3>
-        <div class="space-y-2.5">
+        <h3 class="text-xs font-black uppercase tracking-wider">Historique des soins</h3>
+        <div class="space-y-2">
           <template x-for="item in registreSoins" :key="item.id">
-            <div class="card-item-bento p-3.5 flex items-start justify-between bg-white/10">
-              <div class="space-y-1">
-                <p class="font-bold text-sm text-yellow-300" x-text="item.enfant"></p>
-                <p class="text-xs font-bold text-white" x-text="item.incident"></p>
-                <p class="text-[11px] text-white/70" x-text="item.heure + ' • Soin : ' + item.action"></p>
-                <span x-show="item.prevenirFamille" class="inline-block px-2.5 py-0.5 bg-rose-500 text-white text-[10px] font-bold rounded-full mt-1">
+            <div class="p-3 rounded-xl border-2 border-current bg-white flex items-start justify-between">
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-2">
+                  <p class="font-black text-sm text-accent" x-text="item.enfant"></p>
+                  <span class="text-[9px] font-bold opacity-60" x-text="item.heure"></span>
+                </div>
+                <p class="text-xs font-bold" x-text="item.incident"></p>
+                <p class="text-[11px] opacity-70" x-text="'Soin : ' + item.action"></p>
+                <span x-show="item.prevenirFamille" class="inline-block px-2 py-0.5 bg-red-100 text-red-800 text-[9px] font-bold rounded border border-red-600 mt-1 uppercase">
                   ⚠️ Prévenir la famille
                 </span>
               </div>
-              <button type="button" @click="deleteSoin(item.id)" class="text-white/60 hover:text-rose-400"><i class="fa-solid fa-trash text-xs"></i></button>
+              <button type="button" @click="deleteSoin(item.id)" class="text-red-600 hover:opacity-80 p-1"><i class="fa-solid fa-trash text-xs"></i></button>
             </div>
           </template>
         </div>
+
       </div>
     </div>
 
 
     <!-- ==================== 4. ONGLET : GOÛTERS & RECETTES ==================== -->
-    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-bento p-6 space-y-4">
+    <div x-show="currentTab === 'gouter'" class="space-y-4">
+      <div class="card-main p-6 rounded-2xl space-y-4">
         
-        <div class="space-y-3">
-          <div class="flex items-center justify-between border-b border-white/20 pb-3">
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span>🍪</span> Goûters & Recettes
-            </h2>
-            <div class="flex gap-2">
-              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1.5 rounded-full font-bold border border-white/20 transition-transform active:scale-95">
-                + Recette
-              </button>
-              <button type="button" @click="showPlanifModal = true" class="bg-yellow-400 hover:bg-yellow-300 text-black text-xs px-3 py-1.5 rounded-full font-black transition-transform active:scale-95 shadow-md">
-                Planifier
-              </button>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between card-item-bento px-4 py-2.5">
-            <button type="button" @click="changerSemaine(-1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-left text-sm"></i></button>
-            <div class="text-center">
-              <p class="text-xs font-bold text-yellow-300" x-text="getLibelleSemaine()"></p>
-            </div>
-            <button type="button" @click="changerSemaine(1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-right text-sm"></i></button>
+        <div class="flex items-center justify-between border-b-2 border-current pb-3">
+          <h2 class="text-2xl font-black font-syne uppercase tracking-tight text-accent flex items-center gap-2">
+            🍪 Goûters
+          </h2>
+          <div class="flex gap-2">
+            <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="bg-gray-100 border-2 border-current text-xs px-3 py-1.5 rounded-xl font-bold uppercase">
+              + Recette
+            </button>
+            <button type="button" @click="showPlanifModal = true" class="btn-primary text-xs px-3 py-1.5 rounded-xl font-black uppercase tracking-wider">
+              Planifier
+            </button>
           </div>
         </div>
 
+        <div class="flex items-center justify-between p-2.5 border-2 border-current rounded-xl bg-gray-50">
+          <button type="button" @click="changerSemaine(-1)"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+          <p class="text-xs font-black uppercase text-accent" x-text="getLibelleSemaine()"></p>
+          <button type="button" @click="changerSemaine(1)"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+        </div>
+
         <!-- MODAL CRÉER UNE RECETTE -->
-        <div x-show="showAddRecetteModal" x-transition class="card-item-bento p-4 space-y-3 bg-black/20" style="display: none;">
-          <div class="flex justify-between items-center border-b border-white/20 pb-2">
-            <h3 class="text-xs font-bold text-yellow-300">
-              🍰 Nouvelle Recette (Base 8 enfants)
-            </h3>
-            <button type="button" @click="showAddRecetteModal = false"><i class="fa-solid fa-xmark text-sm text-white"></i></button>
+        <div x-show="showAddRecetteModal" class="p-4 border-2 border-current rounded-xl bg-gray-50 space-y-3">
+          <div class="flex justify-between items-center border-b border-current pb-2">
+            <h3 class="text-xs font-black uppercase text-accent">🍰 Nouvelle Recette (Base 8 enf)</h3>
+            <button type="button" @click="showAddRecetteModal = false"><i class="fa-solid fa-xmark"></i></button>
           </div>
 
-          <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Nom de la recette</label>
-            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré Chocolat" class="input-chubby w-full px-3 py-2 text-xs">
-          </div>
+          <input type="text" x-model="nouvelleRecette.nom" placeholder="Nom de la recette..." class="input-pop w-full px-3 py-2 text-xs">
 
-          <div class="space-y-2 pt-1">
-            <label class="block text-[11px] font-bold text-white/80">Ingrédients :</label>
-            
+          <div class="space-y-1.5">
             <div class="grid grid-cols-6 gap-1.5">
-              <input type="text" x-model="tempIng.nom" placeholder="Nom" class="col-span-3 input-chubby px-2.5 py-1.5 text-xs">
-              <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-chubby px-2 py-1.5 text-xs text-center">
-              <input type="text" x-model="tempIng.unite" placeholder="Unité" class="col-span-1.5 input-chubby px-2 py-1.5 text-xs">
+              <input type="text" x-model="tempIng.nom" placeholder="Ingrédient" class="col-span-3 input-pop px-2 py-1.5 text-xs">
+              <input type="number" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-pop px-1 py-1.5 text-xs text-center">
+              <input type="text" x-model="tempIng.unite" placeholder="Unité" class="col-span-1.5 input-pop px-1 py-1.5 text-xs">
             </div>
             
-            <button type="button" @click="ajouterIngredierntRecette()" class="bg-white/20 hover:bg-white/30 text-white w-full py-2 text-xs font-bold rounded-xl border border-white/20 transition-transform active:scale-95">
-              + Ajouter l'ingrédient
+            <button type="button" @click="ajouterIngredierntRecette()" class="bg-white border-2 border-current w-full py-1.5 text-xs font-bold uppercase rounded-xl">
+              + Ajouter Ingrédient
             </button>
 
             <div class="space-y-1 pt-1">
               <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
-                <div class="flex justify-between items-center text-xs bg-white/10 px-3 py-1.5 rounded-xl">
-                  <span class="font-medium text-white" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
-                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-yellow-300"><i class="fa-solid fa-xmark"></i></button>
+                <div class="flex justify-between items-center text-xs bg-white p-1.5 rounded-lg border border-current">
+                  <span class="font-bold" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
+                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="text-red-600 font-bold"><i class="fa-solid fa-xmark"></i></button>
                 </div>
               </template>
             </div>
           </div>
 
-          <button type="button" @click="enregistrerNouvelleRecette()" class="bg-yellow-400 hover:bg-yellow-300 text-black w-full py-2.5 text-xs font-black rounded-full transition-transform active:scale-95 shadow-md">
-            Enregistrer la recette
+          <button type="button" @click="enregistrerNouvelleRecette()" class="btn-primary w-full py-2 text-xs font-black uppercase tracking-wider rounded-xl">
+            Enregistrer Recette
           </button>
         </div>
 
-        <!-- LISTE DES GOÛTERS PROGRAMMÉS -->
-        <div class="space-y-2.5">
-          <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider flex justify-between items-center">
-            <span>Planning Goûters</span>
-            <span class="bg-yellow-400 text-black text-[10px] px-2.5 py-0.5 rounded-full font-bold" x-text="getGoutersDeLaSemaine().length + ' prévu(s)'"></span>
-          </h3>
-
+        <!-- LISTE GOÛTERS PROGRAMMÉS -->
+        <div class="space-y-2">
           <template x-if="getGoutersDeLaSemaine().length === 0">
-            <div class="card-item-bento p-4 text-center">
-              <p class="text-xs font-medium text-white/70">Aucun goûter planifié cette semaine.</p>
+            <div class="p-4 text-center border-2 border-dashed border-current rounded-xl">
+              <p class="text-xs font-bold opacity-70">Aucun goûter prévu cette semaine.</p>
             </div>
           </template>
 
           <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
-            <div class="card-item-bento p-3.5 space-y-2 bg-white/10">
+            <div class="p-3.5 rounded-xl border-2 border-current bg-white space-y-2">
               <div class="flex justify-between items-start">
                 <div>
-                  <span class="text-[10px] font-bold text-yellow-300 uppercase" x-text="formatDateLisible(g.date)"></span>
-                  <h4 class="text-sm font-bold text-white" x-text="getNomRecette(g.recetteId)"></h4>
+                  <span class="text-[9px] font-black uppercase text-accent" x-text="formatDateLisible(g.date)"></span>
+                  <h4 class="text-sm font-black" x-text="getNomRecette(g.recetteId)"></h4>
                 </div>
-                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="text-white/60 hover:text-rose-400">
-                  <i class="fa-solid fa-trash text-xs"></i>
-                </button>
+                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="text-red-600"><i class="fa-solid fa-trash text-xs"></i></button>
               </div>
 
               <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="bg-black/20 p-2 rounded-xl">
-                  <span class="text-[10px] text-white/60 block">Animateur</span>
-                  <span class="font-bold text-yellow-300" x-text="g.anim || 'Non assigné'"></span>
+                <div class="p-2 border border-current rounded-lg bg-gray-50">
+                  <span class="text-[9px] font-bold opacity-60 uppercase block">Animateur</span>
+                  <span class="font-bold text-accent" x-text="g.anim || 'Non assigné'"></span>
                 </div>
-                <div class="bg-black/20 p-2 rounded-xl">
-                  <span class="text-[10px] text-white/60 block">Quantité</span>
-                  <span class="font-bold text-white" x-text="g.nbEnfants + ' enfants (' + Math.ceil(g.nbEnfants/8) + ' gâteaux)'"></span>
+                <div class="p-2 border border-current rounded-lg bg-gray-50">
+                  <span class="text-[9px] font-bold opacity-60 uppercase block">Enfants</span>
+                  <span class="font-bold" x-text="g.nbEnfants + ' pers.'"></span>
                 </div>
               </div>
             </div>
           </template>
         </div>
 
-        <div class="pt-2 text-center">
-          <button type="button" @click="currentTab = 'courses'; subTabCourses = 'gouter'" class="bg-white/10 hover:bg-white/20 text-white text-xs px-4 py-2 rounded-full font-bold border border-white/20 transition-transform active:scale-95 inline-flex items-center gap-2">
-            <span>🛒</span> Voir la liste de courses des goûters
-          </button>
-        </div>
+        <button type="button" @click="currentTab = 'courses'; subTabCourses = 'gouter'" class="btn-primary w-full py-3 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2">
+          <span>🛒</span> Voir Liste de Courses Goûters
+        </button>
 
       </div>
     </div>
 
     <!-- MODAL : PLANIFIER UN GOÛTER -->
-    <div x-show="showPlanifModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20">
-        <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
-          📅 Planifier un Goûter
-        </h3>
+    <div x-show="showPlanifModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" style="display: none;">
+      <div class="card-main p-6 max-w-sm w-full space-y-4 rounded-2xl">
+        <h3 class="text-base font-black font-syne uppercase border-b-2 border-current pb-2">📅 Planifier Goûter</h3>
 
         <div class="space-y-3">
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Date du goûter</label>
-            <input type="date" x-model="saisieGouter.date" class="input-chubby w-full px-3 py-2 text-xs">
+            <label class="block text-[10px] font-bold uppercase mb-1">Date</label>
+            <input type="date" x-model="saisieGouter.date" class="input-pop w-full px-3 py-2 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Choisir la recette</label>
-            <select x-model="saisieGouter.recetteId" class="input-chubby w-full px-3 py-2 text-xs font-bold">
+            <label class="block text-[10px] font-bold uppercase mb-1">Recette</label>
+            <select x-model="saisieGouter.recetteId" class="input-pop w-full px-3 py-2 text-xs font-bold">
               <template x-for="r in recettesGouter" :key="r.id">
-                <option :value="r.id" x-text="r.nom + ' (base 8 enfants)'"></option>
+                <option :value="r.id" x-text="r.nom"></option>
               </template>
             </select>
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Animateur responsable</label>
-            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-chubby w-full px-3 py-2 text-xs">
+            <label class="block text-[10px] font-bold uppercase mb-1">Animateur</label>
+            <input type="text" x-model="saisieGouter.anim" placeholder="Sarah" class="input-pop w-full px-3 py-2 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Nombre d'enfants prévus</label>
-            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-chubby w-full px-3 py-2 text-xs text-center font-bold">
+            <label class="block text-[10px] font-bold uppercase mb-1">Nombre d'enfants</label>
+            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" class="input-pop w-full px-3 py-2 text-xs font-bold text-center">
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-white/20">
-          <button type="button" @click="showPlanifModal = false" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold transition-transform active:scale-95 border border-white/20">Annuler</button>
-          <button type="button" @click="enregistrerGouterPlanifie()" class="bg-yellow-400 hover:bg-yellow-300 text-black flex-1 py-2.5 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">Valider</button>
+        <div class="flex gap-2 pt-2 border-t-2 border-current">
+          <button type="button" @click="showPlanifModal = false" class="bg-gray-200 flex-1 py-2.5 rounded-xl text-xs font-bold uppercase">Annuler</button>
+          <button type="button" @click="enregistrerGouterPlanifie()" class="btn-primary flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider">Valider</button>
         </div>
       </div>
     </div>
 
 
-    <!-- ==================== 5. ONGLET : COURSES MATÉRIEL & GOÛTERS ==================== -->
-    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-bento p-6 space-y-4">
+    <!-- ==================== 5. ONGLET : COURSES & MATÉRIEL ==================== -->
+    <div x-show="currentTab === 'courses'" class="space-y-4">
+      <div class="card-main p-6 rounded-2xl space-y-4">
         
-        <div class="flex items-center justify-between border-b border-white/20 pb-3">
-          <h2 class="text-lg font-bold text-white flex items-center gap-2">
-            <span>🛍️</span> Courses & Matériel
+        <div class="flex items-center justify-between border-b-2 border-current pb-3">
+          <h2 class="text-2xl font-black font-syne uppercase tracking-tight text-accent flex items-center gap-2">
+            🛍️ Courses
           </h2>
         </div>
 
-        <!-- NAVIGATION SOUS-ONGLETS COURSES -->
-        <div class="flex gap-2 p-1 bg-black/20 rounded-2xl border border-white/10">
-          <button type="button" @click="subTabCourses = 'activites'" :class="subTabCourses === 'activites' ? 'bg-yellow-400 text-black font-black shadow' : 'text-white font-bold hover:bg-white/10'" class="flex-1 py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
-            📦 Matériel Activités
+        <!-- SOUS-ONGLETS COURSES -->
+        <div class="flex gap-2 p-1 bg-gray-100 rounded-xl border-2 border-current">
+          <button type="button" @click="subTabCourses = 'activites'" :class="subTabCourses === 'activites' ? 'btn-primary font-black' : 'font-bold opacity-60'" class="flex-1 py-2 rounded-lg text-xs uppercase transition-all">
+            📦 Activités
           </button>
-          <button type="button" @click="subTabCourses = 'gouter'" :class="subTabCourses === 'gouter' ? 'bg-yellow-400 text-black font-black shadow' : 'text-white font-bold hover:bg-white/10'" class="flex-1 py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
-            🍪 Courses Goûters
+          <button type="button" @click="subTabCourses = 'gouter'" :class="subTabCourses === 'gouter' ? 'btn-primary font-black' : 'font-bold opacity-60'" class="flex-1 py-2 rounded-lg text-xs uppercase transition-all">
+            🍪 Goûters
           </button>
         </div>
 
-        <!-- SOUS-ONGLET 1 : MATÉRIEL ACTIVITÉS -->
-        <div x-show="subTabCourses === 'activites'" class="space-y-4">
+        <!-- SUB-ONGLET 1 : ACTIVITÉS -->
+        <div x-show="subTabCourses === 'activites'" class="space-y-3">
           <div class="grid grid-cols-5 gap-2">
-            <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-chubby px-3 py-2.5 text-xs">
-            <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-chubby px-2 py-2.5 text-xs text-center">
-            <button type="button" @click="addCourseDirecte()" class="col-span-1 bg-yellow-400 hover:bg-yellow-300 text-black rounded-2xl text-base font-black flex items-center justify-center transition-transform active:scale-95 shadow-md">+</button>
+            <input type="text" x-model="nouvelleCourseNom" placeholder="Nom article" class="col-span-3 input-pop px-3 py-2 text-xs">
+            <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-pop px-1 py-2 text-xs text-center">
+            <button type="button" @click="addCourseDirecte()" class="col-span-1 btn-primary font-black rounded-xl text-sm">+</button>
           </div>
 
-          <div class="space-y-2.5">
+          <div class="space-y-2">
             <template x-for="item in listeCourses" :key="item.id">
-              <div class="card-item-bento p-3.5 flex items-center justify-between transition-opacity bg-white/10" :class="item.achete ? 'opacity-40 line-through' : ''">
+              <div class="p-3 rounded-xl border-2 border-current bg-white flex items-center justify-between transition-opacity" :class="item.achete ? 'opacity-40 line-through' : ''">
                 <div class="flex items-center space-x-3">
-                  <input type="checkbox" x-model="item.achete" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
+                  <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-purple-800">
                   <div>
-                    <p class="text-xs font-bold text-white" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
-                    <p class="text-[11px] text-yellow-300" x-text="'Pour : ' + item.activite"></p>
+                    <p class="text-xs font-bold" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
+                    <p class="text-[10px] text-accent font-bold" x-text="'Pour: ' + item.activite"></p>
                   </div>
                 </div>
-                <button type="button" @click="deleteCourse(item.id)" class="text-white/60 hover:text-rose-400"><i class="fa-solid fa-trash text-xs"></i></button>
+                <button type="button" @click="deleteCourse(item.id)" class="text-red-600"><i class="fa-solid fa-trash text-xs"></i></button>
               </div>
             </template>
           </div>
 
-          <button type="button" @click="viderAchetes()" class="bg-white/10 hover:bg-white/20 text-white w-full py-3 text-xs font-bold rounded-full border border-white/20 transition-transform active:scale-95">
-            Nettoyer les articles achetés
+          <button type="button" @click="viderAchetes()" class="bg-gray-100 border-2 border-current w-full py-2.5 rounded-xl text-xs font-bold uppercase">
+            Purger les articles achetés
           </button>
         </div>
 
-        <!-- SOUS-ONGLET 2 : COURSES GOÛTERS -->
-        <div x-show="subTabCourses === 'gouter'" class="space-y-4">
-          <div class="flex items-center justify-between card-item-bento px-4 py-2">
-            <button type="button" @click="changerSemaine(-1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-left text-sm"></i></button>
-            <div class="text-center">
-              <p class="text-xs font-bold text-yellow-300" x-text="getLibelleSemaine()"></p>
-            </div>
-            <button type="button" @click="changerSemaine(1)" class="text-white/80 hover:text-white"><i class="fa-solid fa-chevron-right text-sm"></i></button>
-          </div>
-
-          <div class="flex items-center justify-between pt-1">
-            <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider">
-              🛒 Ingrédients cumulés
-            </h3>
-            <span class="bg-emerald-500 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
+        <!-- SUB-ONGLET 2 : GOÛTERS -->
+        <div x-show="subTabCourses === 'gouter'" class="space-y-3">
+          <div class="flex items-center justify-between p-2 border-2 border-current rounded-xl bg-gray-50">
+            <button type="button" @click="changerSemaine(-1)"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+            <p class="text-xs font-black uppercase text-accent" x-text="getLibelleSemaine()"></p>
+            <button type="button" @click="changerSemaine(1)"><i class="fa-solid fa-chevron-right text-xs"></i></button>
           </div>
 
           <div class="space-y-2">
             <template x-if="getListeCoursesAgregeeSemaine().length === 0">
-              <div class="card-item-bento p-4 text-center">
-                <p class="text-xs font-medium text-white/70">Aucun goûter prévu cette semaine.</p>
+              <div class="p-4 text-center border-2 border-dashed border-current rounded-xl">
+                <p class="text-xs font-bold opacity-70">Aucun ingrédient requis cette semaine.</p>
               </div>
             </template>
 
             <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
-              <div class="card-item-bento p-3 flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 line-through' : ''">
+              <div class="p-3 rounded-xl border-2 border-current bg-white flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 line-through' : ''">
                 <div class="flex items-center space-x-3">
-                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-5 h-5 accent-yellow-400 rounded-lg cursor-pointer">
-                  <span class="text-xs font-bold text-white" x-text="item.nom"></span>
+                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-4 h-4 accent-purple-800">
+                  <span class="text-xs font-bold" x-text="item.nom"></span>
                 </div>
-                <span class="font-bold text-xs text-black bg-yellow-400 px-2.5 py-1 rounded-full" x-text="item.qte + ' ' + item.unite"></span>
+                <span class="font-black text-xs btn-primary px-2.5 py-1 rounded-md" x-text="item.qte + ' ' + item.unite"></span>
               </div>
             </template>
           </div>
@@ -828,153 +765,82 @@
     </div>
 
 
-    <!-- ==================== 6. ONGLET : PLANNING & ORGANISATION ==================== -->
-    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
-      <div class="card-bento p-6 space-y-4">
+    <!-- ==================== 6. ONGLET : PLANNING & ÉQUIPE ==================== -->
+    <div x-show="currentTab === 'planning'" class="space-y-4">
+      <div class="card-main p-6 rounded-2xl space-y-4">
         
-        <div class="space-y-3 border-b border-white/20 pb-3">
-          <div class="flex items-center justify-between">
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <span>📅</span> Planning Équipe
-            </h2>
-            <div class="flex gap-2">
-              <button type="button" @click="ouvrirModalOrg()" class="bg-yellow-400 hover:bg-yellow-300 text-black text-xs px-3 py-1.5 rounded-full font-black transition-transform active:scale-95 shadow-md">
-                🚌 Sortie
-              </button>
-              <button type="button" @click="nouveauCreneauVierge()" class="bg-white/10 hover:bg-white/20 text-white text-xs px-3 py-1.5 rounded-full font-bold border border-white/20 transition-transform active:scale-95">
-                + Créneau
-              </button>
-            </div>
-          </div>
-
-          <!-- FILTRES INTERACTIFS ET CODE COULEUR -->
-          <div class="flex gap-1.5 pt-1">
-            <button type="button" @click="filtrePlanning = 'anim'" :class="filtrePlanning === 'anim' ? 'bg-yellow-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
-              Animateurs
+        <div class="flex items-center justify-between border-b-2 border-current pb-3">
+          <h2 class="text-2xl font-black font-syne uppercase tracking-tight text-accent flex items-center gap-2">
+            📅 Planning
+          </h2>
+          <div class="flex gap-2">
+            <button type="button" @click="ouvrirModalOrg()" class="btn-primary text-xs px-3 py-1.5 rounded-xl font-black uppercase tracking-wider">
+              🚌 Sortie
             </button>
-            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'bg-amber-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
-              🟡 -6 ans
-            </button>
-            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'bg-sky-400 text-black font-black' : 'bg-white/10 text-white font-bold'" class="flex-1 py-1.5 rounded-xl text-xs transition-transform active:scale-95 border border-white/20">
-              🟦 +6 ans
+            <button type="button" @click="nouveauCreneauVierge()" class="bg-gray-100 border-2 border-current text-xs px-3 py-1.5 rounded-xl font-bold uppercase">
+              + Créneau
             </button>
           </div>
+        </div>
 
-          <!-- SÉLECTEUR DE DATE INTERACTIF AVEC BOUTONS & CALENDRIER -->
-          <div class="flex items-center justify-between card-item-bento px-3 py-2 gap-2">
-            <button type="button" @click="changerJour(-1)" class="text-white/80 hover:text-white px-2 py-1"><i class="fa-solid fa-chevron-left text-sm"></i></button>
-            
-            <div class="flex items-center gap-2">
-              <input type="date" x-model="dateAffichee" @change="nettoyerCreneauxPasses()" class="bg-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-lg border border-white/20 focus:outline-none cursor-pointer">
-            </div>
+        <div class="flex gap-1.5">
+          <button type="button" @click="filtrePlanning = 'anim'" :class="filtrePlanning === 'anim' ? 'btn-primary font-black' : 'bg-gray-100 border-2 border-current font-bold'" class="flex-1 py-1.5 rounded-xl text-[10px] uppercase">
+            Tous
+          </button>
+          <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'btn-primary font-black' : 'bg-gray-100 border-2 border-current font-bold'" class="flex-1 py-1.5 rounded-xl text-[10px] uppercase">
+            -6 ans
+          </button>
+          <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'btn-primary font-black' : 'bg-gray-100 border-2 border-current font-bold'" class="flex-1 py-1.5 rounded-xl text-[10px] uppercase">
+            +6 ans
+          </button>
+        </div>
 
-            <button type="button" @click="changerJour(1)" class="text-white/80 hover:text-white px-2 py-1"><i class="fa-solid fa-chevron-right text-sm"></i></button>
-          </div>
-          <div class="text-center text-[11px] font-bold text-yellow-300" x-text="formatDateLisible(dateAffichee)"></div>
+        <div class="flex items-center justify-between p-2 border-2 border-current rounded-xl bg-gray-50">
+          <button type="button" @click="changerJour(-1)"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+          <input type="date" x-model="dateAffichee" @change="nettoyerCreneauxPasses()" class="bg-white border border-current text-xs font-bold px-2 py-1 rounded-md">
+          <button type="button" @click="changerJour(1)"><i class="fa-solid fa-chevron-right text-xs"></i></button>
         </div>
 
         <!-- ENCADRÉ SORTIE SPÉCIALE -->
         <template x-if="getOrgDuJour()">
-          <div class="card-item-bento p-4 space-y-3 bg-yellow-400 text-black">
-            <div class="flex justify-between items-start border-b border-black/10 pb-2">
+          <div class="p-4 rounded-xl border-2 border-current bg-amber-100 space-y-2">
+            <div class="flex justify-between items-start border-b border-current pb-1">
               <div>
-                <span class="inline-block px-2.5 py-0.5 rounded-full bg-black text-yellow-400 text-[10px] font-black uppercase mb-1">
-                  🚨 SORTIE SPÉCIALE
-                </span>
-                <h3 class="text-base font-bold leading-tight" x-text="getOrgDuJour().titre"></h3>
+                <span class="px-2 py-0.5 rounded bg-black text-white text-[9px] font-black uppercase">🚨 SORTIE</span>
+                <h3 class="text-base font-black uppercase mt-1" x-text="getOrgDuJour().titre"></h3>
               </div>
-              <button type="button" @click="effacerOrgDuJour()" class="text-black/60 hover:text-black">
-                <i class="fa-solid fa-trash text-xs"></i>
-              </button>
+              <button type="button" @click="effacerOrgDuJour()" class="text-red-700"><i class="fa-solid fa-trash text-xs"></i></button>
             </div>
-
-            <p class="text-xs font-semibold" x-text="'📍 Lieu : ' + (getOrgDuJour().lieu || 'Non spécifié')"></p>
-            
-            <div class="grid grid-cols-2 gap-2 text-xs bg-white/40 p-2 rounded-xl">
-              <div>
-                <span class="text-[10px] text-black/60 font-bold block">Bus Départ</span>
-                <span class="font-black text-black" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
-              </div>
-              <div>
-                <span class="text-[10px] text-black/60 font-bold block">Bus Retour</span>
-                <span class="font-black text-black" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
-              </div>
-            </div>
-
-            <div class="space-y-2 pt-1">
-              <span class="text-[11px] font-black text-black uppercase block">Groupes d'enfants affectés :</span>
-              <template x-for="g in getOrgDuJour().groupes" :key="g.id">
-                <div class="bg-black/10 p-3 rounded-2xl border border-black/10 space-y-2">
-                  <div class="font-black text-xs text-black flex items-center gap-1.5">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <span>Animateur : <span x-text="g.anim"></span></span>
-                  </div>
-                  
-                  <div class="grid grid-cols-2 gap-1.5">
-                    <template x-for="(ef, index) in parseEnfantsList(g.enfants)" :key="index">
-                      <div class="bg-white/80 p-2 rounded-xl text-[11px] font-bold text-black shadow-sm flex items-center gap-1.5">
-                        <i class="fa-solid fa-child text-yellow-600 text-[10px]"></i>
-                        <span x-text="ef"></span>
-                      </div>
-                    </template>
-                  </div>
-                </div>
-              </template>
+            <p class="text-xs font-bold" x-text="'📍 ' + (getOrgDuJour().lieu || 'Lieu non défini')"></p>
+            <div class="grid grid-cols-2 gap-2 text-xs bg-white p-2 rounded-lg border border-current">
+              <div><span class="text-[9px] font-bold opacity-60 block">Aller</span><span class="font-black" x-text="getOrgDuJour().busAller || '-'"></span></div>
+              <div><span class="text-[9px] font-bold opacity-60 block">Retour</span><span class="font-black" x-text="getOrgDuJour().busRetour || '-'"></span></div>
             </div>
           </div>
         </template>
 
-        <!-- LISTE PLANNING DES ANIMATEURS -->
+        <!-- LISTE PLANNING ANIMATEURS -->
         <div class="space-y-3">
-          <h3 class="text-xs font-bold text-white/80 uppercase tracking-wider" x-text="filtrePlanning === 'anim' ? 'Planning des Animateurs' : 'Groupes concernés (' + filtrePlanning + ')'"></h3>
-
           <template x-for="p in getPlanningFiltre()" :key="p.id">
-            <div class="card-item-bento p-4 space-y-3 bg-white/10">
-              
+            <div class="p-4 rounded-xl border-2 border-current bg-white space-y-2">
               <div class="flex justify-between items-center">
-                <button type="button" @click="ouvrirDetailAnim(p)" class="text-xs font-bold text-yellow-300 flex items-center gap-1.5 hover:underline">
-                  <span x-text="p.nom"></span>
-                  <i class="fa-solid fa-circle-info text-[10px]"></i>
-                </button>
-                
-                <div class="flex items-center space-x-1.5">
-                  <button type="button" @click="editerPlanningDuJour(p)" class="bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 text-[10px] font-bold rounded-full border border-white/20 transition-transform active:scale-95">
-                    Modifier
-                  </button>
-                  <button type="button" @click="supprimerAnim(p.id)" class="text-white/60 hover:text-rose-400 p-1">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                  </button>
+                <button type="button" @click="ouvrirDetailAnim(p)" class="text-sm font-black uppercase text-accent hover:underline" x-text="p.nom"></button>
+                <div class="flex items-center space-x-1">
+                  <button type="button" @click="editerPlanningDuJour(p)" class="bg-gray-100 border border-current text-[10px] font-bold px-2 py-0.5 rounded uppercase">Modifier</button>
+                  <button type="button" @click="supprimerAnim(p.id)" class="text-red-600 p-1"><i class="fa-solid fa-xmark text-xs"></i></button>
                 </div>
               </div>
 
-              <!-- BLOCS MATIN / APREM -->
               <div class="grid grid-cols-2 gap-2 text-xs">
-                
-                <!-- MATIN -->
-                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'border-amber-400' : 'border-sky-400'">
-                  <div class="flex justify-between items-center mb-1">
-                    <span class="text-[10px] text-white/60 block">☀️ Matin</span>
-                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageMatin)" 
-                            class="text-[9px] font-black px-1.5 py-0.5 rounded-md transition-colors"
-                            :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'bg-amber-400 text-black' : 'bg-sky-400 text-black'"
-                            x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></button>
-                  </div>
-                  <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
+                <div class="p-2 border border-current rounded-lg bg-gray-50">
+                  <span class="text-[9px] font-bold opacity-60 uppercase block">☀️ Matin</span>
+                  <p class="font-bold truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
                 </div>
-
-                <!-- APRÈS-MIDI -->
-                <div class="bg-black/20 p-2.5 rounded-xl border-l-4" :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'border-amber-400' : 'border-sky-400'">
-                  <div class="flex justify-between items-center mb-1">
-                    <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
-                    <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageAprem)" 
-                            class="text-[9px] font-black px-1.5 py-0.5 rounded-md transition-colors"
-                            :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'bg-amber-400 text-black' : 'bg-sky-400 text-black'"
-                            x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></button>
-                  </div>
-                  <p class="font-bold text-white truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
+                <div class="p-2 border border-current rounded-lg bg-gray-50">
+                  <span class="text-[9px] font-bold opacity-60 uppercase block">🌆 Après-midi</span>
+                  <p class="font-bold truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
                 </div>
               </div>
-
             </div>
           </template>
         </div>
@@ -982,162 +848,108 @@
       </div>
     </div>
 
-    <!-- MODAL : ORGANISATION / SORTIES -->
-    <div x-show="showOrgModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[90vh] overflow-y-auto">
-        <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
-          🚌 Programmation d'une Sortie
-        </h3>
+    <!-- MODAL : SORTIE SPÉCIALE -->
+    <div x-show="showOrgModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" style="display: none;">
+      <div class="card-main p-6 max-w-sm w-full space-y-4 rounded-2xl max-h-[90vh] overflow-y-auto">
+        <h3 class="text-base font-black font-syne uppercase border-b-2 border-current pb-2">🚌 Sortie Spéciale</h3>
 
         <div class="space-y-3">
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Date</label>
-            <input type="date" x-model="saisieOrg.date" class="input-chubby w-full px-3 py-2 text-xs overflow-hidden">
+            <label class="block text-[10px] font-bold uppercase mb-1">Date</label>
+            <input type="date" x-model="saisieOrg.date" class="input-pop w-full px-3 py-2 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Titre de la sortie</label>
-            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-chubby w-full px-3 py-2 text-xs">
+            <label class="block text-[10px] font-bold uppercase mb-1">Titre de la sortie</label>
+            <input type="text" x-model="saisieOrg.titre" placeholder="Zoo / Parc" class="input-pop w-full px-3 py-2 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Lieu</label>
-            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo" class="input-chubby w-full px-3 py-2 text-xs">
+            <label class="block text-[10px] font-bold uppercase mb-1">Lieu</label>
+            <input type="text" x-model="saisieOrg.lieu" placeholder="Ville" class="input-pop w-full px-3 py-2 text-xs">
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] font-bold text-white/80 mb-1">Bus Départ</label>
-              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-chubby w-full px-3 py-2 text-xs">
+              <label class="block text-[10px] font-bold uppercase mb-1">Bus Aller</label>
+              <input type="text" x-model="saisieOrg.busAller" placeholder="09h00" class="input-pop w-full px-3 py-2 text-xs">
             </div>
             <div>
-              <label class="block text-[11px] font-bold text-white/80 mb-1">Bus Retour</label>
-              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-chubby w-full px-3 py-2 text-xs">
-            </div>
-          </div>
-
-          <div class="card-item-bento p-3 space-y-2.5 bg-white/10">
-            <span class="text-xs font-bold text-yellow-300 block">👥 Animateurs & Enfants attribués</span>
-            
-            <div class="space-y-1.5">
-              <input type="text" x-model="tempGroupe.anim" placeholder="Nom Animateur (ex: Sarah)" class="input-chubby w-full px-2.5 py-1.5 text-xs">
-              <input type="text" x-model="tempGroupe.enfants" placeholder="Enfants (ex: Lucas, Nathan, Zoé...)" class="input-chubby w-full px-2.5 py-1.5 text-xs">
-              <button type="button" @click="ajouterGroupeSortie()" class="bg-yellow-400 hover:bg-yellow-300 text-black w-full py-1.5 text-xs font-black rounded-xl transition-transform active:scale-95">+ Ajouter ce groupe</button>
-            </div>
-
-            <div class="space-y-1 pt-1">
-              <template x-for="(grp, idx) in saisieOrg.groupes" :key="idx">
-                <div class="flex justify-between items-center text-xs bg-black/20 p-2 rounded-xl">
-                  <div>
-                    <p class="font-bold text-yellow-300" x-text="grp.anim"></p>
-                    <p class="text-[11px] text-white/80" x-text="grp.enfants"></p>
-                  </div>
-                  <button type="button" @click="saisieOrg.groupes.splice(idx, 1)" class="text-rose-400"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-              </template>
+              <label class="block text-[10px] font-bold uppercase mb-1">Bus Retour</label>
+              <input type="text" x-model="saisieOrg.busRetour" placeholder="16h30" class="input-pop w-full px-3 py-2 text-xs">
             </div>
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-white/20">
-          <button type="button" @click="showOrgModal = false" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold border border-white/20 transition-transform active:scale-95">Annuler</button>
-          <button type="button" @click="sauvegarderOrg()" class="bg-yellow-400 hover:bg-yellow-300 text-black flex-1 py-2.5 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">Enregistrer</button>
+        <div class="flex gap-2 pt-2 border-t-2 border-current">
+          <button type="button" @click="showOrgModal = false" class="bg-gray-200 flex-1 py-2.5 rounded-xl text-xs font-bold uppercase">Annuler</button>
+          <button type="button" @click="sauvegarderOrg()" class="btn-primary flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider">Enregistrer</button>
         </div>
       </div>
     </div>
 
     <!-- MODAL : DETAIL ANIMATEUR -->
-    <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[85vh] overflow-y-auto">
-        
-        <div class="flex justify-between items-center border-b border-white/20 pb-3">
-          <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-full bg-yellow-400 text-black flex items-center justify-center font-black text-base shadow-sm">
-              <span x-text="animSelectionne?.nom ? animSelectionne.nom.charAt(0) : 'A'"></span>
-            </div>
-            <div>
-              <h3 class="text-base font-bold text-white" x-text="animSelectionne?.nom"></h3>
-              <p class="text-[10px] text-yellow-300 uppercase font-bold">Planning Animateur</p>
-            </div>
-          </div>
-          <button type="button" @click="animSelectionne = null" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <div x-show="animSelectionne !== null" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" style="display: none;">
+      <div class="card-main p-6 max-w-sm w-full space-y-4 rounded-2xl max-h-[85vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b-2 border-current pb-2">
+          <h3 class="text-lg font-black font-syne uppercase" x-text="animSelectionne?.nom"></h3>
+          <button type="button" @click="animSelectionne = null"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <div class="space-y-3">
+        <div class="space-y-2">
           <template x-for="(planningDate, dateKey) in animSelectionne?.dates" :key="dateKey">
-            <div class="card-item-bento p-3.5 space-y-2 bg-white/10">
-              <div class="flex justify-between items-center border-b border-white/20 pb-2">
-                <span class="text-xs font-bold text-yellow-300" x-text="formatDateLisible(dateKey)"></span>
-                <button type="button" @click="allerADate(dateKey)" class="bg-yellow-400 text-black text-[10px] font-black px-2.5 py-1 rounded-full transition-transform active:scale-95">
-                  Voir jour
-                </button>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 text-xs">
-                <div class="bg-black/20 p-2 rounded-xl">
-                  <span class="text-[10px] text-white/60 block">☀️ Matin</span>
-                  <p class="font-bold text-white" x-text="(planningDate.matin || 'Repos') + ' (' + (planningDate.ageMatin || '-6 ans') + ')'"></p>
-                </div>
-                <div class="bg-black/20 p-2 rounded-xl">
-                  <span class="text-[10px] text-white/60 block">🌆 Après-midi</span>
-                  <p class="font-bold text-white" x-text="(planningDate.aprem || 'Repos') + ' (' + (planningDate.ageAprem || '-6 ans') + ')'"></p>
-                </div>
+            <div class="p-3 border-2 border-current rounded-xl bg-gray-50 space-y-1">
+              <span class="text-xs font-black text-accent uppercase" x-text="formatDateLisible(dateKey)"></span>
+              <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                <div><span class="text-[9px] font-bold opacity-60 uppercase block">☀️ Matin</span><p class="font-bold" x-text="planningDate.matin"></p></div>
+                <div><span class="text-[9px] font-bold opacity-60 uppercase block">🌆 Aprem</span><p class="font-bold" x-text="planningDate.aprem"></p></div>
               </div>
             </div>
           </template>
         </div>
 
-        <button type="button" @click="animSelectionne = null" class="bg-white/10 hover:bg-white/20 text-white w-full py-2.5 rounded-full text-xs font-bold border border-white/20 transition-transform active:scale-95">Fermer</button>
+        <button type="button" @click="animSelectionne = null" class="bg-gray-200 w-full py-2.5 rounded-xl text-xs font-bold uppercase">Fermer</button>
       </div>
     </div>
 
-    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
-    <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
-      <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20">
-        <h3 class="text-base font-bold text-white border-b border-white/20 pb-2">
-          ✏️ Créneau Animateur
-        </h3>
+    <!-- MODAL : CRÉATION / MODIFICATION CRÉNEAU -->
+    <div x-show="showAddAnimModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" style="display: none;">
+      <div class="card-main p-6 max-w-sm w-full space-y-4 rounded-2xl">
+        <h3 class="text-base font-black font-syne uppercase border-b-2 border-current pb-2">✏️ Créneau Animateur</h3>
         
         <div class="space-y-3">
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Nom de l'animateur</label>
-            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-chubby w-full px-3 py-2 text-xs">
+            <label class="block text-[10px] font-bold uppercase mb-1">Nom de l'animateur</label>
+            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-pop w-full px-3 py-2 text-xs">
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-white/80 mb-1">Date</label>
-            <input type="date" x-model="saisiePlanning.date" class="input-chubby w-full px-3 py-2 text-xs overflow-hidden">
+            <label class="block text-[10px] font-bold uppercase mb-1">Date</label>
+            <input type="date" x-model="saisiePlanning.date" class="input-pop w-full px-3 py-2 text-xs">
           </div>
 
-          <div class="space-y-1 bg-black/20 p-2.5 rounded-xl border border-white/10">
-            <span class="text-[11px] font-bold text-yellow-300 block">☀️ Créneau Matin</span>
-            <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu de piste" class="input-chubby w-full px-3 py-1.5 text-xs">
-            <div class="flex items-center gap-2 pt-1">
-              <span class="text-[10px] text-white/80">Tranche d'âge :</span>
-              <select x-model="saisiePlanning.ageMatin" class="input-chubby px-2 py-1 text-[11px] font-bold flex-1">
-                <option value="-6 ans">-6 ans</option>
-                <option value="+6 ans">+6 ans</option>
-              </select>
-            </div>
+          <div class="p-2.5 border-2 border-current rounded-xl bg-gray-50 space-y-1">
+            <span class="text-xs font-black uppercase text-accent">☀️ Matin</span>
+            <input type="text" x-model="saisiePlanning.matin" placeholder="Activité du matin" class="input-pop w-full px-2.5 py-1.5 text-xs">
+            <select x-model="saisiePlanning.ageMatin" class="input-pop w-full px-2 py-1 text-xs font-bold mt-1">
+              <option value="-6 ans">-6 ans</option>
+              <option value="+6 ans">+6 ans</option>
+            </select>
           </div>
 
-          <div class="space-y-1 bg-black/20 p-2.5 rounded-xl border border-white/10">
-            <span class="text-[11px] font-bold text-yellow-300 block">🌆 Créneau Après-midi</span>
-            <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu Forêt" class="input-chubby w-full px-3 py-1.5 text-xs">
-            <div class="flex items-center gap-2 pt-1">
-              <span class="text-[10px] text-white/80">Tranche d'âge :</span>
-              <select x-model="saisiePlanning.ageAprem" class="input-chubby px-2 py-1 text-[11px] font-bold flex-1">
-                <option value="-6 ans">-6 ans</option>
-                <option value="+6 ans">+6 ans</option>
-              </select>
-            </div>
+          <div class="p-2.5 border-2 border-current rounded-xl bg-gray-50 space-y-1">
+            <span class="text-xs font-black uppercase text-accent">🌆 Après-midi</span>
+            <input type="text" x-model="saisiePlanning.aprem" placeholder="Activité de l'après-midi" class="input-pop w-full px-2.5 py-1.5 text-xs">
+            <select x-model="saisiePlanning.ageAprem" class="input-pop w-full px-2 py-1 text-xs font-bold mt-1">
+              <option value="-6 ans">-6 ans</option>
+              <option value="+6 ans">+6 ans</option>
+            </select>
           </div>
-
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-white/20">
-          <button type="button" @click="showAddAnimModal = false" class="bg-white/10 hover:bg-white/20 text-white flex-1 py-2.5 rounded-full text-xs font-bold border border-white/20 transition-transform active:scale-95">Annuler</button>
-          <button type="button" @click="validerPlanning()" class="bg-yellow-400 hover:bg-yellow-300 text-black flex-1 py-2.5 rounded-full text-xs font-black transition-transform active:scale-95 shadow-md">Valider</button>
+        <div class="flex gap-2 pt-2 border-t-2 border-current">
+          <button type="button" @click="showAddAnimModal = false" class="bg-gray-200 flex-1 py-2.5 rounded-xl text-xs font-bold uppercase">Annuler</button>
+          <button type="button" @click="validerPlanning()" class="btn-primary flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider">Valider</button>
         </div>
       </div>
     </div>
@@ -1171,10 +983,8 @@
         enfantSelectionne: null,
         searchEnfant: '',
         toast: { show: false, message: '' },
-
         semaineActiveOffset: 0,
 
-        // BASE DE DONNÉES ENFANTS / SANITAIRE
         enfants: [
           {
             id: 1,
@@ -1185,7 +995,7 @@
               { nom: 'Maman Dupont', telephone: '06 11 22 33 44' },
               { nom: 'Papa Dupont', telephone: '06 55 66 77 88' }
             ],
-            pai: 'Allergie sévère aux arachides',
+            pai: 'Allergie arachides',
             droitImage: true
           },
           {
@@ -1223,7 +1033,7 @@
               { nom: 'Chocolat noir', qte: 200, unite: 'g' },
               { nom: 'Beurre', qte: 125, unite: 'g' },
               { nom: 'Sucre', qte: 100, unite: 'g' },
-              { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }
+              { nom: 'Œufs', qte: 4, unite: 'pce' }
             ]
           },
           {
@@ -1231,10 +1041,10 @@
             nom: 'Gâteau aux Pommes 🍏',
             ingredients: [
               { nom: 'Farine', qte: 150, unite: 'g' },
-              { nom: 'Pommes', qte: 3, unite: 'pièce(s)' },
+              { nom: 'Pommes', qte: 3, unite: 'pce' },
               { nom: 'Sucre', qte: 80, unite: 'g' },
               { nom: 'Beurre', qte: 80, unite: 'g' },
-              { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }
+              { nom: 'Œufs', qte: 3, unite: 'pce' }
             ]
           }
         ],
@@ -1255,11 +1065,9 @@
         listeCourses: [],
         
         saisiePlanning: { nom: '', date: todayISO, matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' },
-        
         organisations: {},
         saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] },
         tempGroupe: { anim: '', enfants: '' },
-        
         planningGlobal: [],
 
         init() {
@@ -1289,14 +1097,11 @@
             }
           ];
 
-          // Nettoyage automatique au démarrage
           this.nettoyerCreneauxPasses();
         },
 
-        // FONCTION DE NETTOYAGE DES CRÉNEAUX PASSÉS
         nettoyerCreneauxPasses() {
           const aujourdhui = this.todayDateISO;
-          
           this.planningGlobal.forEach(anim => {
             if (anim.dates) {
               Object.keys(anim.dates).forEach(dateKey => {
@@ -1308,7 +1113,6 @@
           });
         },
 
-        // FONCTIONS FICHE SANITAIRE
         ouvrirModalAddEnfant() {
           this.isEditingEnfant = false;
           this.enfantEditingId = null;
@@ -1325,7 +1129,6 @@
         },
 
         editerEnfant(enfant) {
-          // Fermer le pop-up de détails pour laisser place à la modale de modification
           this.enfantSelectionne = null;
           this.isEditingEnfant = true;
           this.enfantEditingId = enfant.id;
@@ -1371,7 +1174,6 @@
           const respsFiltres = this.nouvelEnfant.responsables.filter(r => r.nom.trim() !== '' || r.telephone.trim() !== '');
 
           if (this.isEditingEnfant) {
-            // Modification d'un enfant existant
             const idx = this.enfants.findIndex(e => e.id === this.enfantEditingId);
             if (idx !== -1) {
               this.enfants[idx] = {
@@ -1383,10 +1185,9 @@
                 pai: this.nouvelEnfant.aPAI ? this.nouvelEnfant.pai.trim() : '',
                 droitImage: this.nouvelEnfant.droitImage
               };
-              this.showToast('Fiche sanitaire mise à jour ! ✏️');
+              this.showToast('Fiche sanitaire mise à jour !');
             }
           } else {
-            // Création d'un nouvel enfant
             const nouveau = {
               id: Date.now(),
               nom: this.nouvelEnfant.nom.trim(),
@@ -1397,7 +1198,7 @@
               droitImage: this.nouvelEnfant.droitImage
             };
             this.enfants.push(nouveau);
-            this.showToast('Enfant enregistré ! 👶');
+            this.showToast('Enfant enregistré !');
           }
 
           this.showAddEnfantModal = false;
@@ -1411,7 +1212,6 @@
           }
         },
 
-        // PURGE TOTALE
         reinitialiserApp() {
           if (confirm("Réinitialiser TOUTES les données ?")) {
             this.fiche = { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] };
@@ -1425,7 +1225,7 @@
             this.animSelectionne = null;
             this.enfantSelectionne = null;
             this.currentTab = 'hub';
-            this.showToast("Application réinitialisée ! 🗑️");
+            this.showToast("Application réinitialisée !");
           }
         },
 
@@ -1437,17 +1237,6 @@
             const pJour = this.getPlanningDuJour(p, this.dateAffichee);
             return pJour.ageMatin === this.filtrePlanning || pJour.ageAprem === this.filtrePlanning;
           });
-        },
-
-        filtrerParAge(age) {
-          if (age) {
-            this.filtrePlanning = age;
-          }
-        },
-
-        parseEnfantsList(chaine) {
-          if (!chaine) return [];
-          return chaine.split(',').map(item => item.trim()).filter(item => item.length > 0);
         },
 
         getLundiDeLaSemaine(d) {
@@ -1509,14 +1298,8 @@
         },
 
         enregistrerNouvelleRecette() {
-          if (this.nouvelleRecette.nom.trim() === '') {
-            this.showToast('Indique le nom de la recette !');
-            return;
-          }
-          if (this.nouvelleRecette.ingredients.length === 0) {
-            this.showToast('Ajoute au moins 1 ingrédient.');
-            return;
-          }
+          if (this.nouvelleRecette.nom.trim() === '') return this.showToast('Indique le nom !');
+          if (this.nouvelleRecette.ingredients.length === 0) return this.showToast('Ajoute 1 ingrédient min.');
 
           const newId = 'recette-' + Date.now();
           this.recettesGouter.push({
@@ -1528,14 +1311,11 @@
           this.saisieGouter.recetteId = newId;
           this.nouvelleRecette = { nom: '', ingredients: [] };
           this.showAddRecetteModal = false;
-          this.showToast('Recette ajoutée ! 🍰');
+          this.showToast('Recette ajoutée !');
         },
 
         enregistrerGouterPlanifie() {
-          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) {
-            this.showToast('Choisis une date et une recette !');
-            return;
-          }
+          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) return this.showToast('Champs incomplets !');
 
           this.goutersPlanifies.push({
             id: 'gouter-' + Date.now(),
@@ -1546,12 +1326,12 @@
           });
 
           this.showPlanifModal = false;
-          this.showToast('Goûter planifié ! 🍪');
+          this.showToast('Goûter planifié !');
         },
 
         supprimerGouterPlanifie(id) {
           this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
-          this.showToast('Goûter supprimé !');
+          this.showToast('Goûter supprimé.');
         },
 
         getListeCoursesAgregeeSemaine() {
@@ -1566,12 +1346,7 @@
               recette.ingredients.forEach(ing => {
                 const key = `${ing.nom.toLowerCase().trim()}_${ing.unite.toLowerCase().trim()}`;
                 if (!cumule[key]) {
-                  cumule[key] = {
-                    key: key,
-                    nom: ing.nom,
-                    qte: 0,
-                    unite: ing.unite
-                  };
+                  cumule[key] = { key: key, nom: ing.nom, qte: 0, unite: ing.unite };
                 }
                 cumule[key].qte += (ing.qte * nbGateaux);
               });
@@ -1607,9 +1382,8 @@
           const parts = dateStr.split('-');
           if(parts.length !== 3) return dateStr;
           const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          const options = { weekday: 'long', day: 'numeric', month: 'long' };
-          const txt = d.toLocaleDateString('fr-FR', options);
-          return txt.charAt(0).toUpperCase() + txt.slice(1);
+          const options = { weekday: 'short', day: 'numeric', month: 'short' };
+          return d.toLocaleDateString('fr-FR', options);
         },
 
         getPlanningDuJour(anim, dateKey) {
@@ -1655,20 +1429,7 @@
           } else {
             this.saisieOrg = { date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] };
           }
-          this.tempGroupe = { anim: '', enfants: '' };
           this.showOrgModal = true;
-        },
-
-        ajouterGroupeSortie() {
-          if(this.tempGroupe.anim.trim() !== '' && this.tempGroupe.enfants.trim() !== '') {
-            if(!this.saisieOrg.groupes) this.saisieOrg.groupes = [];
-            this.saisieOrg.groupes.push({
-              id: Date.now(),
-              anim: this.tempGroupe.anim.trim(),
-              enfants: this.tempGroupe.enfants.trim()
-            });
-            this.tempGroupe = { anim: '', enfants: '' };
-          }
         },
 
         sauvegarderOrg() {
@@ -1676,7 +1437,7 @@
             this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
             this.dateAffichee = this.saisieOrg.date;
             this.showOrgModal = false;
-            this.showToast('Sortie programmée ! 🚌');
+            this.showToast('Sortie enregistrée !');
           }
         },
 
@@ -1710,24 +1471,24 @@
               achete: false
             });
           });
-          this.showToast('Fiche créée & Matériel en cours d\'achat ! 📦');
+          this.showToast('Fiche validée & matériel envoyé !');
         },
 
         exportPDF() {
-          document.getElementById('pdf-titre').innerText = this.fiche.titre || 'Fiche d\'Activité Sans Titre';
+          document.getElementById('pdf-titre').innerText = this.fiche.titre || 'Fiche d\'Activité';
           document.getElementById('pdf-age').innerText = this.fiche.age;
-          document.getElementById('pdf-lieu').innerText = this.fiche.lieu || 'Non spécifié';
-          document.getElementById('pdf-objectif').innerText = this.fiche.objectif || 'Non spécifié';
-          document.getElementById('pdf-deroulement').innerText = this.fiche.deroulement || 'Aucun déroulement renseigné.';
+          document.getElementById('pdf-lieu').innerText = this.fiche.lieu || '-';
+          document.getElementById('pdf-objectif').innerText = this.fiche.objectif || '-';
+          document.getElementById('pdf-deroulement').innerText = this.fiche.deroulement || '-';
 
           const listEl = document.getElementById('pdf-materiel');
           listEl.innerHTML = '';
           if(this.fiche.materiel.length === 0) {
-            listEl.innerHTML = '<li>Aucun matériel particulier</li>';
+            listEl.innerHTML = '<li>Aucun matériel</li>';
           } else {
             this.fiche.materiel.forEach(item => {
               const li = document.createElement('li');
-              li.innerText = `${item.nom} — Quantité : ${item.qte}`;
+              li.innerText = `${item.nom} — Qté : ${item.qte}`;
               listEl.appendChild(li);
             });
           }
@@ -1750,7 +1511,7 @@
             console.error(err);
           });
 
-          this.showToast('PDF en préparation... 📄');
+          this.showToast('Génération du PDF...');
         },
 
         submitSoin() {
@@ -1764,13 +1525,13 @@
             heure: timeStr,
             prevenirFamille: this.soin.prevenirFamille
           });
-          this.showToast('Soin bien enregistré ! 🩺');
+          this.showToast('Soin enregistré !');
           this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = ''; this.soin.prevenirFamille = false;
         },
 
         deleteSoin(id) {
           this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-          this.showToast('Soin retiré.');
+          this.showToast('Soin supprimé.');
         },
 
         addCourseDirecte() {
@@ -1793,16 +1554,11 @@
 
         viderAchetes() {
           this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.showToast('Articles achetés nettoyés ! ✨');
+          this.showToast('Articles nettoyés !');
         },
 
         ouvrirDetailAnim(p) {
           this.animSelectionne = p;
-        },
-
-        allerADate(dateKey) {
-          this.dateAffichee = dateKey;
-          this.animSelectionne = null;
         },
 
         validerPlanning() {
@@ -1828,7 +1584,7 @@
             };
 
             this.showAddAnimModal = false;
-            this.showToast(`Créneau de ${anim.nom} à jour ! 👍`);
+            this.showToast(`Créneau mis à jour !`);
           }
         },
 
