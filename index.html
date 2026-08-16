@@ -55,6 +55,11 @@
 
     *, ::before, ::after { box-sizing: border-box; }
 
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
     body {
       font-family: 'Outfit', sans-serif;
       min-height: 100vh;
@@ -155,12 +160,12 @@
   </style>
 </head>
 
-<body class="pb-6 select-none flex flex-col min-h-screen" 
+<body class="pb-4 select-none flex flex-col min-h-screen" 
       x-data="alshApp()" 
       :class="'theme-' + currentTab">
 
   <!-- HEADER BRANDING -->
-  <header class="max-w-5xl mx-auto w-full px-4 pt-4 mb-2 flex items-center justify-between shrink-0">
+  <header class="max-w-5xl mx-auto w-full px-4 pt-3 mb-1 flex items-center justify-between shrink-0 h-[60px]">
     <div class="flex items-center gap-2.5 cursor-pointer group" @click="currentTab = 'hub'">
       <div class="w-9 h-9 bg-white rounded-xl flex items-center justify-center text-lg font-black shadow-md transform -rotate-3 group-hover:rotate-0 transition-transform">
         ⚡
@@ -203,75 +208,79 @@
     <button type="button" @click="toast.show = false" class="opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark text-base"></i></button>
   </div>
 
-  <main class="max-w-5xl mx-auto w-full px-4 mt-2 flex-1 flex flex-col justify-start">
+  <main class="max-w-5xl mx-auto w-full px-4 flex-1 flex flex-col justify-start">
 
-    <!-- ==================== 0. HUB PRINCIPAL (STRICTEMENT 2 COLONNES x 3 LIGNES) ==================== -->
-    <div x-show="currentTab === 'hub'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="w-full my-auto py-2">
+    <!-- ==================== 0. HUB PRINCIPAL (ADAPTÉ TAILLE ÉCRAN 100% 2 COL x 3 LIGNES) ==================== -->
+    <div x-show="currentTab === 'hub'" 
+         x-transition:enter="transition ease-out duration-150" 
+         x-transition:enter-start="opacity-0 scale-95" 
+         x-transition:enter-end="opacity-100 scale-100" 
+         class="w-full flex-1 flex flex-col justify-center py-2 h-[calc(100vh-80px)]">
       
-      <div class="grid grid-cols-2 grid-rows-3 gap-2.5 sm:gap-3.5 w-full">
+      <div class="grid grid-cols-2 grid-rows-3 gap-3 sm:gap-4 w-full h-full">
         
-        <!-- 1. Fiches Sanitaires -->
-        <button type="button" @click="currentTab = 'sanitaire'" class="card-pop p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3.5 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#A8E6CF] text-[#1D2A44] flex items-center justify-center text-lg sm:text-2xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
+        <!-- 1. Fiches San' -->
+        <button type="button" @click="currentTab = 'sanitaire'" class="card-pop p-3 sm:p-5 flex items-center gap-3 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full w-full justify-start">
+          <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-[#A8E6CF] text-[#1D2A44] flex items-center justify-center text-xl sm:text-3xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
             🩺
           </div>
           <div class="overflow-hidden">
-            <h3 class="font-poster text-xs sm:text-base font-black truncate">Fiches Sanitaires</h3>
+            <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Fiches San'</h3>
             <p class="text-[10px] sm:text-xs font-bold opacity-80 truncate hidden xs:block">PAI, Droit image, Enfants</p>
           </div>
         </button>
 
         <!-- 2. Fiche d'activité -->
-        <button type="button" @click="currentTab = 'fiche'" class="card-pop p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3.5 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#FFB703] text-[#2A385B] flex items-center justify-center text-lg sm:text-2xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
+        <button type="button" @click="currentTab = 'fiche'" class="card-pop p-3 sm:p-5 flex items-center gap-3 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full w-full justify-start">
+          <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-[#FFB703] text-[#2A385B] flex items-center justify-center text-xl sm:text-3xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
             🎨
           </div>
           <div class="overflow-hidden">
-            <h3 class="font-poster text-xs sm:text-base font-black truncate">Fiche d'Activité</h3>
+            <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Fiche d'Activité</h3>
             <p class="text-[10px] sm:text-xs font-bold opacity-80 truncate hidden xs:block">Création, Matériel & PDF</p>
           </div>
         </button>
 
         <!-- 3. Cahier de soins -->
-        <button type="button" @click="currentTab = 'soins'" class="card-pop p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3.5 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#FFD1DC] text-[#E63946] flex items-center justify-center text-lg sm:text-2xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
+        <button type="button" @click="currentTab = 'soins'" class="card-pop p-3 sm:p-5 flex items-center gap-3 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full w-full justify-start">
+          <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-[#FFD1DC] text-[#E63946] flex items-center justify-center text-xl sm:text-3xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
             🩹
           </div>
           <div class="overflow-hidden">
-            <h3 class="font-poster text-xs sm:text-base font-black truncate">Cahier de Soins</h3>
+            <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Cahier de Soins</h3>
             <p class="text-[10px] sm:text-xs font-bold opacity-80 truncate hidden xs:block">Suivi blessures & parents</p>
           </div>
         </button>
 
-        <!-- 4. Goûters & Recettes -->
-        <button type="button" @click="currentTab = 'gouter'" class="card-pop p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3.5 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#FF9F1C] text-[#4A2810] flex items-center justify-center text-lg sm:text-2xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
+        <!-- 4. Goûter -->
+        <button type="button" @click="currentTab = 'gouter'" class="card-pop p-3 sm:p-5 flex items-center gap-3 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full w-full justify-start">
+          <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-[#FF9F1C] text-[#4A2810] flex items-center justify-center text-xl sm:text-3xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
             🍪
           </div>
           <div class="overflow-hidden">
-            <h3 class="font-poster text-xs sm:text-base font-black truncate">Goûters & Recettes</h3>
+            <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Goûter</h3>
             <p class="text-[10px] sm:text-xs font-bold opacity-80 truncate hidden xs:block">Menus, Recettes & Planning</p>
           </div>
         </button>
 
-        <!-- 5. Courses Matériel -->
-        <button type="button" @click="currentTab = 'courses'" class="card-pop p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3.5 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#B7E4C7] text-[#1B4332] flex items-center justify-center text-lg sm:text-2xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
+        <!-- 5. Courses & Matériel -->
+        <button type="button" @click="currentTab = 'courses'" class="card-pop p-3 sm:p-5 flex items-center gap-3 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full w-full justify-start">
+          <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-[#B7E4C7] text-[#1B4332] flex items-center justify-center text-xl sm:text-3xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
             🛍️
           </div>
           <div class="overflow-hidden">
-            <h3 class="font-poster text-xs sm:text-base font-black truncate">Courses & Matériel</h3>
+            <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Courses & Matériel</h3>
             <p class="text-[10px] sm:text-xs font-bold opacity-80 truncate hidden xs:block">Achats activités & goûters</p>
           </div>
         </button>
 
-        <!-- 6. Planning & Équipe -->
-        <button type="button" @click="currentTab = 'planning'" class="card-pop p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3.5 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full">
-          <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#4CC9F0] text-[#3A0CA3] flex items-center justify-center text-lg sm:text-2xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
+        <!-- 6. Planning -->
+        <button type="button" @click="currentTab = 'planning'" class="card-pop p-3 sm:p-5 flex items-center gap-3 text-left hover:scale-[1.01] transition-all active:scale-98 group h-full w-full justify-start">
+          <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-[#4CC9F0] text-[#3A0CA3] flex items-center justify-center text-xl sm:text-3xl font-black shadow-md shrink-0 group-hover:scale-105 transition-transform">
             📅
           </div>
           <div class="overflow-hidden">
-            <h3 class="font-poster text-xs sm:text-base font-black truncate">Planning Équipe</h3>
+            <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Planning</h3>
             <p class="text-[10px] sm:text-xs font-bold opacity-80 truncate hidden xs:block">Animateurs, Groupes & Sorties</p>
           </div>
         </button>
@@ -280,13 +289,13 @@
     </div>
 
 
-    <!-- ==================== 1. ONGLET : FICHES SANITAIRES ==================== -->
+    <!-- ==================== 1. ONGLET : FICHES SAN' ==================== -->
     <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b-2 border-current/20 pb-3 gap-2">
           <h2 class="font-poster text-lg md:text-xl flex items-center gap-2 truncate">
-            <span>🩺</span> Fiches Sanitaires
+            <span>🩺</span> Fiches San'
           </h2>
           <button type="button" @click="ouvrirModalAddEnfant()" class="btn-white text-[11px] px-3 py-1.5 rounded-full shadow-md shrink-0 whitespace-nowrap">
             + Enfant
@@ -317,17 +326,17 @@
                 <p class="text-[11px] font-bold opacity-75 truncate" x-text="getAgeEnfant(e.dateNaissance) + ' ans (' + formatDateLisible(e.dateNaissance) + ')'"></p>
               </div>
 
-              <!-- ICÔNES DE RAPPEL (PAI & DROIT A L'IMAGE) -->
+              <!-- ICÔNES DE RAPPEL (PAI & DROIT A L'IMAGE DYNAMIQUES) -->
               <div class="flex items-center space-x-1.5 shrink-0">
                 <span x-show="e.pai" title="PAI / Médical" class="w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold animate-pulse">
                   ⚠️
                 </span>
                 
-                <!-- PASTILLE VERTE / SOMBRE POUR LE DROIT A L'IMAGE (SANS PASTILLE ROUGE 🚫) -->
+                <!-- PASTILLE VERTE (AUTORISÉ) / ROUGE (REFUSÉ) POUR LE DROIT A L'IMAGE -->
                 <span x-show="e.droitImage" title="Droit à l'image AUTORISÉ" class="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm">
                   <i class="fa-solid fa-camera"></i>
                 </span>
-                <span x-show="!e.droitImage" title="Droit à l'image REFUSÉ" class="w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm">
+                <span x-show="!e.droitImage" title="Droit à l'image REFUSÉ" class="w-6 h-6 bg-rose-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm">
                   <i class="fa-solid fa-camera"></i>
                 </span>
 
@@ -343,7 +352,7 @@
     <!-- MODAL : AJOUTER / MODIFIER UN ENFANT -->
     <div x-show="showAddEnfantModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-sanitaire border-2 border-white max-h-[90vh] overflow-y-auto shadow-2xl">
-        <h3 class="font-poster text-base md:text-lg border-b-2 border-current/20 pb-2" x-text="isEditingEnfant ? '✏️ Modifier Fiche Sanitaire' : '👶 Ajouter Fiche Sanitaire'">
+        <h3 class="font-poster text-base md:text-lg border-b-2 border-current/20 pb-2" x-text="isEditingEnfant ? '✏️ Modifier Fiche San' : '👶 Ajouter Fiche San'">
         </h3>
 
         <form @submit.prevent="enregistrerEnfant()" class="space-y-3">
@@ -398,7 +407,7 @@
 
           <div class="flex items-center space-x-2.5 card-item-pop p-3">
             <input type="checkbox" x-model="nouvelEnfant.droitImage" id="addDroitImg" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer">
-            <label for="addDroitImg" class="text-xs font-extrabold uppercase cursor-pointer">Autorisation Droit à l'Image OK 📸</label>
+            <label for="addDroitImg" class="text-xs font-extrabold uppercase cursor-pointer">Autorisation Droit à l'Image 📸</label>
           </div>
 
           <div class="flex gap-2 pt-2 border-t border-current/20">
@@ -409,7 +418,7 @@
       </div>
     </div>
 
-    <!-- MODAL : FICHE SANITAIRE DÉTAILLÉE -->
+    <!-- MODAL : FICHE SAN' DÉTAILLÉE -->
     <div x-show="enfantSelectionne !== null" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-sanitaire border-2 border-white max-h-[85vh] overflow-y-auto shadow-2xl">
         
@@ -443,34 +452,39 @@
             </template>
           </div>
 
-          <!-- ENCADRÉ PAI -->
-          <div class="p-3 rounded-xl space-y-1 border border-current/20 bg-white/40">
+          <!-- ENCADRÉ PAI FLASHY ET REMARQUABLE -->
+          <div class="p-3.5 rounded-2xl space-y-1.5 border-4 transition-all" 
+               :class="enfantSelectionne?.pai ? 'bg-amber-300 border-amber-600 text-amber-950 shadow-lg animate-pulse' : 'bg-white/40 border-current/20'">
             <div class="flex items-center justify-between">
-              <span class="text-[9px] font-extrabold uppercase tracking-wider">⚠️ PAI / Médical / Allergies</span>
-              <span x-text="enfantSelectionne?.pai ? 'OUI' : 'AUCUN'" class="font-black px-2 py-0.2 rounded-full text-[9px] bg-white border border-current/20"></span>
+              <span class="text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
+                ⚠️ PAI / MAPPING MÉDICAL / ALLERGIES
+              </span>
+              <span x-text="enfantSelectionne?.pai ? 'PAI ACTIF !' : 'AUCUN PAI'" 
+                    class="font-black px-2.5 py-0.5 rounded-full text-[9px] uppercase shadow-sm"
+                    :class="enfantSelectionne?.pai ? 'bg-amber-600 text-white' : 'bg-white border border-current/20'"></span>
             </div>
-            <p class="font-bold text-xs pt-0.5 break-words" x-text="enfantSelectionne?.pai || 'Aucun traitement ou PAI renseigné.'"></p>
+            <p class="font-black text-xs md:text-sm pt-0.5 break-words" x-text="enfantSelectionne?.pai || 'Aucun traitement ou PAI renseigné.'"></p>
           </div>
 
-          <!-- ENCADRÉ DROIT A L'IMAGE DYNAMIQUE (SANS 🚫) -->
+          <!-- ENCADRÉ DROIT A L'IMAGE DYNAMIQUE (ROUGE / VERT) -->
           <div class="card-item-pop p-2.5 flex items-center justify-between">
             <span class="text-[10px] font-extrabold uppercase opacity-80">📸 Droit à l'Image</span>
             
             <span x-show="enfantSelectionne?.droitImage" class="font-extrabold px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1 bg-emerald-500 text-white shadow-sm">
               <i class="fa-solid fa-camera"></i> AUTORISÉ
             </span>
-            <span x-show="!enfantSelectionne?.droitImage" class="font-extrabold px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1 bg-gray-800 text-white shadow-sm">
+            <span x-show="!enfantSelectionne?.droitImage" class="font-extrabold px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1 bg-rose-600 text-white shadow-sm">
               <i class="fa-solid fa-camera"></i> REFUSÉ
             </span>
           </div>
         </div>
 
         <div class="pt-2 flex gap-2">
-          <button type="button" @click="editerEnfant(enfantSelectionne)" class="btn-white py-2 px-3 rounded-full text-xs shadow border border-current/20">
-            ✏️ Edit
+          <button type="button" @click="editerEnfant(enfantSelectionne)" class="btn-white py-2 px-3 rounded-full text-xs shadow border border-current/20 flex items-center gap-1">
+            ✏️ Modifier
           </button>
-          <button type="button" @click="supprimerEnfant(enfantSelectionne?.id)" class="btn-dark py-2 px-3 rounded-full text-xs">
-            Supprimer
+          <button type="button" @click="supprimerEnfant(enfantSelectionne?.id)" class="bg-red-600 text-white hover:bg-red-700 font-extrabold py-2 px-3 rounded-full text-xs shadow flex items-center gap-1">
+            ❌ Supprimer
           </button>
           <button type="button" @click="enfantSelectionne = null" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">
             Fermer
@@ -646,14 +660,14 @@
     </div>
 
 
-    <!-- ==================== 4. ONGLET : GOÛTERS & RECETTES ==================== -->
+    <!-- ==================== 4. ONGLET : GOÛTER ==================== -->
     <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-3">
           <div class="flex items-center justify-between border-b-2 border-current/20 pb-3 gap-1.5">
             <h2 class="font-poster text-base sm:text-lg md:text-xl flex items-center gap-1.5 truncate">
-              <span>🍪</span> Goûters & Recettes
+              <span>🍪</span> Goûter
             </h2>
             <div class="flex gap-1.5 shrink-0">
               <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="btn-dark text-[11px] px-2.5 py-1.5 rounded-full uppercase shrink-0">
@@ -895,14 +909,14 @@
     </div>
 
 
-    <!-- ==================== 6. ONGLET : PLANNING & ORGANISATION ==================== -->
+    <!-- ==================== 6. ONGLET : PLANNING ==================== -->
     <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-2.5 border-b-2 border-current/20 pb-3">
           <div class="flex items-center justify-between gap-1.5">
             <h2 class="font-poster text-base sm:text-lg md:text-xl flex items-center gap-1.5 truncate">
-              <span>📅</span> Planning Équipe
+              <span>📅</span> Planning
             </h2>
             <div class="flex gap-1.5 shrink-0">
               <button type="button" @click="ouvrirModalOrg()" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full shadow border border-current/20 shrink-0 whitespace-nowrap">
@@ -914,16 +928,16 @@
             </div>
           </div>
 
-          <!-- FILTRES INTERACTIFS -->
+          <!-- FILTRES INTERACTIFS PAR GROUPE/COULEUR -->
           <div class="flex gap-1.5 pt-0.5">
             <button type="button" @click="filtrePlanning = 'anim'" :class="filtrePlanning === 'anim' ? 'btn-white shadow border border-current/20' : 'bg-white/20 opacity-80 font-extrabold'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all">
-              Animateurs
+              Tous
             </button>
-            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'btn-white shadow border border-current/20' : 'bg-white/20 opacity-80 font-extrabold'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all">
-              -6 ans
+            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'bg-emerald-500 text-white font-extrabold shadow' : 'bg-emerald-100 text-emerald-900 font-extrabold opacity-80'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all flex items-center justify-center gap-1">
+              <span>🌱</span> -6 ans
             </button>
-            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'btn-white shadow border border-current/20' : 'bg-white/20 opacity-80 font-extrabold'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all">
-              +6 ans
+            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'bg-indigo-600 text-white font-extrabold shadow' : 'bg-indigo-100 text-indigo-900 font-extrabold opacity-80'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all flex items-center justify-center gap-1">
+              <span>⚡</span> +6 ans
             </button>
           </div>
 
@@ -988,7 +1002,7 @@
           </div>
         </template>
 
-        <!-- LISTE PLANNING DES ANIMATEURS -->
+        <!-- LISTE PLANNING DES ANIMATEURS (AVEC DISTINCTION PAR COULEURS DES GROUPES) -->
         <div class="space-y-2.5">
           <h3 class="text-xs font-extrabold uppercase tracking-wider" x-text="filtrePlanning === 'anim' ? 'Planning des Animateurs' : 'Groupes concernés (' + filtrePlanning + ')'"></h3>
 
@@ -1003,8 +1017,8 @@
                   </button>
                   
                   <div class="flex items-center space-x-1 shrink-0">
-                    <button type="button" @click="editerPlanningDuJour(p)" class="btn-white px-2 py-0.5 text-[8px] rounded-full uppercase border border-current/20 shadow">
-                      Edit
+                    <button type="button" @click="editerPlanningDuJour(p)" class="btn-white px-2 py-0.5 text-[10px] rounded-full uppercase border border-current/20 shadow flex items-center gap-1">
+                      ✏️ Modifier
                     </button>
                     <button type="button" @click="supprimerAnim(p.id)" class="opacity-60 hover:opacity-100 p-1">
                       <i class="fa-solid fa-xmark text-xs"></i>
@@ -1012,26 +1026,34 @@
                   </div>
                 </div>
 
-                <!-- BLOCS MATIN / APREM -->
+                <!-- BLOCS MATIN / APREM DYNAMIQUES AVEC COULEURS DE GROUPES -->
                 <div class="grid grid-cols-2 gap-1.5 text-xs">
                   
                   <!-- MATIN -->
-                  <div class="bg-white/40 p-2 rounded-xl border-l-4 border-current">
+                  <div class="p-2 rounded-xl border-l-4 transition-all"
+                       :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' 
+                               ? 'bg-emerald-500/15 border-emerald-600 text-emerald-950' 
+                               : 'bg-indigo-500/15 border-indigo-600 text-indigo-950'">
                     <div class="flex justify-between items-center mb-0.5">
                       <span class="text-[8px] opacity-75 font-bold uppercase">☀️ Matin</span>
                       <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageMatin)" 
-                              class="text-[7px] font-black px-1 py-0.2 rounded bg-white border border-current/20 uppercase"
+                              class="text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase shadow-sm"
+                              :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'"
                               x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></button>
                     </div>
                     <p class="font-extrabold text-[11px] truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
                   </div>
 
                   <!-- APRÈS-MIDI -->
-                  <div class="bg-white/40 p-2 rounded-xl border-l-4 border-current">
+                  <div class="p-2 rounded-xl border-l-4 transition-all"
+                       :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' 
+                               ? 'bg-emerald-500/15 border-emerald-600 text-emerald-950' 
+                               : 'bg-indigo-500/15 border-indigo-600 text-indigo-950'">
                     <div class="flex justify-between items-center mb-0.5">
                       <span class="text-[8px] opacity-75 font-bold uppercase">🌆 Aprem</span>
                       <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageAprem)" 
-                              class="text-[7px] font-black px-1 py-0.2 rounded bg-white border border-current/20 uppercase"
+                              class="text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase shadow-sm"
+                              :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'"
                               x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></button>
                     </div>
                     <p class="font-extrabold text-[11px] truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
