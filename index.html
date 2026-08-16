@@ -1,5 +1,3 @@
-
-En prenant ce code :
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -120,7 +118,7 @@ En prenant ce code :
        x-transition:leave="transition ease-in duration-150"
        x-transition:leave-start="opacity-100 scale-100"
        x-transition:leave-end="opacity-0 scale-95"
-       class="fixed top-5 right-4 left-4 z-50 max-w-md mx-auto bg-black text-white p-4 rounded-3xl shadow-2xl flex items-center justify-between border border-white/20"
+       class="fixed top-5 right-4 left-4 z-[70] max-w-md mx-auto bg-black text-white p-4 rounded-3xl shadow-2xl flex items-center justify-between border border-white/20"
        style="display: none;">
     <div class="flex items-center space-x-3">
       <i class="fa-solid fa-circle-check text-yellow-400 text-xl"></i>
@@ -253,7 +251,7 @@ En prenant ce code :
                 <p class="text-[11px] text-white/70" x-text="getAgeEnfant(e.dateNaissance) + ' ans (' + formatDateLisible(e.dateNaissance) + ')'"></p>
               </div>
 
-              <!-- ICÔNES DE RAPPEL RAPIDES CORRIGÉES (PASTILLES VERTES / ROUGES) -->
+              <!-- ICÔNES DE RAPPEL RAPIDES CORRIGÉES (PASTILLES VERTES / ROUGES SANS LE REFUS DOUBLE) -->
               <div class="flex items-center space-x-1.5">
                 <span x-show="e.pai" title="PAI / Médical" class="w-8 h-8 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold animate-pulse">
                   ⚠️
@@ -262,8 +260,8 @@ En prenant ce code :
                 <span x-show="e.droitImage" title="Droit à l'image AUTORISÉ" class="w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold shrink-0">
                   📸
                 </span>
-                <span x-show="!e.droitImage" title="Droit à l'image REFUSÉ" class="w-8 h-8 bg-rose-600 text-white rounded-full flex items-center justify-center text-[10px] shadow-sm font-bold shrink-0">
-                  🚫📸
+                <span x-show="!e.droitImage" title="Droit à l'image REFUSÉ" class="w-8 h-8 bg-rose-600 text-white rounded-full flex items-center justify-center text-xs shadow-sm font-bold shrink-0">
+                  📸
                 </span>
                 <i class="fa-solid fa-chevron-right text-white/40 text-xs pl-1"></i>
               </div>
@@ -275,7 +273,7 @@ En prenant ce code :
     </div>
 
     <!-- MODAL : AJOUTER / MODIFIER UN ENFANT -->
-    <div x-show="showAddEnfantModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
+    <div x-show="showAddEnfantModal" x-transition class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="display: none;">
       <div class="card-bento p-6 max-w-sm w-full space-y-4 bg-card-blue border border-white/20 max-h-[90vh] overflow-y-auto">
         <h3 class="text-base font-bold text-white border-b border-white/20 pb-2" x-text="isEditingEnfant ? '✏️ Modifier la Fiche Sanitaire' : '👶 Ajouter une Fiche Sanitaire'">
         </h3>
@@ -386,11 +384,12 @@ En prenant ce code :
             <p class="font-bold text-xs pt-1" x-text="enfantSelectionne?.pai || 'Aucun traitement ou PAI renseigné.'"></p>
           </div>
 
-          <!-- ENCADRÉ DROIT A L'IMAGE (AVEC PASTILLE VERTE / ROUGE) -->
+          <!-- ENCADRÉ DROIT A L'IMAGE -->
           <div class="p-3 rounded-2xl flex items-center justify-between bg-black/20">
             <span class="text-[10px] text-white/60 font-bold uppercase">📸 Droit à l'Image</span>
-            <span class="font-bold px-3 py-1 rounded-full text-[10px] flex items-center gap-1" :class="enfantSelectionne?.droitImage ? 'bg-emerald-500 text-white' : 'bg-rose-600 text-white'">
-              <span x-text="enfantSelectionne?.droitImage ? '📸 AUTORISÉ' : '🚫📸 REFUSÉ'"></span>
+            <span class="font-bold px-3 py-1 rounded-full text-[10px] flex items-center gap-1.5" :class="enfantSelectionne?.droitImage ? 'bg-emerald-500 text-white' : 'bg-rose-600 text-white'">
+              <i class="fa-solid" :class="enfantSelectionne?.droitImage ? 'fa-camera' : 'fa-camera-retro'"></i>
+              <span x-text="enfantSelectionne?.droitImage ? 'AUTORISÉ' : 'REFUSÉ'"></span>
             </span>
           </div>
         </div>
@@ -1326,6 +1325,8 @@ En prenant ce code :
         },
 
         editerEnfant(enfant) {
+          // Fermer le pop-up de détails pour laisser place à la modale de modification
+          this.enfantSelectionne = null;
           this.isEditingEnfant = true;
           this.enfantEditingId = enfant.id;
           this.nouvelEnfant = {
@@ -1382,7 +1383,6 @@ En prenant ce code :
                 pai: this.nouvelEnfant.aPAI ? this.nouvelEnfant.pai.trim() : '',
                 droitImage: this.nouvelEnfant.droitImage
               };
-              this.enfantSelectionne = this.enfants[idx];
               this.showToast('Fiche sanitaire mise à jour ! ✏️');
             }
           } else {
@@ -1847,9 +1847,3 @@ En prenant ce code :
   </script>
 </body>
 </html>
-
-Il y a un petit bug, Quand on clique sur modifier dans le pop up de la fiche sanitaire, le truc pour modifier la fiche apparaît derrière le pop up du coup faut fermer le pop up pour modifier.
-
-Les pastilles dans la liste des enfants dans les fiches sanitaire, le refus de droit à l'image a bien la pastille rouge avec le "📸" mais tu as garder le "🚫" est ce que tu peux l'enlever !
-
-Est ce que tu peux corriger et mettre à jour tout l'html!
