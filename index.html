@@ -26,28 +26,28 @@
       --hub-text: #1E1E24;
 
       /* Theme 1: Fiche Sanitaire */
-      --sanitaire-bg: #E8F8F5;
+      --sanitaire-bg: #A8E6CF;
       --sanitaire-text: #1D2A44;
 
       /* Theme 2: Fiche d'Activité */
-      --fiche-bg: #FEF9E7;
+      --fiche-bg: #FFB703;
       --fiche-text: #2A385B;
 
       /* Theme 3: Cahier de Soins */
-      --soins-bg: #FADBD8;
-      --soins-text: #78281F;
+      --soins-bg: #FFD1DC;
+      --soins-text: #E63946;
 
       /* Theme 4: Goûter & Recettes */
-      --gouter-bg: #FDEBD0;
+      --gouter-bg: #FF9F1C;
       --gouter-text: #4A2810;
 
       /* Theme 5: Courses & Matériel */
-      --courses-bg: #E8F8F5;
+      --courses-bg: #B7E4C7;
       --courses-text: #1B4332;
 
       /* Theme 6: Planning */
-      --planning-bg: #EBF5FB;
-      --planning-text: #1B4F72;
+      --planning-bg: #4CC9F0;
+      --planning-text: #3A0CA3;
 
       --radius-lg: 24px;
       --radius-md: 16px;
@@ -85,7 +85,7 @@
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
     }
 
-    /* Tiles Hub modernisées et sans bordures lourdes */
+    /* Tiles Hub modernisées */
     .hub-tile {
       position: relative;
       border-radius: 24px;
@@ -94,7 +94,7 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       display: flex;
       flex-direction: column;
-      justify-between;
+      justify-content: space-between;
       overflow: hidden;
     }
 
@@ -252,7 +252,7 @@
             </span>
           </div>
           <div class="mt-auto flex items-center justify-between">
-            <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Fiches San'</h3>
+            <h3 class="font-poster text-xs sm:text-base md:text-lg font-black leading-tight">Fiches<br>san'</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
           </div>
         </button>
@@ -260,7 +260,7 @@
         <!-- 2. Fiche d'activité -->
         <button type="button" @click="currentTab = 'fiche'" 
                 class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #FFD166; color: #2A385B;">
+                style="background-color: #FFB703; color: #2A385B;">
           <div class="flex items-center justify-between">
             <span class="text-3xl sm:text-4xl">
               🎨
@@ -275,7 +275,7 @@
         <!-- 3. Cahier de soins -->
         <button type="button" @click="currentTab = 'soins'" 
                 class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #FFADAD; color: #78281F;">
+                style="background-color: #FFD1DC; color: #E63946;">
           <div class="flex items-center justify-between">
             <span class="text-3xl sm:text-4xl">
               🩹
@@ -290,7 +290,7 @@
         <!-- 4. Goûter -->
         <button type="button" @click="currentTab = 'gouter'" 
                 class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #FFD6A5; color: #4A2810;">
+                style="background-color: #FF9F1C; color: #4A2810;">
           <div class="flex items-center justify-between">
             <span class="text-3xl sm:text-4xl">
               🍪
@@ -305,7 +305,7 @@
         <!-- 5. Courses & Matériel -->
         <button type="button" @click="currentTab = 'courses'" 
                 class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #CAFFBF; color: #1B4332;">
+                style="background-color: #B7E4C7; color: #1B4332;">
           <div class="flex items-center justify-between">
             <span class="text-3xl sm:text-4xl">
               🛍️
@@ -320,7 +320,7 @@
         <!-- 6. Planning -->
         <button type="button" @click="currentTab = 'planning'" 
                 class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #9BF6FF; color: #1B4F72;">
+                style="background-color: #4CC9F0; color: #3A0CA3;">
           <div class="flex items-center justify-between">
             <span class="text-3xl sm:text-4xl">
               📅
@@ -1985,7 +1985,7 @@
             id: Date.now(),
             enfant: this.soin.enfant.trim(),
             incident: this.soin.incident.trim(),
-            action: this.soin.action.trim() || 'Soin de base',
+            action: this.soin.action.trim(),
             prevenirFamille: this.soin.prevenirFamille,
             heure: heure
           });
@@ -1996,6 +1996,7 @@
 
         deleteSoin(id) {
           this.registreSoins = this.registreSoins.filter(s => s.id !== id);
+          this.showToast('Soin supprimé.');
         },
 
         addCourseDirecte() {
@@ -2004,23 +2005,25 @@
               id: Date.now(),
               nom: this.nouvelleCourseNom.trim(),
               qte: this.nouvelleCourseQte.trim() || '1',
-              activite: 'Achat Direct',
+              activite: 'Achat direct',
               achete: false
             });
             this.nouvelleCourseNom = '';
             this.nouvelleCourseQte = '';
+            this.showToast('Article ajouté aux courses ! 🛍️');
           }
         },
 
         deleteCourse(id) {
           this.listeCourses = this.listeCourses.filter(c => c.id !== id);
+          this.showToast('Article supprimé.');
         },
 
         viderAchetes() {
           this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.showToast('Liste nettoyée ! 🧹');
+          this.showToast('Articles achetés nettoyés !');
         }
-      }
+      };
     }
   </script>
 </body>
