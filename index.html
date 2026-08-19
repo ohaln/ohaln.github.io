@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ALSHFlow - Animation Hub</title>
 
   <!-- Google Fonts: Outfit & Syne -->
@@ -58,12 +58,13 @@
     html, body {
       height: 100%;
       margin: 0;
+      overflow-x: hidden;
     }
 
     body {
       font-family: 'Outfit', sans-serif;
       min-height: 100vh;
-      overflow-x: hidden;
+      min-height: 100dvh;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
@@ -72,7 +73,7 @@
       font-family: 'Syne', sans-serif;
       text-transform: uppercase;
       letter-spacing: -0.01em;
-      line-height: 1.1;
+      line-height: 1.05;
     }
 
     /* Cartes en surimpression */
@@ -85,21 +86,28 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     }
 
-    /* Hub Card Flat & Épuré Bi-Couleur */
-    .hub-card {
+    /* Hub Tile Neo-Brutalist & Ergonomique */
+    .hub-tile {
       position: relative;
+      border-radius: 22px;
+      border: 2.5px solid #111111;
+      box-shadow: 4px 4px 0px 0px #111111;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-between;
       overflow: hidden;
-      border-radius: var(--radius-lg);
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .hub-card:hover {
-      transform: translateY(-4px) scale(1.01);
-      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+    .hub-tile:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px 0px #111111;
+      filter: brightness(1.03);
     }
 
-    .hub-card:active {
-      transform: translateY(0) scale(0.98);
+    .hub-tile:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px 0px #111111;
     }
 
     .card-item-pop {
@@ -177,32 +185,32 @@
   </style>
 </head>
 
-<body class="pb-4 select-none flex flex-col min-h-screen" 
+<body class="select-none flex flex-col h-screen h-[100dvh] overflow-hidden" 
       x-data="alshApp()" 
       :class="'theme-' + currentTab">
 
   <!-- HEADER BRANDING -->
-  <header class="max-w-5xl mx-auto w-full px-4 pt-3 mb-1 flex items-center justify-between shrink-0 h-[60px]">
-    <div class="flex items-center gap-2.5 cursor-pointer group" @click="currentTab = 'hub'">
-      <div class="w-9 h-9 bg-white rounded-xl flex items-center justify-center text-lg font-black shadow-md transform -rotate-3 group-hover:rotate-0 transition-transform">
+  <header class="max-w-5xl mx-auto w-full px-3 pt-2 pb-1 flex items-center justify-between shrink-0 h-[52px]">
+    <div class="flex items-center gap-2 cursor-pointer group" @click="currentTab = 'hub'">
+      <div class="w-8 h-8 bg-white border-2 border-black rounded-xl flex items-center justify-center text-base font-black shadow-[2px_2px_0px_0px_#000] transform -rotate-3 group-hover:rotate-0 transition-transform">
         ⚡
       </div>
       <div>
-        <h1 class="font-poster text-lg md:text-xl font-black leading-none">
+        <h1 class="font-poster text-base md:text-lg font-black leading-none">
           ALSH<span class="opacity-75">FLOW</span>
         </h1>
-        <p class="text-[9px] font-extrabold uppercase tracking-widest opacity-80">Les 3 z'ailes</p>
+        <p class="text-[8px] font-extrabold uppercase tracking-widest opacity-80 leading-tight">Les 3 z'ailes</p>
       </div>
     </div>
     
     <div class="flex items-center gap-2">
       <!-- Bouton Retour au Hub -->
-      <button x-show="currentTab !== 'hub'" type="button" @click="currentTab = 'hub'" class="btn-white text-[11px] px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
+      <button x-show="currentTab !== 'hub'" type="button" @click="currentTab = 'hub'" class="btn-white text-[10px] px-3 py-1.5 rounded-full border-2 border-black shadow-[2px_2px_0px_0px_#000] flex items-center gap-1.5 font-black">
         <i class="fa-solid fa-house"></i> <span class="hidden sm:inline">Hub</span>
       </button>
 
       <!-- Bouton Réinitialiser -->
-      <button type="button" @click="reinitialiserApp()" class="btn-dark text-[11px] px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5" title="Réinitialiser">
+      <button type="button" @click="reinitialiserApp()" class="btn-dark text-[10px] px-2.5 py-1.5 rounded-full border-2 border-black shadow-[2px_2px_0px_0px_#000] flex items-center gap-1.5" title="Réinitialiser">
         <i class="fa-solid fa-rotate-left"></i>
       </button>
     </div>
@@ -216,120 +224,151 @@
        x-transition:leave="transition ease-in duration-150"
        x-transition:leave-start="opacity-100 scale-100"
        x-transition:leave-end="opacity-0 scale-95"
-       class="fixed top-4 right-4 left-4 z-[100] max-w-md mx-auto bg-white p-3 rounded-xl shadow-2xl flex items-center justify-between border-2 border-current"
+       class="fixed top-3 right-3 left-3 z-[100] max-w-md mx-auto bg-white p-2.5 rounded-xl shadow-2xl flex items-center justify-between border-2 border-black"
        style="display: none;">
-    <div class="flex items-center space-x-2.5">
-      <i class="fa-solid fa-circle-check text-lg"></i>
+    <div class="flex items-center space-x-2">
+      <i class="fa-solid fa-circle-check text-base"></i>
       <span class="text-xs font-extrabold uppercase tracking-wide" x-text="toast.message"></span>
     </div>
-    <button type="button" @click="toast.show = false" class="opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark text-base"></i></button>
+    <button type="button" @click="toast.show = false" class="opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark text-sm"></i></button>
   </div>
 
-  <main class="max-w-5xl mx-auto w-full px-4 flex-1 flex flex-col justify-start">
+  <main class="max-w-5xl mx-auto w-full px-3 pb-2 flex-1 flex flex-col justify-start overflow-y-auto">
 
-    <!-- ==================== 0. HUB PRINCIPAL (DÉGRADÉS BI-COULEURS ÉPURÉS & FLAT) ==================== -->
+    <!-- ==================== 0. HUB PRINCIPAL (REPENSI : FULL VIEWPORT, 0 SCROLL MOBILE, GRANDE LISIBILITÉ) ==================== -->
     <div x-show="currentTab === 'hub'" 
          x-transition:enter="transition ease-out duration-150" 
          x-transition:enter-start="opacity-0 scale-95" 
          x-transition:enter-end="opacity-100 scale-100" 
-         class="w-full flex-1 flex flex-col justify-center py-2 min-h-[calc(100vh-80px)]">
+         class="w-full flex-1 flex flex-col justify-between h-[calc(100dvh-60px)] max-h-[calc(100dvh-60px)] py-1 gap-2 overflow-hidden">
       
-      <div class="grid grid-cols-2 grid-rows-3 gap-3 sm:gap-5 w-full flex-1">
+      <!-- GRILLE 2 COLS x 3 ROWS PARFAITEMENT ÉQUILIBRÉE -->
+      <div class="grid grid-cols-2 grid-rows-3 gap-2.5 sm:gap-3.5 w-full flex-1 h-full min-h-0">
         
         <!-- 1. Fiches San' -->
         <button type="button" @click="currentTab = 'sanitaire'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
-                style="background: linear-gradient(135deg, #A8E6CF 0%, #82d8b8 100%); border-color: #1D2A44; color: #1D2A44;">
-          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#1D2A44] text-[#A8E6CF] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                class="hub-tile p-2.5 sm:p-4 text-left group"
+                style="background: linear-gradient(135deg, #A8E6CF 0%, #74D4B0 100%); color: #1D2A44;">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#1D2A44] text-[#A8E6CF] flex items-center justify-center text-lg sm:text-2xl font-black shadow-sm shrink-0 border border-black/20">
               🩺
-            </div>
-            <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Fiches San'</h3>
-              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">PAI, Urgences & Droit image</p>
+            </span>
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-white/70 backdrop-blur-sm px-2 py-0.5 rounded-full border border-black/10">
+              Urgences
+            </span>
+          </div>
+          <div class="mt-auto">
+            <h3 class="font-poster text-xs sm:text-base md:text-lg font-black truncate">Fiches San'</h3>
+            <div class="flex items-center justify-between text-[9px] sm:text-xs font-bold opacity-85 mt-0.5">
+              <span class="truncate">PAI & Image</span>
+              <i class="fa-solid fa-arrow-right text-[10px] sm:text-xs group-hover:translate-x-1 transition-transform ml-1 shrink-0"></i>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 2. Fiche d'activité -->
         <button type="button" @click="currentTab = 'fiche'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
-                style="background: linear-gradient(135deg, #FFB703 0%, #f0a300 100%); border-color: #2A385B; color: #2A385B;">
-          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#2A385B] text-[#FFB703] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                class="hub-tile p-2.5 sm:p-4 text-left group"
+                style="background: linear-gradient(135deg, #FFB703 0%, #FD9E02 100%); color: #2A385B;">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#2A385B] text-[#FFB703] flex items-center justify-center text-lg sm:text-2xl font-black shadow-sm shrink-0 border border-black/20">
               🎨
-            </div>
-            <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Fiche d'Activité</h3>
-              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Création, Matériel & Export PDF</p>
+            </span>
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-white/70 backdrop-blur-sm px-2 py-0.5 rounded-full border border-black/10">
+              PDF
+            </span>
+          </div>
+          <div class="mt-auto">
+            <h3 class="font-poster text-xs sm:text-base md:text-lg font-black truncate">Activité</h3>
+            <div class="flex items-center justify-between text-[9px] sm:text-xs font-bold opacity-85 mt-0.5">
+              <span class="truncate">Créer & Exporter</span>
+              <i class="fa-solid fa-arrow-right text-[10px] sm:text-xs group-hover:translate-x-1 transition-transform ml-1 shrink-0"></i>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 3. Cahier de soins -->
         <button type="button" @click="currentTab = 'soins'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
-                style="background: linear-gradient(135deg, #FFD1DC 0%, #f8b1c4 100%); border-color: #E63946; color: #E63946;">
-          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#E63946] text-[#FFD1DC] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                class="hub-tile p-2.5 sm:p-4 text-left group"
+                style="background: linear-gradient(135deg, #FFD1DC 0%, #FFA8BD 100%); color: #8B0000;">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#8B0000] text-[#FFD1DC] flex items-center justify-center text-lg sm:text-2xl font-black shadow-sm shrink-0 border border-black/20">
               🩹
-            </div>
-            <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Cahier de Soins</h3>
-              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Suivi bobos, soins & parents</p>
+            </span>
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-white/70 backdrop-blur-sm px-2 py-0.5 rounded-full border border-black/10">
+              Registre
+            </span>
+          </div>
+          <div class="mt-auto">
+            <h3 class="font-poster text-xs sm:text-base md:text-lg font-black truncate">Soins</h3>
+            <div class="flex items-center justify-between text-[9px] sm:text-xs font-bold opacity-85 mt-0.5">
+              <span class="truncate">Bobos & Parents</span>
+              <i class="fa-solid fa-arrow-right text-[10px] sm:text-xs group-hover:translate-x-1 transition-transform ml-1 shrink-0"></i>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 4. Goûter -->
         <button type="button" @click="currentTab = 'gouter'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
-                style="background: linear-gradient(135deg, #FF9F1C 0%, #e88905 100%); border-color: #4A2810; color: #4A2810;">
-          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#4A2810] text-[#FF9F1C] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                class="hub-tile p-2.5 sm:p-4 text-left group"
+                style="background: linear-gradient(135deg, #FF9F1C 0%, #E07A00 100%); color: #3D1E0B;">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#3D1E0B] text-[#FF9F1C] flex items-center justify-center text-lg sm:text-2xl font-black shadow-sm shrink-0 border border-black/20">
               🍪
-            </div>
-            <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Goûter</h3>
-              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Menus, Recettes & Quantités</p>
+            </span>
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-white/70 backdrop-blur-sm px-2 py-0.5 rounded-full border border-black/10">
+              Menus
+            </span>
+          </div>
+          <div class="mt-auto">
+            <h3 class="font-poster text-xs sm:text-base md:text-lg font-black truncate">Goûter</h3>
+            <div class="flex items-center justify-between text-[9px] sm:text-xs font-bold opacity-85 mt-0.5">
+              <span class="truncate">Recettes & Quantités</span>
+              <i class="fa-solid fa-arrow-right text-[10px] sm:text-xs group-hover:translate-x-1 transition-transform ml-1 shrink-0"></i>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 5. Courses & Matériel -->
         <button type="button" @click="currentTab = 'courses'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
-                style="background: linear-gradient(135deg, #B7E4C7 0%, #95d5aa 100%); border-color: #1B4332; color: #1B4332;">
-          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#1B4332] text-[#B7E4C7] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                class="hub-tile p-2.5 sm:p-4 text-left group"
+                style="background: linear-gradient(135deg, #B7E4C7 0%, #74C69D 100%); color: #0B2B1B;">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#0B2B1B] text-[#B7E4C7] flex items-center justify-center text-lg sm:text-2xl font-black shadow-sm shrink-0 border border-black/20">
               🛍️
-            </div>
-            <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Courses & Matos</h3>
-              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Listes d'achats cumulées</p>
+            </span>
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-white/70 backdrop-blur-sm px-2 py-0.5 rounded-full border border-black/10">
+              Achats
+            </span>
+          </div>
+          <div class="mt-auto">
+            <h3 class="font-poster text-xs sm:text-base md:text-lg font-black truncate">Courses</h3>
+            <div class="flex items-center justify-between text-[9px] sm:text-xs font-bold opacity-85 mt-0.5">
+              <span class="truncate">Matos & Cumul</span>
+              <i class="fa-solid fa-arrow-right text-[10px] sm:text-xs group-hover:translate-x-1 transition-transform ml-1 shrink-0"></i>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 6. Planning -->
         <button type="button" @click="currentTab = 'planning'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
-                style="background: linear-gradient(135deg, #4CC9F0 0%, #29b8e3 100%); border-color: #3A0CA3; color: #3A0CA3;">
-          <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#3A0CA3] text-[#4CC9F0] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
+                class="hub-tile p-2.5 sm:p-4 text-left group"
+                style="background: linear-gradient(135deg, #4CC9F0 0%, #3A86FF 100%); color: #1E0059;">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-[#1E0059] text-[#4CC9F0] flex items-center justify-center text-lg sm:text-2xl font-black shadow-sm shrink-0 border border-black/20">
               📅
-            </div>
-            <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Planning</h3>
-              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Animateurs, Groupes & Sorties</p>
+            </span>
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-white/70 backdrop-blur-sm px-2 py-0.5 rounded-full border border-black/10">
+              Agenda
+            </span>
+          </div>
+          <div class="mt-auto">
+            <h3 class="font-poster text-xs sm:text-base md:text-lg font-black truncate">Planning</h3>
+            <div class="flex items-center justify-between text-[9px] sm:text-xs font-bold opacity-85 mt-0.5">
+              <span class="truncate">Anims & Sorties</span>
+              <i class="fa-solid fa-arrow-right text-[10px] sm:text-xs group-hover:translate-x-1 transition-transform ml-1 shrink-0"></i>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
       </div>
@@ -337,7 +376,7 @@
 
 
     <!-- ==================== 1. ONGLET : FICHES SAN' ==================== -->
-    <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+    <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b-2 border-current/20 pb-3 gap-2">
@@ -390,7 +429,6 @@
                     <span>⚡️</span> +6ans
                   </span>
                 </div>
-                <!-- AGE DE L'ENFANT RESTAURÉ DE FAÇON BIEN VISIBLE -->
                 <p class="text-[11px] font-extrabold opacity-80 truncate">
                   <span class="text-xs font-black text-emerald-950" x-text="getAgeEnfant(e.dateNaissance) + ' ans'"></span>
                   <span class="opacity-75" x-text="'(' + formatDateLisible(e.dateNaissance) + ')'"></span>
@@ -499,7 +537,6 @@
             </div>
             <div class="truncate">
               <h3 class="font-poster text-base font-black truncate" x-text="enfantSelectionne?.prenom + ' ' + enfantSelectionne?.nom"></h3>
-              <!-- BADGES GROUPE ET ÂGE DE L'ENFANT DANS LA MODALE -->
               <div class="pt-0.5 flex items-center gap-1.5">
                 <span class="text-[10px] font-black bg-white/70 px-2 py-0.5 rounded-full shadow-sm text-current" x-text="getAgeEnfant(enfantSelectionne?.dateNaissance) + ' ans'"></span>
                 <span x-show="getAgeEnfant(enfantSelectionne?.dateNaissance) < 6" class="inline-flex items-center gap-1 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">
@@ -571,7 +608,7 @@
 
 
     <!-- ==================== 2. ONGLET : FICHE D'ACTIVITÉ ==================== -->
-    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b-2 border-current/20 pb-3">
@@ -679,7 +716,7 @@
 
 
     <!-- ==================== 3. ONGLET : CAHIER DE SOINS NUMÉRIQUE ==================== -->
-    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b-2 border-current/20 pb-3">
@@ -737,7 +774,7 @@
 
 
     <!-- ==================== 4. ONGLET : GOÛTER ==================== -->
-    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-3">
@@ -906,7 +943,7 @@
 
 
     <!-- ==================== 5. ONGLET : COURSES MATÉRIEL & GOÛTERS ==================== -->
-    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b-2 border-current/20 pb-3">
@@ -994,7 +1031,7 @@
 
 
     <!-- ==================== 6. ONGLET : PLANNING ==================== -->
-    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
+    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-2.5 border-b-2 border-current/20 pb-3">
@@ -1886,19 +1923,20 @@
         },
 
         ouvrirModalOrg() {
-          const orgCourante = this.getOrgDuJour();
-          if (orgCourante) {
-            this.saisieOrg = JSON.parse(JSON.stringify(orgCourante));
-          } else {
-            this.saisieOrg = { date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] };
-          }
+          this.saisieOrg = {
+            date: this.dateAffichee,
+            titre: '',
+            lieu: '',
+            busAller: '',
+            busRetour: '',
+            groupes: []
+          };
           this.tempGroupe = { anim: '', enfants: '' };
           this.showOrgModal = true;
         },
 
         ajouterGroupeSortie() {
-          if(this.tempGroupe.anim.trim() !== '' && this.tempGroupe.enfants.trim() !== '') {
-            if(!this.saisieOrg.groupes) this.saisieOrg.groupes = [];
+          if (this.tempGroupe.anim.trim() !== '') {
             this.saisieOrg.groupes.push({
               id: Date.now(),
               anim: this.tempGroupe.anim.trim(),
@@ -1910,7 +1948,7 @@
 
         sauvegarderOrg() {
           if (!this.saisieOrg.titre.trim()) {
-            this.showToast('Donne un titre à la sortie !');
+            this.showToast('Veuillez saisir un titre !');
             return;
           }
           this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
@@ -1919,14 +1957,22 @@
         },
 
         effacerOrgDuJour() {
-          if(confirm('Supprimer la sortie spéciale de cette journée ?')) {
+          if (confirm('Supprimer la sortie du jour ?')) {
             delete this.organisations[this.dateAffichee];
-            this.showToast('Sortie annulée.');
+            this.showToast('Sortie supprimée.');
           }
         },
 
+        submitFiche() {
+          if (!this.fiche.titre.trim()) {
+            this.showToast('Veuillez saisir un titre !');
+            return;
+          }
+          this.showToast('Fiche d\'activité enregistrée ! 🎨');
+        },
+
         addMatos() {
-          if(this.newMatosNom.trim() !== '') {
+          if (this.newMatosNom.trim() !== '') {
             this.fiche.materiel.push({
               nom: this.newMatosNom.trim(),
               qte: this.newMatosQte.trim() || '1'
@@ -1940,39 +1986,69 @@
           this.fiche.materiel.splice(index, 1);
         },
 
-        submitFiche() {
-          if(!this.fiche.titre.trim()) {
-            this.showToast('Indique le nom de l\'activité !');
-            return;
-          }
-
-          this.fiche.materiel.forEach(item => {
-            this.listeCourses.push({
-              id: Date.now() + Math.random(),
-              nom: item.nom,
-              qte: item.qte,
-              activite: this.fiche.titre,
-              achete: false
-            });
+        exportPDF() {
+          const element = document.getElementById('pdf-template');
+          document.getElementById('pdf-titre').textContent = this.fiche.titre || "Fiche d'Activité";
+          document.getElementById('pdf-age').textContent = this.fiche.age || "-6 ans";
+          document.getElementById('pdf-lieu').textContent = this.fiche.lieu || "-";
+          document.getElementById('pdf-objectif').textContent = this.fiche.objectif || "-";
+          document.getElementById('pdf-deroulement').textContent = this.fiche.deroulement || "-";
+          
+          const matosUl = document.getElementById('pdf-materiel');
+          matosUl.innerHTML = '';
+          this.fiche.materiel.forEach(m => {
+            const li = document.createElement('li');
+            li.textContent = `${m.nom} (${m.qte})`;
+            matosUl.appendChild(li);
           });
 
-          this.showToast('Matériel envoyé dans Courses & Matos ! 🛒');
-          this.currentTab = 'courses';
-          this.subTabCourses = 'activites';
+          element.style.display = 'block';
+          const opt = {
+            margin: 0.5,
+            filename: `Fiche_Activite_${this.fiche.titre || 'ALSH'}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+          };
+
+          html2pdf().set(opt).from(element).save().then(() => {
+            element.style.display = 'none';
+          });
+        },
+
+        submitSoin() {
+          if (!this.soin.enfant.trim() || !this.soin.incident.trim()) {
+            this.showToast('Saisis l\'enfant et l\'incident !');
+            return;
+          }
+          this.registreSoins.unshift({
+            id: Date.now(),
+            enfant: this.soin.enfant.trim(),
+            incident: this.soin.incident.trim(),
+            action: this.soin.action.trim() || 'Soin de confort',
+            prevenirFamille: this.soin.prevenirFamille,
+            heure: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+          });
+          this.soin = { enfant: '', incident: '', action: '', prevenirFamille: false };
+          this.showToast('Soin enregistré dans le registre ! 🩹');
+        },
+
+        deleteSoin(id) {
+          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
+          this.showToast('Soin supprimé.');
         },
 
         addCourseDirecte() {
-          if(this.nouvelleCourseNom.trim() !== '') {
+          if (this.nouvelleCourseNom.trim() !== '') {
             this.listeCourses.push({
               id: Date.now(),
               nom: this.nouvelleCourseNom.trim(),
               qte: this.nouvelleCourseQte.trim() || '1',
-              activite: 'Achat direct',
+              activite: 'Manuel',
               achete: false
             });
             this.nouvelleCourseNom = '';
             this.nouvelleCourseQte = '';
-            this.showToast('Article ajouté !');
           }
         },
 
@@ -1983,69 +2059,6 @@
         viderAchetes() {
           this.listeCourses = this.listeCourses.filter(c => !c.achete);
           this.showToast('Articles achetés nettoyés !');
-        },
-
-        submitSoin() {
-          if(!this.soin.enfant.trim() || !this.soin.incident.trim()) {
-            this.showToast('Complète les informations du soin !');
-            return;
-          }
-
-          const d = new Date();
-          const heureStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-
-          this.registreSoins.unshift({
-            id: Date.now(),
-            enfant: this.soin.enfant.trim(),
-            incident: this.soin.incident.trim(),
-            action: this.soin.action.trim() || 'Soin courant',
-            prevenirFamille: this.soin.prevenirFamille,
-            heure: heureStr
-          });
-
-          this.soin = { enfant: '', incident: '', action: '', prevenirFamille: false };
-          this.showToast('Soin consigné dans le registre ! 🩹');
-        },
-
-        deleteSoin(id) {
-          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-          this.showToast('Soin effacé.');
-        },
-
-        exportPDF() {
-          document.getElementById('pdf-titre').innerText = this.fiche.titre || "Fiche d'Activité";
-          document.getElementById('pdf-age').innerText = this.fiche.age || "-6 ans";
-          document.getElementById('pdf-lieu').innerText = this.fiche.lieu || "Non précisé";
-          document.getElementById('pdf-objectif').innerText = this.fiche.objectif || "Non précisé";
-          document.getElementById('pdf-deroulement').innerText = this.fiche.deroulement || "Aucun déroulement saisi.";
-
-          const matosUl = document.getElementById('pdf-materiel');
-          matosUl.innerHTML = '';
-          if (this.fiche.materiel.length === 0) {
-            matosUl.innerHTML = '<li>Aucun matériel spécifique</li>';
-          } else {
-            this.fiche.materiel.forEach(m => {
-              const li = document.createElement('li');
-              li.innerText = `${m.nom} (Qté : ${m.qte})`;
-              matosUl.appendChild(li);
-            });
-          }
-
-          const element = document.getElementById('pdf-template');
-          element.style.display = 'block';
-
-          const opt = {
-            margin: 10,
-            filename: `Fiche_Activite_${(this.fiche.titre || 'Sans_titre').replace(/\s+/g, '_')}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-          };
-
-          html2pdf().set(opt).from(element).save().then(() => {
-            element.style.display = 'none';
-            this.showToast('PDF téléchargé ! 📄');
-          });
         }
       }
     }
