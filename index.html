@@ -85,22 +85,17 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
     }
 
-    /* Hub Card Deluxe avec Bi-Couleur Dynamique */
+    /* Hub Card Flat & Épuré Bi-Couleur */
     .hub-card {
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 2.5px solid rgba(255, 255, 255, 0.85);
       border-radius: var(--radius-lg);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
       transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .hub-card:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.15);
-      border-color: #ffffff;
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
     }
 
     .hub-card:active {
@@ -172,7 +167,7 @@
     }
 
     /* Dynamic Theme Colors */
-    .theme-hub { background-color: var(--hub-bg); color: var(--hub-text); }
+    .theme-hub { background: linear-gradient(135deg, var(--hub-bg) 0%, #FFB3D1 100%); color: var(--hub-text); }
     .theme-sanitaire { background-color: var(--sanitaire-bg); color: var(--sanitaire-text); }
     .theme-fiche { background-color: var(--fiche-bg); color: var(--fiche-text); }
     .theme-soins { background-color: var(--soins-bg); color: var(--soins-text); }
@@ -217,7 +212,7 @@
   <div x-show="toast.show" 
        x-transition:enter="transition ease-out duration-200"
        x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
-       x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+       x-transition:enter-end="opacity-100 scale-100"
        x-transition:leave="transition ease-in duration-150"
        x-transition:leave-start="opacity-100 scale-100"
        x-transition:leave-end="opacity-0 scale-95"
@@ -232,7 +227,7 @@
 
   <main class="max-w-5xl mx-auto w-full px-4 flex-1 flex flex-col justify-start">
 
-    <!-- ==================== 0. HUB PRINCIPAL (2 COL x 3 LIGNES AVEC CARTES BI-COULEURS ET TITRES SOIGNÉS) ==================== -->
+    <!-- ==================== 0. HUB PRINCIPAL (DÉGRADÉS BI-COULEURS ÉPURÉS & FLAT) ==================== -->
     <div x-show="currentTab === 'hub'" 
          x-transition:enter="transition ease-out duration-150" 
          x-transition:enter-start="opacity-0 scale-95" 
@@ -243,98 +238,98 @@
         
         <!-- 1. Fiches San' -->
         <button type="button" @click="currentTab = 'sanitaire'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
-                style="background: linear-gradient(135deg, #A8E6CF 0%, #ffffff 80%); border-color: #1D2A44;">
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
+                style="background: linear-gradient(135deg, #A8E6CF 0%, #82d8b8 100%); border-color: #1D2A44; color: #1D2A44;">
           <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#1D2A44] text-[#A8E6CF] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#1D2A44] text-[#A8E6CF] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
               🩺
             </div>
             <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#1D2A44] truncate">Fiches San'</h3>
-              <p class="text-[9px] sm:text-xs font-bold text-[#1D2A44]/75 truncate">PAI, Urgences & Droit image</p>
+              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Fiches San'</h3>
+              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">PAI, Urgences & Droit image</p>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#1D2A44]/40 group-hover:text-[#1D2A44] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 2. Fiche d'activité -->
         <button type="button" @click="currentTab = 'fiche'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
-                style="background: linear-gradient(135deg, #FFB703 0%, #ffffff 80%); border-color: #2A385B;">
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
+                style="background: linear-gradient(135deg, #FFB703 0%, #f0a300 100%); border-color: #2A385B; color: #2A385B;">
           <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#2A385B] text-[#FFB703] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#2A385B] text-[#FFB703] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
               🎨
             </div>
             <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#2A385B] truncate">Fiche d'Activité</h3>
-              <p class="text-[9px] sm:text-xs font-bold text-[#2A385B]/75 truncate">Création, Matériel & Export PDF</p>
+              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Fiche d'Activité</h3>
+              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Création, Matériel & Export PDF</p>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#2A385B]/40 group-hover:text-[#2A385B] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 3. Cahier de soins -->
         <button type="button" @click="currentTab = 'soins'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
-                style="background: linear-gradient(135deg, #FFD1DC 0%, #ffffff 80%); border-color: #E63946;">
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
+                style="background: linear-gradient(135deg, #FFD1DC 0%, #f8b1c4 100%); border-color: #E63946; color: #E63946;">
           <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#E63946] text-[#FFD1DC] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#E63946] text-[#FFD1DC] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
               🩹
             </div>
             <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#E63946] truncate">Cahier de Soins</h3>
-              <p class="text-[9px] sm:text-xs font-bold text-[#E63946]/75 truncate">Suivi bobos, soins & parents</p>
+              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Cahier de Soins</h3>
+              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Suivi bobos, soins & parents</p>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#E63946]/40 group-hover:text-[#E63946] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 4. Goûter -->
         <button type="button" @click="currentTab = 'gouter'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
-                style="background: linear-gradient(135deg, #FF9F1C 0%, #ffffff 80%); border-color: #4A2810;">
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
+                style="background: linear-gradient(135deg, #FF9F1C 0%, #e88905 100%); border-color: #4A2810; color: #4A2810;">
           <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#4A2810] text-[#FF9F1C] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#4A2810] text-[#FF9F1C] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
               🍪
             </div>
             <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#4A2810] truncate">Goûter</h3>
-              <p class="text-[9px] sm:text-xs font-bold text-[#4A2810]/75 truncate">Menus, Recettes & Quantités</p>
+              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Goûter</h3>
+              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Menus, Recettes & Quantités</p>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#4A2810]/40 group-hover:text-[#4A2810] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 5. Courses & Matériel -->
         <button type="button" @click="currentTab = 'courses'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
-                style="background: linear-gradient(135deg, #B7E4C7 0%, #ffffff 80%); border-color: #1B4332;">
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
+                style="background: linear-gradient(135deg, #B7E4C7 0%, #95d5aa 100%); border-color: #1B4332; color: #1B4332;">
           <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#1B4332] text-[#B7E4C7] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#1B4332] text-[#B7E4C7] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
               🛍️
             </div>
             <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#1B4332] truncate">Courses & Matos</h3>
-              <p class="text-[9px] sm:text-xs font-bold text-[#1B4332]/75 truncate">Listes d'achats cumulées</p>
+              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Courses & Matos</h3>
+              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Listes d'achats cumulées</p>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#1B4332]/40 group-hover:text-[#1B4332] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
         <!-- 6. Planning -->
         <button type="button" @click="currentTab = 'planning'" 
-                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full"
-                style="background: linear-gradient(135deg, #4CC9F0 0%, #ffffff 80%); border-color: #3A0CA3;">
+                class="hub-card p-4 sm:p-5 flex items-center justify-between text-left group h-full w-full border-2"
+                style="background: linear-gradient(135deg, #4CC9F0 0%, #29b8e3 100%); border-color: #3A0CA3; color: #3A0CA3;">
           <div class="flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#3A0CA3] text-[#4CC9F0] flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0 group-hover:scale-110 transition-transform">
+            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#3A0CA3] text-[#4CC9F0] flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform">
               📅
             </div>
             <div class="overflow-hidden min-w-0 flex-1">
-              <h3 class="font-poster text-xs sm:text-base md:text-xl font-black text-[#3A0CA3] truncate">Planning</h3>
-              <p class="text-[9px] sm:text-xs font-bold text-[#3A0CA3]/75 truncate">Animateurs, Groupes & Sorties</p>
+              <h3 class="font-poster text-xs sm:text-sm md:text-base font-black truncate">Planning</h3>
+              <p class="text-[9px] sm:text-xs font-bold opacity-80 truncate">Animateurs, Groupes & Sorties</p>
             </div>
           </div>
-          <i class="fa-solid fa-chevron-right text-sm sm:text-lg text-[#3A0CA3]/40 group-hover:text-[#3A0CA3] group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
+          <i class="fa-solid fa-chevron-right text-sm sm:text-lg opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0 hidden sm:block"></i>
         </button>
 
       </div>
@@ -346,7 +341,7 @@
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b-2 border-current/20 pb-3 gap-2">
-          <h2 class="font-poster text-lg md:text-xl flex items-center gap-2 truncate">
+          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2 truncate">
             <span>🩺</span> Fiches San'
           </h2>
           <button type="button" @click="ouvrirModalAddEnfant()" class="btn-white text-[11px] px-3 py-1.5 rounded-full shadow-md shrink-0 whitespace-nowrap">
@@ -427,7 +422,7 @@
     <!-- MODAL : AJOUTER / MODIFIER UN ENFANT -->
     <div x-show="showAddEnfantModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-sanitaire border-2 border-white max-h-[90vh] overflow-y-auto shadow-2xl">
-        <h3 class="font-poster text-base md:text-lg border-b-2 border-current/20 pb-2" x-text="isEditingEnfant ? '✏️ Modifier Fiche San' : '👶 Ajouter Fiche San'">
+        <h3 class="font-poster text-sm sm:text-base md:text-lg border-b-2 border-current/20 pb-2" x-text="isEditingEnfant ? '✏️ Modifier Fiche San' : '👶 Ajouter Fiche San'">
         </h3>
 
         <form @submit.prevent="enregistrerEnfant()" class="space-y-3">
@@ -580,7 +575,7 @@
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b-2 border-current/20 pb-3">
-          <h2 class="font-poster text-lg md:text-xl flex items-center gap-2">
+          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">
             <span>🎨</span> Fiche d'Activité
           </h2>
         </div>
@@ -688,7 +683,7 @@
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b-2 border-current/20 pb-3">
-          <h2 class="font-poster text-lg md:text-xl flex items-center gap-2">
+          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">
             <span>🩹</span> Cahier de Soins
           </h2>
         </div>
@@ -747,7 +742,7 @@
         
         <div class="space-y-3">
           <div class="flex items-center justify-between border-b-2 border-current/20 pb-3 gap-1.5">
-            <h2 class="font-poster text-base sm:text-lg md:text-xl flex items-center gap-1.5 truncate">
+            <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-1.5 truncate">
               <span>🍪</span> Goûter
             </h2>
             <div class="flex gap-1.5 shrink-0">
@@ -769,7 +764,7 @@
           </div>
         </div>
 
-        <!-- MODAL CRÉER RECETTE (UNITÉS NETTOYÉES ET SANS PINCÉE OU C. À CAFÉ) -->
+        <!-- MODAL CRÉER RECETTE -->
         <div x-show="showAddRecetteModal" x-transition class="card-item-pop p-3.5 space-y-2.5" style="display: none;">
           <div class="flex justify-between items-center border-b border-current/20 pb-1.5">
             <h3 class="text-xs font-extrabold uppercase">
@@ -789,7 +784,6 @@
             <div class="grid grid-cols-6 gap-1">
               <input type="text" x-model="tempIng.nom" placeholder="Nom" class="col-span-3 input-pop px-2 py-1 text-xs">
               <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-pop px-1 py-1 text-xs text-center">
-              <!-- SELECTEUR D'UNITÉ SANS PINCÉE, C. À SOUPE OU C. À CAFÉ -->
               <select x-model="tempIng.unite" class="col-span-1.5 input-pop px-1 py-1 text-xs font-extrabold">
                 <option value="g">g</option>
                 <option value="kg">kg</option>
@@ -916,7 +910,7 @@
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b-2 border-current/20 pb-3">
-          <h2 class="font-poster text-lg md:text-xl flex items-center gap-2">
+          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">
             <span>🛍️</span> Courses & Matériel
           </h2>
         </div>
@@ -999,13 +993,13 @@
     </div>
 
 
-    <!-- ==================== 6. ONGLET : PLANNING (AVEC TITRE CORRIGÉ ET ANTI-DEBORDEMENT) ==================== -->
+    <!-- ==================== 6. ONGLET : PLANNING ==================== -->
     <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-2.5 border-b-2 border-current/20 pb-3">
           <div class="flex items-center justify-between gap-1.5">
-            <h2 class="font-poster text-base sm:text-lg md:text-xl font-black flex items-center gap-1.5 truncate shrink min-w-0">
+            <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-1.5 truncate shrink min-w-0">
               <span>📅</span> Planning
             </h2>
             <div class="flex gap-1.5 shrink-0">
@@ -1052,7 +1046,7 @@
                 <span class="inline-block px-2 py-0.2 rounded-full bg-rose-600 text-white text-[8px] font-black uppercase mb-0.5">
                   🚨 SORTIE SPÉCIALE
                 </span>
-                <h3 class="font-poster text-base font-black text-rose-600 truncate" x-text="getOrgDuJour().titre"></h3>
+                <h3 class="font-poster text-sm sm:text-base font-black text-rose-600 truncate" x-text="getOrgDuJour().titre"></h3>
               </div>
               <button type="button" @click="effacerOrgDuJour()" class="text-gray-400 hover:text-rose-600 p-1">
                 <i class="fa-solid fa-trash text-xs"></i>
@@ -1101,7 +1095,7 @@
               <div class="card-item-pop p-3 space-y-2.5">
                 
                 <div class="flex justify-between items-center">
-                  <button type="button" @click="ouvrirDetailAnim(p)" class="font-poster text-sm font-black flex items-center gap-1.5 hover:underline truncate pr-2">
+                  <button type="button" @click="ouvrirDetailAnim(p)" class="font-poster text-xs sm:text-sm font-black flex items-center gap-1.5 hover:underline truncate pr-2">
                     <span x-text="p.nom" class="truncate"></span>
                     <i class="fa-solid fa-circle-info text-[10px] shrink-0"></i>
                   </button>
@@ -1161,7 +1155,7 @@
     <!-- MODAL : ORGANISATION / SORTIES -->
     <div x-show="showOrgModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3 theme-planning border-2 border-white max-h-[90vh] overflow-y-auto shadow-2xl">
-        <h3 class="font-poster text-base border-b-2 border-current/20 pb-1.5">
+        <h3 class="font-poster text-sm sm:text-base border-b-2 border-current/20 pb-1.5">
           🚌 Programmation d'une Sortie
         </h3>
 
@@ -1232,7 +1226,7 @@
               <span x-text="animSelectionne?.nom ? animSelectionne.nom.charAt(0) : 'A'"></span>
             </div>
             <div class="truncate">
-              <h3 class="font-poster text-base truncate" x-text="animSelectionne?.nom"></h3>
+              <h3 class="font-poster text-sm sm:text-base truncate" x-text="animSelectionne?.nom"></h3>
               <p class="text-[9px] uppercase font-black opacity-80">Planning Animateur</p>
             </div>
           </div>
@@ -1289,7 +1283,7 @@
     <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
     <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-sm w-full space-y-3 theme-planning border-2 border-white shadow-2xl">
-        <h3 class="font-poster text-base border-b-2 border-current/20 pb-1.5">
+        <h3 class="font-poster text-sm sm:text-base border-b-2 border-current/20 pb-1.5">
           ✏️ Créneau Animateur
         </h3>
         
@@ -1485,6 +1479,12 @@
           ];
 
           this.nettoyerCreneauxPasses();
+        },
+
+        showToast(msg) {
+          this.toast.message = msg;
+          this.toast.show = true;
+          setTimeout(() => { this.toast.show = false; }, 2500);
         },
 
         nettoyerCreneauxPasses() {
@@ -1842,6 +1842,45 @@
           this.showAddAnimModal = true;
         },
 
+        validerPlanning() {
+          if (!this.saisiePlanning.nom.trim()) {
+            this.showToast('Renseigne le nom de l\'animateur !');
+            return;
+          }
+
+          let anim = this.planningGlobal.find(a => a.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
+          if (!anim) {
+            anim = { id: Date.now(), nom: this.saisiePlanning.nom.trim(), dates: {} };
+            this.planningGlobal.push(anim);
+          }
+
+          anim.dates[this.saisiePlanning.date] = {
+            matin: this.saisiePlanning.matin.trim() || 'Repos / Libre',
+            ageMatin: this.saisiePlanning.ageMatin,
+            aprem: this.saisiePlanning.aprem.trim() || 'Repos / Libre',
+            ageAprem: this.saisiePlanning.ageAprem
+          };
+
+          this.showAddAnimModal = false;
+          this.showToast('Planning mis à jour ! 📅');
+        },
+
+        supprimerAnim(id) {
+          if(confirm('Supprimer cet animateur du planning ?')) {
+            this.planningGlobal = this.planningGlobal.filter(a => a.id !== id);
+            this.showToast('Animateur supprimé.');
+          }
+        },
+
+        ouvrirDetailAnim(anim) {
+          this.animSelectionne = anim;
+        },
+
+        allerADate(dateKey) {
+          this.dateAffichee = dateKey;
+          this.animSelectionne = null;
+        },
+
         getOrgDuJour() {
           return this.organisations[this.dateAffichee] || null;
         },
@@ -1870,21 +1909,24 @@
         },
 
         sauvegarderOrg() {
-          if (this.saisieOrg.titre.trim() !== '' && this.saisieOrg.date) {
-            this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
-            this.dateAffichee = this.saisieOrg.date;
-            this.showOrgModal = false;
-            this.showToast('Sortie programmée ! 🚌');
+          if (!this.saisieOrg.titre.trim()) {
+            this.showToast('Donne un titre à la sortie !');
+            return;
           }
+          this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
+          this.showOrgModal = false;
+          this.showToast('Sortie programmée ! 🚌');
         },
 
         effacerOrgDuJour() {
-          delete this.organisations[this.dateAffichee];
-          this.showToast('Sortie effacée.');
+          if(confirm('Supprimer la sortie spéciale de cette journée ?')) {
+            delete this.organisations[this.dateAffichee];
+            this.showToast('Sortie annulée.');
+          }
         },
 
         addMatos() {
-          if (this.newMatosNom.trim() !== '') {
+          if(this.newMatosNom.trim() !== '') {
             this.fiche.materiel.push({
               nom: this.newMatosNom.trim(),
               qte: this.newMatosQte.trim() || '1'
@@ -1899,81 +1941,29 @@
         },
 
         submitFiche() {
+          if(!this.fiche.titre.trim()) {
+            this.showToast('Indique le nom de l\'activité !');
+            return;
+          }
+
           this.fiche.materiel.forEach(item => {
             this.listeCourses.push({
               id: Date.now() + Math.random(),
               nom: item.nom,
               qte: item.qte,
-              activite: this.fiche.titre || 'Activité',
+              activite: this.fiche.titre,
               achete: false
             });
           });
-          this.showToast('Fiche créée & Matériel en cours d\'achat ! 📦');
-        },
 
-        exportPDF() {
-          document.getElementById('pdf-titre').innerText = this.fiche.titre || 'Fiche d\'Activité Sans Titre';
-          document.getElementById('pdf-age').innerText = this.fiche.age;
-          document.getElementById('pdf-lieu').innerText = this.fiche.lieu || 'Non spécifié';
-          document.getElementById('pdf-objectif').innerText = this.fiche.objectif || 'Non spécifié';
-          document.getElementById('pdf-deroulement').innerText = this.fiche.deroulement || 'Aucun déroulement renseigné.';
-
-          const listEl = document.getElementById('pdf-materiel');
-          listEl.innerHTML = '';
-          if(this.fiche.materiel.length === 0) {
-            listEl.innerHTML = '<li>Aucun matériel particulier</li>';
-          } else {
-            this.fiche.materiel.forEach(item => {
-              const li = document.createElement('li');
-              li.innerText = `${item.nom} — Quantité : ${item.qte}`;
-              listEl.appendChild(li);
-            });
-          }
-
-          const element = document.getElementById('pdf-template');
-          element.style.display = 'block';
-
-          const opt = {
-            margin:       0.5,
-            filename:     `fiche_${(this.fiche.titre || 'activite').replace(/\s+/g, '_')}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, logging: false },
-            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-          };
-
-          html2pdf().set(opt).from(element).save().then(() => {
-            element.style.display = 'none';
-          }).catch(err => {
-            element.style.display = 'none';
-            console.error(err);
-          });
-
-          this.showToast('PDF en préparation... 📄');
-        },
-
-        submitSoin() {
-          const now = new Date();
-          const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-          this.registreSoins.unshift({
-            id: Date.now(),
-            enfant: this.soin.enfant,
-            incident: this.soin.incident,
-            action: this.soin.action || 'Soin apporté',
-            heure: timeStr,
-            prevenirFamille: this.soin.prevenirFamille
-          });
-          this.showToast('Soin bien enregistré ! 🩺');
-          this.soin.enfant = ''; this.soin.incident = ''; this.soin.action = ''; this.soin.prevenirFamille = false;
-        },
-
-        deleteSoin(id) {
-          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-          this.showToast('Soin retiré.');
+          this.showToast('Matériel envoyé dans Courses & Matos ! 🛒');
+          this.currentTab = 'courses';
+          this.subTabCourses = 'activites';
         },
 
         addCourseDirecte() {
           if(this.nouvelleCourseNom.trim() !== '') {
-            this.listeCourses.unshift({
+            this.listeCourses.push({
               id: Date.now(),
               nom: this.nouvelleCourseNom.trim(),
               qte: this.nouvelleCourseQte.trim() || '1',
@@ -1982,6 +1972,7 @@
             });
             this.nouvelleCourseNom = '';
             this.nouvelleCourseQte = '';
+            this.showToast('Article ajouté !');
           }
         },
 
@@ -1991,54 +1982,70 @@
 
         viderAchetes() {
           this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.showToast('Articles achetés nettoyés ! ✨');
+          this.showToast('Articles achetés nettoyés !');
         },
 
-        ouvrirDetailAnim(p) {
-          this.animSelectionne = p;
-        },
-
-        allerADate(dateKey) {
-          this.dateAffichee = dateKey;
-          this.animSelectionne = null;
-        },
-
-        validerPlanning() {
-          if(this.saisiePlanning.nom.trim() !== '' && this.saisiePlanning.date) {
-            let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
-            
-            if (!anim) {
-              anim = {
-                id: Date.now(),
-                nom: this.saisiePlanning.nom.trim(),
-                dates: {}
-              };
-              this.planningGlobal.push(anim);
-            }
-
-            if(!anim.dates) anim.dates = {};
-
-            anim.dates[this.saisiePlanning.date] = {
-              matin: this.saisiePlanning.matin.trim() || 'Repos / Libre',
-              ageMatin: this.saisiePlanning.ageMatin || '-6 ans',
-              aprem: this.saisiePlanning.aprem.trim() || 'Repos / Libre',
-              ageAprem: this.saisiePlanning.ageAprem || '+6 ans'
-            };
-
-            this.showAddAnimModal = false;
-            this.showToast(`Créneau de ${anim.nom} à jour ! 👍`);
+        submitSoin() {
+          if(!this.soin.enfant.trim() || !this.soin.incident.trim()) {
+            this.showToast('Complète les informations du soin !');
+            return;
           }
+
+          const d = new Date();
+          const heureStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+
+          this.registreSoins.unshift({
+            id: Date.now(),
+            enfant: this.soin.enfant.trim(),
+            incident: this.soin.incident.trim(),
+            action: this.soin.action.trim() || 'Soin courant',
+            prevenirFamille: this.soin.prevenirFamille,
+            heure: heureStr
+          });
+
+          this.soin = { enfant: '', incident: '', action: '', prevenirFamille: false };
+          this.showToast('Soin consigné dans le registre ! 🩹');
         },
 
-        supprimerAnim(id) {
-          this.planningGlobal = this.planningGlobal.filter(p => p.id !== id);
-          this.showToast('Animateur retiré.');
+        deleteSoin(id) {
+          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
+          this.showToast('Soin effacé.');
         },
 
-        showToast(msg) {
-          this.toast.message = msg;
-          this.toast.show = true;
-          setTimeout(() => { this.toast.show = false; }, 3000);
+        exportPDF() {
+          document.getElementById('pdf-titre').innerText = this.fiche.titre || "Fiche d'Activité";
+          document.getElementById('pdf-age').innerText = this.fiche.age || "-6 ans";
+          document.getElementById('pdf-lieu').innerText = this.fiche.lieu || "Non précisé";
+          document.getElementById('pdf-objectif').innerText = this.fiche.objectif || "Non précisé";
+          document.getElementById('pdf-deroulement').innerText = this.fiche.deroulement || "Aucun déroulement saisi.";
+
+          const matosUl = document.getElementById('pdf-materiel');
+          matosUl.innerHTML = '';
+          if (this.fiche.materiel.length === 0) {
+            matosUl.innerHTML = '<li>Aucun matériel spécifique</li>';
+          } else {
+            this.fiche.materiel.forEach(m => {
+              const li = document.createElement('li');
+              li.innerText = `${m.nom} (Qté : ${m.qte})`;
+              matosUl.appendChild(li);
+            });
+          }
+
+          const element = document.getElementById('pdf-template');
+          element.style.display = 'block';
+
+          const opt = {
+            margin: 10,
+            filename: `Fiche_Activite_${(this.fiche.titre || 'Sans_titre').replace(/\s+/g, '_')}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
+
+          html2pdf().set(opt).from(element).save().then(() => {
+            element.style.display = 'none';
+            this.showToast('PDF téléchargé ! 📄');
+          });
         }
       }
     }
