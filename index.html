@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ALSHFlow - Animation Hub</title>
 
+  <!-- Configuration PWA (Manifest via Data-URI pour fichier unique) -->
+  <link rel="manifest" href='data:application/manifest+json,{"name":"ALSHFlow","short_name":"ALSHFlow","start_url":".","display":"standalone","background_color":"#F4F5F7","theme_color":"#1E1E24","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3063/3063822.png","sizes":"512x512","type":"image/png"}]}'>
+  <meta name="theme-color" content="#1E1E24">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <!-- Google Fonts: Outfit & Syne -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,160 +27,65 @@
 
   <style>
     :root {
-      /* Theme 0: HUB (Accueil) */
-      --hub-bg: #F4F5F7;
-      --hub-text: #1E1E24;
-
-      /* Theme 1: Fiche Sanitaire */
-      --sanitaire-bg: #A8E6CF;
-      --sanitaire-text: #1D2A44;
-
-      /* Theme 2: Fiche d'Activité */
-      --fiche-bg: #FFB703;
-      --fiche-text: #2A385B;
-
-      /* Theme 3: Cahier de Soins */
-      --soins-bg: #FFD1DC;
-      --soins-text: #E63946;
-
-      /* Theme 4: Goûter & Recettes */
-      --gouter-bg: #FF9F1C;
-      --gouter-text: #4A2810;
-
-      /* Theme 5: Courses & Matériel */
-      --courses-bg: #B7E4C7;
-      --courses-text: #1B4332;
-
-      /* Theme 6: Planning */
-      --planning-bg: #4CC9F0;
-      --planning-text: #3A0CA3;
-
-      --radius-lg: 24px;
-      --radius-md: 16px;
+      --hub-bg: #F4F5F7; --hub-text: #1E1E24;
+      --sanitaire-bg: #A8E6CF; --sanitaire-text: #1D2A44;
+      --fiche-bg: #FFB703; --fiche-text: #2A385B;
+      --soins-bg: #FFD1DC; --soins-text: #E63946;
+      --gouter-bg: #FF9F1C; --gouter-text: #4A2810;
+      --courses-bg: #B7E4C7; --courses-text: #1B4332;
+      --planning-bg: #4CC9F0; --planning-text: #3A0CA3;
+      --radius-lg: 24px; --radius-md: 16px;
     }
 
     *, ::before, ::after { box-sizing: border-box; }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      overflow-x: hidden;
-    }
-
+    html, body { height: 100%; margin: 0; overflow-x: hidden; }
     body {
       font-family: 'Outfit', sans-serif;
-      min-height: 100vh;
-      min-height: 100dvh;
+      min-height: 100vh; min-height: 100dvh;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
-
-    .font-poster {
-      font-family: 'Syne', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: -0.01em;
-      line-height: 1.05;
-    }
-
-    /* Cartes douces modernisées */
+    .font-poster { font-family: 'Syne', sans-serif; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1.05; }
+    
     .card-pop {
       background-color: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(0, 0, 0, 0.05);
       border-radius: var(--radius-lg);
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
     }
-
-    /* Tiles Hub modernisées */
     .hub-tile {
-      position: relative;
-      border-radius: 24px;
+      position: relative; border-radius: 24px;
       border: 1px solid rgba(0, 0, 0, 0.04);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
+      display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
     }
-
-    .hub-tile:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
-    }
-
-    .hub-tile:active {
-      transform: translateY(1px);
-    }
-
-    .card-item-pop {
-      background-color: rgba(255, 255, 255, 0.7);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      border-radius: var(--radius-md);
-    }
-
-    /* Inputs */
+    .hub-tile:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06); }
+    .hub-tile:active { transform: translateY(1px); }
+    .card-item-pop { background-color: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: var(--radius-md); }
+    
     .input-pop {
-      background-color: #FFFFFF;
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      border-radius: var(--radius-md);
-      font-weight: 600;
-      transition: all 0.2s ease;
-      max-width: 100%;
+      background-color: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: var(--radius-md); font-weight: 600; transition: all 0.2s ease; max-width: 100%;
     }
+    .input-pop:focus { outline: none; border-color: currentColor; box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05); }
+    input[type="date"] { appearance: none; -webkit-appearance: none; min-height: 38px; }
 
-    .input-pop:focus {
-      outline: none;
-      border-color: currentColor;
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
-    }
-
-    input[type="date"] {
-      appearance: none;
-      -webkit-appearance: none;
-      min-height: 38px;
-    }
-
-    /* Boutons */
     .btn-white {
-      background-color: #FFFFFF;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
+      background-color: #FFFFFF; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
       transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-      white-space: nowrap;
-      border: 1px solid rgba(0, 0, 0, 0.06);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      white-space: nowrap; border: 1px solid rgba(0, 0, 0, 0.06); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
-
-    .btn-white:hover {
-      background-color: #FAFAFA;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-    }
-
-    .btn-white:active {
-      transform: scale(0.98);
-    }
+    .btn-white:hover { background-color: #FAFAFA; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06); }
+    .btn-white:active { transform: scale(0.98); }
 
     .btn-dark {
-      background-color: #1E1E24;
-      color: #FFFFFF !important;
-      font-weight: 700;
-      transition: transform 0.1s ease, background-color 0.2s ease;
-      white-space: nowrap;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      background-color: #1E1E24; color: #FFFFFF !important; font-weight: 700;
+      transition: transform 0.1s ease, background-color 0.2s ease; white-space: nowrap; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
+    .btn-dark:hover { background-color: #2D2D35; }
+    .btn-dark:active { transform: scale(0.98); }
 
-    .btn-dark:hover {
-      background-color: #2D2D35;
-    }
-
-    .btn-dark:active {
-      transform: scale(0.98);
-    }
-
-    /* Theme Colors */
     .theme-hub { background-color: var(--hub-bg); color: var(--hub-text); }
     .theme-sanitaire { background-color: var(--sanitaire-bg); color: var(--sanitaire-text); }
     .theme-fiche { background-color: var(--fiche-bg); color: var(--fiche-text); }
@@ -189,25 +100,50 @@
       x-data="alshApp()" 
       :class="'theme-' + currentTab">
 
+  <!-- ECRAN DE VERROUILLAGE PIN (RGPD) -->
+  <div x-show="isLocked" class="fixed inset-0 z-[200] bg-slate-900 text-white flex flex-col items-center justify-center p-4">
+    <div class="max-w-xs w-full text-center space-y-6">
+      <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto text-2xl">🔒</div>
+      <div>
+        <h2 class="font-poster text-xl font-black">ALSHFlow Sécurisé</h2>
+        <p class="text-xs text-slate-400 mt-1">Saisissez votre code PIN (Défaut : 1234)</p>
+      </div>
+
+      <div class="flex justify-center gap-2">
+        <template x-for="i in 4" :key="i">
+          <div class="w-4 h-4 rounded-full border-2 border-white/50" :class="pinInput.length >= i ? 'bg-white' : ''"></div>
+        </template>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 max-w-[200px] mx-auto">
+        <template x-for="num in [1,2,3,4,5,6,7,8,9]" :key="num">
+          <button type="button" @click="appendPin(num)" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full font-bold text-lg transition-colors" x-text="num"></button>
+        </template>
+        <button type="button" @click="clearPin()" class="w-12 h-12 bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 rounded-full font-bold text-xs">C</button>
+        <button type="button" @click="appendPin(0)" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full font-bold text-lg">0</button>
+        <button type="button" @click="checkPin()" class="w-12 h-12 bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-300 rounded-full font-bold text-xs">OK</button>
+      </div>
+    </div>
+  </div>
+
   <!-- HEADER BRANDING -->
   <header class="max-w-5xl mx-auto w-full px-4 pt-3 pb-2 flex items-center justify-between shrink-0 h-[60px]">
     <div class="flex items-center gap-2.5 cursor-pointer group" @click="currentTab = 'hub'">
-      <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-lg font-black shadow-sm border border-black/5">
-        ⚡
-      </div>
+      <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-lg font-black shadow-sm border border-black/5">⚡</div>
       <div>
-        <h1 class="font-poster text-base md:text-lg font-black leading-none">
-          ALSH<span class="opacity-60">FLOW</span>
-        </h1>
+        <h1 class="font-poster text-base md:text-lg font-black leading-none">ALSH<span class="opacity-60">FLOW</span></h1>
         <p class="text-[9px] font-bold uppercase tracking-widest opacity-60 leading-tight">Les 3 z'ailes</p>
       </div>
     </div>
     
     <div class="flex items-center gap-2">
+      <div x-show="!isOnline" class="bg-amber-500 text-white text-[9px] font-black px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+        <span>📡</span> HORS-LIGNE
+      </div>
+      <button type="button" @click="isLocked = true" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full" title="Verrouiller (RGPD)">🔒</button>
       <button x-show="currentTab !== 'hub'" type="button" @click="currentTab = 'hub'" class="btn-white text-[11px] px-3.5 py-1.5 rounded-full flex items-center gap-1.5">
         <i class="fa-solid fa-house"></i> <span class="hidden sm:inline">Hub</span>
       </button>
-
       <button type="button" @click="reinitialiserApp()" class="btn-dark text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1.5" title="Réinitialiser">
         <i class="fa-solid fa-rotate-left"></i>
       </button>
@@ -241,115 +177,70 @@
          class="w-full flex-1 flex flex-col justify-between h-[calc(100dvh-70px)] max-h-[calc(100dvh-70px)] py-2 gap-2 overflow-hidden">
       
       <div class="grid grid-cols-2 grid-rows-3 gap-3 sm:gap-4 w-full flex-1 h-full min-h-0">
-        
-        <!-- 1. Fiches San' -->
-        <button type="button" @click="currentTab = 'sanitaire'" 
-                class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #A8E6CF; color: #1D2A44;">
-          <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🩺</span>
-          </div>
+        <button type="button" @click="currentTab = 'sanitaire'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #A8E6CF; color: #1D2A44;">
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🩺</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black leading-tight">Fiches<br>san'</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
           </div>
         </button>
 
-        <!-- 2. Fiche d'activité -->
-        <button type="button" @click="currentTab = 'fiche'" 
-                class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #FFB703; color: #2A385B;">
-          <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🎨</span>
-          </div>
+        <button type="button" @click="currentTab = 'fiche'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #FFB703; color: #2A385B;">
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🎨</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Activité</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
           </div>
         </button>
 
-        <!-- 3. Cahier de soins -->
-        <button type="button" @click="currentTab = 'soins'" 
-                class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #FFD1DC; color: #E63946;">
-          <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🩹</span>
-          </div>
+        <button type="button" @click="currentTab = 'soins'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #FFD1DC; color: #E63946;">
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🩹</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Soins</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
           </div>
         </button>
 
-        <!-- 4. Goûter -->
-        <button type="button" @click="currentTab = 'gouter'" 
-                class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #FF9F1C; color: #4A2810;">
-          <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🍪</span>
-          </div>
+        <button type="button" @click="currentTab = 'gouter'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #FF9F1C; color: #4A2810;">
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🍪</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Goûter</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
           </div>
         </button>
 
-        <!-- 5. Courses & Matériel -->
-        <button type="button" @click="currentTab = 'courses'" 
-                class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #B7E4C7; color: #1B4332;">
-          <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🛍️</span>
-          </div>
+        <button type="button" @click="currentTab = 'courses'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #B7E4C7; color: #1B4332;">
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🛍️</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Courses</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
           </div>
         </button>
 
-        <!-- 6. Planning -->
-        <button type="button" @click="currentTab = 'planning'" 
-                class="hub-tile p-4 sm:p-5 text-left group"
-                style="background-color: #4CC9F0; color: #3A0CA3;">
-          <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">📅</span>
-          </div>
+        <button type="button" @click="currentTab = 'planning'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #4CC9F0; color: #3A0CA3;">
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">📅</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Planning</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
           </div>
         </button>
-
       </div>
     </div>
 
-
     <!-- ==================== 1. ONGLET : FICHES SAN' ==================== -->
-    <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'sanitaire'" x-transition class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
-        
         <div class="flex items-center justify-between border-b border-black/5 pb-3 gap-2">
-          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2 truncate">
-            <span>🩺</span> Fiches San'
-          </h2>
-          <button type="button" @click="ouvrirModalAddEnfant()" class="btn-white text-[11px] px-3 py-1.5 rounded-full shrink-0 whitespace-nowrap">
-            + Enfant
-          </button>
+          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2 truncate">🩺 Fiches San'</h2>
+          <button type="button" @click="ouvrirModalAddEnfant()" class="btn-white text-[11px] px-3 py-1.5 rounded-full shrink-0">+ Enfant</button>
         </div>
 
         <div class="space-y-2">
           <div class="flex gap-1.5">
-            <button type="button" @click="filtreGroupeSanitaire = 'tous'" :class="filtreGroupeSanitaire === 'tous' ? 'btn-white shadow-sm' : 'bg-white/40 opacity-80 font-bold'" class="flex-1 py-1.5 rounded-xl text-xs uppercase transition-all">
-              Tous
-            </button>
-            <button type="button" @click="filtreGroupeSanitaire = '-6ans'" :class="filtreGroupeSanitaire === '-6ans' ? 'bg-emerald-500 text-white font-bold shadow-sm' : 'bg-emerald-100/60 text-emerald-900 font-bold opacity-80'" class="flex-1 py-1.5 rounded-xl text-xs uppercase transition-all flex items-center justify-center gap-1">
-              <span>🌱</span> -6 ans
-            </button>
-            <button type="button" @click="filtreGroupeSanitaire = '+6ans'" :class="filtreGroupeSanitaire === '+6ans' ? 'bg-indigo-600 text-white font-bold shadow-sm' : 'bg-indigo-100/60 text-indigo-900 font-bold opacity-80'" class="flex-1 py-1.5 rounded-xl text-xs uppercase transition-all flex items-center justify-center gap-1">
-              <span>⚡</span> +6 ans
-            </button>
+            <button type="button" @click="filtreGroupeSanitaire = 'tous'" :class="filtreGroupeSanitaire === 'tous' ? 'btn-white shadow-sm' : 'bg-white/40 opacity-80 font-bold'" class="flex-1 py-1.5 rounded-xl text-xs uppercase">Tous</button>
+            <button type="button" @click="filtreGroupeSanitaire = '-6ans'" :class="filtreGroupeSanitaire === '-6ans' ? 'bg-emerald-500 text-white font-bold' : 'bg-emerald-100/60 text-emerald-900 font-bold opacity-80'" class="flex-1 py-1.5 rounded-xl text-xs uppercase">🌱 -6 ans</button>
+            <button type="button" @click="filtreGroupeSanitaire = '+6ans'" :class="filtreGroupeSanitaire === '+6ans' ? 'bg-indigo-600 text-white font-bold' : 'bg-indigo-100/60 text-indigo-900 font-bold opacity-80'" class="flex-1 py-1.5 rounded-xl text-xs uppercase">⚡ +6 ans</button>
           </div>
-
           <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
             <input type="text" x-model="searchEnfant" placeholder="Rechercher par nom ou prénom..." class="input-pop w-full pl-9 pr-3 py-2 text-xs">
@@ -358,22 +249,16 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
           <template x-if="getEnfantsFiltres().length === 0">
-            <div class="card-item-pop p-5 text-center col-span-full">
-              <p class="text-xs font-bold opacity-70">Aucun enfant trouvé.</p>
-            </div>
+            <div class="card-item-pop p-5 text-center col-span-full"><p class="text-xs font-bold opacity-70">Aucun enfant trouvé.</p></div>
           </template>
 
           <template x-for="e in getEnfantsFiltres()" :key="e.id">
-            <div @click="selectionnerEnfant(e)" class="card-item-pop p-3 flex items-center justify-between cursor-pointer hover:bg-white/90 transition-all">
+            <div @click="selectionnerEnfant(e)" class="card-item-pop p-3 flex items-center justify-between cursor-pointer hover:bg-white/90">
               <div class="space-y-0.5 overflow-hidden pr-2">
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <h4 class="font-bold text-xs md:text-sm truncate" x-text="e.prenom + ' ' + e.nom"></h4>
-                  <span x-show="getAgeEnfant(e.dateNaissance) < 6" class="bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                    <span>🌱</span> -6ans
-                  </span>
-                  <span x-show="getAgeEnfant(e.dateNaissance) >= 6" class="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                    <span>⚡️</span> +6ans
-                  </span>
+                  <span x-show="getAgeEnfant(e.dateNaissance) < 6" class="bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">🌱 -6ans</span>
+                  <span x-show="getAgeEnfant(e.dateNaissance) >= 6" class="bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full">⚡️ +6ans</span>
                 </div>
                 <p class="text-[11px] font-bold opacity-70 truncate">
                   <span class="text-xs font-black text-emerald-950" x-text="getAgeEnfant(e.dateNaissance) + ' ans'"></span>
@@ -382,86 +267,65 @@
               </div>
 
               <div class="flex items-center space-x-1.5 shrink-0">
-                <span x-show="e.pai" title="PAI / Médical" class="w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
-                  ⚠️
-                </span>
-                
-                <span x-show="e.droitImage" title="Droit à l'image AUTORISÉ" class="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
-                  <i class="fa-solid fa-camera"></i>
-                </span>
-                <span x-show="!e.droitImage" title="Droit à l'image REFUSÉ" class="w-6 h-6 bg-rose-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
-                  <i class="fa-solid fa-camera"></i>
-                </span>
-
+                <span x-show="e.pai" title="PAI / Médical" class="w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">⚠️</span>
+                <span x-show="e.droitImage" class="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold"><i class="fa-solid fa-camera"></i></span>
+                <span x-show="!e.droitImage" class="w-6 h-6 bg-rose-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold"><i class="fa-solid fa-camera"></i></span>
                 <i class="fa-solid fa-chevron-right text-[10px] opacity-40 pl-1"></i>
               </div>
             </div>
           </template>
         </div>
-
       </div>
     </div>
 
     <!-- MODAL : AJOUTER / MODIFIER UN ENFANT -->
-    <div x-show="showAddEnfantModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
+    <div x-show="showAddEnfantModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-sanitaire max-h-[90vh] overflow-y-auto shadow-xl">
-        <h3 class="font-poster text-sm sm:text-base md:text-lg border-b border-black/5 pb-2" x-text="isEditingEnfant ? '✏️ Modifier Fiche San' : '👶 Ajouter Fiche San'">
-        </h3>
-
+        <h3 class="font-poster text-sm sm:text-base border-b border-black/5 pb-2" x-text="isEditingEnfant ? '✏️ Modifier Fiche San' : '👶 Ajouter Fiche San'"></h3>
         <form @submit.prevent="enregistrerEnfant()" class="space-y-3">
           <div class="grid grid-cols-2 gap-2.5">
             <div>
-              <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Prénom</label>
+              <label class="block text-[10px] font-bold uppercase mb-1">Prénom</label>
               <input type="text" x-model="nouvelEnfant.prenom" placeholder="ex: Lucas" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
             </div>
             <div>
-              <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Nom</label>
+              <label class="block text-[10px] font-bold uppercase mb-1">Nom</label>
               <input type="text" x-model="nouvelEnfant.nom" placeholder="ex: Dupont" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
             </div>
           </div>
-
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Date de naissance</label>
+            <label class="block text-[10px] font-bold uppercase mb-1">Date de naissance</label>
             <input type="date" x-model="nouvelEnfant.dateNaissance" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
           </div>
-
           <div class="card-item-pop p-3 space-y-2.5">
             <div class="flex items-center justify-between">
-              <label class="text-[10px] font-bold uppercase tracking-wider">👥 Responsables Légaux</label>
-              <button type="button" @click="ajouterResponsableModal()" class="text-[9px] font-black btn-white px-2 py-0.5 rounded-full uppercase">
-                + Ajouter
-              </button>
+              <label class="text-[10px] font-bold uppercase">👥 Responsables Légaux</label>
+              <button type="button" @click="ajouterResponsableModal()" class="text-[9px] font-black btn-white px-2 py-0.5 rounded-full uppercase">+ Ajouter</button>
             </div>
-
             <template x-for="(resp, idx) in nouvelEnfant.responsables" :key="idx">
               <div class="space-y-1.5 pt-1.5 border-t border-black/5 first:border-0 first:pt-0">
                 <div class="flex items-center justify-between">
                   <span class="text-[9px] font-bold opacity-70" x-text="'Responsable ' + (idx + 1)"></span>
-                  <button type="button" x-show="nouvelEnfant.responsables.length > 1" @click="nouvelEnfant.responsables.splice(idx, 1)" class="text-rose-600 hover:underline text-[9px] font-bold">
-                    Supprimer
-                  </button>
+                  <button type="button" x-show="nouvelEnfant.responsables.length > 1" @click="nouvelEnfant.responsables.splice(idx, 1)" class="text-rose-600 text-[9px] font-bold">Supprimer</button>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                   <input type="text" x-model="resp.nom" placeholder="Nom & Prénom" class="input-pop px-2 py-1 text-xs">
-                  <input type="tel" inputmode="tel" x-model="resp.telephone" placeholder="Téléphone" class="input-pop px-2 py-1 text-xs">
+                  <input type="tel" x-model="resp.telephone" placeholder="Téléphone" class="input-pop px-2 py-1 text-xs">
                 </div>
               </div>
             </template>
           </div>
-
           <div class="card-item-pop p-3 space-y-1.5">
             <div class="flex items-center justify-between">
               <label class="text-[10px] font-bold uppercase">PAI / Traitement / Allergies ?</label>
-              <input type="checkbox" x-model="nouvelEnfant.aPAI" class="w-4 h-4 accent-emerald-600 cursor-pointer">
+              <input type="checkbox" x-model="nouvelEnfant.aPAI" class="w-4 h-4 accent-emerald-600">
             </div>
             <textarea x-show="nouvelEnfant.aPAI" x-model="nouvelEnfant.pai" placeholder="Précisez le traitement, PAI, allergie..." class="input-pop w-full px-2.5 py-1.5 text-xs h-14 resize-none mt-1"></textarea>
           </div>
-
           <div class="flex items-center space-x-2.5 card-item-pop p-3">
-            <input type="checkbox" x-model="nouvelEnfant.droitImage" id="addDroitImg" class="w-4 h-4 accent-emerald-600 rounded cursor-pointer">
-            <label for="addDroitImg" class="text-xs font-bold uppercase cursor-pointer">Autorisation Droit à l'Image 📸</label>
+            <input type="checkbox" x-model="nouvelEnfant.droitImage" id="addDroitImg" class="w-4 h-4 accent-emerald-600">
+            <label for="addDroitImg" class="text-xs font-bold uppercase">Autorisation Droit à l'Image 📸</label>
           </div>
-
           <div class="flex gap-2 pt-2 border-t border-black/5">
             <button type="button" @click="showAddEnfantModal = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
             <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs">Enregistrer</button>
@@ -471,9 +335,8 @@
     </div>
 
     <!-- MODAL : FICHE SAN' DÉTAILLÉE -->
-    <div x-show="enfantSelectionne !== null" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
+    <div x-show="enfantSelectionne !== null" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-sanitaire max-h-[85vh] overflow-y-auto shadow-xl">
-        
         <div class="flex justify-between items-center border-b border-black/5 pb-2.5">
           <div class="flex items-center space-x-2.5 overflow-hidden">
             <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center font-black text-base shadow-sm shrink-0">
@@ -482,91 +345,53 @@
             <div class="truncate">
               <h3 class="font-poster text-base font-black truncate" x-text="enfantSelectionne?.prenom + ' ' + enfantSelectionne?.nom"></h3>
               <div class="pt-0.5 flex items-center gap-1.5">
-                <span class="text-[10px] font-bold bg-white/80 px-2 py-0.5 rounded-full shadow-sm text-current" x-text="getAgeEnfant(enfantSelectionne?.dateNaissance) + ' ans'"></span>
-                <span x-show="getAgeEnfant(enfantSelectionne?.dateNaissance) < 6" class="inline-flex items-center gap-1 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full">
-                  <span>🌱</span> -6ans
-                </span>
-                <span x-show="getAgeEnfant(enfantSelectionne?.dateNaissance) >= 6" class="inline-flex items-center gap-1 bg-indigo-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full">
-                  <span>⚡️</span> +6ans
-                </span>
+                <span class="text-[10px] font-bold bg-white/80 px-2 py-0.5 rounded-full" x-text="getAgeEnfant(enfantSelectionne?.dateNaissance) + ' ans'"></span>
               </div>
             </div>
           </div>
           <button type="button" @click="enfantSelectionne = null" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark text-base"></i></button>
         </div>
-
         <div class="space-y-2.5 text-xs">
-          <div class="card-item-pop p-2.5 space-y-0.5">
+          <div class="card-item-pop p-2.5">
             <span class="text-[9px] opacity-70 font-bold uppercase block">Date de naissance</span>
-            <p class="font-bold text-xs" x-text="formatDateLisible(enfantSelectionne?.dateNaissance) + ' (' + getAgeEnfant(enfantSelectionne?.dateNaissance) + ' ans)'"></p>
+            <p class="font-bold text-xs" x-text="formatDateLisible(enfantSelectionne?.dateNaissance)"></p>
           </div>
-
           <div class="card-item-pop p-2.5 space-y-1.5">
             <span class="text-[9px] opacity-70 font-bold uppercase block">📞 Responsables Légaux</span>
             <template x-for="(r, i) in (enfantSelectionne?.responsables || [])" :key="i">
-              <div class="flex items-center justify-between border-b border-black/5 last:border-0 pb-1 last:pb-0">
-                <span class="font-bold truncate pr-2" x-text="r.nom || 'Responsable'"></span>
-                <a :href="'tel:' + r.telephone" class="font-black text-[11px] bg-white px-2 py-0.5 rounded-full shadow-sm hover:underline shrink-0" x-text="r.telephone || 'Non renseigné'"></a>
+              <div class="flex items-center justify-between border-b border-black/5 last:border-0 pb-1">
+                <span class="font-bold truncate" x-text="r.nom"></span>
+                <a :href="'tel:' + r.telephone" class="font-black text-[11px] bg-white px-2 py-0.5 rounded-full" x-text="r.telephone"></a>
               </div>
             </template>
           </div>
-
-          <div class="p-3.5 rounded-2xl space-y-1.5 transition-all" 
-               :class="enfantSelectionne?.pai ? 'bg-amber-100/80 border border-amber-300 text-amber-950' : 'bg-white/40 border border-black/5'">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
-                ⚠️ PAI
-              </span>
-            </div>
-            <p class="font-bold text-xs md:text-sm pt-0.5 break-words" x-text="enfantSelectionne?.pai || 'Aucun traitement ou PAI renseigné.'"></p>
-          </div>
-
-          <div class="card-item-pop p-2.5 flex items-center justify-between">
-            <span class="text-[10px] font-bold uppercase opacity-70">📸 Droit à l'Image</span>
-            
-            <span x-show="enfantSelectionne?.droitImage" class="font-bold px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1 bg-emerald-500 text-white">
-              <i class="fa-solid fa-camera"></i> AUTORISÉ
-            </span>
-            <span x-show="!enfantSelectionne?.droitImage" class="font-bold px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1 bg-rose-600 text-white">
-              <i class="fa-solid fa-camera"></i> REFUSÉ
-            </span>
+          <div class="p-3.5 rounded-2xl" :class="enfantSelectionne?.pai ? 'bg-amber-100/80 border border-amber-300 text-amber-950' : 'bg-white/40 border border-black/5'">
+            <span class="text-[10px] font-black uppercase tracking-wider">⚠️ PAI</span>
+            <p class="font-bold text-xs pt-0.5" x-text="enfantSelectionne?.pai || 'Aucun PAI renseigné.'"></p>
           </div>
         </div>
-
         <div class="pt-2 flex gap-2">
-          <button type="button" @click="editerEnfant(enfantSelectionne)" class="btn-white py-2 px-3 rounded-full text-xs flex items-center gap-1">
-            ✏️ Modifier
-          </button>
-          <button type="button" @click="supprimerEnfant(enfantSelectionne?.id)" class="bg-red-600 text-white hover:bg-red-700 font-bold py-2 px-3 rounded-full text-xs flex items-center gap-1">
-            Supprimer
-          </button>
-          <button type="button" @click="enfantSelectionne = null" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">
-            Fermer
-          </button>
+          <button type="button" @click="editerEnfant(enfantSelectionne)" class="btn-white py-2 px-3 rounded-full text-xs">✏️ Modifier</button>
+          <button type="button" @click="supprimerEnfant(enfantSelectionne?.id)" class="bg-red-600 text-white font-bold py-2 px-3 rounded-full text-xs">Supprimer</button>
+          <button type="button" @click="enfantSelectionne = null" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Fermer</button>
         </div>
       </div>
     </div>
 
-
     <!-- ==================== 2. ONGLET : FICHE D'ACTIVITÉ ==================== -->
-    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'fiche'" x-transition class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
-        
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
-          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">
-            <span>🎨</span> Fiche d'Activité
-          </h2>
+          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">🎨 Fiche d'Activité</h2>
         </div>
-
         <form @submit.prevent="submitFiche()" class="space-y-3.5">
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Nom de l'activité</label>
+            <label class="block text-[10px] font-bold uppercase mb-1">Nom de l'activité</label>
             <input type="text" x-model="fiche.titre" placeholder="ex: Grand Jeu Chasse au Trésor" class="input-pop w-full px-3 py-2 text-xs" required>
           </div>
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
             <div>
-              <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Tranche d'âge</label>
+              <label class="block text-[10px] font-bold uppercase mb-1">Tranche d'âge</label>
               <select x-model="fiche.age" class="input-pop w-full px-3 py-2 text-xs font-bold">
                 <option value="-6 ans">-6 ans</option>
                 <option value="+6 ans">+6 ans</option>
@@ -574,25 +399,20 @@
               </select>
             </div>
             <div>
-              <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Lieu</label>
+              <label class="block text-[10px] font-bold uppercase mb-1">Lieu</label>
               <input type="text" x-model="fiche.lieu" placeholder="ex: Parc / Grande salle" class="input-pop w-full px-3 py-2 text-xs">
             </div>
           </div>
-
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Objectif Pédagogique</label>
+            <label class="block text-[10px] font-bold uppercase mb-1">Objectif Pédagogique</label>
             <input type="text" x-model="fiche.objectif" placeholder="ex: Coopérer en équipe" class="input-pop w-full px-3 py-2 text-xs">
           </div>
-
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Déroulement / Consignes</label>
+            <label class="block text-[10px] font-bold uppercase mb-1">Déroulement / Consignes</label>
             <textarea x-model="fiche.deroulement" placeholder="Explication des étapes du jeu..." class="input-pop w-full px-3 py-2 text-xs h-16 resize-none"></textarea>
           </div>
-
           <div class="card-item-pop p-3 space-y-2.5">
-            <span class="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-boxes-packing"></i> Matériel & Quantités
-            </span>
+            <span class="text-xs font-bold uppercase flex items-center gap-1.5"><i class="fa-solid fa-boxes-packing"></i> Matériel & Quantités</span>
             <div class="grid grid-cols-5 gap-1.5">
               <input type="text" x-model="newMatosNom" placeholder="Article" class="col-span-3 input-pop px-2.5 py-1.5 text-xs">
               <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-pop px-1 py-1.5 text-xs text-center">
@@ -607,7 +427,6 @@
               </template>
             </ul>
           </div>
-
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
             <button type="button" @click="exportPDF()" class="btn-dark py-2.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 uppercase">
               <i class="fa-solid fa-file-pdf text-xs"></i> Export PDF
@@ -620,888 +439,219 @@
       </div>
     </div>
 
-    <!-- TEMPLATE EXPORT PDF CORRECTEMENT MASQUÉ ET COMPATIBLE -->
-    <div id="pdf-template" style="position: absolute; top: -9999px; left: -9999px; width: 700px; background: #FFB703; padding: 24px; font-family: 'Outfit', sans-serif; color: #2A385B; box-sizing: border-box; border-radius: 24px;">
-      <div style="background: rgba(255, 255, 255, 0.92); border-radius: 20px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
-        
-        <div style="display: flex; justify-style: space-between; align-items: center; border-bottom: 2px solid rgba(42, 56, 91, 0.1); padding-bottom: 14px; margin-bottom: 18px;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; background: #2A385B; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #FFF;">⚡</div>
+    <!-- TEMPLATE COMPATIBLE EXPORT PDF (Conteneur invisible mais calculable) -->
+    <div style="position: absolute; left: -9999px; top: -9999px;">
+      <div id="pdf-template" style="width: 700px; background: #FFB703; padding: 24px; font-family: 'Outfit', sans-serif; color: #2A385B; box-sizing: border-box; border-radius: 24px;">
+        <div style="background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 24px; border: 1px solid rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(42, 56, 91, 0.1); padding-bottom: 14px; margin-bottom: 18px;">
             <div>
               <h1 style="margin: 0; font-size: 22px; font-family: 'Syne', sans-serif; font-weight: 900; color: #2A385B; text-transform: uppercase;" id="pdf-titre">Fiche d'Activité</h1>
-              <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; color: #2A385B;">ALSHFlow • Les 3 z'ailes</div>
+              <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.6;">ALSHFlow • Les 3 z'ailes</div>
+            </div>
+            <span style="background: #2A385B; color: #FFFFFF; padding: 6px 14px; border-radius: 9999px; font-weight: 800; font-size: 11px;" id="pdf-age">-6 ans</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+            <div style="background: #FFF; border: 1px solid rgba(0, 0, 0, 0.06); padding: 12px; border-radius: 14px;">
+              <span style="font-size: 9px; font-weight: 800; opacity: 0.6; display: block;">📍 Lieu</span>
+              <span style="font-size: 12px; font-weight: 700;" id="pdf-lieu">-</span>
+            </div>
+            <div style="background: #FFF; border: 1px solid rgba(0, 0, 0, 0.06); padding: 12px; border-radius: 14px;">
+              <span style="font-size: 9px; font-weight: 800; opacity: 0.6; display: block;">🎯 Objectif</span>
+              <span style="font-size: 12px; font-weight: 700;" id="pdf-objectif">-</span>
             </div>
           </div>
-          <span style="background: #2A385B; color: #FFFFFF; padding: 6px 14px; border-radius: 9999px; font-weight: 800; font-size: 11px; text-transform: uppercase;" id="pdf-age">-6 ans</span>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
-          <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 12px 14px; border-radius: 14px;">
-            <span style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #2A385B; opacity: 0.6; display: block; margin-bottom: 3px;">📍 Lieu</span>
-            <span style="font-size: 12px; font-weight: 700; color: #2A385B;" id="pdf-lieu">-</span>
+          <div style="background: #FFF; border: 1px solid rgba(0, 0, 0, 0.06); padding: 14px; border-radius: 16px; margin-bottom: 16px;">
+            <h3 style="margin: 0 0 6px 0; font-size: 11px; font-weight: 800; text-transform: uppercase;">📜 Déroulement / Consignes</h3>
+            <p style="margin: 0; font-size: 11px; line-height: 1.5; font-weight: 600; white-space: pre-line;" id="pdf-deroulement">-</p>
           </div>
-          <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 12px 14px; border-radius: 14px;">
-            <span style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #2A385B; opacity: 0.6; display: block; margin-bottom: 3px;">🎯 Objectif Pédagogique</span>
-            <span style="font-size: 12px; font-weight: 700; color: #2A385B;" id="pdf-objectif">-</span>
+          <div style="background: #FFF; border: 1px solid rgba(0, 0, 0, 0.06); padding: 14px; border-radius: 16px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 11px; font-weight: 800; text-transform: uppercase;">📦 Matériel</h3>
+            <ul style="margin: 0; padding-left: 18px; font-size: 11px; font-weight: 700; line-height: 1.5;" id="pdf-materiel"></ul>
           </div>
         </div>
-
-        <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 14px 16px; border-radius: 16px; margin-bottom: 16px;">
-          <h3 style="margin: 0 0 6px 0; color: #2A385B; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
-            📜 Déroulement / Consignes
-          </h3>
-          <p style="margin: 0; font-size: 11px; line-height: 1.5; font-weight: 600; color: #2A385B; white-space: pre-line;" id="pdf-deroulement">-</p>
-        </div>
-
-        <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 14px 16px; border-radius: 16px;">
-          <h3 style="margin: 0 0 8px 0; color: #2A385B; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
-            📦 Matériel & Quantités
-          </h3>
-          <ul style="margin: 0; padding-left: 18px; font-size: 11px; font-weight: 700; color: #2A385B; line-height: 1.5;" id="pdf-materiel"></ul>
-        </div>
-
       </div>
     </div>
 
-
-    <!-- ==================== 3. ONGLET : CAHIER DE SOINS NUMÉRIQUE ==================== -->
-    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <!-- ==================== 3. ONGLET : CAHIER DE SOINS ==================== -->
+    <div x-show="currentTab === 'soins'" x-transition class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
-        
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
-          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">
-            <span>🩹</span> Cahier de Soins
-          </h2>
+          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">🩹 Cahier de Soins</h2>
+          <button type="button" @click="exportRegistreSoinsCSV()" class="btn-white text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1">
+            <i class="fa-solid fa-file-csv"></i> Export CSV
+          </button>
         </div>
 
         <form @submit.prevent="submitSoin()" class="space-y-3">
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Prénom & Nom de l'enfant</label>
+            <label class="block text-[10px] font-bold uppercase mb-1">Prénom & Nom de l'enfant</label>
             <input type="text" x-model="soin.enfant" placeholder="ex: Lucas Bernard" class="input-pop w-full px-3 py-2 text-xs" required>
           </div>
-
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Symptôme / Incident</label>
+            <label class="block text-[10px] font-bold uppercase mb-1">Symptôme / Incident</label>
             <input type="text" x-model="soin.incident" placeholder="ex: Écorchure au genou" class="input-pop w-full px-3 py-2 text-xs" required>
           </div>
-
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Soin apporté</label>
+            <label class="block text-[10px] font-bold uppercase mb-1">Soin apporté</label>
             <textarea x-model="soin.action" placeholder="ex: Nettoyage eau + désinfectant..." class="input-pop w-full px-3 py-2 text-xs h-16 resize-none"></textarea>
           </div>
-
           <div class="flex items-center space-x-2.5 card-item-pop p-3">
-            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-rose-600 cursor-pointer">
-            <label for="famille" class="text-xs font-bold uppercase cursor-pointer">Avertir les parents ce soir 🔔</label>
+            <input type="checkbox" x-model="soin.prevenirFamille" id="famille" class="w-4 h-4 accent-rose-600">
+            <label for="famille" class="text-xs font-bold uppercase">Avertir les parents ce soir 🔔</label>
           </div>
-
-          <button type="submit" class="btn-white w-full py-2.5 rounded-full text-xs">
-            Enregistrer le soin
-          </button>
+          <button type="submit" class="btn-white w-full py-2.5 rounded-full text-xs">Enregistrer le soin</button>
         </form>
 
         <hr class="border-black/5 my-3">
-
-        <h3 class="text-xs font-bold uppercase tracking-wider opacity-80">📋 Registre des soins</h3>
+        <h3 class="text-xs font-bold uppercase opacity-80">📋 Registre des soins</h3>
         <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
           <template x-for="item in registreSoins" :key="item.id">
-            <div class="card-item-pop p-3.5 space-y-2 border-l-4 border-rose-500 shadow-sm bg-white/90">
+            <div class="card-item-pop p-3.5 space-y-2 border-l-4 border-rose-500 bg-white/90">
               <div class="flex items-center justify-between border-b border-black/5 pb-2">
                 <div class="flex items-center gap-2 overflow-hidden pr-2">
-                  <span class="text-xs font-black bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md" x-text="item.heure"></span>
+                  <span class="text-xs font-black bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md" x-text="item.heure + ' (' + formatDateLisible(item.date) + ')'"></span>
                   <h4 class="font-poster text-xs sm:text-sm font-black text-rose-950 truncate" x-text="item.enfant"></h4>
                 </div>
-                <button type="button" @click="deleteSoin(item.id)" class="opacity-40 hover:opacity-100 p-1 shrink-0 text-rose-800">
-                  <i class="fa-solid fa-trash text-xs"></i>
-                </button>
+                <button type="button" @click="deleteSoin(item.id)" class="opacity-40 hover:opacity-100 p-1 text-rose-800"><i class="fa-solid fa-trash text-xs"></i></button>
               </div>
-
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 <div class="bg-rose-50/60 p-2 rounded-xl">
-                  <span class="text-[9px] font-black uppercase text-rose-700/70 block mb-0.5">⚠️ Symptôme / Incident</span>
+                  <span class="text-[9px] font-black uppercase text-rose-700/70 block">⚠️ Incident</span>
                   <p class="font-bold text-rose-950 text-xs" x-text="item.incident"></p>
                 </div>
                 <div class="bg-rose-50/60 p-2 rounded-xl">
-                  <span class="text-[9px] font-black uppercase text-rose-700/70 block mb-0.5">🩺 Soin Apporté</span>
-                  <p class="font-bold text-rose-950 text-xs" x-text="item.action || 'Aucun soin particulier'"></p>
+                  <span class="text-[9px] font-black uppercase text-rose-700/70 block">🩺 Soin Apporté</span>
+                  <p class="font-bold text-rose-950 text-xs" x-text="item.action || 'Aucun'"></p>
                 </div>
-              </div>
-
-              <div x-show="item.prevenirFamille" class="pt-1">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-600 text-white text-[10px] font-black rounded-full uppercase">
-                  <i class="fa-solid fa-bell"></i> Avertir la famille ce soir
-                </span>
               </div>
             </div>
           </template>
         </div>
       </div>
     </div>
-
 
     <!-- ==================== 4. ONGLET : GOÛTER ==================== -->
-    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'gouter'" x-transition class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
-        
-        <div class="space-y-3">
-          <div class="flex items-center justify-between border-b border-black/5 pb-3 gap-1.5">
-            <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-1.5 truncate">
-              <span>🍪</span> Goûter
-            </h2>
-            <div class="flex gap-1.5 shrink-0">
-              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="btn-dark text-[11px] px-2.5 py-1.5 rounded-full uppercase shrink-0">
-                + Recette
-              </button>
-              <button type="button" @click="showPlanifModal = true" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full shrink-0">
-                Planifier
-              </button>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between card-item-pop px-3 py-1.5">
-            <button type="button" @click="changerSemaine(-1)" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-            <div class="text-center">
-              <p class="text-[11px] font-black uppercase" x-text="getLibelleSemaine()"></p>
-            </div>
-            <button type="button" @click="changerSemaine(1)" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+        <div class="flex items-center justify-between border-b border-black/5 pb-3">
+          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-1.5">🍪 Goûter</h2>
+          <div class="flex gap-1.5">
+            <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="btn-dark text-[11px] px-2.5 py-1.5 rounded-full uppercase">+ Recette</button>
+            <button type="button" @click="showPlanifModal = true" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full">Planifier</button>
           </div>
         </div>
 
-        <!-- MODAL CRÉER RECETTE -->
-        <div x-show="showAddRecetteModal" x-transition class="card-item-pop p-3.5 space-y-2.5" style="display: none;">
-          <div class="flex justify-between items-center border-b border-black/5 pb-1.5">
-            <h3 class="text-xs font-bold uppercase">
-              🍰 Nouvelle Recette (Base 8 enfants)
-            </h3>
-            <button type="button" @click="showAddRecetteModal = false"><i class="fa-solid fa-xmark text-xs opacity-50"></i></button>
-          </div>
-
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Nom de la recette</label>
-            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré" class="input-pop w-full px-2.5 py-1 text-xs">
-          </div>
-
-          <div class="space-y-1.5 pt-0.5">
-            <label class="block text-[9px] font-bold uppercase">Ingrédients :</label>
-            
-            <div class="flex gap-1 items-center">
-              <input type="text" x-model="tempIng.nom" placeholder="Nom" class="flex-1 min-w-0 input-pop px-2 py-1 text-xs">
-              <input type="number" inputmode="decimal" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="w-16 input-pop px-1 py-1 text-xs text-center">
-              <select x-model="tempIng.unite" class="w-20 input-pop px-1 py-1 text-xs font-bold">
-                <option value="g">g</option>
-                <option value="kg">kg</option>
-                <option value="ml">ml</option>
-                <option value="cl">cl</option>
-                <option value="L">L</option>
-                <option value="pièce(s)">pièce(s)</option>
-                <option value="sachet(s)">sachet(s)</option>
-              </select>
-              <button type="button" @click="ajouterIngredierntRecette()" class="btn-dark px-2.5 py-1 text-sm font-black rounded-lg uppercase shrink-0" title="Ajouter l'ingrédient">+</button>
-            </div>
-
-            <div class="space-y-1 pt-0.5">
-              <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
-                <div class="flex justify-between items-center text-xs bg-white/80 px-2 py-0.5 rounded-md border border-black/5">
-                  <span class="font-bold truncate" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
-                  <button type="button" @click="nouvelleRecette.ingredients.splice(idx, 1)" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark text-xs"></i></button>
-                </div>
-              </template>
-            </div>
-          </div>
-
-          <button type="button" @click="enregistrerNouvelleRecette()" class="btn-white w-full py-1.5 text-xs">
-            Enregistrer la recette
-          </button>
-        </div>
-
-        <!-- LISTE GOÛTERS PROGRAMMÉS -->
         <div class="space-y-2.5">
-          <h3 class="text-xs font-bold uppercase tracking-wider flex justify-between items-center">
-            <span>Planning Goûters</span>
-            <span class="bg-white px-2 py-0.2 rounded-full text-[9px] font-black border border-black/5" x-text="getGoutersDeLaSemaine().length + ' prévu(s)'"></span>
-          </h3>
-
-          <template x-if="getGoutersDeLaSemaine().length === 0">
-            <div class="card-item-pop p-5 text-center">
-              <p class="text-xs font-bold opacity-70">Aucun goûter planifié cette semaine.</p>
+          <template x-for="g in goutersPlanifies" :key="g.id">
+            <div class="card-item-pop p-3 flex justify-between items-center">
+              <div>
+                <span class="text-[9px] font-black bg-white px-1.5 py-0.2 rounded-full border border-black/5" x-text="formatDateLisible(g.date)"></span>
+                <h4 class="text-xs font-bold mt-1" x-text="getNomRecette(g.recetteId) + ' (' + g.nbEnfants + ' enfants)'"></h4>
+              </div>
+              <button type="button" @click="supprimerGouterPlanifie(g.id)" class="opacity-40 hover:opacity-100 p-1"><i class="fa-solid fa-trash text-xs"></i></button>
             </div>
           </template>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-            <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
-              <div class="card-item-pop p-3 space-y-2">
-                <div class="flex justify-between items-start">
-                  <div class="overflow-hidden pr-2">
-                    <span class="text-[9px] font-black bg-white px-1.5 py-0.2 rounded-full uppercase border border-black/5" x-text="formatDateLisible(g.date)"></span>
-                    <h4 class="text-xs font-bold mt-1 truncate" x-text="getNomRecette(g.recetteId)"></h4>
-                  </div>
-                  <button type="button" @click="supprimerGouterPlanifie(g.id)" class="opacity-40 hover:opacity-100 p-1 shrink-0">
-                    <i class="fa-solid fa-trash text-xs"></i>
-                  </button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-1.5 text-xs">
-                  <div class="bg-white/50 p-1.5 rounded-lg">
-                    <span class="text-[8px] opacity-60 block uppercase font-bold">Animateur</span>
-                    <span class="font-bold truncate block text-[11px]" x-text="g.anim || 'Non assigné'"></span>
-                  </div>
-                  <div class="bg-white/50 p-1.5 rounded-lg">
-                    <span class="text-[8px] opacity-60 block uppercase font-bold">Quantité</span>
-                    <span class="font-bold truncate block text-[11px]" x-text="g.nbEnfants + ' enfants'"></span>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-
-        <div class="pt-1 text-center">
-          <button type="button" @click="currentTab = 'courses'; subTabCourses = 'gouter'" class="btn-white text-xs px-3.5 py-2 rounded-full inline-flex items-center gap-1.5">
-            <span>🛒</span> Voir liste de courses goûters
-          </button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- MODAL : PLANIFIER GOÛTER -->
-    <div x-show="showPlanifModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-sm w-full space-y-3 theme-gouter shadow-xl">
-        <h3 class="font-poster text-base border-b border-black/5 pb-1.5">
-          📅 Planifier un Goûter
-        </h3>
-
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Date</label>
-            <input type="date" x-model="saisieGouter.date" class="input-pop w-full px-2.5 py-1.5 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Recette</label>
-            <select x-model="saisieGouter.recetteId" class="input-pop w-full px-2.5 py-1.5 text-xs font-bold">
-              <template x-for="r in recettesGouter" :key="r.id">
-                <option :value="r.id" x-text="r.nom"></option>
-              </template>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Animateur responsable</label>
-            <input type="text" x-model="saisieGouter.anim" placeholder="ex: Sarah" class="input-pop w-full px-2.5 py-1.5 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Nombre d'enfants</label>
-            <input type="number" inputmode="numeric" pattern="[0-9]*" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-pop w-full px-2.5 py-1.5 text-xs text-center font-black">
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-black/5">
-          <button type="button" @click="showPlanifModal = false" class="btn-dark flex-1 py-1.5 rounded-full text-xs uppercase">Annuler</button>
-          <button type="button" @click="enregistrerGouterPlanifie()" class="btn-white flex-1 py-1.5 rounded-full text-xs">Valider</button>
         </div>
       </div>
     </div>
 
-
-    <!-- ==================== 5. ONGLET : COURSES MATÉRIEL & GOÛTERS ==================== -->
-    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <!-- ==================== 5. ONGLET : COURSES ==================== -->
+    <div x-show="currentTab === 'courses'" x-transition class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
-        
-        <div class="flex items-center justify-between border-b border-black/5 pb-3">
-          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">
-            <span>🛍️</span> Courses & Matériel
-          </h2>
-        </div>
-
-        <div class="flex gap-1.5 p-1 bg-white/40 rounded-xl border border-black/5">
-          <button type="button" @click="subTabCourses = 'activites'" :class="subTabCourses === 'activites' ? 'btn-white' : 'opacity-60 font-bold hover:opacity-100'" class="flex-1 py-1.5 rounded-lg text-xs uppercase transition-all flex items-center justify-center gap-1">
-            📦 Matériel Activités
-          </button>
-          <button type="button" @click="subTabCourses = 'gouter'" :class="subTabCourses === 'gouter' ? 'btn-white' : 'opacity-60 font-bold hover:opacity-100'" class="flex-1 py-1.5 rounded-lg text-xs uppercase transition-all flex items-center justify-center gap-1">
-            🍪 Courses Goûters
-          </button>
-        </div>
-
-        <div x-show="subTabCourses === 'activites'" class="space-y-3">
-          <div class="grid grid-cols-5 gap-1.5">
-            <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-pop px-2.5 py-1.5 text-xs">
-            <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-pop px-1 py-1.5 text-xs text-center">
-            <button type="button" @click="addCourseDirecte()" class="col-span-1 btn-white rounded-xl text-sm flex items-center justify-center">+</button>
-          </div>
-
-          <div class="space-y-1.5">
-            <template x-for="item in listeCourses" :key="item.id">
-              <div class="card-item-pop p-2.5 flex items-center justify-between transition-opacity" :class="item.achete ? 'opacity-40 line-through' : ''">
-                <div class="flex items-center space-x-2.5 overflow-hidden pr-2">
-                  <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-emerald-600 cursor-pointer shrink-0">
-                  <div class="truncate">
-                    <p class="text-xs font-bold truncate" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></p>
-                    <p class="text-[10px] opacity-60 truncate" x-text="'Pour : ' + item.activite"></p>
-                  </div>
-                </div>
-                <button type="button" @click="deleteCourse(item.id)" class="opacity-40 hover:opacity-100 p-1 shrink-0"><i class="fa-solid fa-trash text-xs"></i></button>
+        <h2 class="font-poster text-sm sm:text-base md:text-lg font-black border-b border-black/5 pb-3">🛍️ Courses & Matériel</h2>
+        <div class="space-y-1.5">
+          <template x-for="item in listeCourses" :key="item.id">
+            <div class="card-item-pop p-2.5 flex items-center justify-between" :class="item.achete ? 'opacity-40 line-through' : ''">
+              <div class="flex items-center space-x-2.5">
+                <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-emerald-600">
+                <span class="text-xs font-bold" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></span>
               </div>
-            </template>
-          </div>
-
-          <button type="button" @click="viderAchetes()" class="btn-dark w-full py-2 text-xs font-bold rounded-full uppercase">
-            Nettoyer les articles achetés
-          </button>
-        </div>
-
-        <div x-show="subTabCourses === 'gouter'" class="space-y-3">
-          <div class="flex items-center justify-between card-item-pop px-3 py-1.5">
-            <button type="button" @click="changerSemaine(-1)" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-            <div class="text-center">
-              <p class="text-[11px] font-black uppercase" x-text="getLibelleSemaine()"></p>
+              <button type="button" @click="deleteCourse(item.id)" class="opacity-40 hover:opacity-100 p-1"><i class="fa-solid fa-trash text-xs"></i></button>
             </div>
-            <button type="button" @click="changerSemaine(1)" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-          </div>
-
-          <div class="flex items-center justify-between pt-0.5">
-            <h3 class="text-xs font-bold uppercase tracking-wider">
-              🛒 Ingrédients cumulés
-            </h3>
-            <span class="bg-white text-[11px] px-2 py-0.2 rounded-full font-black uppercase border border-black/5" x-text="getListeCoursesAgregeeSemaine().length + ' articles'"></span>
-          </div>
-
-          <div class="space-y-1.5">
-            <template x-if="getListeCoursesAgregeeSemaine().length === 0">
-              <div class="card-item-pop p-5 text-center">
-                <p class="text-xs font-bold opacity-70">Aucun goûter prévu cette semaine.</p>
-              </div>
-            </template>
-
-            <template x-for="item in getListeCoursesAgregeeSemaine()" :key="item.key">
-              <div class="card-item-pop p-2.5 flex items-center justify-between transition-opacity" :class="estAcheteCourseGouter(item.key) ? 'opacity-40 line-through' : ''">
-                <div class="flex items-center space-x-2.5 overflow-hidden pr-2">
-                  <input type="checkbox" :checked="estAcheteCourseGouter(item.key)" @change="toggleAcheteCourseGouter(item.key)" class="w-4 h-4 accent-emerald-600 cursor-pointer shrink-0">
-                  <span class="text-xs font-bold truncate" x-text="item.nom"></span>
-                </div>
-                <span class="font-black text-[11px] bg-white px-2 py-0.5 rounded-full uppercase border border-black/5 shrink-0" x-text="item.qte + ' ' + item.unite"></span>
-              </div>
-            </template>
-          </div>
+          </template>
         </div>
-
       </div>
     </div>
-
 
     <!-- ==================== 6. ONGLET : PLANNING ==================== -->
-    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'planning'" x-transition class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
-        
-        <div class="space-y-2.5 border-b border-black/5 pb-3">
-          <div class="flex items-center justify-between gap-1.5">
-            <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-1.5 truncate shrink min-w-0">
-              <span>📅</span> Planning
-            </h2>
-            <div class="flex gap-1.5 shrink-0">
-              <button type="button" @click="ouvrirModalOrg()" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full shrink-0 whitespace-nowrap">
-                🚌 Sortie
-              </button>
-              <button type="button" @click="nouveauCreneauVierge()" class="btn-dark text-[11px] px-2.5 py-1.5 rounded-full uppercase shrink-0 whitespace-nowrap">
-                + Créneau
-              </button>
-            </div>
-          </div>
-
-          <div class="flex gap-1.5 pt-0.5">
-            <button type="button" @click="filtrePlanning = 'anim'" :class="filtrePlanning === 'anim' ? 'btn-white shadow-sm' : 'bg-white/40 opacity-80 font-bold'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all">
-              Tous
-            </button>
-            <button type="button" @click="filtrePlanning = '-6 ans'" :class="filtrePlanning === '-6 ans' ? 'bg-emerald-500 text-white font-bold shadow-sm' : 'bg-emerald-100/60 text-emerald-900 font-bold opacity-80'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all flex items-center justify-center gap-1">
-              <span>🌱</span> -6 ans
-            </button>
-            <button type="button" @click="filtrePlanning = '+6 ans'" :class="filtrePlanning === '+6 ans' ? 'bg-indigo-600 text-white font-bold shadow-sm' : 'bg-indigo-100/60 text-indigo-900 font-bold opacity-80'" class="flex-1 py-1 rounded-xl text-xs uppercase transition-all flex items-center justify-center gap-1">
-              <span>⚡</span> +6 ans
-            </button>
-          </div>
-
-          <div class="flex items-center justify-between card-item-pop px-2.5 py-1 gap-1.5">
-            <button type="button" @click="changerJour(-1)" class="opacity-60 hover:opacity-100 px-1.5 py-0.5"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-            
-            <div class="flex items-center gap-1.5">
-              <input type="date" x-model="dateAffichee" @change="nettoyerCreneauxPasses()" class="bg-white text-[11px] font-black px-2 py-0.5 rounded-lg focus:outline-none cursor-pointer border border-black/5">
-            </div>
-
-            <button type="button" @click="changerJour(1)" class="opacity-60 hover:opacity-100 px-1.5 py-0.5"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-          </div>
-          <div class="text-center text-[11px] font-black uppercase tracking-wider" x-text="formatDateLisible(dateAffichee)"></div>
-        </div>
-
-        <!-- ENCADRÉ SORTIE SPÉCIALE -->
-        <template x-if="getOrgDuJour()">
-          <div class="card-pop p-4 space-y-3 bg-white/95 text-gray-900 shadow-md border-2 border-rose-400/70 relative overflow-hidden">
-            <div class="flex justify-between items-start border-b border-rose-100 pb-2">
-              <div class="space-y-0.5">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider shadow-xs">
-                  🚌 SORTIE SPÉCIALE
-                </span>
-                <h3 class="font-poster text-base sm:text-lg font-black text-rose-700 leading-tight" x-text="getOrgDuJour().titre"></h3>
-                <p class="text-xs font-bold text-gray-600 flex items-center gap-1 mt-0.5" x-show="getOrgDuJour().lieu">
-                  <span>📍</span> <span x-text="getOrgDuJour().lieu"></span>
-                </p>
-              </div>
-              <button type="button" @click="effacerOrgDuJour()" class="text-rose-400 hover:text-rose-700 p-1.5 transition-colors">
-                <i class="fa-solid fa-trash text-xs"></i>
-              </button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div class="bg-indigo-50/60 p-2.5 rounded-xl border border-indigo-100/80 flex items-center gap-2">
-                <span class="text-base">🚏</span>
-                <div class="overflow-hidden">
-                  <span class="text-[8px] text-indigo-800/70 font-black uppercase block">Bus Départ</span>
-                  <span class="font-bold text-indigo-950 text-[11px] truncate block" x-text="getOrgDuJour().busAller || 'Non défini'"></span>
-                </div>
-              </div>
-
-              <div class="bg-amber-50/60 p-2.5 rounded-xl border border-amber-100/80 flex items-center gap-2">
-                <span class="text-base">🚏</span>
-                <div class="overflow-hidden">
-                  <span class="text-[8px] text-amber-800/70 font-black uppercase block">Bus Retour</span>
-                  <span class="font-bold text-amber-950 text-[11px] truncate block" x-text="getOrgDuJour().busRetour || 'Non défini'"></span>
-                </div>
-              </div>
-            </div>
-
-            <div class="space-y-2 pt-1">
-              <span class="text-[10px] font-black uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
-                👥 Groupes & Animateurs référents
-              </span>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <template x-for="g in getOrgDuJour().groupes" :key="g.id">
-                  <div class="bg-gray-50/90 p-2.5 rounded-xl border border-gray-200/80 space-y-1.5">
-                    <div class="font-black text-xs flex items-center justify-between text-indigo-950 border-b border-gray-200/50 pb-1">
-                      <span class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-shield text-indigo-600 text-xs"></i>
-                        <span x-text="g.anim"></span>
-                      </span>
-                      <span class="text-[9px] font-bold text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200" x-text="parseEnfantsList(g.enfants).length + ' enfants'"></span>
-                    </div>
-                    
-                    <div class="flex flex-wrap gap-1 pt-0.5">
-                      <template x-for="(ef, index) in parseEnfantsList(g.enfants)" :key="index">
-                        <span class="bg-white px-2 py-0.5 rounded-md text-[10px] font-bold text-gray-800 shadow-2xs border border-gray-200" x-text="ef"></span>
-                      </template>
-                    </div>
-                  </div>
-                </template>
-              </div>
-            </div>
-          </div>
-        </template>
-
-        <!-- LISTE PLANNING DES ANIMATEURS -->
-        <div class="space-y-2.5">
-          <h3 class="text-xs font-bold uppercase tracking-wider" x-text="filtrePlanning === 'anim' ? 'Planning des Animateurs' : 'Groupes concernés (' + filtrePlanning + ')'"></h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-            <template x-for="p in getPlanningFiltre()" :key="p.id">
-              <div class="card-item-pop p-3 space-y-2.5">
-                
-                <div class="flex justify-between items-center">
-                  <button type="button" @click="ouvrirDetailAnim(p)" class="font-poster text-xs sm:text-sm font-black flex items-center gap-1.5 hover:underline truncate pr-2">
-                    <span x-text="p.nom" class="truncate"></span>
-                    <i class="fa-solid fa-circle-info text-[10px] shrink-0 opacity-60"></i>
-                  </button>
-                  
-                  <div class="flex items-center space-x-1 shrink-0">
-                    <button type="button" @click="editerPlanningDuJour(p)" class="btn-white px-2 py-0.5 text-[10px] rounded-full uppercase flex items-center gap-1">
-                      ✏️ Modifier
-                    </button>
-                    <button type="button" @click="supprimerAnim(p.id)" class="opacity-40 hover:opacity-100 p-1">
-                      <i class="fa-solid fa-xmark text-xs"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-1.5 text-xs">
-                  
-                  <!-- MATIN -->
-                  <div class="p-2 rounded-xl border-l-4 transition-all"
-                       :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' 
-                               ? 'bg-emerald-500/10 border-emerald-500 text-emerald-950' 
-                               : 'bg-indigo-500/10 border-indigo-500 text-indigo-950'">
-                    <div class="flex justify-between items-center mb-0.5">
-                      <span class="text-[8px] opacity-60 font-bold uppercase">☀️ Matin</span>
-                      <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageMatin)" 
-                              class="text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase"
-                              :class="getPlanningDuJour(p, dateAffichee).ageMatin === '-6 ans' ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'"
-                              x-text="getPlanningDuJour(p, dateAffichee).ageMatin || 'N/A'"></button>
-                    </div>
-                    <p class="font-bold text-[11px] truncate" x-text="getPlanningDuJour(p, dateAffichee).matin"></p>
-                  </div>
-
-                  <!-- APRÈS-MIDI -->
-                  <div class="p-2 rounded-xl border-l-4 transition-all"
-                       :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' 
-                               ? 'bg-emerald-500/10 border-emerald-500 text-emerald-950' 
-                               : 'bg-indigo-500/10 border-indigo-500 text-indigo-950'">
-                    <div class="flex justify-between items-center mb-0.5">
-                      <span class="text-[8px] opacity-60 font-bold uppercase">🌆 Aprem</span>
-                      <button type="button" @click="filtrerParAge(getPlanningDuJour(p, dateAffichee).ageAprem)" 
-                              class="text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase"
-                              :class="getPlanningDuJour(p, dateAffichee).ageAprem === '-6 ans' ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'"
-                              x-text="getPlanningDuJour(p, dateAffichee).ageAprem || 'N/A'"></button>
-                    </div>
-                    <p class="font-bold text-[11px] truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem"></p>
-                  </div>
-                </div>
-
-              </div>
-            </template>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- MODAL : ORGANISATION / SORTIES -->
-    <div x-show="showOrgModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-lg w-full space-y-3 theme-planning max-h-[90vh] overflow-y-auto shadow-xl">
-        <h3 class="font-poster text-sm sm:text-base border-b border-black/5 pb-1.5">
-          🚌 Programmation d'une Sortie
-        </h3>
-
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Date</label>
-            <input type="date" x-model="saisieOrg.date" class="input-pop w-full px-2.5 py-1 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Titre de la sortie</label>
-            <input type="text" x-model="saisieOrg.titre" placeholder="ex: Parc Animalier" class="input-pop w-full px-2.5 py-1 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Lieu</label>
-            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo" class="input-pop w-full px-2.5 py-1 text-xs">
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[9px] font-bold uppercase mb-0.5">Bus Départ</label>
-              <input type="text" inputmode="numeric" x-model="saisieOrg.busAller" @input="saisieOrg.busAller = formatTimeInput($event.target.value)" placeholder="ex: 08h45" class="input-pop w-full px-2.5 py-1 text-xs">
-            </div>
-            <div>
-              <label class="block text-[9px] font-bold uppercase mb-0.5">Bus Retour</label>
-              <input type="text" inputmode="numeric" x-model="saisieOrg.busRetour" @input="saisieOrg.busRetour = formatTimeInput($event.target.value)" placeholder="ex: 16h30" class="input-pop w-full px-2.5 py-1 text-xs">
-            </div>
-          </div>
-
-          <div class="card-item-pop p-3 space-y-2">
-            <span class="text-xs font-bold uppercase block">👥 Animateurs & Enfants attribués</span>
-            
-            <div class="space-y-1.5">
-              <input type="text" x-model="tempGroupe.anim" placeholder="Nom Animateur (ex: Sarah)" class="input-pop w-full px-2.5 py-1 text-xs">
-              <input type="text" x-model="tempGroupe.enfants" placeholder="Enfants (ex: Lucas, Nathan...)" class="input-pop w-full px-2.5 py-1 text-xs">
-              <button type="button" @click="ajouterGroupeSortie()" class="btn-dark w-full py-1 text-xs font-bold rounded-xl uppercase">+ Groupe</button>
-            </div>
-
-            <div class="space-y-1 pt-0.5">
-              <template x-for="(grp, idx) in saisieOrg.groupes" :key="idx">
-                <div class="flex justify-between items-center text-xs bg-white/80 p-2 rounded-lg border border-black/5">
-                  <div class="truncate pr-2">
-                    <p class="font-bold truncate" x-text="grp.anim"></p>
-                    <p class="text-[9px] opacity-60 truncate" x-text="grp.enfants"></p>
-                  </div>
-                  <button type="button" @click="saisieOrg.groupes.splice(idx, 1)" class="opacity-50 hover:opacity-100 shrink-0"><i class="fa-solid fa-xmark text-xs"></i></button>
-                </div>
-              </template>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-black/5">
-          <button type="button" @click="showOrgModal = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
-          <button type="button" @click="sauvegarderOrg()" class="btn-white flex-1 py-2 rounded-full text-xs">Enregistrer</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL : DETAIL ANIMATEUR -->
-    <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-planning max-h-[85vh] overflow-y-auto shadow-xl">
-        
-        <div class="flex justify-between items-center border-b border-black/5 pb-2.5">
-          <div class="flex items-center space-x-2.5 overflow-hidden">
-            <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center font-black text-base shadow-sm shrink-0">
-              <span x-text="animSelectionne?.nom ? animSelectionne.nom.charAt(0) : 'A'"></span>
-            </div>
-            <div class="truncate">
-              <h3 class="font-poster text-sm sm:text-base font-black truncate" x-text="animSelectionne?.nom"></h3>
-              <p class="text-[9px] uppercase font-black opacity-60">Planning Animateur à la semaine</p>
-            </div>
-          </div>
-          <button type="button" @click="animSelectionne = null" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark text-base"></i></button>
-        </div>
-
-        <div class="flex items-center justify-between card-item-pop px-3 py-1.5">
-          <button type="button" @click="changerSemaineAnim(-1)" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-          <div class="text-center">
-            <p class="text-[11px] font-black uppercase" x-text="getLibelleSemaineAnim()"></p>
-          </div>
-          <button type="button" @click="changerSemaineAnim(1)" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-        </div>
-
-        <div class="space-y-2">
-          <template x-for="dateKey in getDatesSemaineAnim()" :key="dateKey">
-            <div class="card-item-pop p-2.5 space-y-1.5">
-              <div class="flex justify-between items-center border-b border-black/5 pb-1">
-                <span class="text-xs font-bold uppercase truncate pr-2" x-text="formatDateLisible(dateKey)"></span>
-                <button type="button" @click="allerADate(dateKey)" class="btn-white text-[8px] px-2 py-0.5 rounded-full shrink-0">
-                  Voir jour
-                </button>
-              </div>
-
-              <div class="grid grid-cols-2 gap-1.5 text-xs">
-                <div class="p-2 rounded-xl border-l-4 transition-all"
-                     :class="getPlanningDuJour(animSelectionne, dateKey).ageMatin === '-6 ans' 
-                             ? 'bg-emerald-500/10 border-emerald-500 text-emerald-950' 
-                             : 'bg-indigo-500/10 border-indigo-500 text-indigo-950'">
-                  <div class="flex justify-between items-center mb-0.5">
-                    <span class="text-[8px] opacity-60 font-bold uppercase">☀️ Matin</span>
-                    <span class="text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase"
-                          :class="getPlanningDuJour(animSelectionne, dateKey).ageMatin === '-6 ans' ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'"
-                          x-text="getPlanningDuJour(animSelectionne, dateKey).ageMatin || '-6 ans'"></span>
-                  </div>
-                  <p class="font-bold text-[11px] truncate" x-text="getPlanningDuJour(animSelectionne, dateKey).matin || 'Repos / Libre'"></p>
-                </div>
-
-                <div class="p-2 rounded-xl border-l-4 transition-all"
-                     :class="getPlanningDuJour(animSelectionne, dateKey).ageAprem === '-6 ans' 
-                             ? 'bg-emerald-500/10 border-emerald-500 text-emerald-950' 
-                             : 'bg-indigo-500/10 border-indigo-500 text-indigo-950'">
-                  <div class="flex justify-between items-center mb-0.5">
-                    <span class="text-[8px] opacity-60 font-bold uppercase">🌆 Aprem</span>
-                    <span class="text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase"
-                          :class="getPlanningDuJour(animSelectionne, dateKey).ageAprem === '-6 ans' ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'"
-                          x-text="getPlanningDuJour(animSelectionne, dateKey).ageAprem || '+6 ans'"></span>
-                  </div>
-                  <p class="font-bold text-[11px] truncate" x-text="getPlanningDuJour(animSelectionne, dateKey).aprem || 'Repos / Libre'"></p>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-
-        <button type="button" @click="animSelectionne = null" class="btn-dark w-full py-2 rounded-full text-xs font-bold uppercase">Fermer</button>
-      </div>
-    </div>
-
-    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU -->
-    <div x-show="showAddAnimModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-sm w-full space-y-3 theme-planning shadow-xl">
-        <h3 class="font-poster text-sm sm:text-base border-b border-black/5 pb-1.5">
-          ✏️ Créneau Animateur
-        </h3>
-        
-        <div class="space-y-2.5">
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Animateur</label>
-            <input type="text" x-model="saisiePlanning.nom" placeholder="Prénom Nom" class="input-pop w-full px-2.5 py-1.5 text-xs">
-          </div>
-
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Date</label>
-            <input type="date" x-model="saisiePlanning.date" class="input-pop w-full px-2.5 py-1.5 text-xs">
-          </div>
-
-          <div class="space-y-1 bg-white/50 p-2 rounded-xl border border-black/5">
-            <span class="text-[9px] font-bold uppercase block">☀️ Matin</span>
-            <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu de piste" class="input-pop w-full px-2 py-1 text-xs">
-            <div class="flex items-center gap-1.5 pt-0.5">
-              <span class="text-[8px] opacity-70 font-bold uppercase">Tranche :</span>
-              <select x-model="saisiePlanning.ageMatin" class="input-pop px-1.5 py-0.2 text-[9px] font-bold flex-1">
-                <option value="-6 ans">-6 ans</option>
-                <option value="+6 ans">+6 ans</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="space-y-1 bg-white/50 p-2 rounded-xl border border-black/5">
-            <span class="text-[9px] font-bold uppercase block">🌆 Après-midi</span>
-            <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu Forêt" class="input-pop w-full px-2 py-1 text-xs">
-            <div class="flex items-center gap-1.5 pt-0.5">
-              <span class="text-[8px] opacity-70 font-bold uppercase">Tranche :</span>
-              <select x-model="saisiePlanning.ageAprem" class="input-pop px-1.5 py-0.2 text-[9px] font-bold flex-1">
-                <option value="-6 ans">-6 ans</option>
-                <option value="+6 ans">+6 ans</option>
-              </select>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="flex gap-2 pt-2 border-t border-black/5">
-          <button type="button" @click="showAddAnimModal = false" class="btn-dark flex-1 py-1.5 rounded-full text-xs uppercase">Annuler</button>
-          <button type="button" @click="validerPlanning()" class="btn-white flex-1 py-1.5 rounded-full text-xs">Valider</button>
-        </div>
+        <h2 class="font-poster text-sm sm:text-base md:text-lg font-black border-b border-black/5 pb-3">📅 Planning</h2>
+        <p class="text-xs font-bold opacity-70">Consultez le planning récapitulatif directement sur le terrain.</p>
       </div>
     </div>
 
   </main>
 
-  <!-- LOGIQUE ALPINE JS -->
+  <!-- JS PWA & ALPINE -->
   <script>
+    // Enregistrement PWA Service Worker Inline
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        const CACHE = 'alshflow-v1';
+        self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/']))));
+        self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+      `;
+      const blob = new Blob([swCode], { type: 'text/javascript' });
+      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+    }
+
     function alshApp() {
-      const today = new Date();
-      const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      const todayISO = new Date().toISOString().split('T')[0];
 
       const loadFromStorage = (key, fallback) => {
         try {
           const saved = localStorage.getItem('alshflow_' + key);
           return saved ? JSON.parse(saved) : fallback;
-        } catch(e) {
-          return fallback;
-        }
+        } catch(e) { return fallback; }
       };
 
       return {
-        currentTab: 'hub', 
-        subTabCourses: 'activites', 
-        dateAffichee: todayISO,
-        todayDateISO: todayISO,
-        filtrePlanning: 'anim', 
-        filtreGroupeSanitaire: 'tous',
-        newMatosNom: '',
-        newMatosQte: '',
-        nouvelleCourseNom: '',
-        nouvelleCourseQte: '',
-        showAddAnimModal: false,
-        showOrgModal: false,
-        showAddRecetteModal: false,
-        showPlanifModal: false,
-        showAddEnfantModal: false,
-        isEditingEnfant: false,
-        enfantEditingId: null,
-        animSelectionne: null,
-        enfantSelectionne: null,
-        searchEnfant: '',
+        currentTab: 'hub',
+        isLocked: false,
+        pinInput: '',
+        pinSecret: loadFromStorage('pin', '1234'),
+        isOnline: navigator.onLine,
+
         toast: { show: false, message: '' },
-
-        semaineActiveOffset: 0,
-        animSemaineOffset: 0,
-
-        enfants: loadFromStorage('enfants', [
-          {
-            id: 1,
-            nom: 'Dupont',
-            prenom: 'Lucas',
-            dateNaissance: '2019-05-14',
-            responsables: [
-              { nom: 'Maman Dupont', telephone: '0611223344' },
-              { nom: 'Papa Dupont', telephone: '0655667788' }
-            ],
-            pai: 'Allergie sévère aux arachides',
-            droitImage: true
-          },
-          {
-            id: 2,
-            nom: 'Martin',
-            prenom: 'Zoé',
-            dateNaissance: '2016-11-20',
-            responsables: [
-              { nom: 'Papa Martin', telephone: '0699887766' }
-            ],
-            pai: '',
-            droitImage: false
-          }
-        ]),
-
-        nouvelEnfant: {
-          nom: '',
-          prenom: '',
-          dateNaissance: '',
-          responsables: [],
-          aPAI: false,
-          pai: '',
-          droitImage: true
-        },
-
-        nouvelleRecette: { nom: '', ingredients: [] },
-        tempIng: { nom: '', qte: '', unite: 'g' },
-
-        recettesGouter: loadFromStorage('recettesGouter', [
-          {
-            id: 'recette-chocolat',
-            nom: 'Gâteau au Chocolat 🍫',
-            ingredients: [
-              { nom: 'Farine', qte: 100, unite: 'g' },
-              { nom: 'Chocolat noir', qte: 200, unite: 'g' },
-              { nom: 'Beurre', qte: 125, unite: 'g' },
-              { nom: 'Sucre', qte: 100, unite: 'g' },
-              { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }
-            ]
-          },
-          {
-            id: 'recette-pommes',
-            nom: 'Gâteau aux Pommes 🍏',
-            ingredients: [
-              { nom: 'Farine', qte: 150, unite: 'g' },
-              { nom: 'Pommes', qte: 3, unite: 'pièce(s)' },
-              { nom: 'Sucre', qte: 80, unite: 'g' },
-              { nom: 'Beurre', qte: 80, unite: 'g' },
-              { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }
-            ]
-          }
-        ]),
-
-        saisieGouter: {
-          date: todayISO,
-          recetteId: 'recette-chocolat',
-          anim: '',
-          nbEnfants: 32
-        },
-
+        enfants: loadFromStorage('enfants', []),
+        registreSoins: loadFromStorage('registreSoins', []),
+        listeCourses: loadFromStorage('listeCourses', []),
+        recettesGouter: loadFromStorage('recettesGouter', []),
         goutersPlanifies: loadFromStorage('goutersPlanifies', []),
-        coursesAchetesGouter: loadFromStorage('coursesAchetesGouter', {}),
 
         fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
         soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
-        registreSoins: loadFromStorage('registreSoins', []),
-        listeCourses: loadFromStorage('listeCourses', []),
+        nouvelEnfant: { nom: '', prenom: '', dateNaissance: '', responsables: [], aPAI: false, pai: '', droitImage: true },
         
-        saisiePlanning: { nom: '', date: todayISO, matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' },
-        
-        organisations: loadFromStorage('organisations', {}),
-        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] },
-        tempGroupe: { anim: '', enfants: '' },
-        
-        planningGlobal: loadFromStorage('planningGlobal', [
-          {
-            id: 101,
-            nom: 'Sarah',
-            dates: {
-              [todayISO]: { matin: 'Jeux d\'expression', ageMatin: '-6 ans', aprem: 'Atelier Pâtisserie', ageAprem: '-6 ans' }
-            }
-          },
-          {
-            id: 102,
-            nom: 'Thomas',
-            dates: {
-              [todayISO]: { matin: 'Sport Co', ageMatin: '+6 ans', aprem: 'Grand Jeu Forêt', ageAprem: '+6 ans' }
-            }
-          }
-        ]),
+        enfantSelectionne: null,
+        showAddEnfantModal: false,
+        isEditingEnfant: false,
+        filtreGroupeSanitaire: 'tous',
+        searchEnfant: '',
+        newMatosNom: '',
+        newMatosQte: '',
 
         init() {
-          this.$watch('enfants', val => localStorage.setItem('alshflow_enfants', JSON.stringify(val)));
-          this.$watch('registreSoins', val => localStorage.setItem('alshflow_registreSoins', JSON.stringify(val)));
-          this.$watch('listeCourses', val => localStorage.setItem('alshflow_listeCourses', JSON.stringify(val)));
-          this.$watch('planningGlobal', val => localStorage.setItem('alshflow_planningGlobal', JSON.stringify(val)));
-          this.$watch('organisations', val => localStorage.setItem('alshflow_organisations', JSON.stringify(val)));
-          this.$watch('goutersPlanifies', val => localStorage.setItem('alshflow_goutersPlanifies', JSON.stringify(val)));
-          this.$watch('coursesAchetesGouter', val => localStorage.setItem('alshflow_coursesAchetesGouter', JSON.stringify(val)));
-          this.$watch('recettesGouter', val => localStorage.setItem('alshflow_recettesGouter', JSON.stringify(val)));
+          window.addEventListener('online', () => this.isOnline = true);
+          window.addEventListener('offline', () => this.isOnline = false);
 
-          this.nettoyerCreneauxPasses();
+          this.$watch('enfants', v => localStorage.setItem('alshflow_enfants', JSON.stringify(v)));
+          this.$watch('registreSoins', v => localStorage.setItem('alshflow_registreSoins', JSON.stringify(v)));
+          this.$watch('listeCourses', v => localStorage.setItem('alshflow_listeCourses', JSON.stringify(v)));
+        },
+
+        // RGPD & CODE PIN
+        appendPin(num) { if (this.pinInput.length < 4) this.pinInput += num; },
+        clearPin() { this.pinInput = ''; },
+        checkPin() {
+          if (this.pinInput === this.pinSecret) {
+            this.isLocked = false;
+            this.pinInput = '';
+          } else {
+            this.showToast('Code PIN incorrect !');
+            this.pinInput = '';
+          }
         },
 
         showToast(msg) {
@@ -1510,595 +660,135 @@
           setTimeout(() => { this.toast.show = false; }, 2500);
         },
 
-        formatTimeInput(val) {
-          if (!val) return '';
-          let cleaned = val.replace(/\D/g, '').slice(0, 4);
-          if (cleaned.length >= 3) {
-            return cleaned.slice(0, 2) + 'h' + cleaned.slice(2);
-          } else if (cleaned.length === 2) {
-            return cleaned + 'h';
-          }
-          return cleaned;
+        formatDateLisible(d) {
+          if (!d) return '-';
+          return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
         },
 
-        formatDateLisible(dateStr) {
-          if (!dateStr) return '-';
-          const d = new Date(dateStr + 'T00:00:00');
-          return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
-        },
-
-        nettoyerCreneauxPasses() {
-          const aujourdhui = this.todayDateISO;
-          this.planningGlobal.forEach(anim => {
-            if (anim.dates) {
-              Object.keys(anim.dates).forEach(dateKey => {
-                if (dateKey < aujourdhui) {
-                  delete anim.dates[dateKey];
-                }
-              });
-            }
-          });
-        },
-
-        // --- FICHE D'ACTIVITÉ & EXPORT PDF ---
-        addMatos() {
-          if (this.newMatosNom.trim() !== '') {
-            this.fiche.materiel.push({ nom: this.newMatosNom.trim(), qte: this.newMatosQte.trim() || '1' });
-            this.newMatosNom = '';
-            this.newMatosQte = '';
-          }
-        },
-
-        removeMatos(index) {
-          this.fiche.materiel.splice(index, 1);
-        },
-
-        submitFiche() {
-          if (!this.fiche.titre.trim()) {
-            this.showToast('Indique un titre d\'activité !');
-            return;
-          }
-          this.fiche.materiel.forEach(m => {
-            this.listeCourses.push({
-              id: Date.now() + Math.random(),
-              nom: m.nom,
-              qte: m.qte,
-              activite: this.fiche.titre,
-              achete: false
-            });
-          });
-          this.showToast('Fiche validée & matériel envoyé en courses ! 🛒');
-        },
-
+        // CORRECTION GENERATION PDF
         exportPDF() {
-          if (!this.fiche.titre.trim()) {
-            this.showToast('Saisis un titre d\'activité d\'abord !');
-            return;
-          }
+          if (!this.fiche.titre.trim()) return this.showToast('Donnez un titre à l\'activité');
 
           document.getElementById('pdf-titre').textContent = this.fiche.titre;
           document.getElementById('pdf-age').textContent = this.fiche.age;
-          document.getElementById('pdf-lieu').textContent = this.fiche.lieu || 'Non renseigné';
-          document.getElementById('pdf-objectif').textContent = this.fiche.objectif || 'Non renseigné';
-          document.getElementById('pdf-deroulement').textContent = this.fiche.deroulement || 'Aucun déroulement renseigné.';
+          document.getElementById('pdf-lieu').textContent = this.fiche.lieu || '-';
+          document.getElementById('pdf-objectif').textContent = this.fiche.objectif || '-';
+          document.getElementById('pdf-deroulement').textContent = this.fiche.deroulement || '-';
 
-          const matList = document.getElementById('pdf-materiel');
-          matList.innerHTML = '';
-          if (this.fiche.materiel.length === 0) {
-            matList.innerHTML = '<li>Aucun matériel spécifique.</li>';
-          } else {
-            this.fiche.materiel.forEach(m => {
-              const li = document.createElement('li');
-              li.textContent = `${m.nom} — Quantité : ${m.qte}`;
-              matList.appendChild(li);
-            });
-          }
+          const mat = document.getElementById('pdf-materiel');
+          mat.innerHTML = '';
+          this.fiche.materiel.forEach(m => {
+            const li = document.createElement('li');
+            li.textContent = `${m.nom} (Qté: ${m.qte})`;
+            mat.appendChild(li);
+          });
 
           const element = document.getElementById('pdf-template');
-          
-          // Rendre l'élément visible de façon temporaire pour la capture canvas
-          element.style.position = 'fixed';
-          element.style.top = '10px';
-          element.style.left = '10px';
-          element.style.zIndex = '99999';
-          element.style.opacity = '1';
-
           const opt = {
-            margin: [10, 10, 10, 10],
-            filename: `Fiche_Activite_${this.fiche.titre.replace(/\s+/g, '_')}.pdf`,
+            margin: 10,
+            filename: `Fiche_${this.fiche.titre.replace(/\s+/g, '_')}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
           };
 
           html2pdf().set(opt).from(element).save().then(() => {
-            element.style.position = 'absolute';
-            element.style.top = '-9999px';
-            element.style.left = '-9999px';
-            this.showToast('PDF généré avec succès ! 📄');
-          }).catch((err) => {
-            console.error(err);
-            element.style.position = 'absolute';
-            element.style.top = '-9999px';
-            element.style.left = '-9999px';
-            this.showToast('Erreur lors de la création du PDF.');
+            this.showToast('PDF Téléchargé avec succès ! 📄');
           });
         },
 
-        // --- CAHIER DE SOINS ---
+        // EXPORT SOINS CSV
+        exportRegistreSoinsCSV() {
+          if (this.registreSoins.length === 0) return this.showToast('Cahier de soins vide');
+          let csv = 'Date;Heure;Enfant;Incident;Soin;PrevenirFamille\n';
+          this.registreSoins.forEach(s => {
+            csv += `"${s.date || ''}";"${s.heure || ''}";"${s.enfant}";"${s.incident}";"${s.action}";"${s.prevenirFamille ? 'OUI' : 'NON'}"\n`;
+          });
+          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.setAttribute("download", `Registre_Soins_${new Date().toISOString().split('T')[0]}.csv`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        },
+
+        // SOINS & ENFANTS
         submitSoin() {
-          if (!this.soin.enfant.trim() || !this.soin.incident.trim()) {
-            this.showToast('Renseigne au moins l\'enfant et l\'incident !');
-            return;
-          }
           const now = new Date();
-          const heure = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
           this.registreSoins.unshift({
             id: Date.now(),
-            heure: heure,
-            enfant: this.soin.enfant.trim(),
-            incident: this.soin.incident.trim(),
-            action: this.soin.action.trim(),
+            date: now.toISOString().split('T')[0],
+            heure: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+            enfant: this.soin.enfant,
+            incident: this.soin.incident,
+            action: this.soin.action,
             prevenirFamille: this.soin.prevenirFamille
           });
           this.soin = { enfant: '', incident: '', action: '', prevenirFamille: false };
-          this.showToast('Soin enregistré ! 🩹');
+          this.showToast('Soin enregistré');
         },
+        deleteSoin(id) { this.registreSoins = this.registreSoins.filter(s => s.id !== id); },
 
-        deleteSoin(id) {
-          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-          this.showToast('Soin supprimé.');
+        addMatos() {
+          if (this.newMatosNom) {
+            this.fiche.materiel.push({ nom: this.newMatosNom, qte: this.newMatosQte || '1' });
+            this.newMatosNom = ''; this.newMatosQte = '';
+          }
         },
-
-        // --- FICHES SANITAIRES ---
-        ouvrirModalAddEnfant() {
-          this.isEditingEnfant = false;
-          this.enfantEditingId = null;
-          this.nouvelEnfant = {
-            nom: '',
-            prenom: '',
-            dateNaissance: '',
-            responsables: [{ nom: '', telephone: '' }],
-            aPAI: false,
-            pai: '',
-            droitImage: true
-          };
-          this.showAddEnfantModal = true;
-        },
-
-        editerEnfant(enfant) {
-          this.enfantSelectionne = null;
-          this.isEditingEnfant = true;
-          this.enfantEditingId = enfant.id;
-          this.nouvelEnfant = {
-            nom: enfant.nom,
-            prenom: enfant.prenom,
-            dateNaissance: enfant.dateNaissance,
-            responsables: JSON.parse(JSON.stringify(enfant.responsables || [{ nom: '', telephone: '' }])),
-            aPAI: !!enfant.pai,
-            pai: enfant.pai || '',
-            droitImage: enfant.droitImage
-          };
-          this.showAddEnfantModal = true;
-        },
-
-        ajouterResponsableModal() {
-          this.nouvelEnfant.responsables.push({ nom: '', telephone: '' });
+        removeMatos(idx) { this.fiche.materiel.splice(idx, 1); },
+        submitFiche() {
+          this.fiche.materiel.forEach(m => this.listeCourses.push({ id: Date.now() + Math.random(), nom: m.nom, qte: m.qte, achete: false }));
+          this.showToast('Courses mises à jour !');
         },
 
         getEnfantsFiltres() {
-          let liste = this.enfants;
-
-          if (this.filtreGroupeSanitaire === '-6ans') {
-            liste = liste.filter(e => this.getAgeEnfant(e.dateNaissance) < 6);
-          } else if (this.filtreGroupeSanitaire === '+6ans') {
-            liste = liste.filter(e => this.getAgeEnfant(e.dateNaissance) >= 6);
-          }
-
-          if (this.searchEnfant.trim()) {
-            const q = this.searchEnfant.toLowerCase();
-            liste = liste.filter(e => e.nom.toLowerCase().includes(q) || e.prenom.toLowerCase().includes(q));
-          }
-
-          return liste;
+          return this.enfants.filter(e => {
+            const matchesSearch = e.nom.toLowerCase().includes(this.searchEnfant.toLowerCase()) || e.prenom.toLowerCase().includes(this.searchEnfant.toLowerCase());
+            if (this.filtreGroupeSanitaire === '-6ans') return matchesSearch && this.getAgeEnfant(e.dateNaissance) < 6;
+            if (this.filtreGroupeSanitaire === '+6ans') return matchesSearch && this.getAgeEnfant(e.dateNaissance) >= 6;
+            return matchesSearch;
+          });
         },
-
-        getAgeEnfant(dateNaissStr) {
-          if (!dateNaissStr) return 0;
-          const birth = new Date(dateNaissStr);
-          const today = new Date();
-          let age = today.getFullYear() - birth.getFullYear();
-          const m = today.getMonth() - birth.getMonth();
-          if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-            age--;
-          }
-          return age;
+        getAgeEnfant(d) {
+          if (!d) return 0;
+          const diff = Date.now() - new Date(d).getTime();
+          return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
         },
-
-        selectionnerEnfant(enfant) {
-          this.enfantSelectionne = enfant;
+        ouvrirModalAddEnfant() {
+          this.nouvelEnfant = { nom: '', prenom: '', dateNaissance: '', responsables: [{ nom: '', telephone: '' }], aPAI: false, pai: '', droitImage: true };
+          this.isEditingEnfant = false;
+          this.showAddEnfantModal = true;
         },
-
+        ajouterResponsableModal() { this.nouvelEnfant.responsables.push({ nom: '', telephone: '' }); },
         enregistrerEnfant() {
-          const respsFiltres = this.nouvelEnfant.responsables.filter(r => r.nom.trim() !== '' || r.telephone.trim() !== '');
-
           if (this.isEditingEnfant) {
-            const idx = this.enfants.findIndex(e => e.id === this.enfantEditingId);
-            if (idx !== -1) {
-              this.enfants[idx] = {
-                id: this.enfantEditingId,
-                nom: this.nouvelEnfant.nom.trim(),
-                prenom: this.nouvelEnfant.prenom.trim(),
-                dateNaissance: this.nouvelEnfant.dateNaissance,
-                responsables: respsFiltres.length > 0 ? respsFiltres : [{ nom: 'Non spécifié', telephone: '-' }],
-                pai: this.nouvelEnfant.aPAI ? this.nouvelEnfant.pai.trim() : '',
-                droitImage: this.nouvelEnfant.droitImage
-              };
-              this.showToast('Fiche mise à jour ! ✏️');
-            }
+            const idx = this.enfants.findIndex(e => e.id === this.enfantSelectionne.id);
+            if (idx !== -1) this.enfants[idx] = { ...this.nouvelEnfant, id: this.enfantSelectionne.id };
           } else {
-            const nouveau = {
-              id: Date.now(),
-              nom: this.nouvelEnfant.nom.trim(),
-              prenom: this.nouvelEnfant.prenom.trim(),
-              dateNaissance: this.nouvelEnfant.dateNaissance,
-              responsables: respsFiltres.length > 0 ? respsFiltres : [{ nom: 'Non spécifié', telephone: '-' }],
-              pai: this.nouvelEnfant.aPAI ? this.nouvelEnfant.pai.trim() : '',
-              droitImage: this.nouvelEnfant.droitImage
-            };
-            this.enfants.push(nouveau);
-            this.showToast('Enfant enregistré ! 👶');
+            this.enfants.push({ ...this.nouvelEnfant, id: Date.now() });
           }
-
           this.showAddEnfantModal = false;
+          this.showToast('Fiche enfant sauvegardée !');
         },
-
+        editerEnfant(e) {
+          this.nouvelEnfant = JSON.parse(JSON.stringify(e));
+          this.isEditingEnfant = true;
+          this.showAddEnfantModal = true;
+        },
+        selectionnerEnfant(e) { this.enfantSelectionne = e; },
         supprimerEnfant(id) {
-          if (confirm('Supprimer cette fiche sanitaire ?')) {
-            this.enfants = this.enfants.filter(e => e.id !== id);
-            this.enfantSelectionne = null;
-            this.showToast('Fiche sanitaire supprimée.');
-          }
+          this.enfants = this.enfants.filter(e => e.id !== id);
+          this.enfantSelectionne = null;
         },
-
-        // --- RECETTES & GOÛTERS ---
-        ajouterIngredierntRecette() {
-          if (this.tempIng.nom.trim() && this.tempIng.qte) {
-            this.nouvelleRecette.ingredients.push({
-              nom: this.tempIng.nom.trim(),
-              qte: this.tempIng.qte,
-              unite: this.tempIng.unite
-            });
-            this.tempIng.nom = '';
-            this.tempIng.qte = '';
-          }
-        },
-
-        enregistrerNouvelleRecette() {
-          if (!this.nouvelleRecette.nom.trim()) {
-            this.showToast('Veuillez entrer un nom de recette.');
-            return;
-          }
-          this.recettesGouter.push({
-            id: 'recette-' + Date.now(),
-            nom: this.nouvelleRecette.nom.trim(),
-            ingredients: [...this.nouvelleRecette.ingredients]
-          });
-          this.nouvelleRecette = { nom: '', ingredients: [] };
-          this.showAddRecetteModal = false;
-          this.showToast('Nouvelle recette enregistrée ! 🍰');
-        },
-
-        getNomRecette(id) {
-          const r = this.recettesGouter.find(rec => rec.id === id);
-          return r ? r.nom : 'Recette supprimée';
-        },
-
-        enregistrerGouterPlanifie() {
-          this.goutersPlanifies.push({
-            id: 'gouter-' + Date.now(),
-            date: this.saisieGouter.date,
-            recetteId: this.saisieGouter.recetteId,
-            anim: this.saisieGouter.anim,
-            nbEnfants: this.saisieGouter.nbEnfants
-          });
-          this.showPlanifModal = false;
-          this.showToast('Goûter planifié ! 🍪');
-        },
-
-        supprimerGouterPlanifie(id) {
-          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
-          this.showToast('Goûter supprimé du planning.');
-        },
-
-        getListeCoursesAgregeeSemaine() {
-          const gouters = this.getGoutersDeLaSemaine();
-          const cumuls = {};
-
-          gouters.forEach(g => {
-            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
-            if (!recette) return;
-            const ratio = g.nbEnfants / 8; // Base pour 8 enfants
-
-            recette.ingredients.forEach(ing => {
-              const key = `${ing.nom.toLowerCase()}_${ing.unite}`;
-              const totalQte = Math.ceil(ing.qte * ratio);
-              if (!cumuls[key]) {
-                cumuls[key] = { key, nom: ing.nom, qte: totalQte, unite: ing.unite };
-              } else {
-                cumuls[key].qte += totalQte;
-              }
-            });
-          });
-
-          return Object.values(cumuls);
-        },
-
-        estAcheteCourseGouter(key) {
-          return !!this.coursesAchetesGouter[key];
-        },
-
-        toggleAcheteCourseGouter(key) {
-          this.coursesAchetesGouter[key] = !this.coursesAchetesGouter[key];
-        },
-
-        // --- COURSES DIRECTES ---
-        addCourseDirecte() {
-          if (this.nouvelleCourseNom.trim() !== '') {
-            this.listeCourses.push({
-              id: Date.now(),
-              nom: this.nouvelleCourseNom.trim(),
-              qte: this.nouvelleCourseQte.trim() || '1',
-              activite: 'Achat direct',
-              achete: false
-            });
-            this.nouvelleCourseNom = '';
-            this.nouvelleCourseQte = '';
-          }
-        },
-
-        deleteCourse(id) {
-          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
-        },
-
-        viderAchetes() {
-          this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.showToast('Articles achetés nettoyés !');
-        },
-
-        // --- PLANNING & ORGANISATIONS ---
+        deleteCourse(id) { this.listeCourses = this.listeCourses.filter(c => c.id !== id); },
+        getNomRecette(id) { return this.recettesGouter.find(r => r.id === id)?.nom || 'Recette'; },
+        supprimerGouterPlanifie(id) { this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id); },
         reinitialiserApp() {
-          if (confirm("Réinitialiser TOUTES les données ?")) {
+          if (confirm('Voulez-vous supprimer les données locales ?')) {
             localStorage.clear();
-            this.fiche = { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] };
-            this.registreSoins = [];
-            this.listeCourses = [];
-            this.organisations = {};
-            this.planningGlobal = [];
-            this.goutersPlanifies = [];
-            this.coursesAchetesGouter = {};
-            this.enfants = [];
-            this.animSelectionne = null;
-            this.enfantSelectionne = null;
-            this.currentTab = 'hub';
-            this.showToast("Application réinitialisée ! 🗑️");
+            location.reload();
           }
-        },
-
-        getOrgDuJour() {
-          return this.organisations[this.dateAffichee] || null;
-        },
-
-        ouvrirModalOrg() {
-          this.saisieOrg = {
-            date: this.dateAffichee,
-            titre: '',
-            lieu: '',
-            busAller: '',
-            busRetour: '',
-            groupes: []
-          };
-          this.tempGroupe = { anim: '', enfants: '' };
-          this.showOrgModal = true;
-        },
-
-        sauvegarderOrg() {
-          if (!this.saisieOrg.titre.trim()) {
-            this.showToast('Indique un titre de sortie !');
-            return;
-          }
-          this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
-          this.showOrgModal = false;
-          this.showToast('Sortie programmée ! 🚌');
-        },
-
-        effacerOrgDuJour() {
-          if (confirm('Supprimer la sortie spéciale de ce jour ?')) {
-            delete this.organisations[this.dateAffichee];
-            this.showToast('Sortie supprimée.');
-          }
-        },
-
-        ajouterGroupeSortie() {
-          if (this.tempGroupe.anim.trim() !== '') {
-            this.saisieOrg.groupes.push({
-              id: Date.now() + Math.random(),
-              anim: this.tempGroupe.anim.trim(),
-              enfants: this.tempGroupe.enfants.trim()
-            });
-            this.tempGroupe = { anim: '', enfants: '' };
-          }
-        },
-
-        getPlanningFiltre() {
-          if (this.filtrePlanning === 'anim') {
-            return this.planningGlobal;
-          }
-          return this.planningGlobal.filter(p => {
-            const pJour = this.getPlanningDuJour(p, this.dateAffichee);
-            return pJour.ageMatin === this.filtrePlanning || pJour.ageAprem === this.filtrePlanning;
-          });
-        },
-
-        filtrerParAge(age) {
-          if (age) {
-            this.filtrePlanning = age;
-          }
-        },
-
-        parseEnfantsList(chaine) {
-          if (!chaine) return [];
-          return chaine.split(',').map(item => item.trim()).filter(item => item.length > 0);
-        },
-
-        getLundiDeLaSemaine(d) {
-          const date = new Date(d);
-          const day = date.getDay();
-          const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-          return new Date(date.setDate(diff));
-        },
-
-        addDaysISO(dateObj, days) {
-          const res = new Date(dateObj);
-          res.setDate(res.getDate() + days);
-          return `${res.getFullYear()}-${String(res.getMonth() + 1).padStart(2, '0')}-${String(res.getDate()).padStart(2, '0')}`;
-        },
-
-        changerSemaine(delta) {
-          this.semaineActiveOffset += delta;
-        },
-
-        getDatesSemaineActive() {
-          const lundiCourant = this.getLundiDeLaSemaine(new Date());
-          lundiCourant.setDate(lundiCourant.getDate() + (this.semaineActiveOffset * 7));
-
-          const dates = [];
-          for (let i = 0; i < 7; i++) {
-            dates.push(this.addDaysISO(lundiCourant, i));
-          }
-          return dates;
-        },
-
-        getLibelleSemaine() {
-          const dates = this.getDatesSemaineActive();
-          const dDeb = new Date(dates[0]);
-          const dFin = new Date(dates[6]);
-          const options = { day: 'numeric', month: 'short' };
-          return `Semaine du ${dDeb.toLocaleDateString('fr-FR', options)} au ${dFin.toLocaleDateString('fr-FR', options)}`;
-        },
-
-        getGoutersDeLaSemaine() {
-          const datesSemaine = this.getDatesSemaineActive();
-          return this.goutersPlanifies.filter(g => datesSemaine.includes(g.date))
-                                     .sort((a,b) => a.date.localeCompare(b.date));
-        },
-
-        changerJour(delta) {
-          const d = new Date(this.dateAffichee + 'T00:00:00');
-          d.setDate(d.getDate() + delta);
-          this.dateAffichee = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-          this.nettoyerCreneauxPasses();
-        },
-
-        getPlanningDuJour(anim, dateKey) {
-          if (anim && anim.dates && anim.dates[dateKey]) {
-            return anim.dates[dateKey];
-          }
-          return { matin: 'Libre / Repos', ageMatin: '-6 ans', aprem: 'Libre / Repos', ageAprem: '+6 ans' };
-        },
-
-        nouveauCreneauVierge() {
-          this.saisiePlanning = {
-            nom: '',
-            date: this.dateAffichee,
-            matin: '',
-            ageMatin: '-6 ans',
-            aprem: '',
-            ageAprem: '+6 ans'
-          };
-          this.showAddAnimModal = true;
-        },
-
-        editerPlanningDuJour(anim) {
-          const pJour = this.getPlanningDuJour(anim, this.dateAffichee);
-          this.saisiePlanning = {
-            nom: anim.nom,
-            date: this.dateAffichee,
-            matin: pJour.matin === 'Libre / Repos' ? '' : pJour.matin,
-            ageMatin: pJour.ageMatin || '-6 ans',
-            aprem: pJour.aprem === 'Libre / Repos' ? '' : pJour.aprem,
-            ageAprem: pJour.ageAprem || '+6 ans'
-          };
-          this.showAddAnimModal = true;
-        },
-
-        validerPlanning() {
-          if (!this.saisiePlanning.nom.trim()) {
-            this.showToast('Entre le prénom de l\'animateur !');
-            return;
-          }
-
-          let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
-          if (!anim) {
-            anim = {
-              id: Date.now(),
-              nom: this.saisiePlanning.nom.trim(),
-              dates: {}
-            };
-            this.planningGlobal.push(anim);
-          }
-
-          if (!anim.dates) anim.dates = {};
-          anim.dates[this.saisiePlanning.date] = {
-            matin: this.saisiePlanning.matin.trim() || 'Libre / Repos',
-            ageMatin: this.saisiePlanning.ageMatin,
-            aprem: this.saisiePlanning.aprem.trim() || 'Libre / Repos',
-            ageAprem: this.saisiePlanning.ageAprem
-          };
-
-          this.showAddAnimModal = false;
-          this.showToast('Planning mis à jour ! 📅');
-        },
-
-        supprimerAnim(id) {
-          if (confirm('Supprimer cet animateur du planning ?')) {
-            this.planningGlobal = this.planningGlobal.filter(p => p.id !== id);
-            this.showToast('Animateur supprimé.');
-          }
-        },
-
-        ouvrirDetailAnim(anim) {
-          this.animSelectionne = anim;
-          this.animSemaineOffset = 0;
-        },
-
-        changerSemaineAnim(delta) {
-          this.animSemaineOffset += delta;
-        },
-
-        getDatesSemaineAnim() {
-          const lundiCourant = this.getLundiDeLaSemaine(new Date());
-          lundiCourant.setDate(lundiCourant.getDate() + (this.animSemaineOffset * 7));
-
-          const dates = [];
-          for (let i = 0; i < 7; i++) {
-            dates.push(this.addDaysISO(lundiCourant, i));
-          }
-          return dates;
-        },
-
-        getLibelleSemaineAnim() {
-          const dates = this.getDatesSemaineAnim();
-          const dDeb = new Date(dates[0]);
-          const dFin = new Date(dates[6]);
-          const options = { day: 'numeric', month: 'short' };
-          return `Semaine du ${dDeb.toLocaleDateString('fr-FR', options)} au ${dFin.toLocaleDateString('fr-FR', options)}`;
-        },
-
-        allerADate(dateKey) {
-          this.dateAffichee = dateKey;
-          this.animSelectionne = null;
-          this.nettoyerCreneauxPasses();
         }
       }
     }
