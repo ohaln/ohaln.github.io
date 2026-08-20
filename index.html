@@ -174,7 +174,7 @@
       transform: scale(0.98);
     }
 
-    /* Theme Colors (Aplats unis sans dégradés) */
+    /* Theme Colors */
     .theme-hub { background-color: var(--hub-bg); color: var(--hub-text); }
     .theme-sanitaire { background-color: var(--sanitaire-bg); color: var(--sanitaire-text); }
     .theme-fiche { background-color: var(--fiche-bg); color: var(--fiche-text); }
@@ -247,9 +247,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #A8E6CF; color: #1D2A44;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">
-              🩺
-            </span>
+            <span class="text-3xl sm:text-4xl">🩺</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black leading-tight">Fiches<br>san'</h3>
@@ -262,9 +260,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #FFB703; color: #2A385B;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">
-              🎨
-            </span>
+            <span class="text-3xl sm:text-4xl">🎨</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Activité</h3>
@@ -277,9 +273,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #FFD1DC; color: #E63946;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">
-              🩹
-            </span>
+            <span class="text-3xl sm:text-4xl">🩹</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Soins</h3>
@@ -292,9 +286,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #FF9F1C; color: #4A2810;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">
-              🍪
-            </span>
+            <span class="text-3xl sm:text-4xl">🍪</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Goûter</h3>
@@ -307,9 +299,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #B7E4C7; color: #1B4332;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">
-              🛍️
-            </span>
+            <span class="text-3xl sm:text-4xl">🛍️</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Courses</h3>
@@ -322,9 +312,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #4CC9F0; color: #3A0CA3;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">
-              📅
-            </span>
+            <span class="text-3xl sm:text-4xl">📅</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Planning</h3>
@@ -632,41 +620,46 @@
       </div>
     </div>
 
-    <!-- TEMPLATE CACHÉ POUR EXPORT PDF (DESIGN IDENTIQUE WEB APP) -->
-    <div id="pdf-template" style="display: none; position: absolute; left: -9999px; top: -9999px; width: 750px;">
-      <div style="padding: 32px; font-family: 'Outfit', sans-serif; color: #2A385B; background: #FFF9E6; border-radius: 24px; border: 2px solid #FFB703;">
-        <div style="display: flex; justify-content: space-between; align-items: center; background-color: #FFB703; padding: 18px 24px; border-radius: 18px; margin-bottom: 24px;">
-          <div>
-            <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #2A385B; opacity: 0.8;">ALSHFlow — Fiche d'Activité</div>
-            <h1 style="margin: 4px 0 0 0; font-size: 22px; color: #2A385B; font-weight: 900; font-family: 'Syne', sans-serif; text-transform: uppercase;" id="pdf-titre">Fiche d'Activité</h1>
+    <!-- TEMPLATE CACHÉ POUR EXPORT PDF (STYLE ET DA DE L'APPLICATION) -->
+    <div id="pdf-template" style="position: fixed; left: -9999px; top: 0; width: 700px; background: #FFB703; padding: 24px; font-family: 'Outfit', sans-serif; color: #2A385B; box-sizing: border-box; border-radius: 24px;">
+      <div style="background: rgba(255, 255, 255, 0.92); border-radius: 20px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(42, 56, 91, 0.1); padding-bottom: 14px; margin-bottom: 18px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: #2A385B; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #FFF;">⚡</div>
+            <div>
+              <h1 style="margin: 0; font-size: 22px; font-family: 'Syne', sans-serif; font-weight: 900; color: #2A385B; text-transform: uppercase;" id="pdf-titre">Fiche d'Activité</h1>
+              <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; color: #2A385B;">ALSHFlow • Les 3 z'ailes</div>
+            </div>
           </div>
-          <span style="background: #2A385B; color: #FFFFFF; padding: 8px 16px; border-radius: 9999px; font-weight: 800; font-size: 13px; text-transform: uppercase;" id="pdf-age">-6 ans</span>
+          <span style="background: #2A385B; color: #FFFFFF; padding: 6px 14px; border-radius: 9999px; font-weight: 800; font-size: 11px; text-transform: uppercase;" id="pdf-age">-6 ans</span>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-          <div style="background: #FFFFFF; padding: 14px 18px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06);">
-            <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #64748B; display: block; margin-bottom: 4px;">📍 Lieu</span>
-            <span style="font-size: 13px; font-weight: 700; color: #2A385B;" id="pdf-lieu">-</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+          <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 12px 14px; border-radius: 14px;">
+            <span style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #2A385B; opacity: 0.6; display: block; margin-bottom: 3px;">📍 Lieu</span>
+            <span style="font-size: 12px; font-weight: 700; color: #2A385B;" id="pdf-lieu">-</span>
           </div>
-          <div style="background: #FFFFFF; padding: 14px 18px; border-radius: 16px; border: 1px solid rgba(0,0,0,0.06);">
-            <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #64748B; display: block; margin-bottom: 4px;">🎯 Objectif Pédagogique</span>
-            <span style="font-size: 13px; font-weight: 700; color: #2A385B;" id="pdf-objectif">-</span>
+          <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 12px 14px; border-radius: 14px;">
+            <span style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #2A385B; opacity: 0.6; display: block; margin-bottom: 3px;">🎯 Objectif Pédagogique</span>
+            <span style="font-size: 12px; font-weight: 700; color: #2A385B;" id="pdf-objectif">-</span>
           </div>
         </div>
 
-        <div style="background: #FFFFFF; padding: 18px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.06); margin-bottom: 20px;">
-          <h3 style="margin: 0 0 10px 0; color: #2A385B; font-size: 14px; font-weight: 800; text-transform: uppercase;">
+        <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 14px 16px; border-radius: 16px; margin-bottom: 16px;">
+          <h3 style="margin: 0 0 6px 0; color: #2A385B; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
             📜 Déroulement / Consignes
           </h3>
-          <p style="margin: 0; font-size: 12px; line-height: 1.6; font-weight: 600; color: #334155; white-space: pre-line;" id="pdf-deroulement">-</p>
+          <p style="margin: 0; font-size: 11px; line-height: 1.5; font-weight: 600; color: #2A385B; white-space: pre-line;" id="pdf-deroulement">-</p>
         </div>
 
-        <div style="background: #FFFFFF; padding: 18px; border-radius: 18px; border: 1px solid rgba(0,0,0,0.06);">
-          <h3 style="margin: 0 0 10px 0; color: #2A385B; font-size: 14px; font-weight: 800; text-transform: uppercase;">
+        <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 14px 16px; border-radius: 16px;">
+          <h3 style="margin: 0 0 8px 0; color: #2A385B; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
             📦 Matériel & Quantités
           </h3>
-          <ul style="margin: 0; padding-left: 20px; font-size: 12px; font-weight: 700; color: #334155;" id="pdf-materiel"></ul>
+          <ul style="margin: 0; padding-left: 18px; font-size: 11px; font-weight: 700; color: #2A385B; line-height: 1.5;" id="pdf-materiel"></ul>
         </div>
+
       </div>
     </div>
 
@@ -791,10 +784,11 @@
           <div class="space-y-1.5 pt-0.5">
             <label class="block text-[9px] font-bold uppercase">Ingrédients :</label>
             
-            <div class="grid grid-cols-6 gap-1">
-              <input type="text" x-model="tempIng.nom" placeholder="Nom" class="col-span-3 input-pop px-2 py-1 text-xs">
-              <input type="number" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="col-span-1.5 input-pop px-1 py-1 text-xs text-center">
-              <select x-model="tempIng.unite" class="col-span-1.5 input-pop px-1 py-1 text-xs font-bold">
+            <!-- AJOUT D'INGRÉDIENT EN LIGNE AVEC BOUTON + -->
+            <div class="flex gap-1 items-center">
+              <input type="text" x-model="tempIng.nom" placeholder="Nom" class="flex-1 min-w-0 input-pop px-2 py-1 text-xs">
+              <input type="number" inputmode="decimal" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="w-16 input-pop px-1 py-1 text-xs text-center">
+              <select x-model="tempIng.unite" class="w-20 input-pop px-1 py-1 text-xs font-bold">
                 <option value="g">g</option>
                 <option value="kg">kg</option>
                 <option value="ml">ml</option>
@@ -803,11 +797,8 @@
                 <option value="pièce(s)">pièce(s)</option>
                 <option value="sachet(s)">sachet(s)</option>
               </select>
+              <button type="button" @click="ajouterIngredierntRecette()" class="btn-dark px-2.5 py-1 text-sm font-black rounded-lg uppercase shrink-0" title="Ajouter l'ingrédient">+</button>
             </div>
-            
-            <button type="button" @click="ajouterIngredierntRecette()" class="btn-dark w-full py-1 text-[9px] font-bold rounded-lg uppercase">
-              + Ingrédient
-            </button>
 
             <div class="space-y-1 pt-0.5">
               <template x-for="(ing, idx) in nouvelleRecette.ingredients" :key="idx">
@@ -903,7 +894,7 @@
 
           <div>
             <label class="block text-[9px] font-bold uppercase mb-0.5">Nombre d'enfants</label>
-            <input type="number" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-pop w-full px-2.5 py-1.5 text-xs text-center font-black">
+            <input type="number" inputmode="numeric" pattern="[0-9]*" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="ex: 35" class="input-pop w-full px-2.5 py-1.5 text-xs text-center font-black">
           </div>
         </div>
 
@@ -1043,30 +1034,26 @@
           <div class="text-center text-[11px] font-black uppercase tracking-wider" x-text="formatDateLisible(dateAffichee)"></div>
         </div>
 
-        <!-- ENCADRÉ SORTIE SPÉCIALE (DESIGN ÉPURÉ & VISIBILITÉ ACCRUE) -->
+        <!-- ENCADRÉ SORTIE SPÉCIALE (LIEU EN SOUS-TITRE & BUS CÔTE À CÔTE) -->
         <template x-if="getOrgDuJour()">
           <div class="card-pop p-4 space-y-3 bg-white/95 text-gray-900 shadow-md border-2 border-rose-400/70 relative overflow-hidden">
             <div class="flex justify-between items-start border-b border-rose-100 pb-2">
-              <div class="space-y-1">
+              <div class="space-y-0.5">
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider shadow-xs">
                   🚌 SORTIE SPÉCIALE
                 </span>
                 <h3 class="font-poster text-base sm:text-lg font-black text-rose-700 leading-tight" x-text="getOrgDuJour().titre"></h3>
+                <p class="text-xs font-bold text-gray-600 flex items-center gap-1 mt-0.5" x-show="getOrgDuJour().lieu">
+                  <span>📍</span> <span x-text="getOrgDuJour().lieu"></span>
+                </p>
               </div>
               <button type="button" @click="effacerOrgDuJour()" class="text-rose-400 hover:text-rose-700 p-1.5 transition-colors">
                 <i class="fa-solid fa-trash text-xs"></i>
               </button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-              <div class="bg-rose-50/60 p-2.5 rounded-xl border border-rose-100/80 flex items-center gap-2 col-span-1 sm:col-span-1">
-                <span class="text-base">📍</span>
-                <div class="overflow-hidden">
-                  <span class="text-[8px] text-rose-800/70 font-black uppercase block">Lieu</span>
-                  <span class="font-bold text-gray-900 text-[11px] truncate block" x-text="getOrgDuJour().lieu || 'Non spécifié'"></span>
-                </div>
-              </div>
-
+            <!-- BUS DÉPART ET BUS RETOUR CÔTE À CÔTE -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
               <div class="bg-indigo-50/60 p-2.5 rounded-xl border border-indigo-100/80 flex items-center gap-2">
                 <span class="text-base">🚏</span>
                 <div class="overflow-hidden">
@@ -1199,14 +1186,15 @@
             <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo" class="input-pop w-full px-2.5 py-1 text-xs">
           </div>
 
+          <!-- INPUTS CHRONO AVEC CLAVIER NUMÉRIQUE & FORMATAGE "00h00" -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="block text-[9px] font-bold uppercase mb-0.5">Bus Départ</label>
-              <input type="text" x-model="saisieOrg.busAller" placeholder="ex: 08h45" class="input-pop w-full px-2.5 py-1 text-xs">
+              <input type="text" inputmode="numeric" x-model="saisieOrg.busAller" @input="saisieOrg.busAller = formatTimeInput($event.target.value)" placeholder="ex: 08h45" class="input-pop w-full px-2.5 py-1 text-xs">
             </div>
             <div>
               <label class="block text-[9px] font-bold uppercase mb-0.5">Bus Retour</label>
-              <input type="text" x-model="saisieOrg.busRetour" placeholder="ex: 16h30" class="input-pop w-full px-2.5 py-1 text-xs">
+              <input type="text" inputmode="numeric" x-model="saisieOrg.busRetour" @input="saisieOrg.busRetour = formatTimeInput($event.target.value)" placeholder="ex: 16h30" class="input-pop w-full px-2.5 py-1 text-xs">
             </div>
           </div>
 
@@ -1520,6 +1508,18 @@
           setTimeout(() => { this.toast.show = false; }, 2500);
         },
 
+        // HEURES BUS AUTO FORMAT : XXhXX
+        formatTimeInput(val) {
+          if (!val) return '';
+          let cleaned = val.replace(/\D/g, '').slice(0, 4);
+          if (cleaned.length >= 3) {
+            return cleaned.slice(0, 2) + 'h' + cleaned.slice(2);
+          } else if (cleaned.length === 2) {
+            return cleaned + 'h';
+          }
+          return cleaned;
+        },
+
         nettoyerCreneauxPasses() {
           const aujourdhui = this.todayDateISO;
           this.planningGlobal.forEach(anim => {
@@ -1565,7 +1565,7 @@
 
         exportPDF() {
           if (!this.fiche.titre.trim()) {
-            this.showToast('Saisie un titre d\'activité d\'abord !');
+            this.showToast('Saisis un titre d\'activité d\'abord !');
             return;
           }
 
@@ -1588,21 +1588,27 @@
           }
 
           const element = document.getElementById('pdf-template');
-          element.style.display = 'block';
+          element.style.left = '0';
+          element.style.top = '0';
+          element.style.opacity = '0.01';
+          element.style.zIndex = '99999';
 
           const opt = {
-            margin: 10,
+            margin: [10, 10, 10, 10],
             filename: `Fiche_Activite_${this.fiche.titre.replace(/\s+/g, '_')}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
           };
 
           html2pdf().set(opt).from(element).save().then(() => {
-            element.style.display = 'none';
+            element.style.left = '-9999px';
+            element.style.opacity = '1';
             this.showToast('PDF généré avec succès ! 📄');
-          }).catch(() => {
-            element.style.display = 'none';
+          }).catch((err) => {
+            console.error(err);
+            element.style.left = '-9999px';
+            element.style.opacity = '1';
             this.showToast('Erreur lors de la création du PDF.');
           });
         },
@@ -1785,6 +1791,51 @@
           }
         },
 
+        getOrgDuJour() {
+          return this.organisations[this.dateAffichee] || null;
+        },
+
+        ouvrirModalOrg() {
+          this.saisieOrg = {
+            date: this.dateAffichee,
+            titre: '',
+            lieu: '',
+            busAller: '',
+            busRetour: '',
+            groupes: []
+          };
+          this.tempGroupe = { anim: '', enfants: '' };
+          this.showOrgModal = true;
+        },
+
+        sauvegarderOrg() {
+          if (!this.saisieOrg.titre.trim()) {
+            this.showToast('Indique un titre de sortie !');
+            return;
+          }
+          this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
+          this.showOrgModal = false;
+          this.showToast('Sortie programmée ! 🚌');
+        },
+
+        effacerOrgDuJour() {
+          if (confirm('Supprimer la sortie spéciale de ce jour ?')) {
+            delete this.organisations[this.dateAffichee];
+            this.showToast('Sortie supprimée.');
+          }
+        },
+
+        ajouterGroupeSortie() {
+          if (this.tempGroupe.anim.trim() !== '') {
+            this.saisieOrg.groupes.push({
+              id: Date.now() + Math.random(),
+              anim: this.tempGroupe.anim.trim(),
+              enfants: this.tempGroupe.enfants.trim()
+            });
+            this.tempGroupe = { anim: '', enfants: '' };
+          }
+        },
+
         getPlanningFiltre() {
           if (this.filtrePlanning === 'anim') {
             return this.planningGlobal;
@@ -1912,67 +1963,108 @@
 
         getListeCoursesAgregeeSemaine() {
           const gouters = this.getGoutersDeLaSemaine();
-          const cumule = {};
+          const map = {};
 
           gouters.forEach(g => {
-            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
-            if (recette) {
-              const nbGateaux = Math.ceil((g.nbEnfants || 8) / 8);
+            const recipe = this.recettesGouter.find(r => r.id === g.recetteId);
+            if (!recipe) return;
+            const ratio = (g.nbEnfants || 8) / 8;
 
-              recette.ingredients.forEach(ing => {
-                const key = `${ing.nom.toLowerCase().trim()}_${ing.unite.toLowerCase().trim()}`;
-                if (!cumule[key]) {
-                  cumule[key] = {
-                    key: key,
-                    nom: ing.nom,
-                    qte: 0,
-                    unite: ing.unite
-                  };
-                }
-                cumule[key].qte += (ing.qte * nbGateaux);
-              });
-            }
+            recipe.ingredients.forEach(ing => {
+              const key = `${ing.nom.toLowerCase().trim()}_${ing.unite}`;
+              const qteCalc = Math.round((ing.qte * ratio) * 10) / 10;
+              if (!map[key]) {
+                map[key] = { key: key, nom: ing.nom, qte: qteCalc, unite: ing.unite };
+              } else {
+                map[key].qte = Math.round((map[key].qte + qteCalc) * 10) / 10;
+              }
+            });
           });
 
-          return Object.values(cumule).map(item => ({
-            ...item,
-            qte: Number(item.qte.toFixed(2))
-          }));
+          return Object.values(map);
         },
 
         estAcheteCourseGouter(key) {
-          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
-          return !!this.coursesAchetesGouter[semaineKey];
+          return !!this.coursesAchetesGouter[key];
         },
 
         toggleAcheteCourseGouter(key) {
-          const semaineKey = `S${this.semaineActiveOffset}_${key}`;
-          this.coursesAchetesGouter[semaineKey] = !this.coursesAchetesGouter[semaineKey];
+          this.coursesAchetesGouter[key] = !this.coursesAchetesGouter[key];
         },
 
-        changerJour(deltaDays) {
+        getPlanningDuJour(p, dateKey) {
+          if (!p || !p.dates || !p.dates[dateKey]) {
+            return { matin: 'Libre', ageMatin: '-6 ans', aprem: 'Libre', ageAprem: '+6 ans' };
+          }
+          return p.dates[dateKey];
+        },
+
+        changerJour(delta) {
           const parts = this.dateAffichee.split('-');
           const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          d.setDate(d.getDate() + deltaDays);
+          d.setDate(d.getDate() + delta);
           this.dateAffichee = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
           this.nettoyerCreneauxPasses();
         },
 
-        formatDateLisible(dateStr) {
-          if (!dateStr) return '';
-          const parts = dateStr.split('-');
-          if (parts.length !== 3) return dateStr;
-          const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          const options = { weekday: 'long', day: 'numeric', month: 'long' };
-          const txt = d.toLocaleDateString('fr-FR', options);
-          return txt.charAt(0).toUpperCase() + txt.slice(1);
+        nouveauCreneauVierge() {
+          this.saisiePlanning = {
+            nom: '',
+            date: this.dateAffichee,
+            matin: '',
+            ageMatin: '-6 ans',
+            aprem: '',
+            ageAprem: '+6 ans'
+          };
+          this.showAddAnimModal = true;
         },
 
-        getPlanningDuJour(anim, dateKey) {
-          if (anim && anim.dates && anim.dates[dateKey]) {
-            return anim.dates[dateKey];
+        editerPlanningDuJour(anim) {
+          const pJour = this.getPlanningDuJour(anim, this.dateAffichee);
+          this.saisiePlanning = {
+            nom: anim.nom,
+            date: this.dateAffichee,
+            matin: pJour.matin === 'Libre' ? '' : pJour.matin,
+            ageMatin: pJour.ageMatin || '-6 ans',
+            aprem: pJour.aprem === 'Libre' ? '' : pJour.aprem,
+            ageAprem: pJour.ageAprem || '+6 ans'
+          };
+          this.showAddAnimModal = true;
+        },
+
+        validerPlanning() {
+          if (!this.saisiePlanning.nom.trim()) {
+            this.showToast("Indique le nom de l'animateur !");
+            return;
           }
-          return { matin: 'Libre / Repos', ageMatin: '-6 ans', aprem: 'Libre / Repos', ageAprem: '+6 ans' };
+
+          let anim = this.planningGlobal.find(a => a.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
+          if (!anim) {
+            anim = {
+              id: Date.now(),
+              nom: this.saisiePlanning.nom.trim(),
+              dates: {}
+            };
+            this.planningGlobal.push(anim);
+          }
+
+          if (!anim.dates) anim.dates = {};
+          anim.dates[this.saisiePlanning.date] = {
+            matin: this.saisiePlanning.matin.trim() || 'Libre',
+            ageMatin: this.saisiePlanning.ageMatin,
+            aprem: this.saisiePlanning.aprem.trim() || 'Libre',
+            ageAprem: this.saisiePlanning.ageAprem
+          };
+
+          this.showAddAnimModal = false;
+          this.showToast('Créneau enregistré ! 📅');
+        },
+
+        supprimerAnim(id) {
+          if (confirm("Supprimer cet animateur du planning ?")) {
+            this.planningGlobal = this.planningGlobal.filter(p => p.id !== id);
+            this.showToast("Animateur supprimé.");
+          }
         },
 
         ouvrirDetailAnim(anim) {
@@ -1985,14 +2077,13 @@
         },
 
         getDatesSemaineAnim() {
-          const lundiCourant = this.getLundiDeLaSemaine(new Date());
-          lundiCourant.setDate(lundiCourant.getDate() + (this.animSemaineOffset * 7));
-
-          const dates = [];
+          const lundi = this.getLundiDeLaSemaine(new Date());
+          lundi.setDate(lundi.getDate() + (this.animSemaineOffset * 7));
+          const list = [];
           for (let i = 0; i < 7; i++) {
-            dates.push(this.addDaysISO(lundiCourant, i));
+            list.push(this.addDaysISO(lundi, i));
           }
-          return dates;
+          return list;
         },
 
         getLibelleSemaineAnim() {
@@ -2008,104 +2099,13 @@
           this.animSelectionne = null;
         },
 
-        nouveauCreneauVierge() {
-          this.saisiePlanning = {
-            nom: '',
-            date: this.dateAffichee,
-            matin: '',
-            ageMatin: '-6 ans',
-            aprem: '',
-            ageAprem: '+6 ans'
-          };
-          this.showAddAnimModal = true;
-        },
-
-        editerPlanningDuJour(p) {
-          const pJour = this.getPlanningDuJour(p, this.dateAffichee);
-          this.saisiePlanning = {
-            nom: p.nom,
-            date: this.dateAffichee,
-            matin: pJour.matin || '',
-            ageMatin: pJour.ageMatin || '-6 ans',
-            aprem: pJour.aprem || '',
-            ageAprem: pJour.ageAprem || '+6 ans'
-          };
-          this.showAddAnimModal = true;
-        },
-
-        validerPlanning() {
-          if (!this.saisiePlanning.nom.trim() || !this.saisiePlanning.date) {
-            this.showToast('Spécifie l\'animateur et la date !');
-            return;
-          }
-
-          let anim = this.planningGlobal.find(a => a.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
-          if (!anim) {
-            anim = { id: Date.now(), nom: this.saisiePlanning.nom.trim(), dates: {} };
-            this.planningGlobal.push(anim);
-          }
-
-          if (!anim.dates) anim.dates = {};
-          anim.dates[this.saisiePlanning.date] = {
-            matin: this.saisiePlanning.matin.trim(),
-            ageMatin: this.saisiePlanning.ageMatin,
-            aprem: this.saisiePlanning.aprem.trim(),
-            ageAprem: this.saisiePlanning.ageAprem
-          };
-
-          this.showAddAnimModal = false;
-          this.showToast('Planning mis à jour ! 📅');
-        },
-
-        supprimerAnim(id) {
-          if (confirm('Supprimer cet animateur du planning ?')) {
-            this.planningGlobal = this.planningGlobal.filter(a => a.id !== id);
-            this.showToast('Animateur supprimé.');
-          }
-        },
-
-        ouvrirModalOrg() {
-          this.saisieOrg = {
-            date: this.dateAffichee,
-            titre: '',
-            lieu: '',
-            busAller: '',
-            busRetour: '',
-            groupes: []
-          };
-          this.showOrgModal = true;
-        },
-
-        ajouterGroupeSortie() {
-          if (this.tempGroupe.anim.trim() !== '') {
-            this.saisieOrg.groupes.push({
-              id: Date.now(),
-              anim: this.tempGroupe.anim.trim(),
-              enfants: this.tempGroupe.enfants.trim()
-            });
-            this.tempGroupe = { anim: '', enfants: '' };
-          }
-        },
-
-        sauvegarderOrg() {
-          if (!this.saisieOrg.titre.trim()) {
-            this.showToast('Indique un titre pour la sortie !');
-            return;
-          }
-          this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
-          this.showOrgModal = false;
-          this.showToast('Sortie programmée ! 🚌');
-        },
-
-        getOrgDuJour() {
-          return this.organisations[this.dateAffichee] || null;
-        },
-
-        effacerOrgDuJour() {
-          if (confirm('Supprimer cette sortie spéciale ?')) {
-            delete this.organisations[this.dateAffichee];
-            this.showToast('Sortie supprimée.');
-          }
+        formatDateLisible(dateStr) {
+          if (!dateStr) return '';
+          const parts = dateStr.split('-');
+          if (parts.length !== 3) return dateStr;
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          const options = { weekday: 'short', day: 'numeric', month: 'short' };
+          return d.toLocaleDateString('fr-FR', options);
         }
       };
     }
