@@ -620,11 +620,11 @@
       </div>
     </div>
 
-    <!-- TEMPLATE CACHÉ POUR EXPORT PDF (STYLE ET DA DE L'APPLICATION) -->
-    <div id="pdf-template" style="position: fixed; left: -9999px; top: 0; width: 700px; background: #FFB703; padding: 24px; font-family: 'Outfit', sans-serif; color: #2A385B; box-sizing: border-box; border-radius: 24px;">
+    <!-- TEMPLATE EXPORT PDF CORRECTEMENT MASQUÉ ET COMPATIBLE -->
+    <div id="pdf-template" style="position: absolute; top: -9999px; left: -9999px; width: 700px; background: #FFB703; padding: 24px; font-family: 'Outfit', sans-serif; color: #2A385B; box-sizing: border-box; border-radius: 24px;">
       <div style="background: rgba(255, 255, 255, 0.92); border-radius: 20px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
         
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(42, 56, 91, 0.1); padding-bottom: 14px; margin-bottom: 18px;">
+        <div style="display: flex; justify-style: space-between; align-items: center; border-bottom: 2px solid rgba(42, 56, 91, 0.1); padding-bottom: 14px; margin-bottom: 18px;">
           <div style="display: flex; align-items: center; gap: 12px;">
             <div style="width: 40px; height: 40px; background: #2A385B; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #FFF;">⚡</div>
             <div>
@@ -784,7 +784,6 @@
           <div class="space-y-1.5 pt-0.5">
             <label class="block text-[9px] font-bold uppercase">Ingrédients :</label>
             
-            <!-- AJOUT D'INGRÉDIENT EN LIGNE AVEC BOUTON + -->
             <div class="flex gap-1 items-center">
               <input type="text" x-model="tempIng.nom" placeholder="Nom" class="flex-1 min-w-0 input-pop px-2 py-1 text-xs">
               <input type="number" inputmode="decimal" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="w-16 input-pop px-1 py-1 text-xs text-center">
@@ -1034,7 +1033,7 @@
           <div class="text-center text-[11px] font-black uppercase tracking-wider" x-text="formatDateLisible(dateAffichee)"></div>
         </div>
 
-        <!-- ENCADRÉ SORTIE SPÉCIALE (LIEU EN SOUS-TITRE & BUS CÔTE À CÔTE) -->
+        <!-- ENCADRÉ SORTIE SPÉCIALE -->
         <template x-if="getOrgDuJour()">
           <div class="card-pop p-4 space-y-3 bg-white/95 text-gray-900 shadow-md border-2 border-rose-400/70 relative overflow-hidden">
             <div class="flex justify-between items-start border-b border-rose-100 pb-2">
@@ -1052,7 +1051,6 @@
               </button>
             </div>
 
-            <!-- BUS DÉPART ET BUS RETOUR CÔTE À CÔTE -->
             <div class="grid grid-cols-2 gap-2 text-xs">
               <div class="bg-indigo-50/60 p-2.5 rounded-xl border border-indigo-100/80 flex items-center gap-2">
                 <span class="text-base">🚏</span>
@@ -1186,7 +1184,6 @@
             <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Zoo" class="input-pop w-full px-2.5 py-1 text-xs">
           </div>
 
-          <!-- INPUTS CHRONO AVEC CLAVIER NUMÉRIQUE & FORMATAGE "00h00" -->
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="block text-[9px] font-bold uppercase mb-0.5">Bus Départ</label>
@@ -1228,7 +1225,7 @@
       </div>
     </div>
 
-    <!-- MODAL : DETAIL ANIMATEUR (NAVIGATION PAR SEMAINE) -->
+    <!-- MODAL : DETAIL ANIMATEUR -->
     <div x-show="animSelectionne !== null" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-planning max-h-[85vh] overflow-y-auto shadow-xl">
         
@@ -1245,7 +1242,6 @@
           <button type="button" @click="animSelectionne = null" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark text-base"></i></button>
         </div>
 
-        <!-- Navigation Semaine Animateur -->
         <div class="flex items-center justify-between card-item-pop px-3 py-1.5">
           <button type="button" @click="changerSemaineAnim(-1)" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-left text-xs"></i></button>
           <div class="text-center">
@@ -1254,7 +1250,6 @@
           <button type="button" @click="changerSemaineAnim(1)" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-right text-xs"></i></button>
         </div>
 
-        <!-- Vue Semaine -->
         <div class="space-y-2">
           <template x-for="dateKey in getDatesSemaineAnim()" :key="dateKey">
             <div class="card-item-pop p-2.5 space-y-1.5">
@@ -1359,6 +1354,15 @@
       const today = new Date();
       const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
+      const loadFromStorage = (key, fallback) => {
+        try {
+          const saved = localStorage.getItem('alshflow_' + key);
+          return saved ? JSON.parse(saved) : fallback;
+        } catch(e) {
+          return fallback;
+        }
+      };
+
       return {
         currentTab: 'hub', 
         subTabCourses: 'activites', 
@@ -1385,7 +1389,7 @@
         semaineActiveOffset: 0,
         animSemaineOffset: 0,
 
-        enfants: [
+        enfants: loadFromStorage('enfants', [
           {
             id: 1,
             nom: 'Dupont',
@@ -1409,7 +1413,7 @@
             pai: '',
             droitImage: false
           }
-        ],
+        ]),
 
         nouvelEnfant: {
           nom: '',
@@ -1424,7 +1428,7 @@
         nouvelleRecette: { nom: '', ingredients: [] },
         tempIng: { nom: '', qte: '', unite: 'g' },
 
-        recettesGouter: [
+        recettesGouter: loadFromStorage('recettesGouter', [
           {
             id: 'recette-chocolat',
             nom: 'Gâteau au Chocolat 🍫',
@@ -1447,7 +1451,7 @@
               { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }
             ]
           }
-        ],
+        ]),
 
         saisieGouter: {
           date: todayISO,
@@ -1456,48 +1460,46 @@
           nbEnfants: 32
         },
 
-        goutersPlanifies: [],
-        coursesAchetesGouter: {},
+        goutersPlanifies: loadFromStorage('goutersPlanifies', []),
+        coursesAchetesGouter: loadFromStorage('coursesAchetesGouter', {}),
 
         fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
         soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
-        registreSoins: [],
-        listeCourses: [],
+        registreSoins: loadFromStorage('registreSoins', []),
+        listeCourses: loadFromStorage('listeCourses', []),
         
         saisiePlanning: { nom: '', date: todayISO, matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' },
         
-        organisations: {},
+        organisations: loadFromStorage('organisations', {}),
         saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] },
         tempGroupe: { anim: '', enfants: '' },
         
-        planningGlobal: [],
+        planningGlobal: loadFromStorage('planningGlobal', [
+          {
+            id: 101,
+            nom: 'Sarah',
+            dates: {
+              [todayISO]: { matin: 'Jeux d\'expression', ageMatin: '-6 ans', aprem: 'Atelier Pâtisserie', ageAprem: '-6 ans' }
+            }
+          },
+          {
+            id: 102,
+            nom: 'Thomas',
+            dates: {
+              [todayISO]: { matin: 'Sport Co', ageMatin: '+6 ans', aprem: 'Grand Jeu Forêt', ageAprem: '+6 ans' }
+            }
+          }
+        ]),
 
         init() {
-          const lundi = this.getLundiDeLaSemaine(new Date());
-          const mardiStr = this.addDaysISO(lundi, 1);
-          const jeudiStr = this.addDaysISO(lundi, 3);
-
-          this.goutersPlanifies = [
-            { id: 'g1', date: mardiStr, recetteId: 'recette-chocolat', anim: 'Sarah', nbEnfants: 35 },
-            { id: 'g2', date: jeudiStr, recetteId: 'recette-pommes', anim: 'Thomas', nbEnfants: 24 }
-          ];
-
-          this.planningGlobal = [
-            {
-              id: 101,
-              nom: 'Sarah',
-              dates: {
-                [todayISO]: { matin: 'Jeux d\'expression', ageMatin: '-6 ans', aprem: 'Atelier Pâtisserie', ageAprem: '-6 ans' }
-              }
-            },
-            {
-              id: 102,
-              nom: 'Thomas',
-              dates: {
-                [todayISO]: { matin: 'Sport Co', ageMatin: '+6 ans', aprem: 'Grand Jeu Forêt', ageAprem: '+6 ans' }
-              }
-            }
-          ];
+          this.$watch('enfants', val => localStorage.setItem('alshflow_enfants', JSON.stringify(val)));
+          this.$watch('registreSoins', val => localStorage.setItem('alshflow_registreSoins', JSON.stringify(val)));
+          this.$watch('listeCourses', val => localStorage.setItem('alshflow_listeCourses', JSON.stringify(val)));
+          this.$watch('planningGlobal', val => localStorage.setItem('alshflow_planningGlobal', JSON.stringify(val)));
+          this.$watch('organisations', val => localStorage.setItem('alshflow_organisations', JSON.stringify(val)));
+          this.$watch('goutersPlanifies', val => localStorage.setItem('alshflow_goutersPlanifies', JSON.stringify(val)));
+          this.$watch('coursesAchetesGouter', val => localStorage.setItem('alshflow_coursesAchetesGouter', JSON.stringify(val)));
+          this.$watch('recettesGouter', val => localStorage.setItem('alshflow_recettesGouter', JSON.stringify(val)));
 
           this.nettoyerCreneauxPasses();
         },
@@ -1508,7 +1510,6 @@
           setTimeout(() => { this.toast.show = false; }, 2500);
         },
 
-        // HEURES BUS AUTO FORMAT : XXhXX
         formatTimeInput(val) {
           if (!val) return '';
           let cleaned = val.replace(/\D/g, '').slice(0, 4);
@@ -1518,6 +1519,12 @@
             return cleaned + 'h';
           }
           return cleaned;
+        },
+
+        formatDateLisible(dateStr) {
+          if (!dateStr) return '-';
+          const d = new Date(dateStr + 'T00:00:00');
+          return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
         },
 
         nettoyerCreneauxPasses() {
@@ -1588,10 +1595,13 @@
           }
 
           const element = document.getElementById('pdf-template');
-          element.style.left = '0';
-          element.style.top = '0';
-          element.style.opacity = '0.01';
+          
+          // Rendre l'élément visible de façon temporaire pour la capture canvas
+          element.style.position = 'fixed';
+          element.style.top = '10px';
+          element.style.left = '10px';
           element.style.zIndex = '99999';
+          element.style.opacity = '1';
 
           const opt = {
             margin: [10, 10, 10, 10],
@@ -1602,13 +1612,15 @@
           };
 
           html2pdf().set(opt).from(element).save().then(() => {
+            element.style.position = 'absolute';
+            element.style.top = '-9999px';
             element.style.left = '-9999px';
-            element.style.opacity = '1';
             this.showToast('PDF généré avec succès ! 📄');
           }).catch((err) => {
             console.error(err);
+            element.style.position = 'absolute';
+            element.style.top = '-9999px';
             element.style.left = '-9999px';
-            element.style.opacity = '1';
             this.showToast('Erreur lors de la création du PDF.');
           });
         },
@@ -1749,6 +1761,87 @@
           }
         },
 
+        // --- RECETTES & GOÛTERS ---
+        ajouterIngredierntRecette() {
+          if (this.tempIng.nom.trim() && this.tempIng.qte) {
+            this.nouvelleRecette.ingredients.push({
+              nom: this.tempIng.nom.trim(),
+              qte: this.tempIng.qte,
+              unite: this.tempIng.unite
+            });
+            this.tempIng.nom = '';
+            this.tempIng.qte = '';
+          }
+        },
+
+        enregistrerNouvelleRecette() {
+          if (!this.nouvelleRecette.nom.trim()) {
+            this.showToast('Veuillez entrer un nom de recette.');
+            return;
+          }
+          this.recettesGouter.push({
+            id: 'recette-' + Date.now(),
+            nom: this.nouvelleRecette.nom.trim(),
+            ingredients: [...this.nouvelleRecette.ingredients]
+          });
+          this.nouvelleRecette = { nom: '', ingredients: [] };
+          this.showAddRecetteModal = false;
+          this.showToast('Nouvelle recette enregistrée ! 🍰');
+        },
+
+        getNomRecette(id) {
+          const r = this.recettesGouter.find(rec => rec.id === id);
+          return r ? r.nom : 'Recette supprimée';
+        },
+
+        enregistrerGouterPlanifie() {
+          this.goutersPlanifies.push({
+            id: 'gouter-' + Date.now(),
+            date: this.saisieGouter.date,
+            recetteId: this.saisieGouter.recetteId,
+            anim: this.saisieGouter.anim,
+            nbEnfants: this.saisieGouter.nbEnfants
+          });
+          this.showPlanifModal = false;
+          this.showToast('Goûter planifié ! 🍪');
+        },
+
+        supprimerGouterPlanifie(id) {
+          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
+          this.showToast('Goûter supprimé du planning.');
+        },
+
+        getListeCoursesAgregeeSemaine() {
+          const gouters = this.getGoutersDeLaSemaine();
+          const cumuls = {};
+
+          gouters.forEach(g => {
+            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
+            if (!recette) return;
+            const ratio = g.nbEnfants / 8; // Base pour 8 enfants
+
+            recette.ingredients.forEach(ing => {
+              const key = `${ing.nom.toLowerCase()}_${ing.unite}`;
+              const totalQte = Math.ceil(ing.qte * ratio);
+              if (!cumuls[key]) {
+                cumuls[key] = { key, nom: ing.nom, qte: totalQte, unite: ing.unite };
+              } else {
+                cumuls[key].qte += totalQte;
+              }
+            });
+          });
+
+          return Object.values(cumuls);
+        },
+
+        estAcheteCourseGouter(key) {
+          return !!this.coursesAchetesGouter[key];
+        },
+
+        toggleAcheteCourseGouter(key) {
+          this.coursesAchetesGouter[key] = !this.coursesAchetesGouter[key];
+        },
+
         // --- COURSES DIRECTES ---
         addCourseDirecte() {
           if (this.nouvelleCourseNom.trim() !== '') {
@@ -1776,6 +1869,7 @@
         // --- PLANNING & ORGANISATIONS ---
         reinitialiserApp() {
           if (confirm("Réinitialiser TOUTES les données ?")) {
+            localStorage.clear();
             this.fiche = { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] };
             this.registreSoins = [];
             this.listeCourses = [];
@@ -1899,112 +1993,18 @@
                                      .sort((a,b) => a.date.localeCompare(b.date));
         },
 
-        getNomRecette(id) {
-          const r = this.recettesGouter.find(item => item.id === id);
-          return r ? r.nom : 'Recette inconnue';
-        },
-
-        ajouterIngredierntRecette() {
-          if (this.tempIng.nom.trim() !== '' && this.tempIng.qte > 0) {
-            this.nouvelleRecette.ingredients.push({
-              nom: this.tempIng.nom.trim(),
-              qte: this.tempIng.qte,
-              unite: this.tempIng.unite
-            });
-            this.tempIng = { nom: '', qte: '', unite: 'g' };
-          }
-        },
-
-        enregistrerNouvelleRecette() {
-          if (this.nouvelleRecette.nom.trim() === '') {
-            this.showToast('Indique le nom de la recette !');
-            return;
-          }
-          if (this.nouvelleRecette.ingredients.length === 0) {
-            this.showToast('Ajoute au moins 1 ingrédient.');
-            return;
-          }
-
-          const newId = 'recette-' + Date.now();
-          this.recettesGouter.push({
-            id: newId,
-            nom: this.nouvelleRecette.nom.trim(),
-            ingredients: JSON.parse(JSON.stringify(this.nouvelleRecette.ingredients))
-          });
-
-          this.saisieGouter.recetteId = newId;
-          this.nouvelleRecette = { nom: '', ingredients: [] };
-          this.showAddRecetteModal = false;
-          this.showToast('Recette ajoutée ! 🍰');
-        },
-
-        enregistrerGouterPlanifie() {
-          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) {
-            this.showToast('Choisis une date et une recette !');
-            return;
-          }
-
-          this.goutersPlanifies.push({
-            id: 'gouter-' + Date.now(),
-            date: this.saisieGouter.date,
-            recetteId: this.saisieGouter.recetteId,
-            anim: this.saisieGouter.anim.trim() || 'Animateur',
-            nbEnfants: this.saisieGouter.nbEnfants || 8
-          });
-
-          this.showPlanifModal = false;
-          this.showToast('Goûter planifié ! 🍪');
-        },
-
-        supprimerGouterPlanifie(id) {
-          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
-          this.showToast('Goûter supprimé !');
-        },
-
-        getListeCoursesAgregeeSemaine() {
-          const gouters = this.getGoutersDeLaSemaine();
-          const map = {};
-
-          gouters.forEach(g => {
-            const recipe = this.recettesGouter.find(r => r.id === g.recetteId);
-            if (!recipe) return;
-            const ratio = (g.nbEnfants || 8) / 8;
-
-            recipe.ingredients.forEach(ing => {
-              const key = `${ing.nom.toLowerCase().trim()}_${ing.unite}`;
-              const qteCalc = Math.round((ing.qte * ratio) * 10) / 10;
-              if (!map[key]) {
-                map[key] = { key: key, nom: ing.nom, qte: qteCalc, unite: ing.unite };
-              } else {
-                map[key].qte = Math.round((map[key].qte + qteCalc) * 10) / 10;
-              }
-            });
-          });
-
-          return Object.values(map);
-        },
-
-        estAcheteCourseGouter(key) {
-          return !!this.coursesAchetesGouter[key];
-        },
-
-        toggleAcheteCourseGouter(key) {
-          this.coursesAchetesGouter[key] = !this.coursesAchetesGouter[key];
-        },
-
-        getPlanningDuJour(p, dateKey) {
-          if (!p || !p.dates || !p.dates[dateKey]) {
-            return { matin: 'Libre', ageMatin: '-6 ans', aprem: 'Libre', ageAprem: '+6 ans' };
-          }
-          return p.dates[dateKey];
-        },
-
         changerJour(delta) {
-          const parts = this.dateAffichee.split('-');
-          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          const d = new Date(this.dateAffichee + 'T00:00:00');
           d.setDate(d.getDate() + delta);
           this.dateAffichee = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
           this.nettoyerCreneauxPasses();
+        },
+
+        getPlanningDuJour(anim, dateKey) {
+          if (anim && anim.dates && anim.dates[dateKey]) {
+            return anim.dates[dateKey];
+          }
+          return { matin: 'Libre / Repos', ageMatin: '-6 ans', aprem: 'Libre / Repos', ageAprem: '+6 ans' };
         },
 
         nouveauCreneauVierge() {
@@ -2024,9 +2024,9 @@
           this.saisiePlanning = {
             nom: anim.nom,
             date: this.dateAffichee,
-            matin: pJour.matin === 'Libre' ? '' : pJour.matin,
+            matin: pJour.matin === 'Libre / Repos' ? '' : pJour.matin,
             ageMatin: pJour.ageMatin || '-6 ans',
-            aprem: pJour.aprem === 'Libre' ? '' : pJour.aprem,
+            aprem: pJour.aprem === 'Libre / Repos' ? '' : pJour.aprem,
             ageAprem: pJour.ageAprem || '+6 ans'
           };
           this.showAddAnimModal = true;
@@ -2034,11 +2034,11 @@
 
         validerPlanning() {
           if (!this.saisiePlanning.nom.trim()) {
-            this.showToast("Indique le nom de l'animateur !");
+            this.showToast('Entre le prénom de l\'animateur !');
             return;
           }
 
-          let anim = this.planningGlobal.find(a => a.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
+          let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
           if (!anim) {
             anim = {
               id: Date.now(),
@@ -2050,20 +2050,20 @@
 
           if (!anim.dates) anim.dates = {};
           anim.dates[this.saisiePlanning.date] = {
-            matin: this.saisiePlanning.matin.trim() || 'Libre',
+            matin: this.saisiePlanning.matin.trim() || 'Libre / Repos',
             ageMatin: this.saisiePlanning.ageMatin,
-            aprem: this.saisiePlanning.aprem.trim() || 'Libre',
+            aprem: this.saisiePlanning.aprem.trim() || 'Libre / Repos',
             ageAprem: this.saisiePlanning.ageAprem
           };
 
           this.showAddAnimModal = false;
-          this.showToast('Créneau enregistré ! 📅');
+          this.showToast('Planning mis à jour ! 📅');
         },
 
         supprimerAnim(id) {
-          if (confirm("Supprimer cet animateur du planning ?")) {
+          if (confirm('Supprimer cet animateur du planning ?')) {
             this.planningGlobal = this.planningGlobal.filter(p => p.id !== id);
-            this.showToast("Animateur supprimé.");
+            this.showToast('Animateur supprimé.');
           }
         },
 
@@ -2077,13 +2077,14 @@
         },
 
         getDatesSemaineAnim() {
-          const lundi = this.getLundiDeLaSemaine(new Date());
-          lundi.setDate(lundi.getDate() + (this.animSemaineOffset * 7));
-          const list = [];
+          const lundiCourant = this.getLundiDeLaSemaine(new Date());
+          lundiCourant.setDate(lundiCourant.getDate() + (this.animSemaineOffset * 7));
+
+          const dates = [];
           for (let i = 0; i < 7; i++) {
-            list.push(this.addDaysISO(lundi, i));
+            dates.push(this.addDaysISO(lundiCourant, i));
           }
-          return list;
+          return dates;
         },
 
         getLibelleSemaineAnim() {
@@ -2097,17 +2098,9 @@
         allerADate(dateKey) {
           this.dateAffichee = dateKey;
           this.animSelectionne = null;
-        },
-
-        formatDateLisible(dateStr) {
-          if (!dateStr) return '';
-          const parts = dateStr.split('-');
-          if (parts.length !== 3) return dateStr;
-          const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          const options = { weekday: 'short', day: 'numeric', month: 'short' };
-          return d.toLocaleDateString('fr-FR', options);
+          this.nettoyerCreneauxPasses();
         }
-      };
+      }
     }
   </script>
 </body>
