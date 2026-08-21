@@ -686,7 +686,7 @@
             <textarea x-model="fiche.deroulement" placeholder="Explication des étapes du jeu..." class="input-pop w-full px-3 py-2 text-xs h-16 resize-none"></textarea>
           </div>
 
-          <!-- Matériel avec Clavier Numérique Natif Mobile -->
+          <!-- Matériel -->
           <div class="card-item-pop p-3 space-y-2.5">
             <div class="flex justify-between items-center">
               <span class="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
@@ -1096,7 +1096,7 @@
             <button type="button" @click="changerJour(-1)" class="opacity-60 hover:opacity-100 px-1.5 py-0.5"><i class="fa-solid fa-chevron-left text-xs"></i></button>
             
             <div class="flex items-center gap-1.5">
-              <input type="date" x-model="dateAffichee" @change="nettoyerCreneauxPasses()" class="bg-white text-[11px] font-black px-2 py-0.5 rounded-lg focus:outline-none cursor-pointer border border-black/5">
+              <input type="date" x-model="dateAffichee" class="bg-white text-[11px] font-black px-2 py-0.5 rounded-lg focus:outline-none cursor-pointer border border-black/5">
             </div>
 
             <button type="button" @click="changerJour(1)" class="opacity-60 hover:opacity-100 px-1.5 py-0.5"><i class="fa-solid fa-chevron-right text-xs"></i></button>
@@ -1271,11 +1271,6 @@
                     <p class="font-bold text-[11px] truncate" x-text="getPlanningDuJour(p, dateAffichee).aprem || '—'"></p>
                   </div>
 
-                  <div x-show="getPlanningDuJour(p, dateAffichee).heures" class="col-span-2 pt-1 text-[10px] font-black text-slate-700 flex items-center gap-1">
-                    <i class="fa-regular fa-clock text-xs opacity-60"></i>
-                    <span x-text="'Horaires : ' + getPlanningDuJour(p, dateAffichee).heures"></span>
-                  </div>
-
                 </div>
 
               </div>
@@ -1329,17 +1324,6 @@
             </div>
           </div>
 
-          <!-- HORAIRES -->
-          <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Horaires</label>
-            <input type="text" 
-                   inputmode="numeric" 
-                   x-model="creneauSaisi.heures" 
-                   @input="creneauSaisi.heures = formatHeureInput($event.target.value)"
-                   placeholder="ex: 0845 - 1715" 
-                   class="input-pop w-full px-2.5 py-1.5 text-xs font-bold">
-          </div>
-
           <div class="flex gap-2 pt-2 border-t border-black/5">
             <button type="button" @click="showModalAnim = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
             <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs font-bold">Enregistrer</button>
@@ -1371,239 +1355,237 @@
             <div>
               <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Bus Départ</label>
               <input type="text" 
-                     inputmode="numeric" 
                      x-model="saisieOrg.busAller" 
-                     @input="saisieOrg.busAller = formatHeureSingle($event.target.value)"
                      placeholder="ex: 08h30" 
                      class="input-pop w-full px-2 py-1.5 text-xs font-bold">
             </div>
             <div>
               <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Bus Retour</label>
               <input type="text" 
-                     inputmode="numeric" 
                      x-model="saisieOrg.busRetour" 
-                     @input="saisieOrg.busRetour = formatHeureSingle($event.target.value)"
-                     placeholder="ex: 17h15" 
+                     placeholder="ex: 16h45" 
                      class="input-pop w-full px-2 py-1.5 text-xs font-bold">
             </div>
           </div>
 
-          <div class="card-item-pop p-3 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <label class="text-[10px] font-bold uppercase tracking-wider">👥 Groupes d'enfants</label>
-              <button type="button" @click="ajouterGroupeOrgModal()" class="text-[9px] font-black btn-white px-2 py-0.5 rounded-full uppercase">
-                + Groupe
-              </button>
+          <!-- GROUPES DE SORTIE -->
+          <div class="card-item-pop p-3 space-y-2">
+            <div class="flex items-center justify-between border-b border-black/5 pb-1">
+              <span class="text-[10px] font-bold uppercase">👥 Groupes d'enfants</span>
+              <button type="button" @click="ajouterGroupeOrg()" class="btn-white text-[9px] px-2 py-0.5 rounded-full uppercase">+ Groupe</button>
             </div>
 
-            <template x-for="(g, idx) in saisieOrg.groupes" :key="idx">
-              <div class="space-y-1.5 pt-2 border-t border-black/5 first:border-0 first:pt-0">
+            <template x-for="(g, idx) in saisieOrg.groupes" :key="g.id">
+              <div class="space-y-1.5 pt-1.5 border-t border-black/5 first:border-0 first:pt-0">
                 <div class="flex items-center justify-between">
                   <span class="text-[9px] font-bold opacity-70" x-text="'Groupe ' + (idx + 1)"></span>
                   <button type="button" x-show="saisieOrg.groupes.length > 1" @click="saisieOrg.groupes.splice(idx, 1)" class="text-rose-600 hover:underline text-[9px] font-bold">
                     Supprimer
                   </button>
                 </div>
-                <input type="text" x-model="g.anim" placeholder="Nom de l'animateur référent" class="input-pop w-full px-2 py-1 text-xs font-bold">
-                <textarea x-model="g.enfants" placeholder="Liste des prénoms (séparés par des virgules ou retours à la ligne)" class="input-pop w-full px-2 py-1 text-xs h-12 resize-none"></textarea>
+
+                <div class="space-y-1">
+                  <input type="text" x-model="g.anim" placeholder="Animateur référent (ex: Thomas)" class="input-pop w-full px-2 py-1 text-xs font-bold">
+                  <textarea x-model="g.enfants" placeholder="Liste des enfants (séparés par virgule ou retour ligne)" class="input-pop w-full px-2 py-1 text-xs h-12 resize-none font-medium"></textarea>
+                </div>
               </div>
             </template>
           </div>
 
           <div class="flex gap-2 pt-2 border-t border-black/5">
             <button type="button" @click="showModalOrg = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
-            <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs font-bold">Enregistrer Sortie</button>
+            <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs font-bold">Valider Sortie</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- MODAL : ESPACE DIRECTEUR / PIN RESET -->
-    <div x-show="showModalDirecteur" x-transition class="fixed inset-0 z-[220] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
-      <div class="card-pop p-5 max-w-sm w-full space-y-3.5 bg-slate-900 text-white shadow-2xl">
-        <h3 class="font-poster text-base border-b border-white/10 pb-2 flex items-center justify-between">
-          <span>🔑 Réinitialisation Code PIN</span>
-          <button type="button" @click="showModalDirecteur = false" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
-        </h3>
-
-        <div class="space-y-3">
-          <p class="text-xs opacity-70">Saisissez le mot de passe directeur par défaut (<code>1234</code>) pour définir un nouveau PIN à 4 chiffres.</p>
-          
-          <div>
-            <label class="block text-[10px] font-bold uppercase mb-1">Mot de passe Directeur</label>
-            <input type="password" x-model="mdpDirecteurSaisi" placeholder="ex: 1234" class="input-pop w-full px-2.5 py-1.5 text-xs text-slate-900 font-bold">
-          </div>
-
-          <div>
-            <label class="block text-[10px] font-bold uppercase mb-1">Nouveau Code PIN (4 chiffres)</label>
-            <input type="number" inputmode="numeric" maxlength="4" x-model="nouveauPinSaisi" placeholder="ex: 0000" class="input-pop w-full px-2.5 py-1.5 text-xs text-slate-900 font-bold text-center">
-          </div>
+    <!-- MODAL : ESPACE DIRECTEUR -->
+    <div x-show="showModalDirecteur" x-transition class="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
+      <div class="card-pop p-5 max-w-xs w-full space-y-4 bg-slate-900 text-white border-white/10 shadow-2xl">
+        <div class="text-center space-y-1 border-b border-white/10 pb-3">
+          <h3 class="font-poster text-base font-black">Espace Directeur</h3>
+          <p class="text-[10px] opacity-60">Gestion et réinitialisation du code PIN</p>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-white/10">
-          <button type="button" @click="showModalDirecteur = false" class="btn-dark flex-1 py-1.5 rounded-full text-xs uppercase">Annuler</button>
-          <button type="button" @click="resetPinAvecMdp()" class="btn-white flex-1 py-1.5 rounded-full text-xs text-slate-900 font-bold">Réinitialiser</button>
-        </div>
+        <form @submit.prevent="reinitialiserPinDirecteur()" class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1 opacity-80">Mot de passe Directeur</label>
+            <input type="password" x-model="mdpDirecteurSaisi" placeholder="Entrez le mot de passe" class="input-pop w-full px-3 py-2 text-xs text-slate-900 font-bold" required>
+          </div>
+
+          <div class="flex gap-2 pt-2 border-t border-white/10">
+            <button type="button" @click="showModalDirecteur = false" class="btn-dark border border-white/20 flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
+            <button type="submit" class="bg-rose-600 hover:bg-rose-700 text-white font-bold flex-1 py-2 rounded-full text-xs uppercase shadow-md">
+              Déverrouiller
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
   </main>
 
-  <!-- ALPINE APP SCRIPT -->
+  <!-- JAVASCRIPT / ALPINE LOGIC -->
   <script>
     function alshApp() {
       return {
         currentTab: 'hub',
-        subTabCourses: 'activites',
         isOnline: navigator.onLine,
         isLocked: false,
-        pinDefaut: '1234',
         pinSaisi: '',
+        pinCorrect: '1234',
+        mdpDirecteurMaster: 'admin123',
         showModalDirecteur: false,
         mdpDirecteurSaisi: '',
-        nouveauPinSaisi: '',
 
         toast: { show: false, message: '' },
 
-        searchEnfant: '',
+        // FICHES SANITAIRES
+        enfants: [],
         filtreGroupeSanitaire: 'tous',
+        searchEnfant: '',
+        enfantSelectionne: null,
         showAddEnfantModal: false,
         isEditingEnfant: false,
-        enfantSelectionne: null,
-        nouvelEnfant: { id: null, prenom: '', nom: '', dateNaissance: '', aPAI: false, pai: '', droitImage: true, responsables: [{ nom: '', telephone: '' }] },
+        nouvelEnfant: {
+          id: null,
+          prenom: '',
+          nom: '',
+          dateNaissance: '',
+          responsables: [{ nom: '', telephone: '' }],
+          aPAI: false,
+          pai: '',
+          droitImage: true
+        },
 
-        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
+        // FICHE ACTIVITÉ
+        fiche: {
+          titre: '',
+          age: '-6 ans',
+          lieu: '',
+          objectif: '',
+          deroulement: '',
+          materiel: []
+        },
         newMatosNom: '',
         newMatosQte: 1,
 
+        // CAHIER DE SOINS
         soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
         registreSoins: [],
 
+        // GOÛTER
+        recettesGouter: [
+          {
+            id: 1,
+            nom: 'Gâteau Marbré',
+            ingredients: [
+              { nom: 'Farine', qte: 250, unite: 'g' },
+              { nom: 'Sucre', qte: 150, unite: 'g' },
+              { nom: 'Beurre', qte: 125, unite: 'g' },
+              { nom: 'Œufs', qte: 3, unite: 'pièce(s)' },
+              { nom: 'Chocolat en poudre', qte: 50, unite: 'g' }
+            ]
+          },
+          {
+            id: 2,
+            nom: 'Compote & Biscuits',
+            ingredients: [
+              { nom: 'Gourdes de compote', qte: 8, unite: 'pièce(s)' },
+              { nom: 'Sachets Biscuits', qte: 2, unite: 'sachet(s)' }
+            ]
+          }
+        ],
+        goutersPlanifies: [],
         semaineDecalage: 0,
         showAddRecetteModal: false,
         showPlanifModal: false,
-        recettesGouter: [],
         nouvelleRecette: { nom: '', ingredients: [] },
-        tempIng: { nom: '', qte: '', unite: 'g' },
-        saisieGouter: { date: new Date().toISOString().split('T')[0], recetteId: '', anim: '', nbEnfants: 30 },
-        goutersPlanifies: [],
+        tempIng: { nom: '', qte: 1, unite: 'g' },
+        saisieGouter: { date: new Date().toISOString().split('T')[0], recetteId: 1, anim: '', nbEnfants: 24 },
 
+        // COURSES & MATÉRIEL
+        subTabCourses: 'activites',
         listeCourses: [],
         nouvelleCourseNom: '',
         nouvelleCourseQte: 1,
         coursesGouterAchetes: {},
 
+        // PLANNING
         dateAffichee: new Date().toISOString().split('T')[0],
         filtrePlanning: 'anim',
-        showModalAnim: false,
-        creneauSaisi: { id: null, animNom: '', date: '', matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '-6 ans', heures: '' },
-        planningCreneaux: [],
-
-        showModalOrg: false,
-        saisieOrg: { id: null, date: '', titre: '', lieu: '', busAller: '', busRetour: '', groupes: [{ anim: '', enfants: '' }] },
-        sortiesOptionnelles: [],
-
+        planningGlobal: [],
         effectifsParJour: {},
+        sortiesSpeciales: {},
+        showModalAnim: false,
+        showModalOrg: false,
+        creneauSaisi: { animNom: '', date: '', matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '-6 ans' },
+        saisieOrg: { titre: '', lieu: '', busAller: '', busRetour: '', groupes: [{ id: 1, anim: '', enfants: '' }] },
 
         initApp() {
           window.addEventListener('online', () => this.isOnline = true);
           window.addEventListener('offline', () => this.isOnline = false);
 
-          this.chargerDonnees();
+          this.chargerDonneesLocales();
         },
 
-        showNotification(msg) {
+        showToast(msg) {
           this.toast.message = msg;
           this.toast.show = true;
           setTimeout(() => { this.toast.show = false; }, 3000);
         },
 
+        // --- VERROUILLAGE PIN ---
         saisirPinDigit(digit) {
           if (this.pinSaisi.length < 4) {
-            this.pinSaisi += digit.toString();
+            this.pinSaisi += digit;
             if (this.pinSaisi.length === 4) {
               setTimeout(() => this.validerPin(), 100);
             }
           }
         },
+
         effacerPinDigit() {
           this.pinSaisi = this.pinSaisi.slice(0, -1);
         },
+
         validerPin() {
-          const pinSaved = localStorage.getItem('alsh_pin') || this.pinDefaut;
-          if (this.pinSaisi === pinSaved) {
+          if (this.pinSaisi === this.pinCorrect) {
             this.isLocked = false;
             this.pinSaisi = '';
-            this.showNotification("Accès déverrouillé");
+            this.showToast("Déverrouillé !");
           } else {
-            this.showNotification("Code PIN incorrect");
+            alert("Code PIN incorrect.");
             this.pinSaisi = '';
           }
         },
-        resetPinAvecMdp() {
-          if (this.mdpDirecteurSaisi === '1234') {
-            if (this.nouveauPinSaisi && this.nouveauPinSaisi.length === 4) {
-              localStorage.setItem('alsh_pin', this.nouveauPinSaisi);
-              this.showNotification("Nouveau code PIN enregistré !");
-              this.showModalDirecteur = false;
-              this.isLocked = false;
-              this.mdpDirecteurSaisi = '';
-              this.nouveauPinSaisi = '';
-            } else {
-              alert("Le code PIN doit comporter 4 chiffres.");
-            }
+
+        reinitialiserPinDirecteur() {
+          if (this.mdpDirecteurSaisi === this.mdpDirecteurMaster) {
+            this.pinCorrect = '1234';
+            this.isLocked = false;
+            this.showModalDirecteur = false;
+            this.mdpDirecteurSaisi = '';
+            this.pinSaisi = '';
+            this.sauvegarderTout();
+            alert("Code PIN réinitialisé à '1234'.");
           } else {
             alert("Mot de passe directeur incorrect.");
           }
         },
 
-        chargerDonnees() {
-          const dataEnfants = localStorage.getItem('alsh_enfants');
-          this.enfants = dataEnfants ? JSON.parse(dataEnfants) : [
-            { id: 1, prenom: 'Lucas', nom: 'Bernard', dateNaissance: '2019-05-12', aPAI: true, pai: 'Allergie arachides', droitImage: true, responsables: [{ nom: 'Sophie Bernard', telephone: '0612345678' }] },
-            { id: 2, prenom: 'Emma', nom: 'Petit', dateNaissance: '2017-09-20', aPAI: false, pai: '', droitImage: false, responsables: [{ nom: 'Marc Petit', telephone: '0698765432' }] }
-          ];
-
-          const dataSoins = localStorage.getItem('alsh_soins');
-          this.registreSoins = dataSoins ? JSON.parse(dataSoins) : [];
-
-          const dataRecettes = localStorage.getItem('alsh_recettes');
-          this.recettesGouter = dataRecettes ? JSON.parse(dataRecettes) : [
-            { id: 1, nom: 'Gâteau Marbré', ingredients: [{ nom: 'Farine', qte: 250, unite: 'g' }, { nom: 'Sucre', qte: 150, unite: 'g' }, { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }] },
-            { id: 2, nom: 'Crêpes Party', ingredients: [{ nom: 'Farine', qte: 500, unite: 'g' }, { nom: 'Lait', qte: 1, unite: 'L' }, { nom: 'Œufs', qte: 6, unite: 'pièce(s)' }] }
-          ];
-
-          const dataGouters = localStorage.getItem('alsh_gouters');
-          this.goutersPlanifies = dataGouters ? JSON.parse(dataGouters) : [];
-
-          const dataCourses = localStorage.getItem('alsh_courses');
-          this.listeCourses = dataCourses ? JSON.parse(dataCourses) : [];
-
-          const dataCoursesGouter = localStorage.getItem('alsh_courses_gouter_status');
-          this.coursesGouterAchetes = dataCoursesGouter ? JSON.parse(dataCoursesGouter) : {};
-
-          const dataPlanning = localStorage.getItem('alsh_planning_creneaux');
-          this.planningCreneaux = dataPlanning ? JSON.parse(dataPlanning) : [];
-
-          const dataSorties = localStorage.getItem('alsh_sorties');
-          this.sortiesOptionnelles = dataSorties ? JSON.parse(dataSorties) : [];
-
-          const dataEffectifs = localStorage.getItem('alsh_effectifs');
-          this.effectifsParJour = dataEffectifs ? JSON.parse(dataEffectifs) : {};
-        },
-
-        sauvegarderDonnees(cle, val) {
-          localStorage.setItem(cle, JSON.stringify(val));
-        },
-
+        // --- FICHES SAN' ---
         getAgeEnfant(dateNaissance) {
           if (!dateNaissance) return 0;
           const birth = new Date(dateNaissance);
-          const today = new Date();
-          let age = today.getFullYear() - birth.getFullYear();
-          const m = today.getMonth() - birth.getMonth();
-          if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) { age--; }
-          return age;
+          const now = new Date();
+          let age = now.getFullYear() - birth.getFullYear();
+          const m = now.getMonth() - birth.getMonth();
+          if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) {
+            age--;
+          }
+          return age < 0 ? 0 : age;
         },
 
         formatDateLisible(dateStr) {
@@ -1613,20 +1595,28 @@
         },
 
         getEnfantsFiltres() {
-          return (this.enfants || []).filter(e => {
+          return this.enfants.filter(e => {
+            const matchQuery = (e.prenom + ' ' + e.nom).toLowerCase().includes(this.searchEnfant.toLowerCase());
             const age = this.getAgeEnfant(e.dateNaissance);
-            const matchGroupe = (this.filtreGroupeSanitaire === 'tous') ||
-                                (this.filtreGroupeSanitaire === '-6ans' && age < 6) ||
-                                (this.filtreGroupeSanitaire === '+6ans' && age >= 6);
-            const term = this.searchEnfant.toLowerCase();
-            const matchSearch = e.prenom.toLowerCase().includes(term) || e.nom.toLowerCase().includes(term);
-            return matchGroupe && matchSearch;
+            let matchGroupe = true;
+            if (this.filtreGroupeSanitaire === '-6ans') matchGroupe = age < 6;
+            if (this.filtreGroupeSanitaire === '+6ans') matchGroupe = age >= 6;
+            return matchQuery && matchGroupe;
           });
         },
 
         ouvrirModalAddEnfant() {
           this.isEditingEnfant = false;
-          this.nouvelEnfant = { id: Date.now(), prenom: '', nom: '', dateNaissance: '', aPAI: false, pai: '', droitImage: true, responsables: [{ nom: '', telephone: '' }] };
+          this.nouvelEnfant = {
+            id: Date.now(),
+            prenom: '',
+            nom: '',
+            dateNaissance: '',
+            responsables: [{ nom: '', telephone: '' }],
+            aPAI: false,
+            pai: '',
+            droitImage: true
+          };
           this.showAddEnfantModal = true;
         },
 
@@ -1635,16 +1625,17 @@
         },
 
         enregistrerEnfant() {
-          if (!this.isEditingEnfant) {
-            this.enfants.push({ ...this.nouvelEnfant });
+          if (this.isEditingEnfant) {
+            const index = this.enfants.findIndex(e => e.id === this.nouvelEnfant.id);
+            if (index !== -1) {
+              this.enfants[index] = JSON.parse(JSON.stringify(this.nouvelEnfant));
+            }
           } else {
-            const idx = this.enfants.findIndex(e => e.id === this.nouvelEnfant.id);
-            if (idx !== -1) { this.enfants[idx] = { ...this.nouvelEnfant }; }
+            this.enfants.push(JSON.parse(JSON.stringify(this.nouvelEnfant)));
           }
-          this.sauvegarderDonnees('alsh_enfants', this.enfants);
+          this.sauvegarderTout();
           this.showAddEnfantModal = false;
-          this.enfantSelectionne = null;
-          this.showNotification("Fiche Enfant enregistrée");
+          this.showToast(this.isEditingEnfant ? "Fiche mise à jour" : "Enfant ajouté !");
         },
 
         selectionnerEnfant(e) {
@@ -1659,23 +1650,27 @@
           this.nouvelEnfant.aPAI = !!this.nouvelEnfant.pai;
           this.isEditingEnfant = true;
           this.showAddEnfantModal = true;
+          this.enfantSelectionne = null;
         },
 
         supprimerEnfant(id) {
-          if (confirm("Supprimer cette fiche enfant ?")) {
+          if (confirm("Supprimer définitivement cette fiche ?")) {
             this.enfants = this.enfants.filter(e => e.id !== id);
-            this.sauvegarderDonnees('alsh_enfants', this.enfants);
             this.enfantSelectionne = null;
-            this.showNotification("Fiche Enfant supprimée");
+            this.sauvegarderTout();
+            this.showToast("Fiche supprimée.");
           }
         },
 
+        // --- FICHE D'ACTIVITÉ ---
         addMatos() {
-          if (this.newMatosNom.trim()) {
-            this.fiche.materiel.push({ nom: this.newMatosNom.trim(), qte: this.newMatosQte || 1 });
-            this.newMatosNom = '';
-            this.newMatosQte = 1;
-          }
+          if (!this.newMatosNom.trim()) return;
+          this.fiche.materiel.push({
+            nom: this.newMatosNom.trim(),
+            qte: this.newMatosQte || 1
+          });
+          this.newMatosNom = '';
+          this.newMatosQte = 1;
         },
 
         removeMatos(index) {
@@ -1683,128 +1678,248 @@
         },
 
         submitFiche() {
-          if (!this.fiche.titre.trim()) return;
-          this.fiche.materiel.forEach(m => {
-            this.listeCourses.push({
-              id: Date.now() + Math.random(),
-              nom: m.nom,
-              qte: m.qte,
-              activite: this.fiche.titre,
-              achete: false
+          if (this.fiche.materiel.length > 0) {
+            this.fiche.materiel.forEach(m => {
+              this.listeCourses.push({
+                id: Date.now() + Math.random(),
+                nom: m.nom,
+                qte: m.qte,
+                activite: this.fiche.titre || 'Activité',
+                achete: false
+              });
             });
-          });
-          this.sauvegarderDonnees('alsh_courses', this.listeCourses);
-          this.showNotification("Activité validée & Matériel envoyé en courses !");
+            this.sauvegarderTout();
+            this.showToast("Matériel envoyé dans Courses !");
+          } else {
+            this.showToast("Fiche enregistrée !");
+          }
         },
 
         exportPDFDirect() {
-          alert("Génération PDF Fiche d'Activité en cours...");
+          const content = `
+            <div style="font-family: Arial; padding: 20px;">
+              <h2>Fiche d'Activité : ${this.fiche.titre || 'Sans titre'}</h2>
+              <p><strong>Tranche d'âge :</strong> ${this.fiche.age}</p>
+              <p><strong>Lieu :</strong> ${this.fiche.lieu || 'Non précisé'}</p>
+              <p><strong>Objectif :</strong> ${this.fiche.objectif || 'Non précisé'}</p>
+              <hr>
+              <h3>Déroulement</h3>
+              <p>${this.fiche.deroulement || 'Aucun déroulement renseigné.'}</p>
+              <hr>
+              <h3>Matériel</h3>
+              <ul>
+                ${this.fiche.materiel.map(m => `<li>${m.nom} (Qté: ${m.qte})</li>`).join('')}
+              </ul>
+            </div>
+          `;
+          const opt = {
+            margin: 10,
+            filename: `fiche_activite_${Date.now()}.pdf`,
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
+          html2pdf().set(opt).from(content).save();
         },
 
+        // --- CAHIER DE SOINS ---
         submitSoin() {
-          if (!this.soin.enfant || !this.soin.incident) return;
-          const nSoin = {
+          const now = new Date();
+          const heureStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+          this.registreSoins.unshift({
             id: Date.now(),
-            heure: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+            heure: heureStr,
+            date: now.toISOString().split('T')[0],
             enfant: this.soin.enfant,
             incident: this.soin.incident,
             action: this.soin.action,
             prevenirFamille: this.soin.prevenirFamille
-          };
-          this.registreSoins.unshift(nSoin);
-          this.sauvegarderDonnees('alsh_soins', this.registreSoins);
+          });
           this.soin = { enfant: '', incident: '', action: '', prevenirFamille: false };
-          this.showNotification("Soin enregistré au registre");
+          this.sauvegarderTout();
+          this.showToast("Soin enregistré !");
         },
 
         deleteSoin(id) {
-          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-          this.sauvegarderDonnees('alsh_soins', this.registreSoins);
+          if (confirm("Supprimer cet enregistrement de soin ?")) {
+            this.registreSoins = this.registreSoins.filter(s => s.id !== id);
+            this.sauvegarderTout();
+            this.showToast("Soin supprimé.");
+          }
         },
 
         exporterSoinsCSV() {
-          let csv = "Heure;Enfant;Incident;Soin;Prevenir Famille\n";
+          let csv = "Heure;Date;Enfant;Incident;Action;Avertir Famille\n";
           this.registreSoins.forEach(s => {
-            csv += `"${s.heure}";"${s.enfant}";"${s.incident}";"${s.action}";"${s.prevenirFamille ? 'OUI' : 'NON'}"\n`;
+            csv += `"${s.heure}";"${s.date}";"${s.enfant}";"${s.incident}";"${s.action}";"${s.prevenirFamille ? 'OUI' : 'NON'}"\n`;
           });
           const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
           const link = document.createElement("a");
           link.href = URL.createObjectURL(blob);
-          link.download = `registre_soins_${new Date().toISOString().split('T')[0]}.csv`;
+          link.download = `registre_soins_${Date.now()}.csv`;
           link.click();
         },
 
         exporterSoinsPDF() {
-          alert("Export PDF du cahier de soins...");
+          const content = `
+            <div style="font-family: Arial; padding: 20px;">
+              <h2>Registre des Soins</h2>
+              <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #f0f0f0;">
+                    <th>Heure/Date</th>
+                    <th>Enfant</th>
+                    <th>Incident</th>
+                    <th>Action</th>
+                    <th>Avertir Parents</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${this.registreSoins.map(s => `
+                    <tr>
+                      <td>${s.heure} (${s.date})</td>
+                      <td><b>${s.enfant}</b></td>
+                      <td>${s.incident}</td>
+                      <td>${s.action || '-'}</td>
+                      <td>${s.prevenirFamille ? 'OUI 🔔' : 'Non'}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          `;
+          const opt = {
+            margin: 10,
+            filename: `registre_soins_${Date.now()}.pdf`,
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+          };
+          html2pdf().set(opt).from(content).save();
         },
 
-        getLibelleSemaine() {
-          const now = new Date();
-          now.setDate(now.getDate() + (this.semaineDecalage * 7));
-          return "Semaine du " + now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-        },
-
+        // --- GOÛTER ---
         changerSemaine(delta) {
           this.semaineDecalage += delta;
         },
 
-        ajouterIngredierntRecette() {
-          if (this.tempIng.nom && this.tempIng.qte) {
-            this.nouvelleRecette.ingredients.push({ ...this.tempIng });
-            this.tempIng = { nom: '', qte: '', unite: 'g' };
+        getDatesSemaine() {
+          const now = new Date();
+          now.setDate(now.getDate() + (this.semaineDecalage * 7));
+          const day = now.getDay();
+          const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+          const monday = new Date(now.setDate(diff));
+
+          const dates = [];
+          for (let i = 0; i < 7; i++) {
+            const next = new Date(monday);
+            next.setDate(monday.getDate() + i);
+            dates.push(next.toISOString().split('T')[0]);
           }
+          return dates;
         },
 
-        enregistrerNouvelleRecette() {
-          if (this.nouvelleRecette.nom) {
-            const nR = { id: Date.now(), ...this.nouvelleRecette };
-            this.recettesGouter.push(nR);
-            this.sauvegarderDonnees('alsh_recettes', this.recettesGouter);
-            this.nouvelleRecette = { nom: '', ingredients: [] };
-            this.showAddRecetteModal = false;
-            this.showNotification("Recette ajoutée");
-          }
-        },
-
-        enregistrerGouterPlanifie() {
-          if (this.saisieGouter.recetteId && this.saisieGouter.date) {
-            this.goutersPlanifies.push({ id: Date.now(), ...this.saisieGouter });
-            this.sauvegarderDonnees('alsh_gouters', this.goutersPlanifies);
-            this.showPlanifModal = false;
-            this.showNotification("Goûter planifié !");
-          }
+        getLibelleSemaine() {
+          const dates = this.getDatesSemaine();
+          const d1 = new Date(dates[0]);
+          const d2 = new Date(dates[6]);
+          return `Semaine du ${d1.getDate()}/${d1.getMonth()+1} au ${d2.getDate()}/${d2.getMonth()+1}`;
         },
 
         getGoutersDeLaSemaine() {
-          return this.goutersPlanifies;
+          const datesSemaine = this.getDatesSemaine();
+          return this.goutersPlanifies.filter(g => datesSemaine.includes(g.date));
         },
 
         getNomRecette(id) {
-          const r = this.recettesGouter.find(x => x.id == id);
-          return r ? r.nom : 'Recette Inconnue';
+          const r = this.recettesGouter.find(item => item.id === parseInt(id));
+          return r ? r.nom : 'Recette personnalisée';
+        },
+
+        ajouterIngredierntRecette() {
+          if (!this.tempIng.nom.trim()) return;
+          this.nouvelleRecette.ingredients.push({ ...this.tempIng });
+          this.tempIng.nom = '';
+          this.tempIng.qte = 1;
+        },
+
+        enregistrerNouvelleRecette() {
+          if (!this.nouvelleRecette.nom.trim()) return;
+          this.recettesGouter.push({
+            id: Date.now(),
+            nom: this.nouvelleRecette.nom,
+            ingredients: [...this.nouvelleRecette.ingredients]
+          });
+          this.nouvelleRecette = { nom: '', ingredients: [] };
+          this.showAddRecetteModal = false;
+          this.sauvegarderTout();
+          this.showToast("Recette ajoutée !");
+        },
+
+        enregistrerGouterPlanifie() {
+          this.goutersPlanifies.push({
+            id: Date.now(),
+            ...this.saisieGouter
+          });
+          this.showPlanifModal = false;
+          this.sauvegarderTout();
+          this.showToast("Goûter planifié !");
         },
 
         supprimerGouterPlanifie(id) {
           this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
-          this.sauvegarderDonnees('alsh_gouters', this.goutersPlanifies);
+          this.sauvegarderTout();
+          this.showToast("Goûter supprimé.");
+        },
+
+        // --- COURSES ---
+        addCourseDirecte() {
+          if (!this.nouvelleCourseNom.trim()) return;
+          this.listeCourses.push({
+            id: Date.now(),
+            nom: this.nouvelleCourseNom.trim(),
+            qte: this.nouvelleCourseQte || 1,
+            activite: 'Achat Direct',
+            achete: false
+          });
+          this.nouvelleCourseNom = '';
+          this.nouvelleCourseQte = 1;
+          this.sauvegarderTout();
+        },
+
+        deleteCourse(id) {
+          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
+          this.sauvegarderTout();
+        },
+
+        viderAchetes() {
+          this.listeCourses = this.listeCourses.filter(c => !c.achete);
+          this.sauvegarderTout();
+          this.showToast("Liste nettoyée.");
         },
 
         getListeCoursesAgregeeSemaine() {
-          const items = {};
-          this.goutersPlanifies.forEach(g => {
-            const r = this.recettesGouter.find(x => x.id == g.recetteId);
-            if (r) {
-              const coeff = (g.nbEnfants || 1) / 8;
+          const gouters = this.getGoutersDeLaSemaine();
+          const agrege = {};
+
+          gouters.forEach(g => {
+            const r = this.recettesGouter.find(rec => rec.id === parseInt(g.recetteId));
+            if (r && r.ingredients) {
+              const ratio = (g.nbEnfants || 8) / 8;
               r.ingredients.forEach(ing => {
-                const key = ing.nom.toLowerCase() + '_' + ing.unite;
-                if (!items[key]) {
-                  items[key] = { key, nom: ing.nom, qte: 0, unite: ing.unite };
+                const key = `${ing.nom.toLowerCase().trim()}_${ing.unite}`;
+                if (!agrege[key]) {
+                  agrege[key] = {
+                    key: key,
+                    nom: ing.nom,
+                    unite: ing.unite,
+                    qte: 0
+                  };
                 }
-                items[key].qte += Math.round(ing.qte * coeff);
+                agrege[key].qte += Math.ceil(ing.qte * ratio);
               });
             }
           });
-          return Object.values(items);
+
+          return Object.values(agrege);
         },
 
         estAcheteCourseGouter(key) {
@@ -1813,210 +1928,193 @@
 
         toggleAcheteCourseGouter(key) {
           this.coursesGouterAchetes[key] = !this.coursesGouterAchetes[key];
-          this.sauvegarderDonnees('alsh_courses_gouter_status', this.coursesGouterAchetes);
+          this.sauvegarderTout();
         },
 
-        addCourseDirecte() {
-          if (this.nouvelleCourseNom) {
-            this.listeCourses.push({
-              id: Date.now(),
-              nom: this.nouvelleCourseNom,
-              qte: this.nouvelleCourseQte || 1,
-              activite: 'Achat Manuel',
-              achete: false
-            });
-            this.sauvegarderDonnees('alsh_courses', this.listeCourses);
-            this.nouvelleCourseNom = '';
-            this.nouvelleCourseQte = 1;
-          }
-        },
-
-        deleteCourse(id) {
-          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
-          this.sauvegarderDonnees('alsh_courses', this.listeCourses);
-        },
-
-        viderAchetes() {
-          this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.sauvegarderDonnees('alsh_courses', this.listeCourses);
-        },
-
+        // --- PLANNING ---
         changerJour(delta) {
           const d = new Date(this.dateAffichee);
           d.setDate(d.getDate() + delta);
           this.dateAffichee = d.toISOString().split('T')[0];
         },
 
-        nettoyerCreneauxPasses() {},
-
-        getEffectifDuJour(date) {
-          if (!this.effectifsParJour[date]) {
-            this.effectifsParJour[date] = { matinMoins6: 0, matinPlus6: 0, midiMoins6: 0, midiPlus6: 0, soirMoins6: 0, soirPlus6: 0 };
+        getEffectifDuJour(dateStr) {
+          if (!this.effectifsParJour[dateStr]) {
+            this.effectifsParJour[dateStr] = {
+              matinMoins6: 0, matinPlus6: 0,
+              midiMoins6: 0, midiPlus6: 0,
+              soirMoins6: 0, soirPlus6: 0
+            };
           }
-          return this.effectifsParJour[date];
+          return this.effectifsParJour[dateStr];
         },
 
-        nouveauCreneauVierge() {
-          this.creneauSaisi = { id: null, animNom: '', date: this.dateAffichee, matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '-6 ans', heures: '' };
-          this.showModalAnim = true;
-        },
-
-        enregistrerCreneau() {
-          if (!this.creneauSaisi.animNom.trim()) return;
-
-          const nNom = this.creneauSaisi.animNom.trim();
-
-          if (this.creneauSaisi.id) {
-            const idx = this.planningCreneaux.findIndex(c => c.id === this.creneauSaisi.id);
-            if (idx !== -1) {
-              this.planningCreneaux[idx] = { ...this.creneauSaisi, animNom: nNom };
-            }
-          } else {
-            this.planningCreneaux.push({
-              ...this.creneauSaisi,
-              id: Date.now(),
-              animNom: nNom
-            });
-          }
-
-          this.sauvegarderDonnees('alsh_planning_creneaux', this.planningCreneaux);
-          this.showModalAnim = false;
-          this.showNotification("Créneau enregistré !");
-        },
-
-        getPlanningFiltre() {
-          const duJour = this.planningCreneaux.filter(c => c.date === this.dateAffichee);
-          const groupesByAnim = {};
-
-          duJour.forEach(c => {
-            const key = c.animNom.trim().toLowerCase();
-            if (!groupesByAnim[key]) {
-              groupesByAnim[key] = {
-                id: c.id,
-                nom: c.animNom.trim(),
-                creneaux: []
-              };
-            }
-            groupesByAnim[key].creneaux.push(c);
-          });
-
-          return Object.values(groupesByAnim);
-        },
-
-        getPlanningDuJour(p, date) {
-          if (!p || !p.creneaux || p.creneaux.length === 0) {
-            return { matin: '—', ageMatin: '-6 ans', aprem: '—', ageAprem: '-6 ans', heures: '' };
-          }
-
-          const matins = p.creneaux.map(c => c.matin).filter(Boolean).join(' / ');
-          const aprems = p.creneaux.map(c => c.aprem).filter(Boolean).join(' / ');
-          const heures = p.creneaux.map(c => c.heures).filter(Boolean).join(' | ');
-
-          const first = p.creneaux[0];
-
-          return {
-            matin: matins || '—',
-            ageMatin: first.ageMatin || '-6 ans',
-            aprem: aprems || '—',
-            ageAprem: first.ageAprem || '-6 ans',
-            heures: heures || ''
-          };
-        },
-
-        editerPlanningDuJour(p) {
-          const creneau = p.creneaux[0];
-          this.creneauSaisi = JSON.parse(JSON.stringify(creneau));
-          this.showModalAnim = true;
-        },
-
-        supprimerAnimParNom(nomAnim) {
-          if (confirm(`Supprimer tous les créneaux de ${nomAnim} pour cette journée ?`)) {
-            const term = nomAnim.trim().toLowerCase();
-            this.planningCreneaux = this.planningCreneaux.filter(c => !(c.date === this.dateAffichee && c.animNom.trim().toLowerCase() === term));
-            this.sauvegarderDonnees('alsh_planning_creneaux', this.planningCreneaux);
-            this.showNotification("Créneaux supprimés");
-          }
-        },
-
-        formatHeureInput(val) {
-          if (!val) return '';
-          let cleaned = val.replace(/[^0-9]/g, '');
-          if (cleaned.length > 8) cleaned = cleaned.substring(0, 8);
-
-          if (cleaned.length <= 4) {
-            if (cleaned.length === 4) {
-              return cleaned.substring(0, 2) + 'h' + cleaned.substring(2, 4);
-            }
-            return cleaned;
-          } else {
-            const h1 = cleaned.substring(0, 2) + 'h' + cleaned.substring(2, 4);
-            const h2 = cleaned.length >= 8 
-              ? cleaned.substring(4, 6) + 'h' + cleaned.substring(6, 8) 
-              : cleaned.substring(4);
-            return h1 + ' - ' + h2;
-          }
-        },
-
-        formatHeureSingle(val) {
-          if (!val) return '';
-          let cleaned = val.replace(/[^0-9]/g, '');
-          if (cleaned.length > 4) cleaned = cleaned.substring(0, 4);
-          if (cleaned.length === 4) {
-            return cleaned.substring(0, 2) + 'h' + cleaned.substring(2, 4);
-          }
-          return cleaned;
+        getOrgDuJour() {
+          return this.sortiesSpeciales[this.dateAffichee] || null;
         },
 
         ouvrirModalOrg() {
-          const ex = this.getOrgDuJour();
-          if (ex) {
-            this.saisieOrg = JSON.parse(JSON.stringify(ex));
+          const exist = this.getOrgDuJour();
+          if (exist) {
+            this.saisieOrg = JSON.parse(JSON.stringify(exist));
           } else {
-            this.saisieOrg = { id: Date.now(), date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [{ anim: '', enfants: '' }] };
+            this.saisieOrg = {
+              titre: '',
+              lieu: '',
+              busAller: '',
+              busRetour: '',
+              groupes: [{ id: 1, anim: '', enfants: '' }]
+            };
           }
           this.showModalOrg = true;
         },
 
-        ajouterGroupeOrgModal() {
-          this.saisieOrg.groupes.push({ anim: '', enfants: '' });
+        ajouterGroupeOrg() {
+          this.saisieOrg.groupes.push({
+            id: Date.now(),
+            anim: '',
+            enfants: ''
+          });
         },
 
         enregistrerOrgDuJour() {
-          this.saisieOrg.date = this.dateAffichee;
-          const idx = this.sortiesOptionnelles.findIndex(s => s.date === this.dateAffichee);
-          if (idx !== -1) {
-            this.sortiesOptionnelles[idx] = { ...this.saisieOrg };
-          } else {
-            this.sortiesOptionnelles.push({ ...this.saisieOrg });
-          }
-          this.sauvegarderDonnees('alsh_sorties', this.sortiesOptionnelles);
+          this.sortiesSpeciales[this.dateAffichee] = JSON.parse(JSON.stringify(this.saisieOrg));
           this.showModalOrg = false;
-          this.showNotification("Sortie enregistrée");
-        },
-
-        getOrgDuJour() {
-          return this.sortiesOptionnelles.find(s => s.date === this.dateAffichee);
+          this.sauvegarderTout();
+          this.showToast("Sortie enregistrée !");
         },
 
         effacerOrgDuJour() {
-          if (confirm("Supprimer la sortie spéciale du jour ?")) {
-            this.sortiesOptionnelles = this.sortiesOptionnelles.filter(s => s.date !== this.dateAffichee);
-            this.sauvegarderDonnees('alsh_sorties', this.sortiesOptionnelles);
+          if (confirm("Supprimer la sortie spéciale de cette journée ?")) {
+            delete this.sortiesSpeciales[this.dateAffichee];
+            this.sauvegarderTout();
+            this.showToast("Sortie supprimée.");
           }
         },
 
         parseEnfantsList(str) {
           if (!str) return [];
-          return str.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+          return str.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
+        },
+
+        getPlanningDuJour(p, dateStr) {
+          if (p.planning && p.planning[dateStr]) {
+            return p.planning[dateStr];
+          }
+          return { matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '-6 ans' };
+        },
+
+        getPlanningFiltre() {
+          return this.planningGlobal.filter(p => {
+            if (this.filtrePlanning === 'anim') return true;
+            const pJour = this.getPlanningDuJour(p, this.dateAffichee);
+            return pJour.ageMatin === this.filtrePlanning || pJour.ageAprem === this.filtrePlanning;
+          });
         },
 
         filtrerParAge(age) {
           if (age) this.filtrePlanning = age;
         },
 
+        nouveauCreneauVierge() {
+          this.creneauSaisi = {
+            animNom: '',
+            date: this.dateAffichee,
+            matin: '',
+            ageMatin: '-6 ans',
+            aprem: '',
+            ageAprem: '-6 ans'
+          };
+          this.showModalAnim = true;
+        },
+
+        editerPlanningDuJour(p) {
+          const pJour = this.getPlanningDuJour(p, this.dateAffichee);
+          this.creneauSaisi = {
+            animNom: p.nom,
+            date: this.dateAffichee,
+            matin: pJour.matin || '',
+            ageMatin: pJour.ageMatin || '-6 ans',
+            aprem: pJour.aprem || '',
+            ageAprem: pJour.ageAprem || '-6 ans'
+          };
+          this.showModalAnim = true;
+        },
+
+        enregistrerCreneau() {
+          const nomClean = this.creneauSaisi.animNom.trim();
+          if (!nomClean) return;
+
+          let anim = this.planningGlobal.find(p => p.nom.toLowerCase() === nomClean.toLowerCase());
+          if (!anim) {
+            anim = { id: Date.now(), nom: nomClean, planning: {} };
+            this.planningGlobal.push(anim);
+          }
+
+          if (!anim.planning) anim.planning = {};
+          anim.planning[this.creneauSaisi.date] = {
+            matin: this.creneauSaisi.matin,
+            ageMatin: this.creneauSaisi.ageMatin,
+            aprem: this.creneauSaisi.aprem,
+            ageAprem: this.creneauSaisi.ageAprem
+          };
+
+          this.showModalAnim = false;
+          this.sauvegarderTout();
+          this.showToast("Planning enregistré !");
+        },
+
+        supprimerAnimParNom(nom) {
+          if (confirm(`Supprimer complètement l'animateur ${nom} et ses créneaux ?`)) {
+            this.planningGlobal = this.planningGlobal.filter(p => p.nom.toLowerCase() !== nom.toLowerCase());
+            this.sauvegarderTout();
+            this.showToast("Animateur supprimé.");
+          }
+        },
+
+        // --- SAUVEGARDE LOCALE (LOCALSTORAGE) ---
+        sauvegarderTout() {
+          const data = {
+            pinCorrect: this.pinCorrect,
+            enfants: this.enfants,
+            fiche: this.fiche,
+            registreSoins: this.registreSoins,
+            recettesGouter: this.recettesGouter,
+            goutersPlanifies: this.goutersPlanifies,
+            listeCourses: this.listeCourses,
+            coursesGouterAchetes: this.coursesGouterAchetes,
+            planningGlobal: this.planningGlobal,
+            effectifsParJour: this.effectifsParJour,
+            sortiesSpeciales: this.sortiesSpeciales
+          };
+          localStorage.setItem('alshflow_data_v2', JSON.stringify(data));
+        },
+
+        chargerDonneesLocales() {
+          const saved = localStorage.getItem('alshflow_data_v2');
+          if (saved) {
+            try {
+              const d = JSON.parse(saved);
+              if (d.pinCorrect) this.pinCorrect = d.pinCorrect;
+              if (d.enfants) this.enfants = d.enfants;
+              if (d.fiche) this.fiche = d.fiche;
+              if (d.registreSoins) this.registreSoins = d.registreSoins;
+              if (d.recettesGouter) this.recettesGouter = d.recettesGouter;
+              if (d.goutersPlanifies) this.goutersPlanifies = d.goutersPlanifies;
+              if (d.listeCourses) this.listeCourses = d.listeCourses;
+              if (d.coursesGouterAchetes) this.coursesGouterAchetes = d.coursesGouterAchetes;
+              if (d.planningGlobal) this.planningGlobal = d.planningGlobal;
+              if (d.effectifsParJour) this.effectifsParJour = d.effectifsParJour;
+              if (d.sortiesSpeciales) this.sortiesSpeciales = d.sortiesSpeciales;
+            } catch (e) {
+              console.error("Erreur de chargement des données", e);
+            }
+          }
+        },
+
         reinitialiserApp() {
-          if (confirm("Réinitialiser toutes les données locales ?")) {
-            localStorage.clear();
+          if (confirm("Réinitialiser l'application et effacer toutes les données locales ?")) {
+            localStorage.removeItem('alshflow_data_v2');
             location.reload();
           }
         }
