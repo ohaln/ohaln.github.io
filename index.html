@@ -42,49 +42,73 @@
     body {
       font-family: 'Outfit', sans-serif;
       min-height: 100vh; min-height: 100dvh;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      transition: background-color 0.4s ease, color 0.4s ease;
     }
     .font-poster { font-family: 'Syne', sans-serif; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1.05; }
     
+    /* ANIMATIONS CSS GLOBALES */
+    .animate-fade-in {
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .animate-pop-in {
+      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
     .card-pop {
-      background-color: rgba(255, 255, 255, 0.85);
+      background-color: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(0, 0, 0, 0.05);
       border-radius: var(--radius-lg);
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .hub-tile {
       position: relative; border-radius: 24px;
       border: 1px solid rgba(0, 0, 0, 0.04);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
       display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
     }
-    .hub-tile:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06); }
-    .hub-tile:active { transform: translateY(1px); }
-    .card-item-pop { background-color: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: var(--radius-md); }
+    .hub-tile:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08); }
+    .hub-tile:active { transform: translateY(1px) scale(0.98); }
+    
+    .card-item-pop { 
+      background-color: rgba(255, 255, 255, 0.75); 
+      border: 1px solid rgba(0, 0, 0, 0.05); 
+      border-radius: var(--radius-md);
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    .card-item-pop:hover { background-color: rgba(255, 255, 255, 0.95); }
     
     .input-pop {
       background-color: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: var(--radius-md); font-weight: 600; transition: all 0.2s ease; max-width: 100%;
     }
-    .input-pop:focus { outline: none; border-color: currentColor; box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05); }
-    input[type="date"] { appearance: none; -webkit-appearance: none; min-height: 38px; }
+    .input-pop:focus { outline: none; border-color: currentColor; box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
+    input[type="date"], input[type="time"] { appearance: none; -webkit-appearance: none; min-height: 38px; }
 
     .btn-white {
       background-color: #FFFFFF; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
-      transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
       white-space: nowrap; border: 1px solid rgba(0, 0, 0, 0.06); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
-    .btn-white:hover { background-color: #FAFAFA; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06); }
-    .btn-white:active { transform: scale(0.98); }
+    .btn-white:hover { background-color: #FAFAFA; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); }
+    .btn-white:active { transform: scale(0.96); }
 
     .btn-dark {
       background-color: #1E1E24; color: #FFFFFF !important; font-weight: 700;
-      transition: transform 0.1s ease, background-color 0.2s ease; white-space: nowrap; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease; white-space: nowrap; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
-    .btn-dark:hover { background-color: #2D2D35; }
-    .btn-dark:active { transform: scale(0.98); }
+    .btn-dark:hover { background-color: #2D2D35; transform: translateY(-1px); }
+    .btn-dark:active { transform: scale(0.96); }
 
     .theme-hub { background-color: var(--hub-bg); color: var(--hub-text); }
     .theme-sanitaire { background-color: var(--sanitaire-bg); color: var(--sanitaire-text); }
@@ -101,9 +125,16 @@
       :class="'theme-' + currentTab">
 
   <!-- ECRAN DE VERROUILLAGE PIN (RGPD) -->
-  <div x-show="isLocked" class="fixed inset-0 z-[200] bg-slate-900 text-white flex flex-col items-center justify-center p-4">
-    <div class="max-w-xs w-full text-center space-y-6">
-      <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto text-2xl">🔒</div>
+  <div x-show="isLocked" 
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="opacity-0 scale-105"
+       x-transition:enter-end="opacity-100 scale-100"
+       x-transition:leave="transition ease-in duration-200"
+       x-transition:leave-start="opacity-100 scale-100"
+       x-transition:leave-end="opacity-0 scale-95"
+       class="fixed inset-0 z-[200] bg-slate-900 text-white flex flex-col items-center justify-center p-4">
+    <div class="max-w-xs w-full text-center space-y-6 animate-pop-in">
+      <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">🔒</div>
       <div>
         <h2 class="font-poster text-xl font-black">ALSHFlow Sécurisé</h2>
         <p class="text-xs text-slate-400 mt-1">Saisissez votre code PIN (Défaut : 1234)</p>
@@ -111,17 +142,17 @@
 
       <div class="flex justify-center gap-2">
         <template x-for="i in 4" :key="i">
-          <div class="w-4 h-4 rounded-full border-2 border-white/50" :class="pinInput.length >= i ? 'bg-white' : ''"></div>
+          <div class="w-4 h-4 rounded-full border-2 border-white/50 transition-all duration-200" :class="pinInput.length >= i ? 'bg-white scale-110' : ''"></div>
         </template>
       </div>
 
       <div class="grid grid-cols-3 gap-3 max-w-[200px] mx-auto">
         <template x-for="num in [1,2,3,4,5,6,7,8,9]" :key="num">
-          <button type="button" @click="appendPin(num)" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full font-bold text-lg transition-colors" x-text="num"></button>
+          <button type="button" @click="appendPin(num)" class="w-12 h-12 bg-white/10 hover:bg-white/20 active:scale-95 rounded-full font-bold text-lg transition-all" x-text="num"></button>
         </template>
-        <button type="button" @click="clearPin()" class="w-12 h-12 bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 rounded-full font-bold text-xs">C</button>
-        <button type="button" @click="appendPin(0)" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full font-bold text-lg">0</button>
-        <button type="button" @click="checkPin()" class="w-12 h-12 bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-300 rounded-full font-bold text-xs">OK</button>
+        <button type="button" @click="clearPin()" class="w-12 h-12 bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 active:scale-95 rounded-full font-bold text-xs transition-all">C</button>
+        <button type="button" @click="appendPin(0)" class="w-12 h-12 bg-white/10 hover:bg-white/20 active:scale-95 rounded-full font-bold text-lg transition-all">0</button>
+        <button type="button" @click="checkPin()" class="w-12 h-12 bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-300 active:scale-95 rounded-full font-bold text-xs transition-all">OK</button>
       </div>
     </div>
   </div>
@@ -129,7 +160,7 @@
   <!-- HEADER BRANDING -->
   <header class="max-w-5xl mx-auto w-full px-4 pt-3 pb-2 flex items-center justify-between shrink-0 h-[60px]">
     <div class="flex items-center gap-2.5 cursor-pointer group" @click="currentTab = 'hub'">
-      <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-lg font-black shadow-sm border border-black/5">⚡</div>
+      <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-lg font-black shadow-sm border border-black/5 group-hover:scale-105 transition-transform">⚡</div>
       <div>
         <h1 class="font-poster text-base md:text-lg font-black leading-none">ALSH<span class="opacity-60">FLOW</span></h1>
         <p class="text-[9px] font-bold uppercase tracking-widest opacity-60 leading-tight">Les 3 z'ailes</p>
@@ -137,9 +168,10 @@
     </div>
     
     <div class="flex items-center gap-2">
-      <div x-show="!isOnline" class="bg-amber-500 text-white text-[9px] font-black px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+      <div x-show="!isOnline" class="bg-amber-500 text-white text-[9px] font-black px-2 py-1 rounded-full flex items-center gap-1 shadow-sm animate-pulse">
         <span>📡</span> HORS-LIGNE
       </div>
+      <button type="button" @click="showPassModal = true" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full" title="Changer le MDP (Directeur)">🔑</button>
       <button type="button" @click="isLocked = true" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full" title="Verrouiller (RGPD)">🔒</button>
       <button x-show="currentTab !== 'hub'" type="button" @click="currentTab = 'hub'" class="btn-white text-[11px] px-3.5 py-1.5 rounded-full flex items-center gap-1.5">
         <i class="fa-solid fa-house"></i> <span class="hidden sm:inline">Hub</span>
@@ -152,17 +184,17 @@
 
   <!-- TOAST NOTIFICATION -->
   <div x-show="toast.show" 
-       x-transition:enter="transition ease-out duration-200"
+       x-transition:enter="transition ease-out duration-300"
        x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
        x-transition:enter-end="opacity-100 scale-100"
-       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave="transition ease-in duration-200"
        x-transition:leave-start="opacity-100 scale-100"
        x-transition:leave-end="opacity-0 scale-95"
-       class="fixed top-4 right-4 left-4 z-[100] max-w-md mx-auto bg-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-black/5"
+       class="fixed top-4 right-4 left-4 z-[300] max-w-md mx-auto bg-white p-3.5 rounded-2xl shadow-2xl flex items-center justify-between border border-black/5"
        style="display: none;">
-    <div class="flex items-center space-x-2">
+    <div class="flex items-center space-x-2.5">
       <i class="fa-solid fa-circle-check text-base text-emerald-500"></i>
-      <span class="text-xs font-bold uppercase tracking-wide" x-text="toast.message"></span>
+      <span class="text-xs font-bold uppercase tracking-wide text-slate-800" x-text="toast.message"></span>
     </div>
     <button type="button" @click="toast.show = false" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark text-sm"></i></button>
   </div>
@@ -171,14 +203,14 @@
 
     <!-- ==================== 0. HUB PRINCIPAL ==================== -->
     <div x-show="currentTab === 'hub'" 
-         x-transition:enter="transition ease-out duration-150" 
+         x-transition:enter="transition ease-out duration-250" 
          x-transition:enter-start="opacity-0 scale-95" 
          x-transition:enter-end="opacity-100 scale-100" 
          class="w-full flex-1 flex flex-col justify-between h-[calc(100dvh-70px)] max-h-[calc(100dvh-70px)] py-2 gap-2 overflow-hidden">
       
       <div class="grid grid-cols-2 grid-rows-3 gap-3 sm:gap-4 w-full flex-1 h-full min-h-0">
         <button type="button" @click="currentTab = 'sanitaire'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #A8E6CF; color: #1D2A44;">
-          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🩺</span></div>
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">🩺</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black leading-tight">Fiches<br>san'</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
@@ -186,7 +218,7 @@
         </button>
 
         <button type="button" @click="currentTab = 'fiche'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #FFB703; color: #2A385B;">
-          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🎨</span></div>
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">🎨</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Activité</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
@@ -194,7 +226,7 @@
         </button>
 
         <button type="button" @click="currentTab = 'soins'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #FFD1DC; color: #E63946;">
-          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🩹</span></div>
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">🩹</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Soins</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
@@ -202,7 +234,7 @@
         </button>
 
         <button type="button" @click="currentTab = 'gouter'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #FF9F1C; color: #4A2810;">
-          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🍪</span></div>
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">🍪</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Goûter</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
@@ -210,7 +242,7 @@
         </button>
 
         <button type="button" @click="currentTab = 'courses'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #B7E4C7; color: #1B4332;">
-          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">🛍️</span></div>
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">🛍️</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Courses</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
@@ -218,7 +250,7 @@
         </button>
 
         <button type="button" @click="currentTab = 'planning'" class="hub-tile p-4 sm:p-5 text-left group" style="background-color: #4CC9F0; color: #3A0CA3;">
-          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl">📅</span></div>
+          <div class="flex items-center justify-between"><span class="text-3xl sm:text-4xl group-hover:scale-110 transition-transform">📅</span></div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Planning</h3>
             <i class="fa-solid fa-arrow-right text-xs sm:text-sm opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all ml-1 shrink-0"></i>
@@ -228,7 +260,7 @@
     </div>
 
     <!-- ==================== 1. ONGLET : FICHES SAN' ==================== -->
-    <div x-show="currentTab === 'sanitaire'" x-transition class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         <div class="flex items-center justify-between border-b border-black/5 pb-3 gap-2">
           <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2 truncate">🩺 Fiches San'</h2>
@@ -237,9 +269,9 @@
 
         <div class="space-y-2">
           <div class="flex gap-1.5">
-            <button type="button" @click="filtreGroupeSanitaire = 'tous'" :class="filtreGroupeSanitaire === 'tous' ? 'btn-white shadow-sm' : 'bg-white/40 opacity-80 font-bold'" class="flex-1 py-1.5 rounded-xl text-xs uppercase">Tous</button>
-            <button type="button" @click="filtreGroupeSanitaire = '-6ans'" :class="filtreGroupeSanitaire === '-6ans' ? 'bg-emerald-500 text-white font-bold' : 'bg-emerald-100/60 text-emerald-900 font-bold opacity-80'" class="flex-1 py-1.5 rounded-xl text-xs uppercase">🌱 -6 ans</button>
-            <button type="button" @click="filtreGroupeSanitaire = '+6ans'" :class="filtreGroupeSanitaire === '+6ans' ? 'bg-indigo-600 text-white font-bold' : 'bg-indigo-100/60 text-indigo-900 font-bold opacity-80'" class="flex-1 py-1.5 rounded-xl text-xs uppercase">⚡ +6 ans</button>
+            <button type="button" @click="filtreGroupeSanitaire = 'tous'" :class="filtreGroupeSanitaire === 'tous' ? 'btn-white shadow-sm' : 'bg-white/40 opacity-80 font-bold'" class="flex-1 py-1.5 rounded-xl text-xs uppercase transition-all">Tous</button>
+            <button type="button" @click="filtreGroupeSanitaire = '-6ans'" :class="filtreGroupeSanitaire === '-6ans' ? 'bg-emerald-500 text-white font-bold' : 'bg-emerald-100/60 text-emerald-900 font-bold opacity-80'" class="flex-1 py-1.5 rounded-xl text-xs uppercase transition-all">🌱 -6 ans</button>
+            <button type="button" @click="filtreGroupeSanitaire = '+6ans'" :class="filtreGroupeSanitaire === '+6ans' ? 'bg-indigo-600 text-white font-bold' : 'bg-indigo-100/60 text-indigo-900 font-bold opacity-80'" class="flex-1 py-1.5 rounded-xl text-xs uppercase transition-all">⚡ +6 ans</button>
           </div>
           <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
@@ -253,7 +285,7 @@
           </template>
 
           <template x-for="e in getEnfantsFiltres()" :key="e.id">
-            <div @click="selectionnerEnfant(e)" class="card-item-pop p-3 flex items-center justify-between cursor-pointer hover:bg-white/90">
+            <div @click="selectionnerEnfant(e)" class="card-item-pop p-3 flex items-center justify-between cursor-pointer hover:scale-[1.01] transition-transform">
               <div class="space-y-0.5 overflow-hidden pr-2">
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <h4 class="font-bold text-xs md:text-sm truncate" x-text="e.prenom + ' ' + e.nom"></h4>
@@ -279,7 +311,10 @@
     </div>
 
     <!-- MODAL : AJOUTER / MODIFIER UN ENFANT -->
-    <div x-show="showAddEnfantModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
+    <div x-show="showAddEnfantModal" 
+         x-transition:enter="transition ease-out duration-250" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-sanitaire max-h-[90vh] overflow-y-auto shadow-xl">
         <h3 class="font-poster text-sm sm:text-base border-b border-black/5 pb-2" x-text="isEditingEnfant ? '✏️ Modifier Fiche San' : '👶 Ajouter Fiche San'"></h3>
         <form @submit.prevent="enregistrerEnfant()" class="space-y-3">
@@ -335,7 +370,10 @@
     </div>
 
     <!-- MODAL : FICHE SAN' DÉTAILLÉE -->
-    <div x-show="enfantSelectionne !== null" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
+    <div x-show="enfantSelectionne !== null" 
+         x-transition:enter="transition ease-out duration-250" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-sanitaire max-h-[85vh] overflow-y-auto shadow-xl">
         <div class="flex justify-between items-center border-b border-black/5 pb-2.5">
           <div class="flex items-center space-x-2.5 overflow-hidden">
@@ -379,7 +417,7 @@
     </div>
 
     <!-- ==================== 2. ONGLET : FICHE D'ACTIVITÉ ==================== -->
-    <div x-show="currentTab === 'fiche'" x-transition class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
           <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">🎨 Fiche d'Activité</h2>
@@ -420,7 +458,7 @@
             </div>
             <ul class="space-y-1 pt-1">
               <template x-for="(item, index) in fiche.materiel" :key="index">
-                <li class="flex items-center justify-between text-xs bg-white/80 px-2.5 py-1.5 rounded-lg border border-black/5">
+                <li class="flex items-center justify-between text-xs bg-white/80 px-2.5 py-1.5 rounded-lg border border-black/5 animate-fade-in">
                   <span class="font-bold truncate pr-2" x-text="item.nom + ' — Qté : ' + item.qte"></span>
                   <button type="button" @click="removeMatos(index)" class="opacity-50 hover:opacity-100 shrink-0"><i class="fa-solid fa-xmark text-xs"></i></button>
                 </li>
@@ -473,7 +511,7 @@
     </div>
 
     <!-- ==================== 3. ONGLET : CAHIER DE SOINS ==================== -->
-    <div x-show="currentTab === 'soins'" x-transition class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
           <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">🩹 Cahier de Soins</h2>
@@ -506,7 +544,7 @@
         <h3 class="text-xs font-bold uppercase opacity-80">📋 Registre des soins</h3>
         <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
           <template x-for="item in registreSoins" :key="item.id">
-            <div class="card-item-pop p-3.5 space-y-2 border-l-4 border-rose-500 bg-white/90">
+            <div class="card-item-pop p-3.5 space-y-2 border-l-4 border-rose-500 bg-white/90 animate-fade-in">
               <div class="flex items-center justify-between border-b border-black/5 pb-2">
                 <div class="flex items-center gap-2 overflow-hidden pr-2">
                   <span class="text-xs font-black bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md" x-text="item.heure + ' (' + formatDateLisible(item.date) + ')'"></span>
@@ -531,37 +569,118 @@
     </div>
 
     <!-- ==================== 4. ONGLET : GOÛTER ==================== -->
-    <div x-show="currentTab === 'gouter'" x-transition class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
           <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-1.5">🍪 Goûter</h2>
           <div class="flex gap-1.5">
-            <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="btn-dark text-[11px] px-2.5 py-1.5 rounded-full uppercase">+ Recette</button>
+            <button type="button" @click="showAddRecetteModal = true" class="btn-dark text-[11px] px-2.5 py-1.5 rounded-full uppercase">+ Recette</button>
             <button type="button" @click="showPlanifModal = true" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full">Planifier</button>
           </div>
         </div>
 
-        <div class="space-y-2.5">
-          <template x-for="g in goutersPlanifies" :key="g.id">
-            <div class="card-item-pop p-3 flex justify-between items-center">
-              <div>
-                <span class="text-[9px] font-black bg-white px-1.5 py-0.2 rounded-full border border-black/5" x-text="formatDateLisible(g.date)"></span>
-                <h4 class="text-xs font-bold mt-1" x-text="getNomRecette(g.recetteId) + ' (' + g.nbEnfants + ' enfants)'"></h4>
+        <!-- LISTE DES RECETTES DISPONIBLES -->
+        <div>
+          <h3 class="text-xs font-bold uppercase opacity-80 mb-2">📖 Recettes enregistrées</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <template x-if="recettesGouter.length === 0">
+              <p class="text-xs opacity-60 col-span-full">Aucune recette pour le moment. Cliquez sur "+ Recette" pour en ajouter.</p>
+            </template>
+            <template x-for="r in recettesGouter" :key="r.id">
+              <div class="card-item-pop p-2.5 flex items-center justify-between animate-fade-in">
+                <span class="text-xs font-bold truncate pr-2" x-text="r.nom"></span>
+                <button type="button" @click="supprimerRecette(r.id)" class="opacity-40 hover:opacity-100 text-rose-700 text-xs"><i class="fa-solid fa-trash"></i></button>
               </div>
-              <button type="button" @click="supprimerGouterPlanifie(g.id)" class="opacity-40 hover:opacity-100 p-1"><i class="fa-solid fa-trash text-xs"></i></button>
-            </div>
-          </template>
+            </template>
+          </div>
+        </div>
+
+        <hr class="border-black/5 my-2">
+
+        <!-- PLANIFICATION GOÛTERS -->
+        <div>
+          <h3 class="text-xs font-bold uppercase opacity-80 mb-2">📅 Goûters planifiés</h3>
+          <div class="space-y-2.5">
+            <template x-if="goutersPlanifies.length === 0">
+              <p class="text-xs opacity-60">Aucun goûter planifié pour le moment.</p>
+            </template>
+            <template x-for="g in goutersPlanifies" :key="g.id">
+              <div class="card-item-pop p-3 flex justify-between items-center animate-fade-in">
+                <div>
+                  <span class="text-[9px] font-black bg-white px-1.5 py-0.5 rounded-full border border-black/5" x-text="formatDateLisible(g.date)"></span>
+                  <h4 class="text-xs font-bold mt-1" x-text="getNomRecette(g.recetteId) + ' (' + g.nbEnfants + ' enfants)'"></h4>
+                </div>
+                <button type="button" @click="supprimerGouterPlanifie(g.id)" class="opacity-40 hover:opacity-100 p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+              </div>
+            </template>
+          </div>
         </div>
       </div>
     </div>
 
+    <!-- MODAL : AJOUTER UNE RECETTE -->
+    <div x-show="showAddRecetteModal" 
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
+      <div class="card-pop p-5 max-w-sm w-full space-y-3 theme-gouter shadow-xl">
+        <h3 class="font-poster text-sm sm:text-base border-b border-black/5 pb-2">➕ Ajouter une recette</h3>
+        <form @submit.prevent="ajouterRecette()" class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Nom de la recette</label>
+            <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: gâteau au chocolat, compote..." class="input-pop w-full px-3 py-2 text-xs" required>
+          </div>
+          <div class="flex gap-2 pt-2">
+            <button type="button" @click="showAddRecetteModal = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
+            <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs">Ajouter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL : PLANIFIER GOÛTER -->
+    <div x-show="showPlanifModal" 
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
+      <div class="card-pop p-5 max-w-sm w-full space-y-3 theme-gouter shadow-xl">
+        <h3 class="font-poster text-sm sm:text-base border-b border-black/5 pb-2">📅 Planifier un goûter</h3>
+        <form @submit.prevent="planifierGouter()" class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Date</label>
+            <input type="date" x-model="nouveauGouterPlanifie.date" class="input-pop w-full px-3 py-2 text-xs" required>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Recette</label>
+            <select x-model="nouveauGouterPlanifie.recetteId" class="input-pop w-full px-3 py-2 text-xs font-bold" required>
+              <option value="">Sélectionner une recette...</option>
+              <template x-for="r in recettesGouter" :key="r.id">
+                <option :value="r.id" x-text="r.nom"></option>
+              </template>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Nombre d'enfants</label>
+            <input type="number" x-model="nouveauGouterPlanifie.nbEnfants" placeholder="ex: 30" class="input-pop w-full px-3 py-2 text-xs" min="1" required>
+          </div>
+          <div class="flex gap-2 pt-2">
+            <button type="button" @click="showPlanifModal = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
+            <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs">Planifier</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- ==================== 5. ONGLET : COURSES ==================== -->
-    <div x-show="currentTab === 'courses'" x-transition class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         <h2 class="font-poster text-sm sm:text-base md:text-lg font-black border-b border-black/5 pb-3">🛍️ Courses & Matériel</h2>
         <div class="space-y-1.5">
+          <template x-if="listeCourses.length === 0">
+            <p class="text-xs opacity-60">La liste de courses est vide pour le moment.</p>
+          </template>
           <template x-for="item in listeCourses" :key="item.id">
-            <div class="card-item-pop p-2.5 flex items-center justify-between" :class="item.achete ? 'opacity-40 line-through' : ''">
+            <div class="card-item-pop p-2.5 flex items-center justify-between animate-fade-in" :class="item.achete ? 'opacity-40 line-through' : ''">
               <div class="flex items-center space-x-2.5">
                 <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-emerald-600">
                 <span class="text-xs font-bold" x-text="item.nom + ' (Qté: ' + item.qte + ')'"></span>
@@ -574,10 +693,98 @@
     </div>
 
     <!-- ==================== 6. ONGLET : PLANNING ==================== -->
-    <div x-show="currentTab === 'planning'" x-transition class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
-        <h2 class="font-poster text-sm sm:text-base md:text-lg font-black border-b border-black/5 pb-3">📅 Planning</h2>
-        <p class="text-xs font-bold opacity-70">Consultez le planning récapitulatif directement sur le terrain.</p>
+        <div class="flex items-center justify-between border-b border-black/5 pb-3">
+          <h2 class="font-poster text-sm sm:text-base md:text-lg font-black">📅 Planning</h2>
+          <button type="button" @click="showAddPlanningModal = true" class="btn-white text-[11px] px-3 py-1.5 rounded-full">+ Événement</button>
+        </div>
+
+        <div class="space-y-2.5">
+          <template x-if="planning.length === 0">
+            <p class="text-xs opacity-60">Aucun événement planifié pour le moment.</p>
+          </template>
+          <template x-for="p in planning" :key="p.id">
+            <div class="card-item-pop p-3 flex justify-between items-center animate-fade-in">
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[9px] font-black bg-white px-2 py-0.5 rounded-full border border-black/5" x-text="formatDateLisible(p.date) + (p.heure ? ' • ' + p.heure : '')"></span>
+                  <span class="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-indigo-200 text-indigo-900" x-text="p.groupe"></span>
+                </div>
+                <h4 class="text-xs md:text-sm font-bold pt-1" x-text="p.titre"></h4>
+                <p x-show="p.description" class="text-[11px] opacity-75" x-text="p.description"></p>
+              </div>
+              <button type="button" @click="supprimerPlanning(p.id)" class="opacity-40 hover:opacity-100 p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL : AJOUTER AU PLANNING -->
+    <div x-show="showAddPlanningModal" 
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
+      <div class="card-pop p-5 max-w-sm w-full space-y-3 theme-planning shadow-xl">
+        <h3 class="font-poster text-sm sm:text-base border-b border-black/5 pb-2">📅 Ajouter au Planning</h3>
+        <form @submit.prevent="ajouterPlanning()" class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Titre de l'activité / événement</label>
+            <input type="text" x-model="nouvelEvenement.titre" placeholder="ex: Grand jeu, Sortie piscine..." class="input-pop w-full px-3 py-2 text-xs" required>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold uppercase mb-1">Date</label>
+              <input type="date" x-model="nouvelEvenement.date" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase mb-1">Heure</label>
+              <input type="time" x-model="nouvelEvenement.heure" class="input-pop w-full px-2.5 py-1.5 text-xs">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Groupe concerné</label>
+            <select x-model="nouvelEvenement.groupe" class="input-pop w-full px-3 py-2 text-xs font-bold">
+              <option value="Tous">Tous</option>
+              <option value="-6 ans">-6 ans</option>
+              <option value="+6 ans">+6 ans</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Description (optionnelle)</label>
+            <textarea x-model="nouvelEvenement.description" placeholder="Détails supplémentaires..." class="input-pop w-full px-3 py-1.5 text-xs h-14 resize-none"></textarea>
+          </div>
+          <div class="flex gap-2 pt-2">
+            <button type="button" @click="showAddPlanningModal = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
+            <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL : CHANGEMENT MOT DE PASSE (DIRECTEUR) -->
+    <div x-show="showPassModal" 
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" style="display: none;">
+      <div class="card-pop p-5 max-w-sm w-full space-y-3 bg-white shadow-2xl text-slate-800">
+        <h3 class="font-poster text-sm sm:text-base border-b border-black/5 pb-2">🔑 Modifier le code PIN</h3>
+        <form @submit.prevent="changerPassSecurise()" class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Mot de passe Directeur</label>
+            <input type="password" x-model="passForm.directeurKey" placeholder="Mot de passe spécial (defaut: admin)" class="input-pop w-full px-3 py-2 text-xs" required>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Nouveau Code PIN (4 chiffres)</label>
+            <input type="password" maxlength="4" pattern="[0-9]{4}" x-model="passForm.newPin" placeholder="ex: 5678" class="input-pop w-full px-3 py-2 text-xs text-center font-bold tracking-widest" required>
+          </div>
+          <p class="text-[10px] opacity-60">⚠️ Changer le mot de passe déconnectera (verrouillera) immédiatement tout le monde.</p>
+          <div class="flex gap-2 pt-2">
+            <button type="button" @click="showPassModal = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
+            <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs">Appliquer</button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -588,7 +795,7 @@
     // Enregistrement PWA Service Worker Inline
     if ('serviceWorker' in navigator) {
       const swCode = `
-        const CACHE = 'alshflow-v1';
+        const CACHE = 'alshflow-v2';
         self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/']))));
         self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
       `;
@@ -611,6 +818,7 @@
         isLocked: false,
         pinInput: '',
         pinSecret: loadFromStorage('pin', '1234'),
+        directeurSecret: loadFromStorage('directeurSecret', 'admin'),
         isOnline: navigator.onLine,
 
         toast: { show: false, message: '' },
@@ -619,6 +827,7 @@
         listeCourses: loadFromStorage('listeCourses', []),
         recettesGouter: loadFromStorage('recettesGouter', []),
         goutersPlanifies: loadFromStorage('goutersPlanifies', []),
+        planning: loadFromStorage('planning', []),
 
         fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
         soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
@@ -632,6 +841,17 @@
         newMatosNom: '',
         newMatosQte: '',
 
+        // NOUVELLES MODALES & ETATS
+        showAddRecetteModal: false,
+        showPlanifModal: false,
+        showAddPlanningModal: false,
+        showPassModal: false,
+
+        nouvelleRecette: { nom: '' },
+        nouveauGouterPlanifie: { date: todayISO, recetteId: '', nbEnfants: 20 },
+        nouvelEvenement: { titre: '', date: todayISO, heure: '10:00', groupe: 'Tous', description: '' },
+        passForm: { directeurKey: '', newPin: '' },
+
         init() {
           window.addEventListener('online', () => this.isOnline = true);
           window.addEventListener('offline', () => this.isOnline = false);
@@ -639,6 +859,9 @@
           this.$watch('enfants', v => localStorage.setItem('alshflow_enfants', JSON.stringify(v)));
           this.$watch('registreSoins', v => localStorage.setItem('alshflow_registreSoins', JSON.stringify(v)));
           this.$watch('listeCourses', v => localStorage.setItem('alshflow_listeCourses', JSON.stringify(v)));
+          this.$watch('recettesGouter', v => localStorage.setItem('alshflow_recettesGouter', JSON.stringify(v)));
+          this.$watch('goutersPlanifies', v => localStorage.setItem('alshflow_goutersPlanifies', JSON.stringify(v)));
+          this.$watch('planning', v => localStorage.setItem('alshflow_planning', JSON.stringify(v)));
         },
 
         // RGPD & CODE PIN
@@ -652,6 +875,26 @@
             this.showToast('Code PIN incorrect !');
             this.pinInput = '';
           }
+        },
+
+        // MODIFICATION MOT DE PASSE DIRECTEUR
+        changerPassSecurise() {
+          if (this.passForm.directeurKey !== this.directeurSecret) {
+            return this.showToast('Mot de passe Directeur incorrect !');
+          }
+          if (this.passForm.newPin.length !== 4 || isNaN(this.passForm.newPin)) {
+            return this.showToast('Le PIN doit faire 4 chiffres');
+          }
+
+          this.pinSecret = this.passForm.newPin;
+          localStorage.setItem('alshflow_pin', JSON.stringify(this.pinSecret));
+          
+          this.passForm = { directeurKey: '', newPin: '' };
+          this.showPassModal = false;
+          
+          // VERROUILLAGE/DÉCONNEXION AUTOMATIQUE
+          this.isLocked = true;
+          this.showToast('Code PIN modifié ! Application verrouillée.');
         },
 
         showToast(msg) {
@@ -782,8 +1025,41 @@
           this.enfantSelectionne = null;
         },
         deleteCourse(id) { this.listeCourses = this.listeCourses.filter(c => c.id !== id); },
-        getNomRecette(id) { return this.recettesGouter.find(r => r.id === id)?.nom || 'Recette'; },
+
+        // METHODES GOUTER
+        ajouterRecette() {
+          if (!this.nouvelleRecette.nom.trim()) return;
+          this.recettesGouter.push({ id: Date.now(), nom: this.nouvelleRecette.nom });
+          this.nouvelleRecette.nom = '';
+          this.showAddRecetteModal = false;
+          this.showToast('Recette ajoutée !');
+        },
+        supprimerRecette(id) {
+          this.recettesGouter = this.recettesGouter.filter(r => r.id !== id);
+          this.showToast('Recette supprimée');
+        },
+        planifierGouter() {
+          if (!this.nouveauGouterPlanifie.recetteId) return this.showToast('Sélectionnez une recette');
+          this.goutersPlanifies.unshift({ ...this.nouveauGouterPlanifie, id: Date.now() });
+          this.showPlanifModal = false;
+          this.showToast('Goûter planifié !');
+        },
+        getNomRecette(id) { return this.recettesGouter.find(r => String(r.id) === String(id))?.nom || 'Recette'; },
         supprimerGouterPlanifie(id) { this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id); },
+
+        // METHODES PLANNING
+        ajouterPlanning() {
+          if (!this.nouvelEvenement.titre.trim()) return;
+          this.planning.unshift({ ...this.nouvelEvenement, id: Date.now() });
+          this.nouvelEvenement = { titre: '', date: todayISO, heure: '10:00', groupe: 'Tous', description: '' };
+          this.showAddPlanningModal = false;
+          this.showToast('Événement ajouté au planning !');
+        },
+        supprimerPlanning(id) {
+          this.planning = this.planning.filter(p => p.id !== id);
+          this.showToast('Événement retiré');
+        },
+
         reinitialiserApp() {
           if (confirm('Voulez-vous supprimer les données locales ?')) {
             localStorage.clear();
