@@ -499,7 +499,7 @@
       </div>
     </div>
 
-    <!-- MODAL : AJOUTER / MODIFIER UN ENFANT (z-[110] pour passer par-dessus la fiche détaillée) -->
+    <!-- MODAL : AJOUTER / MODIFIER UN ENFANT -->
     <div x-show="showAddEnfantModal" x-transition class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-sanitaire max-h-[90vh] overflow-y-auto shadow-xl">
         <h3 class="font-poster text-sm sm:text-base md:text-lg border-b border-black/5 pb-2" x-text="isEditingEnfant ? '✏️ Modifier Fiche San' : '👶 Ajouter Fiche San'">
@@ -795,7 +795,6 @@
             <span>🩹</span> Cahier de Soins
           </h2>
           <div class="flex gap-1.5">
-            <!-- Bouton CSV supprimé, uniquement PDF au format A4 -->
             <button type="button" @click="exporterSoinsPDF()" class="btn-dark text-[10px] px-3 py-1.5 rounded-full flex items-center gap-1 uppercase font-bold">
               <i class="fa-solid fa-file-pdf text-rose-400"></i> Exporter PDF A4
             </button>
@@ -831,7 +830,7 @@
         <hr class="border-black/5 my-3">
 
         <h3 class="text-xs font-bold uppercase tracking-wider opacity-80">📋 Registre des soins</h3>
-        <div id="pdf-template-soins" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+        <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
           <template x-for="item in registreSoins" :key="item.id">
             <div class="card-item-pop p-3.5 space-y-2 border-l-4 border-rose-500 shadow-sm bg-white/90">
               <div class="flex items-center justify-between border-b border-black/5 pb-2">
@@ -863,6 +862,37 @@
             </div>
           </template>
         </div>
+      </div>
+    </div>
+
+    <!-- TEMPLATE CACHÉ POUR EXPORT PDF DU CAHIER DE SOINS (TABLEAU SIMPLE A4) -->
+    <div class="fixed top-0 left-[-9999px] z-[-100]">
+      <div id="pdf-template-soins-simple" class="w-[200mm] p-4 bg-white text-black font-sans">
+        <h1 style="font-size: 16px; font-weight: 800; text-align: center; margin-bottom: 12px; border-bottom: 2px solid #000; padding-bottom: 4px; text-transform: uppercase;">
+          REGISTRE REGLEMENTAIRE DU CAHIER DE SOINS
+        </h1>
+        <table style="width: 100%; border-collapse: collapse; font-size: 11px; font-family: sans-serif;">
+          <thead>
+            <tr style="background-color: #f0f0f0; text-align: left;">
+              <th style="border: 1px solid #000; padding: 6px; width: 12%;">Heure</th>
+              <th style="border: 1px solid #000; padding: 6px; width: 23%;">Enfant</th>
+              <th style="border: 1px solid #000; padding: 6px; width: 28%;">Symptôme / Incident</th>
+              <th style="border: 1px solid #000; padding: 6px; width: 25%;">Soin apporté</th>
+              <th style="border: 1px solid #000; padding: 6px; width: 12%; text-align: center;">Famille</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="item in registreSoins" :key="item.id">
+              <tr>
+                <td style="border: 1px solid #000; padding: 5px;" x-text="item.heure"></td>
+                <td style="border: 1px solid #000; padding: 5px; font-weight: bold;" x-text="item.enfant"></td>
+                <td style="border: 1px solid #000; padding: 5px;" x-text="item.incident"></td>
+                <td style="border: 1px solid #000; padding: 5px;" x-text="item.action || '—'"></td>
+                <td style="border: 1px solid #000; padding: 5px; text-align: center; font-weight: bold;" x-text="item.prevenirFamille ? 'OUI' : 'Non'"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -914,7 +944,6 @@
             
             <div class="flex gap-1 items-center">
               <input type="text" x-model="tempIng.nom" placeholder="Nom" class="flex-1 min-w-0 input-pop px-2 py-1 text-xs">
-              <!-- Champ Quantité vide par défaut avec clavier numérique -->
               <input type="number" inputmode="numeric" min="0" step="any" x-model.number="tempIng.qte" placeholder="Qté" class="w-16 input-pop px-1 py-1 text-xs text-center font-bold">
               <select x-model="tempIng.unite" class="w-20 input-pop px-1 py-1 text-xs font-bold">
                 <option value="g">g</option>
@@ -1022,7 +1051,6 @@
 
           <div>
             <label class="block text-[9px] font-bold uppercase mb-0.5">Nombre d'enfants</label>
-            <!-- Champ Nombre d'enfants vide par défaut avec clavier numérique -->
             <input type="number" inputmode="numeric" pattern="[0-9]*" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="Nombre d'enfants" class="input-pop w-full px-2.5 py-1.5 text-xs text-center font-black">
           </div>
         </div>
@@ -1054,7 +1082,7 @@
           </button>
         </div>
 
-        <!-- Matériel Activités (AVEC QUANTITÉ ET CLAVIER NUMÉRIQUE) -->
+        <!-- Matériel Activités -->
         <div x-show="subTabCourses === 'activites'" class="space-y-3">
           <div class="flex justify-between items-center">
             <span class="text-xs font-bold uppercase opacity-80">Ajouter un article</span>
@@ -1143,8 +1171,6 @@
               </button>
             </div>
           </div>
-
-          <!-- Filtres -6ans et +6ans supprimés comme demandé -->
 
           <div class="flex items-center justify-between card-item-pop px-2.5 py-1 gap-1.5">
             <button type="button" @click="changerJour(-1)" class="opacity-60 hover:opacity-100 px-1.5 py-0.5"><i class="fa-solid fa-chevron-left text-xs"></i></button>
@@ -1338,11 +1364,11 @@
       </div>
     </div>
 
-    <!-- MODAL : PLANNING DE L'ANIM' PAR SEMAINE (MÊME PRÉSENTATION & MÊMES CARTES) -->
-    <div x-show="showModalAnimSemaine" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-lg w-full space-y-4 theme-planning shadow-xl max-h-[90vh] overflow-y-auto">
+    <!-- MODAL : PLANNING DE L'ANIM' PAR SEMAINE -->
+    <div x-show="showModalAnimSemaine" x-transition class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm overflow-y-auto" style="display: none;">
+      <div class="card-pop p-4 sm:p-5 max-w-lg w-full space-y-4 theme-planning shadow-xl my-auto max-h-[85dvh] flex flex-col">
         
-        <div class="flex justify-between items-center border-b border-black/5 pb-2">
+        <div class="flex justify-between items-center border-b border-black/5 pb-2 shrink-0">
           <div class="flex items-center gap-2">
             <span class="text-xl">👤</span>
             <div>
@@ -1354,7 +1380,7 @@
         </div>
 
         <!-- Navigation Semaine -->
-        <div class="flex items-center justify-between card-item-pop px-3 py-2 bg-white/90">
+        <div class="flex items-center justify-between card-item-pop px-3 py-2 bg-white/90 shrink-0">
           <button type="button" @click="changerSemaineAnim(-1)" class="btn-white px-2.5 py-1 text-xs rounded-lg">
             <i class="fa-solid fa-chevron-left"></i>
           </button>
@@ -1368,8 +1394,8 @@
           </button>
         </div>
 
-        <!-- Liste des jours avec cartes identiques au jour J -->
-        <div class="space-y-3">
+        <!-- Liste des jours -->
+        <div class="space-y-3 overflow-y-auto flex-1 pr-1">
           <template x-for="j in getPlanningSemaineAnim()" :key="j.dateStr">
             <div class="card-item-pop p-3 space-y-2 bg-white/90">
               <div class="flex justify-between items-center border-b border-black/5 pb-1">
@@ -1415,20 +1441,20 @@
           </template>
         </div>
 
-        <button type="button" @click="showModalAnimSemaine = false" class="btn-dark w-full py-2 rounded-full text-xs uppercase">
+        <button type="button" @click="showModalAnimSemaine = false" class="btn-dark w-full py-2 rounded-full text-xs uppercase shrink-0">
           Fermer
         </button>
       </div>
     </div>
 
-    <!-- MODAL : SORTIE SPÉCIALE (AVEC SAISIE SÉCURISÉE DES HEURES BUS FORMAT 00h00) -->
-    <div x-show="showModalOrg" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-lg w-full space-y-3.5 theme-planning max-h-[90vh] overflow-y-auto shadow-xl">
-        <h3 class="font-poster text-base border-b border-black/5 pb-2">
+    <!-- MODAL : SORTIE SPÉCIALE (OPTIMISÉE MOBILE) -->
+    <div x-show="showModalOrg" x-transition class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm overflow-y-auto" style="display: none;">
+      <div class="card-pop p-4 sm:p-5 max-w-lg w-full space-y-3.5 theme-planning shadow-xl my-auto max-h-[85dvh] flex flex-col">
+        <h3 class="font-poster text-base border-b border-black/5 pb-2 shrink-0">
           🚌 Organiser une Sortie Spéciale
         </h3>
 
-        <div class="space-y-3">
+        <div class="space-y-3 overflow-y-auto flex-1 pr-1">
           <div>
             <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Titre de la sortie</label>
             <input type="text" x-model="orgSaisie.titre" placeholder="ex: Zoo d'Amnéville" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
@@ -1442,12 +1468,10 @@
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Bus Départ (Heure)</label>
-              <!-- Clavier numérique + Formatage auto 00h00 -->
               <input type="text" inputmode="numeric" x-model="orgSaisie.busAller" @input="orgSaisie.busAller = formatHeureBus($event.target.value)" placeholder="08h30" class="input-pop w-full px-2.5 py-1.5 text-xs text-center font-bold">
             </div>
             <div>
               <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Bus Retour (Heure)</label>
-              <!-- Clavier numérique + Formatage auto 00h00 -->
               <input type="text" inputmode="numeric" x-model="orgSaisie.busRetour" @input="orgSaisie.busRetour = formatHeureBus($event.target.value)" placeholder="17h00" class="input-pop w-full px-2.5 py-1.5 text-xs text-center font-bold">
             </div>
           </div>
@@ -1475,19 +1499,19 @@
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-black/5">
-          <button type="button" @click="showModalOrg = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
-          <button type="button" @click="enregistrerOrg()" class="btn-white flex-1 py-2 rounded-full text-xs">Enregistrer</button>
+        <div class="flex gap-2 pt-2 border-t border-black/5 shrink-0 bg-inherit">
+          <button type="button" @click="showModalOrg = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase cursor-pointer">Annuler</button>
+          <button type="button" @click="enregistrerOrg()" class="btn-white flex-1 py-2 rounded-full text-xs cursor-pointer">Enregistrer</button>
         </div>
       </div>
     </div>
 
-    <!-- MODAL : NOUVEAU / EDIT CRÉNEAU PLANNING -->
-    <div x-show="showModalCreneau" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-md w-full space-y-3.5 theme-planning shadow-xl">
-        <h3 class="font-poster text-base border-b border-black/5 pb-2" x-text="isEditingCreneau ? '✏️ Modifier Créneau' : '➕ Nouveau Créneau'"></h3>
+    <!-- MODAL : NOUVEAU / EDIT CRÉNEAU PLANNING (OPTIMISÉE MOBILE) -->
+    <div x-show="showModalCreneau" x-transition class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm overflow-y-auto" style="display: none;">
+      <div class="card-pop p-4 sm:p-5 max-w-md w-full space-y-3.5 theme-planning shadow-xl my-auto max-h-[85dvh] flex flex-col">
+        <h3 class="font-poster text-base border-b border-black/5 pb-2 shrink-0" x-text="isEditingCreneau ? '✏️ Modifier Créneau' : '➕ Nouveau Créneau'"></h3>
 
-        <div class="space-y-3">
+        <div class="space-y-3 overflow-y-auto flex-1 pr-1">
           <div>
             <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Nom de l'Animateur</label>
             <input type="text" x-model="creneauSaisie.animNom" placeholder="ex: Sarah" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
@@ -1521,9 +1545,9 @@
           </div>
         </div>
 
-        <div class="flex gap-2 pt-2 border-t border-black/5">
-          <button type="button" @click="showModalCreneau = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
-          <button type="button" @click="enregistrerCreneau()" class="btn-white flex-1 py-2 rounded-full text-xs">Enregistrer</button>
+        <div class="flex gap-2 pt-2 border-t border-black/5 shrink-0 bg-inherit">
+          <button type="button" @click="showModalCreneau = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase cursor-pointer">Annuler</button>
+          <button type="button" @click="enregistrerCreneau()" class="btn-white flex-1 py-2 rounded-full text-xs cursor-pointer">Enregistrer</button>
         </div>
       </div>
     </div>
@@ -1595,7 +1619,7 @@
           materiel: []
         },
         newMatosNom: '',
-        newMatosQte: '', // Champ quantité matériel activité
+        newMatosQte: '',
 
         // 3. CAHIER DE SOINS
         soin: {
@@ -1615,7 +1639,7 @@
         },
         tempIng: {
           nom: '',
-          qte: '', // Champ quantité vide par défaut
+          qte: '',
           unite: 'g'
         },
         showPlanifModal: false,
@@ -1623,7 +1647,7 @@
           date: new Date().toISOString().split('T')[0],
           recetteId: 1,
           anim: '',
-          nbEnfants: '' // Champ nombre d'enfants vide par défaut
+          nbEnfants: ''
         },
         semaineDecalageGouter: 0,
         goutersPlanifies: [],
@@ -1631,7 +1655,7 @@
         // 5. COURSES
         listeCourses: [],
         nouvelleCourseNom: '',
-        nouvelleCourseQte: '', // Champ quantité pour courses directes
+        nouvelleCourseQte: '',
         coursesAcheteesGouter: {},
 
         // 6. PLANNING
@@ -1714,7 +1738,7 @@
           }
         },
 
-        // FORMATAGE DES HEURES DE BUS (Format 00h00 automatique)
+        // FORMATAGE DES HEURES DE BUS
         formatHeureBus(val) {
           if (!val) return '';
           let digits = val.replace(/\D/g, '').slice(0, 4);
@@ -1824,92 +1848,89 @@
         },
 
         editerEnfant(e) {
-          this.enfantSelectionne = null; // Ferme la modal de détail pour afficher proprement la modal d'édition au-dessus
+          this.enfantSelectionne = null;
           this.isEditingEnfant = true;
           this.nouvelEnfant = JSON.parse(JSON.stringify(e));
-          if (!this.nouvelEnfant.responsables || this.nouvelEnfant.responsables.length === 0) {
-            this.nouvelEnfant.responsables = [{ nom: '', telephone: '' }];
-          }
           this.showAddEnfantModal = true;
         },
 
         enregistrerEnfant() {
+          if (!this.nouvelEnfant.prenom || !this.nouvelEnfant.nom) return;
           if (this.isEditingEnfant) {
-            const idx = this.enfants.findIndex(item => item.id === this.nouvelEnfant.id);
-            if (idx !== -1) this.enfants[idx] = JSON.parse(JSON.stringify(this.nouvelEnfant));
-            this.showToast('Fiche enfant mise à jour');
+            const idx = this.enfants.findIndex(e => e.id === this.nouvelEnfant.id);
+            if (idx !== -1) this.enfants[idx] = { ...this.nouvelEnfant };
           } else {
-            this.enfants.push(JSON.parse(JSON.stringify(this.nouvelEnfant)));
-            this.showToast('Enfant ajouté');
+            this.enfants.push({ ...this.nouvelEnfant, id: Date.now() });
           }
           this.sauvegarderDonnees();
           this.showAddEnfantModal = false;
+          this.showToast('Fiche sanitaire enregistrée');
         },
 
         supprimerEnfant(id) {
           if (confirm("Supprimer cette fiche enfant ?")) {
             this.enfants = this.enfants.filter(e => e.id !== id);
-            this.sauvegarderDonnees();
             this.enfantSelectionne = null;
-            this.showToast('Fiche enfant supprimée');
+            this.sauvegarderDonnees();
+            this.showToast('Enfant supprimé');
           }
         },
 
-        // FICHE D'ACTIVITÉ
-        addMatos() {
-          if (this.newMatosNom.trim()) {
-            this.fiche.materiel.push({
-              nom: this.newMatosNom.trim(),
-              qte: this.newMatosQte ? this.newMatosQte.toString().trim() : ''
-            });
-            this.newMatosNom = '';
-            this.newMatosQte = '';
-          }
-        },
-
-        removeMatos(index) {
-          this.fiche.materiel.splice(index, 1);
-        },
-
+        // FICHE ACTIVITÉ
         submitFiche() {
           if (!this.fiche.titre) return;
           this.fiche.materiel.forEach(m => {
             this.listeCourses.push({
               id: Date.now() + Math.random(),
               nom: m.nom,
-              qte: m.qte || '',
+              qte: m.qte || 1,
               activite: this.fiche.titre,
               achete: false
             });
           });
           this.sauvegarderDonnees();
-          this.showToast('Matériel envoyé vers les courses !');
+          this.showToast('Matériel envoyé aux courses !');
+        },
+
+        addMatos() {
+          if (!this.newMatosNom.trim()) return;
+          this.fiche.materiel.push({
+            nom: this.newMatosNom.trim(),
+            qte: this.newMatosQte ? parseInt(this.newMatosQte) : 1
+          });
+          this.newMatosNom = '';
+          this.newMatosQte = '';
+        },
+
+        removeMatos(idx) {
+          this.fiche.materiel.splice(idx, 1);
         },
 
         exportPDFDirect() {
           const element = document.getElementById('pdf-template-fiche');
           const opt = {
             margin: 0,
-            filename: `fiche-activite-${this.fiche.titre || 'sans-titre'}.pdf`,
+            filename: `fiche-activite-${this.fiche.titre || 'export'}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
           };
           html2pdf().set(opt).from(element).save();
         },
 
-        // CAHIER DE SOINS
+        // SOINS
         submitSoin() {
+          if (!this.soin.enfant || !this.soin.incident) return;
           const now = new Date();
-          const heure = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          const heure = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           this.registreSoins.unshift({
             id: Date.now(),
-            date: now.toISOString().split('T')[0],
-            heure: heure,
             enfant: this.soin.enfant,
             incident: this.soin.incident,
             action: this.soin.action,
-            prevenirFamille: this.soin.prevenirFamille
+            prevenirFamille: this.soin.prevenirFamille,
+            heure: heure,
+            date: now.toISOString().split('T')[0]
           });
           this.sauvegarderDonnees();
           this.soin = { enfant: '', incident: '', action: '', prevenirFamille: false };
@@ -1917,7 +1938,7 @@
         },
 
         deleteSoin(id) {
-          if (confirm("Supprimer cette entrée de soin ?")) {
+          if (confirm("Supprimer ce soin ?")) {
             this.registreSoins = this.registreSoins.filter(s => s.id !== id);
             this.sauvegarderDonnees();
             this.showToast('Soin supprimé');
@@ -1925,55 +1946,31 @@
         },
 
         exporterSoinsPDF() {
-          const element = document.getElementById('pdf-template-soins');
+          if (this.registreSoins.length === 0) {
+            this.showToast("Aucun soin à exporter.");
+            return;
+          }
+          const element = document.getElementById('pdf-template-soins-simple');
           const opt = {
             margin: 10,
-            filename: `registre-soins-${new Date().toISOString().split('T')[0]}.pdf`,
+            filename: `cahier-de-soins-${new Date().toISOString().split('T')[0]}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
           };
           html2pdf().set(opt).from(element).save();
         },
 
-        // GOÛTER & RECETTES
-        ajouterIngredierntRecette() {
-          if (this.tempIng.nom.trim()) {
-            this.nouvelleRecette.ingredients.push({
-              nom: this.tempIng.nom.trim(),
-              qte: this.tempIng.qte !== '' ? Number(this.tempIng.qte) : '',
-              unite: this.tempIng.unite
-            });
-            this.tempIng = { nom: '', qte: '', unite: 'g' };
-          }
-        },
-
-        enregistrerNouvelleRecette() {
-          if (this.nouvelleRecette.nom.trim()) {
-            const newR = {
-              id: Date.now(),
-              nom: this.nouvelleRecette.nom.trim(),
-              ingredients: [...this.nouvelleRecette.ingredients]
-            };
-            this.recettesGouter.push(newR);
-            this.sauvegarderDonnees();
-            this.nouvelleRecette = { nom: '', ingredients: [] };
-            this.showAddRecetteModal = false;
-            this.showToast('Recette enregistrée');
-          }
-        },
-
-        getStartOfWeek(offset = 0) {
-          const d = new Date();
-          const day = d.getDay();
-          const diff = d.getDate() - day + (day === 0 ? -6 : 1) + (offset * 7);
-          return new Date(d.setDate(diff));
-        },
-
+        // GOÛTERS & RECETTES
         getLibelleSemaine() {
-          const start = this.getStartOfWeek(this.semaineDecalageGouter);
+          const now = new Date();
+          now.setDate(now.getDate() + (this.semaineDecalageGouter * 7));
+          const start = new Date(now);
+          const day = start.getDay();
+          const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+          start.setDate(diff);
           const end = new Date(start);
-          end.setDate(end.getDate() + 4);
+          end.setDate(start.getDate() + 4);
           return `Semaine du ${start.getDate()}/${start.getMonth()+1} au ${end.getDate()}/${end.getMonth()+1}`;
         },
 
@@ -1981,104 +1978,91 @@
           this.semaineDecalageGouter += delta;
         },
 
-        getGoutersDeLaSemaine() {
-          const start = this.getStartOfWeek(this.semaineDecalageGouter);
-          const end = new Date(start);
-          end.setDate(end.getDate() + 6);
-
-          return this.goutersPlanifies.filter(g => {
-            const d = new Date(g.date);
-            return d >= start && d <= end;
+        ajouterIngredierntRecette() {
+          if (!this.tempIng.nom.trim()) return;
+          this.nouvelleRecette.ingredients.push({
+            nom: this.tempIng.nom.trim(),
+            qte: this.tempIng.qte || 0,
+            unite: this.tempIng.unite
           });
+          this.tempIng.nom = '';
+          this.tempIng.qte = '';
+        },
+
+        enregistrerNouvelleRecette() {
+          if (!this.nouvelleRecette.nom) return;
+          const newR = {
+            id: Date.now(),
+            nom: this.nouvelleRecette.nom,
+            ingredients: [...this.nouvelleRecette.ingredients]
+          };
+          this.recettesGouter.push(newR);
+          this.sauvegarderDonnees();
+          this.showAddRecetteModal = false;
+          this.nouvelleRecette = { nom: '', ingredients: [] };
+          this.showToast('Recette ajoutée !');
+        },
+
+        getGoutersDeLaSemaine() {
+          const now = new Date();
+          now.setDate(now.getDate() + (this.semaineDecalageGouter * 7));
+          const start = new Date(now);
+          const day = start.getDay();
+          const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+          start.setDate(diff);
+          const end = new Date(start);
+          end.setDate(start.getDate() + 4);
+          const startStr = start.toISOString().split('T')[0];
+          const endStr = end.toISOString().split('T')[0];
+          return this.goutersPlanifies.filter(g => g.date >= startStr && g.date <= endStr);
         },
 
         getNomRecette(id) {
-          const r = this.recettesGouter.find(item => item.id === id);
+          const r = this.recettesGouter.find(rec => rec.id === parseInt(id));
           return r ? r.nom : 'Recette inconnue';
         },
 
-        enregistrerGouterPlanifie() {
-          if (this.saisieGouter.date && this.saisieGouter.recetteId) {
-            this.goutersPlanifies.push({
-              id: Date.now(),
-              date: this.saisieGouter.date,
-              recetteId: Number(this.saisieGouter.recetteId),
-              anim: this.saisieGouter.anim,
-              nbEnfants: this.saisieGouter.nbEnfants ? Number(this.saisieGouter.nbEnfants) : 0
-            });
-            this.sauvegarderDonnees();
-            this.showPlanifModal = false;
-            this.saisieGouter = {
-              date: new Date().toISOString().split('T')[0],
-              recetteId: this.recettesGouter.length ? this.recettesGouter[0].id : 1,
-              anim: '',
-              nbEnfants: ''
-            };
-            this.showToast('Goûter planifié');
-          }
-        },
-
         supprimerGouterPlanifie(id) {
-          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
-          this.sauvegarderDonnees();
-          this.showToast('Goûter supprimé');
-        },
-
-        // COURSES
-        addCourseDirecte() {
-          if (this.nouvelleCourseNom.trim()) {
-            this.listeCourses.push({
-              id: Date.now(),
-              nom: this.nouvelleCourseNom.trim(),
-              qte: this.nouvelleCourseQte ? this.nouvelleCourseQte.toString().trim() : '',
-              activite: 'Achat Manuel',
-              achete: false
-            });
-            this.nouvelleCourseNom = '';
-            this.nouvelleCourseQte = '';
+          if (confirm("Supprimer ce goûter ?")) {
+            this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
             this.sauvegarderDonnees();
-            this.showToast('Article ajouté aux courses');
+            this.showToast('Goûter supprimé');
           }
         },
 
-        deleteCourse(id) {
-          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
+        enregistrerGouterPlanifie() {
+          if (!this.saisieGouter.recetteId || !this.saisieGouter.date) return;
+          this.goutersPlanifies.push({
+            id: Date.now(),
+            date: this.saisieGouter.date,
+            recetteId: parseInt(this.saisieGouter.recetteId),
+            anim: this.saisieGouter.anim,
+            nbEnfants: this.saisieGouter.nbEnfants || 8
+          });
           this.sauvegarderDonnees();
-        },
-
-        viderAchetes() {
-          this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.sauvegarderDonnees();
-          this.showToast('Articles achetés supprimés');
+          this.showPlanifModal = false;
+          this.showToast('Goûter planifié !');
         },
 
         getListeCoursesAgregeeSemaine() {
-          const list = this.getGoutersDeLaSemaine();
-          const cumuls = {};
-
-          list.forEach(g => {
-            const r = this.recettesGouter.find(rec => rec.id === g.recetteId);
-            if (r && r.ingredients) {
+          const gouters = this.getGoutersDeLaSemaine();
+          const map = {};
+          gouters.forEach(g => {
+            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
+            if (recette && recette.ingredients) {
               const ratio = (g.nbEnfants || 8) / 8;
-              r.ingredients.forEach(ing => {
+              recette.ingredients.forEach(ing => {
                 const key = `${ing.nom.toLowerCase()}_${ing.unite}`;
-                if (!cumuls[key]) {
-                  cumuls[key] = {
-                    key: key,
-                    nom: ing.nom,
-                    qte: 0,
-                    unite: ing.unite
-                  };
+                const qteCalc = Math.round(ing.qte * ratio * 10) / 10;
+                if (!map[key]) {
+                  map[key] = { key: key, nom: ing.nom, qte: qteCalc, unite: ing.unite };
+                } else {
+                  map[key].qte = Math.round((map[key].qte + qteCalc) * 10) / 10;
                 }
-                cumuls[key].qte += (ing.qte || 0) * ratio;
               });
             }
           });
-
-          return Object.values(cumuls).map(item => ({
-            ...item,
-            qte: Math.round(item.qte * 10) / 10
-          }));
+          return Object.values(map);
         },
 
         estAcheteCourseGouter(key) {
@@ -2090,7 +2074,34 @@
           this.sauvegarderDonnees();
         },
 
-        // PLANNING
+        // COURSES DIRECTES
+        addCourseDirecte() {
+          if (!this.nouvelleCourseNom.trim()) return;
+          this.listeCourses.push({
+            id: Date.now(),
+            nom: this.nouvelleCourseNom.trim(),
+            qte: this.nouvelleCourseQte ? parseInt(this.nouvelleCourseQte) : 1,
+            activite: 'Achat direct',
+            achete: false
+          });
+          this.nouvelleCourseNom = '';
+          this.nouvelleCourseQte = '';
+          this.sauvegarderDonnees();
+          this.showToast('Article ajouté');
+        },
+
+        deleteCourse(id) {
+          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
+          this.sauvegarderDonnees();
+        },
+
+        viderAchetes() {
+          this.listeCourses = this.listeCourses.filter(c => !c.achete);
+          this.sauvegarderDonnees();
+          this.showToast('Liste nettoyée');
+        },
+
+        // PLANNING & SORTIES
         changerJour(delta) {
           const d = new Date(this.dateAffichee);
           d.setDate(d.getDate() + delta);
@@ -2109,18 +2120,31 @@
         },
 
         getOrgDuJour() {
-          return this.orgsOutings.find(o => o.date === this.dateAffichee);
+          return this.orgsOutings.find(o => o.date === this.dateAffichee) || null;
+        },
+
+        effacerOrgDuJour() {
+          if (confirm("Supprimer la sortie spéciale de ce jour ?")) {
+            this.orgsOutings = this.orgsOutings.filter(o => o.date !== this.dateAffichee);
+            this.sauvegarderDonnees();
+            this.showToast('Sortie supprimée');
+          }
         },
 
         ouvrirModalOrg() {
-          this.orgSaisie = {
-            date: this.dateAffichee,
-            titre: '',
-            lieu: '',
-            busAller: '',
-            busRetour: '',
-            groupes: [{ id: 1, anim: '', enfants: '' }]
-          };
+          const existing = this.getOrgDuJour();
+          if (existing) {
+            this.orgSaisie = JSON.parse(JSON.stringify(existing));
+          } else {
+            this.orgSaisie = {
+              date: this.dateAffichee,
+              titre: '',
+              lieu: '',
+              busAller: '',
+              busRetour: '',
+              groupes: [{ id: Date.now(), anim: '', enfants: '' }]
+            };
+          }
           this.showModalOrg = true;
         },
 
@@ -2129,30 +2153,17 @@
         },
 
         enregistrerOrg() {
-          if (this.orgSaisie.titre) {
-            this.orgsOutings = this.orgsOutings.filter(o => o.date !== this.orgSaisie.date);
-            this.orgsOutings.push(JSON.parse(JSON.stringify(this.orgSaisie)));
-            this.sauvegarderDonnees();
-            this.showModalOrg = false;
-            this.showToast('Sortie spéciale enregistrée');
+          if (!this.orgSaisie.titre) return;
+          const existingIdx = this.orgsOutings.findIndex(o => o.date === this.dateAffichee);
+          const dataToSave = { ...this.orgSaisie, date: this.dateAffichee };
+          if (existingIdx !== -1) {
+            this.orgsOutings[existingIdx] = dataToSave;
+          } else {
+            this.orgsOutings.push(dataToSave);
           }
-        },
-
-        effacerOrgDuJour() {
-          if (confirm("Supprimer la sortie prévue ce jour ?")) {
-            this.orgsOutings = this.orgsOutings.filter(o => o.date !== this.dateAffichee);
-            this.sauvegarderDonnees();
-            this.showToast('Sortie supprimée');
-          }
-        },
-
-        parseEnfantsList(str) {
-          if (!str) return [];
-          return str.split(',').map(s => s.trim()).filter(s => s.length > 0);
-        },
-
-        getPlanningFiltre() {
-          return this.planningCreneaux.filter(p => p.date === this.dateAffichee);
+          this.sauvegarderDonnees();
+          this.showModalOrg = false;
+          this.showToast('Sortie enregistrée !');
         },
 
         nouveauCreneauVierge() {
@@ -2176,28 +2187,35 @@
         },
 
         enregistrerCreneau() {
-          if (this.creneauSaisie.animNom) {
-            if (this.isEditingCreneau) {
-              const idx = this.planningCreneaux.findIndex(c => c.id === this.creneauSaisie.id);
-              if (idx !== -1) this.planningCreneaux[idx] = JSON.parse(JSON.stringify(this.creneauSaisie));
-            } else {
-              this.planningCreneaux.push(JSON.parse(JSON.stringify(this.creneauSaisie)));
-            }
-            this.sauvegarderDonnees();
-            this.showModalCreneau = false;
-            this.showToast('Planning mis à jour');
+          if (!this.creneauSaisie.animNom) return;
+          if (this.isEditingCreneau) {
+            const idx = this.planningCreneaux.findIndex(c => c.id === this.creneauSaisie.id);
+            if (idx !== -1) this.planningCreneaux[idx] = { ...this.creneauSaisie };
+          } else {
+            this.planningCreneaux.push({ ...this.creneauSaisie });
           }
+          this.sauvegarderDonnees();
+          this.showModalCreneau = false;
+          this.showToast('Créneau enregistré !');
         },
 
         supprimerCreneau(id) {
-          if (confirm("Supprimer ce créneau d'animation ?")) {
+          if (confirm("Supprimer ce créneau ?")) {
             this.planningCreneaux = this.planningCreneaux.filter(c => c.id !== id);
             this.sauvegarderDonnees();
             this.showToast('Créneau supprimé');
           }
         },
 
-        // VUE HEBDOMADAIRE ANIMATEUR
+        getPlanningFiltre() {
+          return this.planningCreneaux.filter(c => c.date === this.dateAffichee);
+        },
+
+        parseEnfantsList(str) {
+          if (!str) return [];
+          return str.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        },
+
         ouvrirPlanningSemaineAnim(animNom) {
           this.animSemaineSelectionne = animNom;
           this.semaineDecalageAnim = 0;
@@ -2209,35 +2227,40 @@
         },
 
         getLibelleSemaineAnim() {
-          const start = this.getStartOfWeek(this.semaineDecalageAnim);
+          const now = new Date();
+          now.setDate(now.getDate() + (this.semaineDecalageAnim * 7));
+          const start = new Date(now);
+          const day = start.getDay();
+          const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+          start.setDate(diff);
           const end = new Date(start);
-          end.setDate(end.getDate() + 4);
+          end.setDate(start.getDate() + 4);
           return `Semaine du ${start.getDate()}/${start.getMonth()+1} au ${end.getDate()}/${end.getMonth()+1}`;
         },
 
         getPlanningSemaineAnim() {
           if (!this.animSemaineSelectionne) return [];
-          const startOfWeek = this.getStartOfWeek(this.semaineDecalageAnim);
-          const jours = [];
-          const nomsJours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+          const now = new Date();
+          now.setDate(now.getDate() + (this.semaineDecalageAnim * 7));
+          const start = new Date(now);
+          const day = start.getDay();
+          const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+          start.setDate(diff);
 
-          for (let i = 0; i < 5; i++) {
-            const d = new Date(startOfWeek);
-            d.setDate(d.getDate() + i);
+          const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+          return days.map((nomJour, idx) => {
+            const d = new Date(start);
+            d.setDate(start.getDate() + idx);
             const dateStr = d.toISOString().split('T')[0];
-
-            const creneau = this.planningCreneaux.find(p => p.date === dateStr && p.animNom.toLowerCase() === this.animSemaineSelectionne.toLowerCase());
-
-            jours.push({
-              nomJour: nomsJours[i],
+            const creneau = this.planningCreneaux.find(c => c.date === dateStr && c.animNom.toLowerCase() === this.animSemaineSelectionne.toLowerCase());
+            return {
+              nomJour: nomJour,
               dateStr: dateStr,
-              dateFormatted: this.formatDateLisible(dateStr),
+              dateFormatted: `${d.getDate()}/${d.getMonth()+1}`,
               creneau: creneau || null
-            });
-          }
-          return jours;
+            };
+          });
         }
-
       };
     }
   </script>
