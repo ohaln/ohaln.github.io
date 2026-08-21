@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ALSHFlow - Animation Hub</title>
 
+  <!-- PWA Theme Color & Apple Touch -->
+  <meta name="theme-color" content="#F4F5F7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <!-- Google Fonts: Outfit & Syne -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,6 +88,7 @@
       border: 1px solid rgba(0, 0, 0, 0.05);
       border-radius: var(--radius-lg);
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Tiles Hub modernisées */
@@ -91,7 +97,7 @@
       border-radius: 24px;
       border: 1px solid rgba(0, 0, 0, 0.04);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -99,18 +105,19 @@
     }
 
     .hub-tile:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.08);
     }
 
     .hub-tile:active {
-      transform: translateY(1px);
+      transform: translateY(1px) scale(0.98);
     }
 
     .card-item-pop {
       background-color: rgba(255, 255, 255, 0.7);
       border: 1px solid rgba(0, 0, 0, 0.05);
       border-radius: var(--radius-md);
+      transition: all 0.2s ease;
     }
 
     /* Inputs */
@@ -126,7 +133,7 @@
     .input-pop:focus {
       outline: none;
       border-color: currentColor;
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
     }
 
     input[type="date"] {
@@ -141,7 +148,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.02em;
-      transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease;
       white-space: nowrap;
       border: 1px solid rgba(0, 0, 0, 0.06);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
@@ -154,24 +161,51 @@
     }
 
     .btn-white:active {
-      transform: scale(0.98);
+      transform: scale(0.96);
     }
 
     .btn-dark {
       background-color: #1E1E24;
       color: #FFFFFF !important;
       font-weight: 700;
-      transition: transform 0.1s ease, background-color 0.2s ease;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
       white-space: nowrap;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
 
     .btn-dark:hover {
       background-color: #2D2D35;
+      transform: translateY(-1px);
     }
 
     .btn-dark:active {
-      transform: scale(0.98);
+      transform: scale(0.96);
+    }
+
+    /* Keypad Numérique */
+    .keypad-btn {
+      background: white;
+      border: 1px solid rgba(0,0,0,0.08);
+      font-weight: 800;
+      border-radius: 12px;
+      padding: 10px 0;
+      text-align: center;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      transition: all 0.1s ease;
+    }
+    .keypad-btn:active {
+      transform: scale(0.92);
+      background-color: rgba(0,0,0,0.05);
+    }
+
+    /* Animation Pulse Offline */
+    @keyframes pulse-red {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .animate-pulse-fast {
+      animation: pulse-red 1.5s infinite;
     }
 
     /* Theme Colors */
@@ -187,12 +221,75 @@
 
 <body class="select-none flex flex-col h-screen h-[100dvh] overflow-hidden" 
       x-data="alshApp()" 
+      x-init="initApp()"
       :class="'theme-' + currentTab">
+
+  <!-- BANNIÈRE DE CONNEXION HORS-LIGNE (PWA) -->
+  <div x-show="!isOnline" 
+       x-transition:enter="transition ease-out duration-200"
+       x-transition:enter-start="-translate-y-full"
+       x-transition:enter-end="translate-y-0"
+       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave-start="translate-y-0"
+       x-transition:leave-end="-translate-y-full"
+       class="bg-rose-600 text-white text-[10px] font-black uppercase tracking-widest text-center py-1.5 px-4 shadow-md flex items-center justify-center gap-2 z-[150] shrink-0" style="display: none;">
+    <span class="w-2 h-2 rounded-full bg-white animate-pulse-fast"></span>
+    <span>Mode Hors-Ligne (PWA Active) — Données sauvegardées localement</span>
+  </div>
+
+  <!-- ECRAN DE VERROUILLAGE PIN (RGPD) -->
+  <div x-show="isLocked" 
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="opacity-0 scale-95"
+       x-transition:enter-end="opacity-100 scale-100"
+       class="fixed inset-0 z-[200] bg-slate-900 text-white flex flex-col items-center justify-center p-6 text-center" 
+       style="display: none;">
+    
+    <div class="max-w-xs w-full space-y-6">
+      <div class="space-y-2">
+        <div class="w-16 h-16 bg-white/10 rounded-3xl mx-auto flex items-center justify-center text-3xl border border-white/10 shadow-inner">
+          🔒
+        </div>
+        <h2 class="font-poster text-xl font-black">Sécurité ALSHFlow</h2>
+        <p class="text-xs opacity-60 font-medium">Entrez votre code PIN à 4 chiffres pour accéder aux données réglementaires.</p>
+      </div>
+
+      <!-- Puces Code PIN -->
+      <div class="flex justify-center items-center gap-3 py-2">
+        <template x-for="i in [0,1,2,3]" :key="i">
+          <div class="w-4 h-4 rounded-full border-2 border-white/40 transition-all duration-200"
+               :class="pinSaisi.length > i ? 'bg-white border-white scale-110 shadow-lg' : ''"></div>
+        </template>
+      </div>
+
+      <!-- Pavé Numérique PIN -->
+      <div class="grid grid-cols-3 gap-2.5 pt-2">
+        <template x-for="num in [1,2,3,4,5,6,7,8,9]" :key="num">
+          <button type="button" @click="saisirPinDigit(num)" class="keypad-btn text-lg py-3.5 bg-white/10 hover:bg-white/20 text-white border-white/10 active:scale-95">
+            <span x-text="num"></span>
+          </button>
+        </template>
+        <button type="button" @click="effacerPinDigit()" class="keypad-btn text-xs py-3.5 bg-rose-500/20 text-rose-300 border-rose-500/20 active:scale-95">
+          <i class="fa-solid fa-backspace"></i>
+        </button>
+        <button type="button" @click="saisirPinDigit(0)" class="keypad-btn text-lg py-3.5 bg-white/10 hover:bg-white/20 text-white border-white/10 active:scale-95">0</button>
+        <button type="button" @click="validerPin()" class="keypad-btn text-xs py-3.5 bg-emerald-500/30 text-emerald-300 border-emerald-500/30 active:scale-95 font-black uppercase">
+          OK
+        </button>
+      </div>
+
+      <div class="pt-2">
+        <button type="button" @click="showModalDirecteur = true" class="text-[11px] opacity-60 hover:opacity-100 font-bold underline">
+          Espace Directeur (Réinitialisation PIN)
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- HEADER BRANDING -->
   <header class="max-w-5xl mx-auto w-full px-4 pt-3 pb-2 flex items-center justify-between shrink-0 h-[60px]">
     <div class="flex items-center gap-2.5 cursor-pointer group" @click="currentTab = 'hub'">
-      <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-lg font-black shadow-sm border border-black/5">
+      <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-lg font-black shadow-sm border border-black/5 group-hover:scale-105 transition-transform">
         ⚡
       </div>
       <div>
@@ -204,6 +301,10 @@
     </div>
     
     <div class="flex items-center gap-2">
+      <button type="button" @click="isLocked = true" class="btn-white text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1.5" title="Verrouiller l'accès">
+        <i class="fa-solid fa-lock text-slate-700"></i>
+      </button>
+
       <button x-show="currentTab !== 'hub'" type="button" @click="currentTab = 'hub'" class="btn-white text-[11px] px-3.5 py-1.5 rounded-full flex items-center gap-1.5">
         <i class="fa-solid fa-house"></i> <span class="hidden sm:inline">Hub</span>
       </button>
@@ -216,13 +317,13 @@
 
   <!-- TOAST NOTIFICATION -->
   <div x-show="toast.show" 
-       x-transition:enter="transition ease-out duration-200"
+       x-transition:enter="transition ease-out duration-300"
        x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
        x-transition:enter-end="opacity-100 scale-100"
-       x-transition:leave="transition ease-in duration-150"
+       x-transition:leave="transition ease-in duration-200"
        x-transition:leave-start="opacity-100 scale-100"
        x-transition:leave-end="opacity-0 scale-95"
-       class="fixed top-4 right-4 left-4 z-[100] max-w-md mx-auto bg-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-black/5"
+       class="fixed top-4 right-4 left-4 z-[180] max-w-md mx-auto bg-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-black/5"
        style="display: none;">
     <div class="flex items-center space-x-2">
       <i class="fa-solid fa-circle-check text-base text-emerald-500"></i>
@@ -235,7 +336,7 @@
 
     <!-- ==================== 0. HUB PRINCIPAL ==================== -->
     <div x-show="currentTab === 'hub'" 
-         x-transition:enter="transition ease-out duration-150" 
+         x-transition:enter="transition ease-out duration-200" 
          x-transition:enter-start="opacity-0 scale-95" 
          x-transition:enter-end="opacity-100 scale-100" 
          class="w-full flex-1 flex flex-col justify-between h-[calc(100dvh-70px)] max-h-[calc(100dvh-70px)] py-2 gap-2 overflow-hidden">
@@ -247,7 +348,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #A8E6CF; color: #1D2A44;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🩺</span>
+            <span class="text-3xl sm:text-4xl transition-transform group-hover:scale-110">🩺</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black leading-tight">Fiches<br>san'</h3>
@@ -260,7 +361,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #FFB703; color: #2A385B;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🎨</span>
+            <span class="text-3xl sm:text-4xl transition-transform group-hover:scale-110">🎨</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Activité</h3>
@@ -273,7 +374,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #FFD1DC; color: #E63946;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🩹</span>
+            <span class="text-3xl sm:text-4xl transition-transform group-hover:scale-110">🩹</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Soins</h3>
@@ -286,7 +387,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #FF9F1C; color: #4A2810;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🍪</span>
+            <span class="text-3xl sm:text-4xl transition-transform group-hover:scale-110">🍪</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Goûter</h3>
@@ -299,7 +400,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #B7E4C7; color: #1B4332;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">🛍️</span>
+            <span class="text-3xl sm:text-4xl transition-transform group-hover:scale-110">🛍️</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Courses</h3>
@@ -312,7 +413,7 @@
                 class="hub-tile p-4 sm:p-5 text-left group"
                 style="background-color: #4CC9F0; color: #3A0CA3;">
           <div class="flex items-center justify-between">
-            <span class="text-3xl sm:text-4xl">📅</span>
+            <span class="text-3xl sm:text-4xl transition-transform group-hover:scale-110">📅</span>
           </div>
           <div class="mt-auto flex items-center justify-between">
             <h3 class="font-poster text-sm sm:text-lg md:text-xl font-black truncate">Planning</h3>
@@ -325,7 +426,7 @@
 
 
     <!-- ==================== 1. ONGLET : FICHES SAN' ==================== -->
-    <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b border-black/5 pb-3 gap-2">
@@ -364,7 +465,7 @@
           </template>
 
           <template x-for="e in getEnfantsFiltres()" :key="e.id">
-            <div @click="selectionnerEnfant(e)" class="card-item-pop p-3 flex items-center justify-between cursor-pointer hover:bg-white/90 transition-all">
+            <div @click="selectionnerEnfant(e)" class="card-item-pop p-3 flex items-center justify-between cursor-pointer hover:bg-white/90 transition-all hover:scale-[1.01]">
               <div class="space-y-0.5 overflow-hidden pr-2">
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <h4 class="font-bold text-xs md:text-sm truncate" x-text="e.prenom + ' ' + e.nom"></h4>
@@ -549,7 +650,7 @@
 
 
     <!-- ==================== 2. ONGLET : FICHE D'ACTIVITÉ ==================== -->
-    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
@@ -589,15 +690,47 @@
             <textarea x-model="fiche.deroulement" placeholder="Explication des étapes du jeu..." class="input-pop w-full px-3 py-2 text-xs h-16 resize-none"></textarea>
           </div>
 
+          <!-- Matériel avec Pavé Numérique Intégré -->
           <div class="card-item-pop p-3 space-y-2.5">
-            <span class="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-boxes-packing"></i> Matériel & Quantités
-            </span>
-            <div class="grid grid-cols-5 gap-1.5">
-              <input type="text" x-model="newMatosNom" placeholder="Article" class="col-span-3 input-pop px-2.5 py-1.5 text-xs">
-              <input type="text" x-model="newMatosQte" placeholder="Qté" class="col-span-1 input-pop px-1 py-1.5 text-xs text-center">
-              <button type="button" @click="addMatos()" class="col-span-1 btn-white rounded-xl text-sm flex items-center justify-center">+</button>
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-boxes-packing"></i> Matériel & Quantités
+              </span>
+              <button type="button" @click="showKeypadMatos = !showKeypadMatos" class="text-[10px] font-black btn-white px-2 py-0.5 rounded-full uppercase flex items-center gap-1">
+                <i class="fa-solid fa-calculator"></i> <span x-text="showKeypadMatos ? 'Masquer Clavier' : 'Clavier Numérique'"></span>
+              </button>
             </div>
+
+            <div class="grid grid-cols-5 gap-1.5">
+              <input type="text" x-model="newMatosNom" placeholder="Article (ex: Ballon)" class="col-span-3 input-pop px-2.5 py-1.5 text-xs">
+              <input type="text" x-model="newMatosQte" readonly @click="showKeypadMatos = true" placeholder="Qté" class="col-span-1 input-pop px-1 py-1.5 text-xs text-center font-black cursor-pointer bg-amber-50/50">
+              <button type="button" @click="addMatos()" class="col-span-1 btn-white rounded-xl text-sm flex items-center justify-center font-black">+</button>
+            </div>
+
+            <!-- KEYPAD NUMÉRIQUE SOURIS/TOUCH POUR QUANTITÉ -->
+            <div x-show="showKeypadMatos" x-transition class="p-2.5 bg-amber-100/60 rounded-xl border border-amber-200/80 space-y-2">
+              <div class="flex items-center justify-between text-[10px] font-bold uppercase text-amber-900">
+                <span>Saisie rapide quantité</span>
+                <span class="font-black text-xs bg-white px-2 py-0.5 rounded-md" x-text="newMatosQte || '0'"></span>
+              </div>
+              <div class="grid grid-cols-4 gap-1">
+                <button type="button" @click="saisirQteKeypad('1', 'matos')" class="keypad-btn">1</button>
+                <button type="button" @click="saisirQteKeypad('2', 'matos')" class="keypad-btn">2</button>
+                <button type="button" @click="saisirQteKeypad('3', 'matos')" class="keypad-btn">3</button>
+                <button type="button" @click="saisirQteKeypad('+1', 'matos')" class="keypad-btn bg-amber-200/80 text-amber-900">+1</button>
+                <button type="button" @click="saisirQteKeypad('4', 'matos')" class="keypad-btn">4</button>
+                <button type="button" @click="saisirQteKeypad('5', 'matos')" class="keypad-btn">5</button>
+                <button type="button" @click="saisirQteKeypad('6', 'matos')" class="keypad-btn">6</button>
+                <button type="button" @click="saisirQteKeypad('+5', 'matos')" class="keypad-btn bg-amber-200/80 text-amber-900">+5</button>
+                <button type="button" @click="saisirQteKeypad('7', 'matos')" class="keypad-btn">7</button>
+                <button type="button" @click="saisirQteKeypad('8', 'matos')" class="keypad-btn">8</button>
+                <button type="button" @click="saisirQteKeypad('9', 'matos')" class="keypad-btn">9</button>
+                <button type="button" @click="saisirQteKeypad('+10', 'matos')" class="keypad-btn bg-amber-200/80 text-amber-900">+10</button>
+                <button type="button" @click="saisirQteKeypad('0', 'matos')" class="keypad-btn col-span-2">0</button>
+                <button type="button" @click="saisirQteKeypad('CLEAR', 'matos')" class="keypad-btn col-span-2 bg-rose-100 text-rose-800">Effacer</button>
+              </div>
+            </div>
+
             <ul class="space-y-1 pt-1">
               <template x-for="(item, index) in fiche.materiel" :key="index">
                 <li class="flex items-center justify-between text-xs bg-white/80 px-2.5 py-1.5 rounded-lg border border-black/5">
@@ -609,7 +742,7 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-            <button type="button" @click="exportPDF()" class="btn-dark py-2.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 uppercase">
+            <button type="button" @click="exportPDFDirect()" class="btn-dark py-2.5 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 uppercase">
               <i class="fa-solid fa-file-pdf text-xs"></i> Export PDF
             </button>
             <button type="submit" class="btn-white py-2.5 rounded-full text-xs flex items-center justify-center gap-1.5">
@@ -620,58 +753,23 @@
       </div>
     </div>
 
-    <!-- TEMPLATE EXPORT PDF CORRECTEMENT MASQUÉ ET COMPATIBLE -->
-    <div id="pdf-template" style="position: absolute; top: -9999px; left: -9999px; width: 700px; background: #FFB703; padding: 24px; font-family: 'Outfit', sans-serif; color: #2A385B; box-sizing: border-box; border-radius: 24px;">
-      <div style="background: rgba(255, 255, 255, 0.92); border-radius: 20px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(42, 56, 91, 0.1); padding-bottom: 14px; margin-bottom: 18px;">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="width: 40px; height: 40px; background: #2A385B; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #FFF;">⚡</div>
-            <div>
-              <h1 style="margin: 0; font-size: 22px; font-family: 'Syne', sans-serif; font-weight: 900; color: #2A385B; text-transform: uppercase;" id="pdf-titre">Fiche d'Activité</h1>
-              <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; color: #2A385B;">ALSHFlow • Les 3 z'ailes</div>
-            </div>
-          </div>
-          <span style="background: #2A385B; color: #FFFFFF; padding: 6px 14px; border-radius: 9999px; font-weight: 800; font-size: 11px; text-transform: uppercase;" id="pdf-age">-6 ans</span>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
-          <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 12px 14px; border-radius: 14px;">
-            <span style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #2A385B; opacity: 0.6; display: block; margin-bottom: 3px;">📍 Lieu</span>
-            <span style="font-size: 12px; font-weight: 700; color: #2A385B;" id="pdf-lieu">-</span>
-          </div>
-          <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 12px 14px; border-radius: 14px;">
-            <span style="font-size: 9px; font-weight: 800; text-transform: uppercase; color: #2A385B; opacity: 0.6; display: block; margin-bottom: 3px;">🎯 Objectif Pédagogique</span>
-            <span style="font-size: 12px; font-weight: 700; color: #2A385B;" id="pdf-objectif">-</span>
-          </div>
-        </div>
-
-        <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 14px 16px; border-radius: 16px; margin-bottom: 16px;">
-          <h3 style="margin: 0 0 6px 0; color: #2A385B; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
-            📜 Déroulement / Consignes
-          </h3>
-          <p style="margin: 0; font-size: 11px; line-height: 1.5; font-weight: 600; color: #2A385B; white-space: pre-line;" id="pdf-deroulement">-</p>
-        </div>
-
-        <div style="background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.06); padding: 14px 16px; border-radius: 16px;">
-          <h3 style="margin: 0 0 8px 0; color: #2A385B; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
-            📦 Matériel & Quantités
-          </h3>
-          <ul style="margin: 0; padding-left: 18px; font-size: 11px; font-weight: 700; color: #2A385B; line-height: 1.5;" id="pdf-materiel"></ul>
-        </div>
-
-      </div>
-    </div>
-
 
     <!-- ==================== 3. ONGLET : CAHIER DE SOINS NUMÉRIQUE ==================== -->
-    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
           <h2 class="font-poster text-sm sm:text-base md:text-lg font-black flex items-center gap-2">
             <span>🩹</span> Cahier de Soins
           </h2>
+          <div class="flex gap-1.5">
+            <button type="button" @click="exporterSoinsCSV()" class="btn-white text-[10px] px-2.5 py-1.5 rounded-full flex items-center gap-1 uppercase">
+              <i class="fa-solid fa-file-csv text-emerald-600"></i> CSV
+            </button>
+            <button type="button" @click="exporterSoinsPDF()" class="btn-dark text-[10px] px-2.5 py-1.5 rounded-full flex items-center gap-1 uppercase">
+              <i class="fa-solid fa-file-pdf text-rose-400"></i> PDF
+            </button>
+          </div>
         </div>
 
         <form @submit.prevent="submitSoin()" class="space-y-3">
@@ -740,7 +838,7 @@
 
 
     <!-- ==================== 4. ONGLET : GOÛTER ==================== -->
-    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-3">
@@ -906,7 +1004,7 @@
 
 
     <!-- ==================== 5. ONGLET : COURSES MATÉRIEL & GOÛTERS ==================== -->
-    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
@@ -925,10 +1023,41 @@
         </div>
 
         <div x-show="subTabCourses === 'activites'" class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold uppercase opacity-80">Ajouter un article</span>
+            <button type="button" @click="showKeypadCourse = !showKeypadCourse" class="text-[10px] font-black btn-white px-2 py-0.5 rounded-full uppercase flex items-center gap-1">
+              <i class="fa-solid fa-calculator"></i> <span x-text="showKeypadCourse ? 'Masquer Clavier' : 'Clavier Numérique'"></span>
+            </button>
+          </div>
+
           <div class="grid grid-cols-5 gap-1.5">
-            <input type="text" x-model="nouvelleCourseNom" placeholder="Achat" class="col-span-3 input-pop px-2.5 py-1.5 text-xs">
-            <input type="text" x-model="nouvelleCourseQte" placeholder="Qté" class="col-span-1 input-pop px-1 py-1.5 text-xs text-center">
-            <button type="button" @click="addCourseDirecte()" class="col-span-1 btn-white rounded-xl text-sm flex items-center justify-center">+</button>
+            <input type="text" x-model="nouvelleCourseNom" placeholder="Achat (ex: Feutres)" class="col-span-3 input-pop px-2.5 py-1.5 text-xs">
+            <input type="text" x-model="nouvelleCourseQte" readonly @click="showKeypadCourse = true" placeholder="Qté" class="col-span-1 input-pop px-1 py-1.5 text-xs text-center font-black cursor-pointer bg-emerald-50/50">
+            <button type="button" @click="addCourseDirecte()" class="col-span-1 btn-white rounded-xl text-sm flex items-center justify-center font-black">+</button>
+          </div>
+
+          <!-- KEYPAD NUMÉRIQUE SOURIS/TOUCH COURSES -->
+          <div x-show="showKeypadCourse" x-transition class="p-2.5 bg-emerald-100/60 rounded-xl border border-emerald-200/80 space-y-2">
+            <div class="flex items-center justify-between text-[10px] font-bold uppercase text-emerald-900">
+              <span>Saisie quantité achat</span>
+              <span class="font-black text-xs bg-white px-2 py-0.5 rounded-md" x-text="nouvelleCourseQte || '0'"></span>
+            </div>
+            <div class="grid grid-cols-4 gap-1">
+              <button type="button" @click="saisirQteKeypad('1', 'course')" class="keypad-btn">1</button>
+              <button type="button" @click="saisirQteKeypad('2', 'course')" class="keypad-btn">2</button>
+              <button type="button" @click="saisirQteKeypad('3', 'course')" class="keypad-btn">3</button>
+              <button type="button" @click="saisirQteKeypad('+1', 'course')" class="keypad-btn bg-emerald-200/80 text-emerald-900">+1</button>
+              <button type="button" @click="saisirQteKeypad('4', 'course')" class="keypad-btn">4</button>
+              <button type="button" @click="saisirQteKeypad('5', 'course')" class="keypad-btn">5</button>
+              <button type="button" @click="saisirQteKeypad('6', 'course')" class="keypad-btn">6</button>
+              <button type="button" @click="saisirQteKeypad('+5', 'course')" class="keypad-btn bg-emerald-200/80 text-emerald-900">+5</button>
+              <button type="button" @click="saisirQteKeypad('7', 'course')" class="keypad-btn">7</button>
+              <button type="button" @click="saisirQteKeypad('8', 'course')" class="keypad-btn">8</button>
+              <button type="button" @click="saisirQteKeypad('9', 'course')" class="keypad-btn">9</button>
+              <button type="button" @click="saisirQteKeypad('+10', 'course')" class="keypad-btn bg-emerald-200/80 text-emerald-900">+10</button>
+              <button type="button" @click="saisirQteKeypad('0', 'course')" class="keypad-btn col-span-2">0</button>
+              <button type="button" @click="saisirQteKeypad('CLEAR', 'course')" class="keypad-btn col-span-2 bg-rose-100 text-rose-800">Effacer</button>
+            </div>
           </div>
 
           <div class="space-y-1.5">
@@ -991,7 +1120,7 @@
 
 
     <!-- ==================== 6. ONGLET : PLANNING ==================== -->
-    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-2.5 border-b border-black/5 pb-3">
@@ -1031,6 +1160,57 @@
             <button type="button" @click="changerJour(1)" class="opacity-60 hover:opacity-100 px-1.5 py-0.5"><i class="fa-solid fa-chevron-right text-xs"></i></button>
           </div>
           <div class="text-center text-[11px] font-black uppercase tracking-wider" x-text="formatDateLisible(dateAffichee)"></div>
+        </div>
+
+        <!-- MODULE NOVEAU : EFFECTIF DE LA JOURNÉE (Matin / Midi / Soir x Tranche d'âge) -->
+        <div class="card-item-pop p-3 space-y-2.5 bg-white/90 border border-black/5">
+          <div class="flex items-center justify-between border-b border-black/5 pb-1.5">
+            <span class="text-xs font-black uppercase tracking-wider flex items-center gap-1.5 text-indigo-950">
+              <i class="fa-solid fa-users text-indigo-600"></i> Effectif du jour
+            </span>
+            <span class="text-[10px] font-bold opacity-60">Saisie directe</span>
+          </div>
+
+          <!-- Tableau Synthétique Compact -->
+          <div class="grid grid-cols-4 gap-1.5 text-center text-xs">
+            <div class="col-span-1"></div>
+            <div class="font-black text-[10px] uppercase opacity-70">🌱 -6 ans</div>
+            <div class="font-black text-[10px] uppercase opacity-70">⚡ +6 ans</div>
+            <div class="font-black text-[10px] uppercase text-indigo-950 bg-indigo-50 rounded-md py-0.5">Total</div>
+
+            <!-- Matin -->
+            <div class="font-bold text-[10px] uppercase flex items-center gap-1 justify-start">☀️ Matin</div>
+            <div>
+              <input type="number" min="0" x-model.number="getEffectifDuJour(dateAffichee).matinMoins6" class="input-pop w-full text-center py-1 text-xs font-bold">
+            </div>
+            <div>
+              <input type="number" min="0" x-model.number="getEffectifDuJour(dateAffichee).matinPlus6" class="input-pop w-full text-center py-1 text-xs font-bold">
+            </div>
+            <div class="font-black text-xs flex items-center justify-center bg-indigo-50 rounded-lg text-indigo-900" 
+                 x-text="(getEffectifDuJour(dateAffichee).matinMoins6 || 0) + (getEffectifDuJour(dateAffichee).matinPlus6 || 0)"></div>
+
+            <!-- Midi -->
+            <div class="font-bold text-[10px] uppercase flex items-center gap-1 justify-start">🍽️ Midi</div>
+            <div>
+              <input type="number" min="0" x-model.number="getEffectifDuJour(dateAffichee).midiMoins6" class="input-pop w-full text-center py-1 text-xs font-bold">
+            </div>
+            <div>
+              <input type="number" min="0" x-model.number="getEffectifDuJour(dateAffichee).midiPlus6" class="input-pop w-full text-center py-1 text-xs font-bold">
+            </div>
+            <div class="font-black text-xs flex items-center justify-center bg-indigo-50 rounded-lg text-indigo-900" 
+                 x-text="(getEffectifDuJour(dateAffichee).midiMoins6 || 0) + (getEffectifDuJour(dateAffichee).midiPlus6 || 0)"></div>
+
+            <!-- Soir -->
+            <div class="font-bold text-[10px] uppercase flex items-center gap-1 justify-start">🌆 Soir</div>
+            <div>
+              <input type="number" min="0" x-model.number="getEffectifDuJour(dateAffichee).soirMoins6" class="input-pop w-full text-center py-1 text-xs font-bold">
+            </div>
+            <div>
+              <input type="number" min="0" x-model.number="getEffectifDuJour(dateAffichee).soirPlus6" class="input-pop w-full text-center py-1 text-xs font-bold">
+            </div>
+            <div class="font-black text-xs flex items-center justify-center bg-indigo-50 rounded-lg text-indigo-900" 
+                 x-text="(getEffectifDuJour(dateAffichee).soirMoins6 || 0) + (getEffectifDuJour(dateAffichee).soirPlus6 || 0)"></div>
+          </div>
         </div>
 
         <!-- ENCADRÉ SORTIE SPÉCIALE -->
@@ -1158,6 +1338,32 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- MODAL : ESPACE DIRECTEUR & PIN -->
+    <div x-show="showModalDirecteur" x-transition class="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
+      <div class="card-pop p-5 max-w-sm w-full space-y-3.5 bg-white text-slate-900 shadow-2xl">
+        <h3 class="font-poster text-base border-b border-black/10 pb-2 flex items-center gap-2">
+          <span>🗝️</span> Espace Directeur
+        </h3>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Mot de passe Directeur</label>
+            <input type="password" x-model="pwdDirecteurSaisi" placeholder="Mot de passe" class="input-pop w-full px-3 py-2 text-xs">
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase mb-1">Nouveau Code PIN (4 chiffres)</label>
+            <input type="text" maxlength="4" inputmode="numeric" pattern="[0-9]*" x-model="nouveauPinSaisi" placeholder="ex: 1234" class="input-pop w-full px-3 py-2 text-xs text-center font-black tracking-widest text-lg">
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t border-black/10">
+          <button type="button" @click="showModalDirecteur = false" class="btn-white flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
+          <button type="button" @click="changerPinEtDeconnecter()" class="btn-dark flex-1 py-2 rounded-full text-xs bg-rose-600 hover:bg-rose-700">Changer & LogOut</button>
+        </div>
       </div>
     </div>
 
@@ -1318,7 +1524,7 @@
             <input type="text" x-model="saisiePlanning.matin" placeholder="ex: Jeu de piste" class="input-pop w-full px-2 py-1 text-xs">
             <div class="flex items-center gap-1.5 pt-0.5">
               <span class="text-[8px] opacity-70 font-bold uppercase">Tranche :</span>
-              <select x-model="saisiePlanning.ageMatin" class="input-pop px-1.5 py-0.2 text-[9px] font-bold flex-1">
+              <select x-model="saisiePlanning.ageMatin" class="input-pop text-[10px] py-0.5 px-1 font-bold">
                 <option value="-6 ans">-6 ans</option>
                 <option value="+6 ans">+6 ans</option>
               </select>
@@ -1327,766 +1533,546 @@
 
           <div class="space-y-1 bg-white/50 p-2 rounded-xl border border-black/5">
             <span class="text-[9px] font-bold uppercase block">🌆 Après-midi</span>
-            <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand Jeu Forêt" class="input-pop w-full px-2 py-1 text-xs">
+            <input type="text" x-model="saisiePlanning.aprem" placeholder="ex: Grand jeu" class="input-pop w-full px-2 py-1 text-xs">
             <div class="flex items-center gap-1.5 pt-0.5">
               <span class="text-[8px] opacity-70 font-bold uppercase">Tranche :</span>
-              <select x-model="saisiePlanning.ageAprem" class="input-pop px-1.5 py-0.2 text-[9px] font-bold flex-1">
+              <select x-model="saisiePlanning.ageAprem" class="input-pop text-[10px] py-0.5 px-1 font-bold">
                 <option value="-6 ans">-6 ans</option>
                 <option value="+6 ans">+6 ans</option>
               </select>
             </div>
           </div>
-
         </div>
 
         <div class="flex gap-2 pt-2 border-t border-black/5">
           <button type="button" @click="showAddAnimModal = false" class="btn-dark flex-1 py-1.5 rounded-full text-xs uppercase">Annuler</button>
-          <button type="button" @click="validerPlanning()" class="btn-white flex-1 py-1.5 rounded-full text-xs">Valider</button>
+          <button type="button" @click="enregistrerCreneauPlanning()" class="btn-white flex-1 py-1.5 rounded-full text-xs">Enregistrer</button>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- LOGIQUE ALPINE JS -->
+  <!-- JAVASCRIPT APP LOGIC -->
   <script>
     function alshApp() {
-      const today = new Date();
-      const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-      const loadFromStorage = (key, fallback) => {
-        try {
-          const saved = localStorage.getItem('alshflow_' + key);
-          return saved ? JSON.parse(saved) : fallback;
-        } catch(e) {
-          return fallback;
-        }
-      };
-
       return {
-        currentTab: 'hub', 
-        subTabCourses: 'activites', 
-        dateAffichee: todayISO,
-        todayDateISO: todayISO,
-        filtrePlanning: 'anim', 
+        currentTab: 'hub',
+        subTabCourses: 'activites',
         filtreGroupeSanitaire: 'tous',
-        newMatosNom: '',
-        newMatosQte: '',
-        nouvelleCourseNom: '',
-        nouvelleCourseQte: '',
-        showAddAnimModal: false,
-        showOrgModal: false,
-        showAddRecetteModal: false,
-        showPlanifModal: false,
-        showAddEnfantModal: false,
-        isEditingEnfant: false,
-        enfantEditingId: null,
-        animSelectionne: null,
-        enfantSelectionne: null,
+        filtrePlanning: 'anim',
         searchEnfant: '',
+        dateAffichee: new Date().toISOString().split('T')[0],
+        semaineOffset: 0,
+        semaineAnimOffset: 0,
+
+        // PWA & Pin Security
+        isOnline: navigator.onLine,
+        isLocked: false,
+        pinDefaut: '1234',
+        pinSaisi: '',
+        showModalDirecteur: false,
+        pwdDirecteurSaisi: '',
+        nouveauPinSaisi: '',
+
+        // Keypads Toggles
+        showKeypadMatos: false,
+        showKeypadCourse: false,
+
         toast: { show: false, message: '' },
 
-        semaineActiveOffset: 0,
-        animSemaineOffset: 0,
-
-        enfants: loadFromStorage('enfants', [
-          {
-            id: 1,
-            nom: 'Dupont',
-            prenom: 'Lucas',
-            dateNaissance: '2019-05-14',
-            responsables: [
-              { nom: 'Maman Dupont', telephone: '0611223344' },
-              { nom: 'Papa Dupont', telephone: '0655667788' }
-            ],
-            pai: 'Allergie sévère aux arachides',
-            droitImage: true
-          },
-          {
-            id: 2,
-            nom: 'Martin',
-            prenom: 'Zoé',
-            dateNaissance: '2016-11-20',
-            responsables: [
-              { nom: 'Papa Martin', telephone: '0699887766' }
-            ],
-            pai: '',
-            droitImage: false
-          }
-        ]),
-
-        nouvelEnfant: {
-          nom: '',
-          prenom: '',
-          dateNaissance: '',
-          responsables: [],
-          aPAI: false,
-          pai: '',
-          droitImage: true
-        },
-
-        nouvelleRecette: { nom: '', ingredients: [] },
-        tempIng: { nom: '', qte: '', unite: 'g' },
-
-        recettesGouter: loadFromStorage('recettesGouter', [
-          {
-            id: 'recette-chocolat',
-            nom: 'Gâteau au Chocolat 🍫',
-            ingredients: [
-              { nom: 'Farine', qte: 100, unite: 'g' },
-              { nom: 'Chocolat noir', qte: 200, unite: 'g' },
-              { nom: 'Beurre', qte: 125, unite: 'g' },
-              { nom: 'Sucre', qte: 100, unite: 'g' },
-              { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }
-            ]
-          },
-          {
-            id: 'recette-pommes',
-            nom: 'Gâteau aux Pommes 🍏',
-            ingredients: [
-              { nom: 'Farine', qte: 150, unite: 'g' },
-              { nom: 'Pommes', qte: 3, unite: 'pièce(s)' },
-              { nom: 'Sucre', qte: 80, unite: 'g' },
-              { nom: 'Beurre', qte: 80, unite: 'g' },
-              { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }
-            ]
-          }
-        ]),
-
-        saisieGouter: {
-          date: todayISO,
-          recetteId: 'recette-chocolat',
-          anim: '',
-          nbEnfants: 32
-        },
-
-        goutersPlanifies: loadFromStorage('goutersPlanifies', []),
-        coursesAchetesGouter: loadFromStorage('coursesAchetesGouter', {}),
+        showAddEnfantModal: false,
+        isEditingEnfant: false,
+        enfantSelectionne: null,
+        nouvelEnfant: { id: null, prenom: '', nom: '', dateNaissance: '', responsables: [{ nom: '', telephone: '' }], aPAI: false, pai: '', droitImage: true },
 
         fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
+        newMatosNom: '',
+        newMatosQte: '',
+
         soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
-        registreSoins: loadFromStorage('registreSoins', []),
-        listeCourses: loadFromStorage('listeCourses', []),
-        
-        saisiePlanning: { nom: '', date: todayISO, matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' },
-        
-        organisations: loadFromStorage('organisations', {}),
-        saisieOrg: { date: todayISO, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] },
+        registreSoins: [],
+
+        recettesGouter: [
+          { id: 1, nom: 'Gâteau Marbré', ingredients: [{ nom: 'Farine', qte: 250, unite: 'g' }, { nom: 'Sucre', qte: 150, unite: 'g' }, { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }] },
+          { id: 2, nom: 'Crêpes Party', ingredients: [{ nom: 'Farine', qte: 500, unite: 'g' }, { nom: 'Lait', qte: 1, unite: 'L' }, { nom: 'Œufs', qte: 6, unite: 'pièce(s)' }] }
+        ],
+        showAddRecetteModal: false,
+        nouvelleRecette: { nom: '', ingredients: [] },
+        tempIng: { nom: '', qte: '', unite: 'g' },
+        goutersPlanifies: [],
+        showPlanifModal: false,
+        saisieGouter: { date: new Date().toISOString().split('T')[0], recetteId: 1, anim: '', nbEnfants: 30 },
+
+        listeCourses: [],
+        nouvelleCourseNom: '',
+        nouvelleCourseQte: '',
+        coursesGouterAchetes: {},
+
+        planningAnims: [
+          { id: 1, nom: 'Sarah', jours: { [new Date().toISOString().split('T')[0]]: { matin: 'Grand Jeu', ageMatin: '-6 ans', aprem: 'Bricolage', ageAprem: '-6 ans' } } }
+        ],
+        effectifsJour: {},
+        animSelectionne: null,
+        showAddAnimModal: false,
+        saisiePlanning: { nom: '', date: new Date().toISOString().split('T')[0], matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' },
+
+        sortiesOrganisees: [],
+        showOrgModal: false,
+        saisieOrg: { date: new Date().toISOString().split('T')[0], titre: '', lieu: '', busAller: '', busRetour: '', groupes: [] },
         tempGroupe: { anim: '', enfants: '' },
-        
-        planningGlobal: loadFromStorage('planningGlobal', [
-          {
-            id: 101,
-            nom: 'Sarah',
-            dates: {
-              [todayISO]: { matin: 'Jeux d\'expression', ageMatin: '-6 ans', aprem: 'Atelier Pâtisserie', ageAprem: '-6 ans' }
-            }
-          },
-          {
-            id: 102,
-            nom: 'Thomas',
-            dates: {
-              [todayISO]: { matin: 'Sport Co', ageMatin: '+6 ans', aprem: 'Grand Jeu Forêt', ageAprem: '+6 ans' }
-            }
+
+        enfantsList: [
+          { id: 1, prenom: 'Lucas', nom: 'Dupont', dateNaissance: '2019-05-12', responsables: [{ nom: 'Marie Dupont', telephone: '06 12 34 56 78' }], pai: '', droitImage: true },
+          { id: 2, prenom: 'Emma', nom: 'Martin', dateNaissance: '2016-11-03', responsables: [{ nom: 'Jean Martin', telephone: '06 98 76 54 32' }], pai: 'Allergie Arachides', droitImage: false }
+        ],
+
+        initApp() {
+          // Listen Online status
+          window.addEventListener('online', () => this.isOnline = true);
+          window.addEventListener('offline', () => this.isOnline = false);
+
+          // PWA Manifest dynamic injection
+          const manifest = {
+            name: "ALSHFlow",
+            short_name: "ALSHFlow",
+            start_url: ".",
+            display: "standalone",
+            background_color: "#F4F5F7",
+            theme_color: "#F4F5F7",
+            icons: [{ src: "https://cdn-icons-png.flaticon.com/512/3068/3068327.png", sizes: "512x512", type: "image/png" }]
+          };
+          const link = document.createElement('link');
+          link.rel = 'manifest';
+          link.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
+          document.head.appendChild(link);
+
+          // Service Worker PWA
+          if ('serviceWorker' in navigator) {
+            const swCode = `
+              self.addEventListener('install', e => e.waitUntil(caches.open('alsh-v1').then(c => c.addAll(['/']))));
+              self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
           }
-        ]),
 
-        init() {
-          this.$watch('enfants', val => localStorage.setItem('alshflow_enfants', JSON.stringify(val)));
-          this.$watch('registreSoins', val => localStorage.setItem('alshflow_registreSoins', JSON.stringify(val)));
-          this.$watch('listeCourses', val => localStorage.setItem('alshflow_listeCourses', JSON.stringify(val)));
-          this.$watch('planningGlobal', val => localStorage.setItem('alshflow_planningGlobal', JSON.stringify(val)));
-          this.$watch('organisations', val => localStorage.setItem('alshflow_organisations', JSON.stringify(val)));
-          this.$watch('goutersPlanifies', val => localStorage.setItem('alshflow_goutersPlanifies', JSON.stringify(val)));
-          this.$watch('coursesAchetesGouter', val => localStorage.setItem('alshflow_coursesAchetesGouter', JSON.stringify(val)));
-          this.$watch('recettesGouter', val => localStorage.setItem('alshflow_recettesGouter', JSON.stringify(val)));
+          // Charger Données LocalStorage
+          const savedSoins = localStorage.getItem('alsh_soins');
+          if (savedSoins) this.registreSoins = JSON.parse(savedSoins);
 
-          this.nettoyerCreneauxPasses();
+          const savedEnfants = localStorage.getItem('alsh_enfants');
+          if (savedEnfants) this.enfantsList = JSON.parse(savedEnfants);
+
+          const savedPin = localStorage.getItem('alsh_pin');
+          if (savedPin) this.pinDefaut = savedPin;
+
+          const savedEffectifs = localStorage.getItem('alsh_effectifs');
+          if (savedEffectifs) this.effectifsJour = JSON.parse(savedEffectifs);
         },
 
         showToast(msg) {
           this.toast.message = msg;
           this.toast.show = true;
-          setTimeout(() => { this.toast.show = false; }, 2500);
+          setTimeout(() => this.toast.show = false, 2500);
         },
 
-        formatTimeInput(val) {
-          if (!val) return '';
-          let cleaned = val.replace(/\D/g, '').slice(0, 4);
-          if (cleaned.length >= 3) {
-            return cleaned.slice(0, 2) + 'h' + cleaned.slice(2);
-          } else if (cleaned.length === 2) {
-            return cleaned + 'h';
-          }
-          return cleaned;
-        },
-
-        formatDateLisible(dateStr) {
-          if (!dateStr) return '-';
-          const d = new Date(dateStr + 'T00:00:00');
-          return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
-        },
-
-        nettoyerCreneauxPasses() {
-          const aujourdhui = this.todayDateISO;
-          this.planningGlobal.forEach(anim => {
-            if (anim.dates) {
-              Object.keys(anim.dates).forEach(dateKey => {
-                if (dateKey < aujourdhui) {
-                  delete anim.dates[dateKey];
-                }
-              });
+        // Security PIN Logic
+        saisirPinDigit(digit) {
+          if (this.pinSaisi.length < 4) {
+            this.pinSaisi += digit;
+            if (this.pinSaisi.length === 4) {
+              setTimeout(() => this.validerPin(), 100);
             }
+          }
+        },
+        effacerPinDigit() {
+          this.pinSaisi = this.pinSaisi.slice(0, -1);
+        },
+        validerPin() {
+          if (this.pinSaisi === this.pinDefaut) {
+            this.isLocked = false;
+            this.pinSaisi = '';
+            this.showToast("Accès Déverrouillé");
+          } else {
+            this.pinSaisi = '';
+            alert("Code PIN Incorrect !");
+          }
+        },
+        changerPinEtDeconnecter() {
+          if (this.pwdDirecteurSaisi !== 'admin') {
+            alert("Mot de passe Directeur incorrect !");
+            return;
+          }
+          if (this.nouveauPinSaisi.length !== 4) {
+            alert("Le PIN doit contenir exactement 4 chiffres.");
+            return;
+          }
+          this.pinDefaut = this.nouveauPinSaisi;
+          localStorage.setItem('alsh_pin', this.pinDefaut);
+          this.showModalDirecteur = false;
+          this.isLocked = true;
+          this.pwdDirecteurSaisi = '';
+          this.nouveauPinSaisi = '';
+          this.showToast("Code PIN modifié. Appliqué !");
+        },
+
+        // Keypad Numérique Handler
+        saisirQteKeypad(val, cible) {
+          let currentVal = cible === 'matos' ? this.newMatosQte : this.nouvelleCourseQte;
+          currentVal = String(currentVal || '');
+
+          if (val === 'CLEAR') {
+            currentVal = '';
+          } else if (val.startsWith('+')) {
+            const add = parseInt(val.replace('+', ''), 10);
+            const num = parseInt(currentVal || '0', 10);
+            currentVal = String(num + add);
+          } else {
+            currentVal += val;
+          }
+
+          if (cible === 'matos') this.newMatosQte = currentVal;
+          if (cible === 'course') this.nouvelleCourseQte = currentVal;
+        },
+
+        // Effectifs du Jour
+        getEffectifDuJour(dateKey) {
+          if (!this.effectifsJour[dateKey]) {
+            this.effectifsJour[dateKey] = { matinMoins6: 0, matinPlus6: 0, midiMoins6: 0, midiPlus6: 0, soirMoins6: 0, soirPlus6: 0 };
+          }
+          // auto-save
+          localStorage.setItem('alsh_effectifs', JSON.stringify(this.effectifsJour));
+          return this.effectifsJour[dateKey];
+        },
+
+        // Fiches Sanitaires
+        getAgeEnfant(dateNaissance) {
+          if (!dateNaissance) return 0;
+          const diff = Date.now() - new Date(dateNaissance).getTime();
+          const ageDate = new Date(diff);
+          return Math.abs(ageDate.getUTCFullYear() - 1970);
+        },
+        formatDateLisible(d) {
+          if (!d) return '';
+          const parts = d.split('-');
+          if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+          return d;
+        },
+        getEnfantsFiltres() {
+          return this.enfantsList.filter(e => {
+            const age = this.getAgeEnfant(e.dateNaissance);
+            const matchGroupe = this.filtreGroupeSanitaire === 'tous' || 
+                               (this.filtreGroupeSanitaire === '-6ans' && age < 6) || 
+                               (this.filtreGroupeSanitaire === '+6ans' && age >= 6);
+            const query = this.searchEnfant.toLowerCase();
+            const matchSearch = e.prenom.toLowerCase().includes(query) || e.nom.toLowerCase().includes(query);
+            return matchGroupe && matchSearch;
           });
         },
+        ouvrirModalAddEnfant() {
+          this.isEditingEnfant = false;
+          this.nouvelEnfant = { id: Date.now(), prenom: '', nom: '', dateNaissance: '', responsables: [{ nom: '', telephone: '' }], aPAI: false, pai: '', droitImage: true };
+          this.showAddEnfantModal = true;
+        },
+        ajouterResponsableModal() {
+          this.nouvelEnfant.responsables.push({ nom: '', telephone: '' });
+        },
+        enregistrerEnfant() {
+          if (this.isEditingEnfant) {
+            const idx = this.enfantsList.findIndex(e => e.id === this.nouvelEnfant.id);
+            if (idx !== -1) this.enfantsList[idx] = JSON.parse(JSON.stringify(this.nouvelEnfant));
+          } else {
+            this.enfantsList.push(JSON.parse(JSON.stringify(this.nouvelEnfant)));
+          }
+          localStorage.setItem('alsh_enfants', JSON.stringify(this.enfantsList));
+          this.showAddEnfantModal = false;
+          this.showToast(this.isEditingEnfant ? "Fiche enfant mise à jour" : "Enfant ajouté");
+        },
+        selectionnerEnfant(e) { this.enfantSelectionne = e; },
+        editerEnfant(e) {
+          this.isEditingEnfant = true;
+          this.nouvelEnfant = JSON.parse(JSON.stringify(e));
+          this.enfantSelectionne = null;
+          this.showAddEnfantModal = true;
+        },
+        supprimerEnfant(id) {
+          if (confirm("Supprimer cette fiche enfant ?")) {
+            this.enfantsList = this.enfantsList.filter(e => e.id !== id);
+            localStorage.setItem('alsh_enfants', JSON.stringify(this.enfantsList));
+            this.enfantSelectionne = null;
+            this.showToast("Fiche supprimée");
+          }
+        },
 
-        // --- FICHE D'ACTIVITÉ & EXPORT PDF ---
+        // Activité & Matériel
         addMatos() {
           if (this.newMatosNom.trim() !== '') {
             this.fiche.materiel.push({ nom: this.newMatosNom.trim(), qte: this.newMatosQte.trim() || '1' });
             this.newMatosNom = '';
             this.newMatosQte = '';
+            this.showKeypadMatos = false;
           }
         },
-
-        removeMatos(index) {
-          this.fiche.materiel.splice(index, 1);
-        },
-
+        removeMatos(index) { this.fiche.materiel.splice(index, 1); },
         submitFiche() {
-          if (!this.fiche.titre.trim()) {
-            this.showToast('Indique un titre d\'activité !');
-            return;
-          }
-          this.fiche.materiel.forEach(m => {
-            this.listeCourses.push({
-              id: Date.now() + Math.random(),
-              nom: m.nom,
-              qte: m.qte,
-              activite: this.fiche.titre,
-              achete: false
-            });
+          this.fiche.materiel.forEach(item => {
+            this.listeCourses.push({ id: Date.now() + Math.random(), nom: item.nom, qte: item.qte, activite: this.fiche.titre, achete: false });
           });
-          this.showToast('Fiche validée & matériel envoyé en courses ! 🛒');
+          this.showToast("Matériel transféré dans la liste de courses !");
+          this.currentTab = 'courses';
+          this.subTabCourses = 'activites';
         },
 
-        exportPDF() {
-          if (!this.fiche.titre.trim()) {
-            this.showToast('Saisis un titre d\'activité d\'abord !');
-            return;
-          }
-
-          document.getElementById('pdf-titre').textContent = this.fiche.titre;
-          document.getElementById('pdf-age').textContent = this.fiche.age;
-          document.getElementById('pdf-lieu').textContent = this.fiche.lieu || 'Non renseigné';
-          document.getElementById('pdf-objectif').textContent = this.fiche.objectif || 'Non renseigné';
-          document.getElementById('pdf-deroulement').textContent = this.fiche.deroulement || 'Aucun déroulement renseigné.';
-
-          const matList = document.getElementById('pdf-materiel');
-          matList.innerHTML = '';
-          if (this.fiche.materiel.length === 0) {
-            matList.innerHTML = '<li>Aucun matériel spécifique.</li>';
-          } else {
-            this.fiche.materiel.forEach(m => {
-              const li = document.createElement('li');
-              li.textContent = `${m.nom} — Quantité : ${m.qte}`;
-              matList.appendChild(li);
-            });
-          }
-
-          const element = document.getElementById('pdf-template');
-          
+        // Rendu & Correctif PDF avec Temp Container DOM Visible
+        exportPDFDirect() {
+          const element = document.createElement('div');
           element.style.position = 'fixed';
-          element.style.top = '10px';
-          element.style.left = '10px';
-          element.style.zIndex = '99999';
+          element.style.top = '0';
+          element.style.left = '-9999px';
           element.style.opacity = '1';
+          element.style.width = '700px';
+          element.style.background = '#FFB703';
+          element.style.padding = '24px';
+          element.style.borderRadius = '24px';
+          element.style.fontFamily = "'Outfit', sans-serif";
+
+          let matosListHtml = this.fiche.materiel.map(m => `<li>${m.nom} — Qté: ${m.qte}</li>`).join('');
+          if(!matosListHtml) matosListHtml = '<li>Aucun matériel spécifié</li>';
+
+          element.innerHTML = `
+            <div style="background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 24px; color: #2A385B;">
+              <h1 style="font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 900; text-transform: uppercase; margin:0 0 10px 0;">🎨 ${this.fiche.titre || 'Fiche d\'Activité'}</h1>
+              <p><b>Tranche d'âge :</b> ${this.fiche.age} | <b>Lieu :</b> ${this.fiche.lieu || 'Non spécifié'}</p>
+              <hr style="margin: 10px 0; border: 0; border-top: 1px solid rgba(0,0,0,0.1);">
+              <p><b>Objectif :</b> ${this.fiche.objectif || '-'}</p>
+              <p><b>Déroulement :</b><br>${this.fiche.deroulement || '-'}</p>
+              <h3 style="margin-top: 15px; font-weight:800;">Matériel Nécessaire :</h3>
+              <ul>${matosListHtml}</ul>
+            </div>
+          `;
+
+          document.body.appendChild(element);
 
           const opt = {
-            margin: [10, 10, 10, 10],
-            filename: `Fiche_Activite_${this.fiche.titre.replace(/\s+/g, '_')}.pdf`,
+            margin: 0.3,
+            filename: `Fiche_Activite_${this.fiche.titre || 'ALSH'}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            html2canvas: { scale: 2, logging: false },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
           };
 
           html2pdf().set(opt).from(element).save().then(() => {
-            element.style.position = 'absolute';
-            element.style.top = '-9999px';
-            element.style.left = '-9999px';
-            this.showToast('PDF généré avec succès ! 📄');
-          }).catch((err) => {
-            console.error(err);
-            element.style.position = 'absolute';
-            element.style.top = '-9999px';
-            element.style.left = '-9999px';
-            this.showToast('Erreur lors de la création du PDF.');
+            document.body.removeChild(element);
+            this.showToast("Export PDF réussi !");
           });
         },
 
-        // --- CAHIER DE SOINS ---
+        // Cahier de soins
         submitSoin() {
-          if (!this.soin.enfant.trim() || !this.soin.incident.trim()) {
-            this.showToast('Renseigne au moins l\'enfant et l\'incident !');
-            return;
-          }
-          const now = new Date();
-          const heure = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-          this.registreSoins.unshift({
+          const nouveauSoin = {
             id: Date.now(),
-            heure: heure,
-            enfant: this.soin.enfant.trim(),
-            incident: this.soin.incident.trim(),
-            action: this.soin.action.trim(),
+            heure: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            enfant: this.soin.enfant,
+            incident: this.soin.incident,
+            action: this.soin.action,
             prevenirFamille: this.soin.prevenirFamille
-          });
+          };
+          this.registreSoins.unshift(nouveauSoin);
+          localStorage.setItem('alsh_soins', JSON.stringify(this.registreSoins));
           this.soin = { enfant: '', incident: '', action: '', prevenirFamille: false };
-          this.showToast('Soin enregistré ! 🩹');
+          this.showToast("Soin enregistré");
         },
-
         deleteSoin(id) {
           this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-          this.showToast('Soin supprimé.');
+          localStorage.setItem('alsh_soins', JSON.stringify(this.registreSoins));
+        },
+        exporterSoinsCSV() {
+          let csvContent = "data:text/csv;charset=utf-8,Heure;Enfant;Incident;Soin;Avertir Famille\n";
+          this.registreSoins.forEach(s => {
+            csvContent += `"${s.heure}";"${s.enfant}";"${s.incident}";"${s.action}";"${s.prevenirFamille ? 'OUI' : 'NON'}"\n`;
+          });
+          const encodedUri = encodeURI(csvContent);
+          const link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", `Registre_Soins_${new Date().toISOString().split('T')[0]}.csv`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        },
+        exporterSoinsPDF() {
+          const element = document.createElement('div');
+          element.style.padding = '20px';
+          element.style.fontFamily = 'Arial, sans-serif';
+          
+          let rows = this.registreSoins.map(s => `
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;">${s.heure}</td>
+              <td style="padding: 8px; border: 1px solid #ddd;"><b>${s.enfant}</b></td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${s.incident}</td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${s.action}</td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${s.prevenirFamille ? '⚠️ OUI' : 'NON'}</td>
+            </tr>
+          `).join('');
+
+          element.innerHTML = `
+            <h2 style="color: #E63946;">🩹 Cahier de Soins Reglementaire — ALSHFlow</h2>
+            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+              <thead>
+                <tr style="background: #FFD1DC; color: #E63946;">
+                  <th style="padding: 8px; border: 1px solid #ddd;">Heure</th>
+                  <th style="padding: 8px; border: 1px solid #ddd;">Enfant</th>
+                  <th style="padding: 8px; border: 1px solid #ddd;">Incident</th>
+                  <th style="padding: 8px; border: 1px solid #ddd;">Soin</th>
+                  <th style="padding: 8px; border: 1px solid #ddd;">Famille</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          `;
+          document.body.appendChild(element);
+          html2pdf().from(element).save(`Cahier_Soins_${new Date().toISOString().split('T')[0]}.pdf`).then(() => document.body.removeChild(element));
         },
 
-        // --- FICHES SANITAIRES ---
-        ouvrirModalAddEnfant() {
-          this.isEditingEnfant = false;
-          this.enfantEditingId = null;
-          this.nouvelEnfant = {
-            nom: '',
-            prenom: '',
-            dateNaissance: '',
-            responsables: [{ nom: '', telephone: '' }],
-            aPAI: false,
-            pai: '',
-            droitImage: true
-          };
-          this.showAddEnfantModal = true;
-        },
-
-        editerEnfant(enfant) {
-          this.enfantSelectionne = null;
-          this.isEditingEnfant = true;
-          this.enfantEditingId = enfant.id;
-          this.nouvelEnfant = {
-            nom: enfant.nom,
-            prenom: enfant.prenom,
-            dateNaissance: enfant.dateNaissance,
-            responsables: JSON.parse(JSON.stringify(enfant.responsables || [{ nom: '', telephone: '' }])),
-            aPAI: !!enfant.pai,
-            pai: enfant.pai || '',
-            droitImage: enfant.droitImage
-          };
-          this.showAddEnfantModal = true;
-        },
-
-        ajouterResponsableModal() {
-          this.nouvelEnfant.responsables.push({ nom: '', telephone: '' });
-        },
-
-        getEnfantsFiltres() {
-          let liste = this.enfants;
-
-          if (this.filtreGroupeSanitaire === '-6ans') {
-            liste = liste.filter(e => this.getAgeEnfant(e.dateNaissance) < 6);
-          } else if (this.filtreGroupeSanitaire === '+6ans') {
-            liste = liste.filter(e => this.getAgeEnfant(e.dateNaissance) >= 6);
-          }
-
-          if (this.searchEnfant.trim()) {
-            const q = this.searchEnfant.toLowerCase();
-            liste = liste.filter(e => e.nom.toLowerCase().includes(q) || e.prenom.toLowerCase().includes(q));
-          }
-
-          return liste;
-        },
-
-        getAgeEnfant(dateNaissStr) {
-          if (!dateNaissStr) return 0;
-          const birth = new Date(dateNaissStr);
-          const today = new Date();
-          let age = today.getFullYear() - birth.getFullYear();
-          const m = today.getMonth() - birth.getMonth();
-          if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-            age--;
-          }
-          return age;
-        },
-
-        selectionnerEnfant(enfant) {
-          this.enfantSelectionne = enfant;
-        },
-
-        enregistrerEnfant() {
-          const respsFiltres = this.nouvelEnfant.responsables.filter(r => r.nom.trim() !== '' || r.telephone.trim() !== '');
-
-          if (this.isEditingEnfant) {
-            const idx = this.enfants.findIndex(e => e.id === this.enfantEditingId);
-            if (idx !== -1) {
-              this.enfants[idx] = {
-                id: this.enfantEditingId,
-                nom: this.nouvelEnfant.nom.trim(),
-                prenom: this.nouvelEnfant.prenom.trim(),
-                dateNaissance: this.nouvelEnfant.dateNaissance,
-                responsables: respsFiltres.length > 0 ? respsFiltres : [{ nom: 'Non spécifié', telephone: '-' }],
-                pai: this.nouvelEnfant.aPAI ? this.nouvelEnfant.pai.trim() : '',
-                droitImage: this.nouvelEnfant.droitImage
-              };
-              this.showToast('Fiche mise à jour ! ✏️');
-            }
-          } else {
-            const nouveau = {
-              id: Date.now(),
-              nom: this.nouvelEnfant.nom.trim(),
-              prenom: this.nouvelEnfant.prenom.trim(),
-              dateNaissance: this.nouvelEnfant.dateNaissance,
-              responsables: respsFiltres.length > 0 ? respsFiltres : [{ nom: 'Non spécifié', telephone: '-' }],
-              pai: this.nouvelEnfant.aPAI ? this.nouvelEnfant.pai.trim() : '',
-              droitImage: this.nouvelEnfant.droitImage
-            };
-            this.enfants.push(nouveau);
-            this.showToast('Enfant enregistré ! 👶');
-          }
-
-          this.showAddEnfantModal = false;
-        },
-
-        supprimerEnfant(id) {
-          if (confirm('Supprimer cette fiche sanitaire ?')) {
-            this.enfants = this.enfants.filter(e => e.id !== id);
-            this.enfantSelectionne = null;
-            this.showToast('Fiche sanitaire supprimée.');
-          }
-        },
-
-        // --- GESTION DES DATES & SEMAINES ---
-        changerSemaine(delta) {
-          this.semaineActiveOffset += delta;
-        },
-
-        getLundiSemaine(offset = 0) {
-          const d = new Date();
-          const day = d.getDay();
-          const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-          const lundi = new Date(d.setDate(diff));
-          lundi.setDate(lundi.getDate() + offset * 7);
-          return lundi;
-        },
-
-        getLibelleSemaine() {
-          const lundi = this.getLundiSemaine(this.semaineActiveOffset);
-          const dimanche = new Date(lundi);
-          dimanche.setDate(lundi.getDate() + 6);
-          return `Du ${lundi.getDate()}/${lundi.getMonth() + 1} au ${dimanche.getDate()}/${dimanche.getMonth() + 1}`;
-        },
-
-        getGoutersDeLaSemaine() {
-          const lundi = this.getLundiSemaine(this.semaineActiveOffset);
-          const dimanche = new Date(lundi);
-          dimanche.setDate(lundi.getDate() + 6);
-
-          const strLundi = `${lundi.getFullYear()}-${String(lundi.getMonth() + 1).padStart(2, '0')}-${String(lundi.getDate()).padStart(2, '0')}`;
-          const strDimanche = `${dimanche.getFullYear()}-${String(dimanche.getMonth() + 1).padStart(2, '0')}-${String(dimanche.getDate()).padStart(2, '0')}`;
-
-          return this.goutersPlanifies.filter(g => g.date >= strLundi && g.date <= strDimanche);
-        },
-
-        // --- RECETTES & GOÛTERS ---
+        // Goûter & Courses
+        changerSemaine(dir) { this.semaineOffset += dir; },
+        getLibelleSemaine() { return this.semaineOffset === 0 ? "Semaine en cours" : `Semaine ${this.semaineOffset > 0 ? '+' : ''}${this.semaineOffset}`; },
         ajouterIngredierntRecette() {
-          if (this.tempIng.nom.trim() && this.tempIng.qte) {
-            this.nouvelleRecette.ingredients.push({
-              nom: this.tempIng.nom.trim(),
-              qte: this.tempIng.qte,
-              unite: this.tempIng.unite
-            });
-            this.tempIng.nom = '';
-            this.tempIng.qte = '';
+          if (this.tempIng.nom.trim() !== '') {
+            this.nouvelleRecette.ingredients.push({ ...this.tempIng });
+            this.tempIng = { nom: '', qte: '', unite: 'g' };
           }
         },
-
         enregistrerNouvelleRecette() {
-          if (!this.nouvelleRecette.nom.trim()) {
-            this.showToast('Veuillez entrer un nom de recette.');
-            return;
+          if (this.nouvelleRecette.nom.trim() !== '') {
+            this.recettesGouter.push({ id: Date.now(), ...this.nouvelleRecette });
+            this.nouvelleRecette = { nom: '', ingredients: [] };
+            this.showAddRecetteModal = false;
+            this.showToast("Recette enregistrée");
           }
-          this.recettesGouter.push({
-            id: 'recette-' + Date.now(),
-            nom: this.nouvelleRecette.nom.trim(),
-            ingredients: [...this.nouvelleRecette.ingredients]
-          });
-          this.nouvelleRecette = { nom: '', ingredients: [] };
-          this.showAddRecetteModal = false;
-          this.showToast('Nouvelle recette enregistrée ! 🍰');
         },
-
-        getNomRecette(id) {
-          const r = this.recettesGouter.find(rec => rec.id === id);
-          return r ? r.nom : 'Recette supprimée';
-        },
-
+        getGoutersDeLaSemaine() { return this.goutersPlanifies; },
+        getNomRecette(id) { const r = this.recettesGouter.find(x => x.id === id); return r ? r.nom : 'Recette'; },
         enregistrerGouterPlanifie() {
-          this.goutersPlanifies.push({
-            id: 'gouter-' + Date.now(),
-            date: this.saisieGouter.date,
-            recetteId: this.saisieGouter.recetteId,
-            anim: this.saisieGouter.anim,
-            nbEnfants: this.saisieGouter.nbEnfants
-          });
+          this.goutersPlanifies.push({ id: Date.now(), ...this.saisieGouter });
           this.showPlanifModal = false;
-          this.showToast('Goûter planifié ! 🍪');
+          this.showToast("Goûter planifié");
         },
+        supprimerGouterPlanifie(id) { this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id); },
 
-        supprimerGouterPlanifie(id) {
-          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
-          this.showToast('Goûter supprimé du planning.');
-        },
-
-        getListeCoursesAgregeeSemaine() {
-          const gouters = this.getGoutersDeLaSemaine();
-          const cumuls = {};
-
-          gouters.forEach(g => {
-            const recette = this.recettesGouter.find(r => r.id === g.recetteId);
-            if (!recette) return;
-            const ratio = g.nbEnfants / 8;
-
-            recette.ingredients.forEach(ing => {
-              const key = `${ing.nom.toLowerCase()}_${ing.unite}`;
-              const totalQte = Math.ceil(ing.qte * ratio);
-              if (!cumuls[key]) {
-                cumuls[key] = { key, nom: ing.nom, qte: totalQte, unite: ing.unite };
-              } else {
-                cumuls[key].qte += totalQte;
-              }
-            });
-          });
-
-          return Object.values(cumuls);
-        },
-
-        estAcheteCourseGouter(key) {
-          return !!this.coursesAchetesGouter[key];
-        },
-
-        toggleAcheteCourseGouter(key) {
-          this.coursesAchetesGouter[key] = !this.coursesAchetesGouter[key];
-        },
-
-        // --- COURSES DIRECTES ---
+        // Courses Matériel Directes
         addCourseDirecte() {
           if (this.nouvelleCourseNom.trim() !== '') {
-            this.listeCourses.push({
-              id: Date.now(),
-              nom: this.nouvelleCourseNom.trim(),
-              qte: this.nouvelleCourseQte.trim() || '1',
-              activite: 'Achat direct',
-              achete: false
-            });
+            this.listeCourses.push({ id: Date.now(), nom: this.nouvelleCourseNom.trim(), qte: this.nouvelleCourseQte.trim() || '1', activite: 'Achat Manuel', achete: false });
             this.nouvelleCourseNom = '';
             this.nouvelleCourseQte = '';
+            this.showKeypadCourse = false;
           }
         },
-
-        deleteCourse(id) {
-          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
-        },
-
-        viderAchetes() {
-          this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.showToast('Articles achetés nettoyés !');
-        },
-
-        // --- PLANNING & ORGANISATIONS ---
-        changerJour(delta) {
-          const current = new Date(this.dateAffichee + 'T00:00:00');
-          current.setDate(current.getDate() + delta);
-          this.dateAffichee = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}-${String(current.getDate()).padStart(2, '0')}`;
-          this.nettoyerCreneauxPasses();
-        },
-
-        nouveauCreneauVierge() {
-          this.saisiePlanning = {
-            nom: '',
-            date: this.dateAffichee,
-            matin: '',
-            ageMatin: '-6 ans',
-            aprem: '',
-            ageAprem: '+6 ans'
-          };
-          this.showAddAnimModal = true;
-        },
-
-        validerPlanning() {
-          if (!this.saisiePlanning.nom.trim()) {
-            this.showToast('Veuillez entrer le nom de l\'animateur.');
-            return;
-          }
-
-          let anim = this.planningGlobal.find(a => a.nom.toLowerCase() === this.saisiePlanning.nom.trim().toLowerCase());
-          if (!anim) {
-            anim = { id: Date.now(), nom: this.saisiePlanning.nom.trim(), dates: {} };
-            this.planningGlobal.push(anim);
-          }
-
-          if (!anim.dates) anim.dates = {};
-          anim.dates[this.saisiePlanning.date] = {
-            matin: this.saisiePlanning.matin.trim() || 'Repos / Libre',
-            ageMatin: this.saisiePlanning.ageMatin,
-            aprem: this.saisiePlanning.aprem.trim() || 'Repos / Libre',
-            ageAprem: this.saisiePlanning.ageAprem
-          };
-
-          this.showAddAnimModal = false;
-          this.showToast('Planning mis à jour ! 📅');
-        },
-
-        editerPlanningDuJour(p) {
-          const progJour = this.getPlanningDuJour(p, this.dateAffichee);
-          this.saisiePlanning = {
-            nom: p.nom,
-            date: this.dateAffichee,
-            matin: progJour.matin !== 'Repos / Libre' ? progJour.matin : '',
-            ageMatin: progJour.ageMatin || '-6 ans',
-            aprem: progJour.aprem !== 'Repos / Libre' ? progJour.aprem : '',
-            ageAprem: progJour.ageAprem || '+6 ans'
-          };
-          this.showAddAnimModal = true;
-        },
-
-        getPlanningDuJour(anim, dateKey) {
-          if (!anim || !anim.dates || !anim.dates[dateKey]) {
-            return { matin: 'Repos / Libre', ageMatin: '-6 ans', aprem: 'Repos / Libre', ageAprem: '+6 ans' };
-          }
-          return anim.dates[dateKey];
-        },
-
-        getPlanningFiltre() {
-          if (this.filtrePlanning === 'anim') {
-            return this.planningGlobal;
-          }
-          return this.planningGlobal.filter(p => {
-            const prog = this.getPlanningDuJour(p, this.dateAffichee);
-            return prog.ageMatin === this.filtrePlanning || prog.ageAprem === this.filtrePlanning;
+        deleteCourse(id) { this.listeCourses = this.listeCourses.filter(c => c.id !== id); },
+        viderAchetes() { this.listeCourses = this.listeCourses.filter(c => !c.achete); },
+        getListeCoursesAgregeeSemaine() {
+          let list = [];
+          this.goutersPlanifies.forEach(g => {
+            const r = this.recettesGouter.find(x => x.id === g.recetteId);
+            if (r) {
+              const ratio = (g.nbEnfants || 8) / 8;
+              r.ingredients.forEach(ing => {
+                const key = ing.nom.toLowerCase();
+                const qteCalculee = Math.round(ing.qte * ratio * 10) / 10;
+                const idx = list.findIndex(l => l.key === key);
+                if (idx !== -1) {
+                  list[idx].qte += qteCalculee;
+                } else {
+                  list.push({ key, nom: ing.nom, qte: qteCalculee, unite: ing.unite });
+                }
+              });
+            }
           });
+          return list;
         },
+        estAcheteCourseGouter(key) { return !!this.coursesGouterAchetes[key]; },
+        toggleAcheteCourseGouter(key) { this.coursesGouterAchetes[key] = !this.coursesGouterAchetes[key]; },
 
-        filtrerParAge(ageStr) {
-          if (ageStr) this.filtrePlanning = ageStr;
+        // Planning
+        changerJour(dir) {
+          const curr = new Date(this.dateAffichee);
+          curr.setDate(curr.getDate() + dir);
+          this.dateAffichee = curr.toISOString().split('T')[0];
         },
-
-        supprimerAnim(id) {
-          if (confirm('Supprimer cet animateur du planning global ?')) {
-            this.planningGlobal = this.planningGlobal.filter(a => a.id !== id);
-            this.showToast('Animateur retiré.');
-          }
-        },
-
-        // --- DÉTAIL ANIMATEUR SEMAINE ---
-        ouvrirDetailAnim(anim) {
-          this.animSelectionne = anim;
-          this.animSemaineOffset = 0;
-        },
-
-        changerSemaineAnim(delta) {
-          this.animSemaineOffset += delta;
-        },
-
-        getLibelleSemaineAnim() {
-          const lundi = this.getLundiSemaine(this.animSemaineOffset);
-          const dimanche = new Date(lundi);
-          dimanche.setDate(lundi.getDate() + 6);
-          return `Semaine du ${lundi.getDate()}/${lundi.getMonth() + 1} au ${dimanche.getDate()}/${dimanche.getMonth() + 1}`;
-        },
-
-        getDatesSemaineAnim() {
-          const lundi = this.getLundiSemaine(this.animSemaineOffset);
-          const dates = [];
-          for (let i = 0; i < 7; i++) {
-            const temp = new Date(lundi);
-            temp.setDate(lundi.getDate() + i);
-            const str = `${temp.getFullYear()}-${String(temp.getMonth() + 1).padStart(2, '0')}-${String(temp.getDate()).padStart(2, '0')}`;
-            dates.push(str);
-          }
-          return dates;
-        },
-
-        allerADate(dateKey) {
-          this.dateAffichee = dateKey;
-          this.animSelectionne = null;
-        },
-
-        // --- SORTIES SPÉCIALES ---
-        ouvrirModalOrg() {
-          this.saisieOrg = {
-            date: this.dateAffichee,
-            titre: '',
-            lieu: '',
-            busAller: '',
-            busRetour: '',
-            groupes: []
-          };
-          this.tempGroupe = { anim: '', enfants: '' };
-          this.showOrgModal = true;
-        },
-
+        nettoyerCreneauxPasses() {},
+        getOrgDuJour() { return this.sortiesOrganisees.find(s => s.date === this.dateAffichee); },
+        effacerOrgDuJour() { this.sortiesOrganisees = this.sortiesOrganisees.filter(s => s.date !== this.dateAffichee); },
+        parseEnfantsList(str) { return str ? str.split(',').map(s => s.trim()) : []; },
+        ouvrirModalOrg() { this.showOrgModal = true; },
         ajouterGroupeSortie() {
-          if (this.tempGroupe.anim.trim()) {
-            this.saisieOrg.groupes.push({
-              id: Date.now(),
-              anim: this.tempGroupe.anim.trim(),
-              enfants: this.tempGroupe.enfants.trim()
-            });
+          if (this.tempGroupe.anim.trim() !== '') {
+            this.saisieOrg.groupes.push({ ...this.tempGroupe });
             this.tempGroupe = { anim: '', enfants: '' };
           }
         },
-
         sauvegarderOrg() {
-          if (!this.saisieOrg.titre.trim()) {
-            this.showToast('Donnez un titre à la sortie !');
-            return;
-          }
-          this.organisations[this.saisieOrg.date] = JSON.parse(JSON.stringify(this.saisieOrg));
+          this.sortiesOrganisees.push({ ...this.saisieOrg });
           this.showOrgModal = false;
-          this.showToast('Sortie enregistrée ! 🚌');
+          this.showToast("Sortie planifiée");
         },
-
-        getOrgDuJour() {
-          return this.organisations[this.dateAffichee] || null;
+        getPlanningFiltre() { return this.planningAnims; },
+        getPlanningDuJour(p, dateKey) {
+          if (p && p.jours && p.jours[dateKey]) return p.jours[dateKey];
+          return { matin: 'Libre / Repos', ageMatin: '-6 ans', aprem: 'Libre / Repos', ageAprem: '+6 ans' };
         },
-
-        effacerOrgDuJour() {
-          if (confirm('Supprimer cette sortie pour la journée sélectionnée ?')) {
-            delete this.organisations[this.dateAffichee];
-            this.showToast('Sortie annulée.');
+        nouveauCreneauVierge() {
+          this.saisiePlanning = { nom: '', date: this.dateAffichee, matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' };
+          this.showAddAnimModal = true;
+        },
+        enregistrerCreneauPlanning() {
+          let anim = this.planningAnims.find(a => a.nom.toLowerCase() === this.saisiePlanning.nom.toLowerCase());
+          if (!anim) {
+            anim = { id: Date.now(), nom: this.saisiePlanning.nom, jours: {} };
+            this.planningAnims.push(anim);
           }
+          anim.jours[this.saisiePlanning.date] = {
+            matin: this.saisiePlanning.matin,
+            ageMatin: this.saisiePlanning.ageMatin,
+            aprem: this.saisiePlanning.aprem,
+            ageAprem: this.saisiePlanning.ageAprem
+          };
+          this.showAddAnimModal = false;
+          this.showToast("Créneau enregistré");
         },
-
-        parseEnfantsList(str) {
-          if (!str) return [];
-          return str.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        editerPlanningDuJour(p) {
+          const j = this.getPlanningDuJour(p, this.dateAffichee);
+          this.saisiePlanning = { nom: p.nom, date: this.dateAffichee, matin: j.matin, ageMatin: j.ageMatin, aprem: j.aprem, ageAprem: j.ageAprem };
+          this.showAddAnimModal = true;
         },
-
-        // --- RESET GLOBAL ---
+        supprimerAnim(id) { this.planningAnims = this.planningAnims.filter(a => a.id !== id); },
+        ouvrirDetailAnim(p) { this.animSelectionne = p; },
+        changerSemaineAnim(dir) { this.semaineAnimOffset += dir; },
+        getLibelleSemaineAnim() { return this.semaineAnimOffset === 0 ? "Semaine courante" : `Semaine ${this.semaineAnimOffset}`; },
+        getDatesSemaineAnim() {
+          const dates = [];
+          const start = new Date();
+          start.setDate(start.getDate() + (this.semaineAnimOffset * 7));
+          for (let i = 0; i < 5; i++) {
+            const d = new Date(start);
+            d.setDate(d.getDate() + i);
+            dates.push(d.toISOString().split('T')[0]);
+          }
+          return dates;
+        },
+        allerADate(d) {
+          this.dateAffichee = d;
+          this.animSelectionne = null;
+        },
+        filtrerParAge(age) { this.filtrePlanning = age; },
+        formatTimeInput(val) { return val; },
         reinitialiserApp() {
-          if (confirm("Réinitialiser TOUTES les données ?")) {
+          if (confirm("Réinitialiser l'application ? Tout le contenu sera effacé.")) {
             localStorage.clear();
-            this.fiche = { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] };
-            this.registreSoins = [];
-            this.listeCourses = [];
-            this.organisations = {};
-            this.planningGlobal = [];
-            this.goutersPlanifies = [];
-            this.coursesAchetesGouter = {};
-            this.enfants = [];
-            this.animSelectionne = null;
-            this.enfantSelectionne = null;
-            this.currentTab = 'hub';
-            this.showToast("Application réinitialisée !");
-            setTimeout(() => location.reload(), 500);
+            location.reload();
           }
         }
-      };
+      }
     }
   </script>
 </body>
