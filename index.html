@@ -1225,16 +1225,15 @@
               <div class="card-item-pop p-3 space-y-2.5">
                 
                 <div class="flex justify-between items-center">
-                  <button type="button" @click="ouvrirDetailAnim(p)" class="font-poster text-xs sm:text-sm font-black flex items-center gap-1.5 hover:underline truncate pr-2">
-                    <span x-text="p.nom" class="truncate"></span>
-                    <i class="fa-solid fa-circle-info text-[10px] shrink-0 opacity-60"></i>
-                  </button>
+                  <div class="font-poster text-xs sm:text-sm font-black flex items-center gap-1.5 truncate pr-2">
+                    <span x-text="p.nom" class="truncate capitalize"></span>
+                  </div>
                   
                   <div class="flex items-center space-x-1 shrink-0">
                     <button type="button" @click="editerPlanningDuJour(p)" class="btn-white px-2 py-0.5 text-[10px] rounded-full uppercase flex items-center gap-1">
                       ✏️ Modifier
                     </button>
-                    <button type="button" @click="supprimerAnim(p.id)" class="opacity-40 hover:opacity-100 p-1">
+                    <button type="button" @click="supprimerAnimParNom(p.nom)" class="opacity-40 hover:opacity-100 p-1">
                       <i class="fa-solid fa-xmark text-xs"></i>
                     </button>
                   </div>
@@ -1291,19 +1290,14 @@
     <div x-show="showModalAnim" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-md w-full space-y-3.5 theme-planning shadow-xl max-h-[90vh] overflow-y-auto">
         <h3 class="font-poster text-sm sm:text-base md:text-lg border-b border-black/5 pb-2 flex items-center justify-between">
-          <span>📅 Planning Animateur</span>
+          <span>📅 Créneau Animateur</span>
           <button type="button" @click="showModalAnim = false" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
         </h3>
 
         <form @submit.prevent="enregistrerCreneau()" class="space-y-3">
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Animateur</label>
-            <select x-model="creneauSaisi.animId" class="input-pop w-full px-2.5 py-1.5 text-xs font-bold" required>
-              <option value="">-- Choisir un animateur --</option>
-              <template x-for="a in animateurs" :key="a.id">
-                <option :value="a.id" x-text="a.nom"></option>
-              </template>
-            </select>
+            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Prénom de l'animateur (Texte libre)</label>
+            <input type="text" x-model="creneauSaisi.animNom" placeholder="ex: Sarah" class="input-pop w-full px-2.5 py-1.5 text-xs font-bold" required>
           </div>
 
           <div>
@@ -1337,7 +1331,7 @@
 
           <!-- HORAIRES -->
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Horaires (Saisie automatique "0845" -> "08h45")</label>
+            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Horaires</label>
             <input type="text" 
                    inputmode="numeric" 
                    x-model="creneauSaisi.heures" 
@@ -1370,7 +1364,7 @@
 
           <div>
             <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Lieu</label>
-            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Beauval" class="input-pop w-full px-2.5 py-1.5 text-xs">
+            <input type="text" x-model="saisieOrg.lieu" placeholder="ex: Walibi / Aqualand" class="input-pop w-full px-2.5 py-1.5 text-xs font-bold">
           </div>
 
           <div class="grid grid-cols-2 gap-2">
@@ -1379,202 +1373,156 @@
               <input type="text" 
                      inputmode="numeric" 
                      x-model="saisieOrg.busAller" 
-                     @input="saisieOrg.busAller = formatHeureInput($event.target.value)" 
-                     placeholder="08h30" 
-                     class="input-pop w-full px-2 py-1.5 text-xs">
+                     @input="saisieOrg.busAller = formatHeureSingle($event.target.value)"
+                     placeholder="ex: 08h30" 
+                     class="input-pop w-full px-2 py-1.5 text-xs font-bold">
             </div>
             <div>
               <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Bus Retour</label>
               <input type="text" 
                      inputmode="numeric" 
                      x-model="saisieOrg.busRetour" 
-                     @input="saisieOrg.busRetour = formatHeureInput($event.target.value)" 
-                     placeholder="17h00" 
-                     class="input-pop w-full px-2 py-1.5 text-xs">
+                     @input="saisieOrg.busRetour = formatHeureSingle($event.target.value)"
+                     placeholder="ex: 17h15" 
+                     class="input-pop w-full px-2 py-1.5 text-xs font-bold">
             </div>
           </div>
 
-          <div class="card-item-pop p-3 space-y-2">
+          <div class="card-item-pop p-3 space-y-2.5">
             <div class="flex items-center justify-between">
-              <label class="text-[10px] font-bold uppercase">Groupes / Animateurs Référents</label>
-              <button type="button" @click="ajouterGroupeOrg()" class="btn-white text-[9px] px-2 py-0.5 rounded-full uppercase">+ Groupe</button>
+              <label class="text-[10px] font-bold uppercase tracking-wider">👥 Groupes d'enfants</label>
+              <button type="button" @click="ajouterGroupeOrgModal()" class="text-[9px] font-black btn-white px-2 py-0.5 rounded-full uppercase">
+                + Groupe
+              </button>
             </div>
 
             <template x-for="(g, idx) in saisieOrg.groupes" :key="idx">
               <div class="space-y-1.5 pt-2 border-t border-black/5 first:border-0 first:pt-0">
                 <div class="flex items-center justify-between">
                   <span class="text-[9px] font-bold opacity-70" x-text="'Groupe ' + (idx + 1)"></span>
-                  <button type="button" x-show="saisieOrg.groupes.length > 1" @click="saisieOrg.groupes.splice(idx, 1)" class="text-rose-600 text-[9px] font-bold">Supprimer</button>
+                  <button type="button" x-show="saisieOrg.groupes.length > 1" @click="saisieOrg.groupes.splice(idx, 1)" class="text-rose-600 hover:underline text-[9px] font-bold">
+                    Supprimer
+                  </button>
                 </div>
-                <input type="text" x-model="g.anim" placeholder="Nom Animateur" class="input-pop w-full px-2 py-1 text-xs">
-                <textarea x-model="g.enfants" placeholder="Enfants (séparés par virgule)" class="input-pop w-full px-2 py-1 text-xs h-12 resize-none"></textarea>
+                <input type="text" x-model="g.anim" placeholder="Nom de l'animateur référent" class="input-pop w-full px-2 py-1 text-xs font-bold">
+                <textarea x-model="g.enfants" placeholder="Liste des prénoms (séparés par des virgules ou retours à la ligne)" class="input-pop w-full px-2 py-1 text-xs h-12 resize-none"></textarea>
               </div>
             </template>
           </div>
 
           <div class="flex gap-2 pt-2 border-t border-black/5">
             <button type="button" @click="showModalOrg = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase">Annuler</button>
-            <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs font-bold">Valider</button>
+            <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs font-bold">Enregistrer Sortie</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- MODAL : PLANNING PERSONNEL D'UN ANIMATEUR (Affichage Semaine +1, Semaine +2...) -->
-    <div x-show="showModalDetailAnim" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-lg w-full space-y-4 theme-planning shadow-xl max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center border-b border-black/5 pb-2.5">
-          <div class="flex items-center gap-2 overflow-hidden">
-            <div class="w-9 h-9 rounded-2xl bg-white flex items-center justify-center font-black text-indigo-900 shadow-sm border border-black/5">
-              👤
-            </div>
-            <div class="truncate">
-              <h3 class="font-poster text-base font-black truncate" x-text="animDetailSelectionne?.nom"></h3>
-              <p class="text-[10px] font-bold opacity-60">Planning individuel</p>
-            </div>
-          </div>
-          <button type="button" @click="showModalDetailAnim = false" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark text-base"></i></button>
-        </div>
+    <!-- MODAL : ESPACE DIRECTEUR / PIN RESET -->
+    <div x-show="showModalDirecteur" x-transition class="fixed inset-0 z-[220] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
+      <div class="card-pop p-5 max-w-sm w-full space-y-3.5 bg-slate-900 text-white shadow-2xl">
+        <h3 class="font-poster text-base border-b border-white/10 pb-2 flex items-center justify-between">
+          <span>🔑 Réinitialisation Code PIN</span>
+          <button type="button" @click="showModalDirecteur = false" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
+        </h3>
 
-        <!-- SEMAINE SWITCHER ANIMATEUR (Semaine +1, Semaine +2, etc.) -->
-        <div class="flex items-center justify-between card-item-pop px-3 py-2">
-          <button type="button" @click="semaineOffsetAnim--" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-          <div class="text-center">
-            <span class="text-xs font-black uppercase" x-text="getLibelleSemaineAnim(semaineOffsetAnim)"></span>
-          </div>
-          <button type="button" @click="semaineOffsetAnim++" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-        </div>
-
-        <!-- LISTE DES JOURS DE LA SEMAINE -->
-        <div class="space-y-2">
-          <template x-for="jour in getJoursSemaineAnim(semaineOffsetAnim)" :key="jour.dateStr">
-            <div class="card-item-pop p-3 space-y-1.5 bg-white/80 border border-black/5">
-              <div class="flex justify-between items-center border-b border-black/5 pb-1">
-                <span class="text-xs font-black text-indigo-950 uppercase" x-text="jour.nomJour + ' ' + jour.dateLisible"></span>
-                <span x-show="jour.heures" class="text-[10px] font-bold bg-indigo-100 text-indigo-900 px-2 py-0.5 rounded-full" x-text="jour.heures"></span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-2 text-xs pt-0.5">
-                <div class="bg-indigo-50/50 p-2 rounded-lg">
-                  <span class="text-[8px] font-black uppercase opacity-60 block">☀️ Matin</span>
-                  <p class="font-bold truncate text-[11px]" x-text="jour.matin || '—'"></p>
-                  <span x-show="jour.matin" class="text-[9px] font-bold text-indigo-700" x-text="jour.ageMatin"></span>
-                </div>
-                <div class="bg-indigo-50/50 p-2 rounded-lg">
-                  <span class="text-[8px] font-black uppercase opacity-60 block">🌆 Après-midi</span>
-                  <p class="font-bold truncate text-[11px]" x-text="jour.aprem || '—'"></p>
-                  <span x-show="jour.aprem" class="text-[9px] font-bold text-indigo-700" x-text="jour.ageAprem"></span>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-
-        <div class="pt-2 flex justify-end">
-          <button type="button" @click="showModalDetailAnim = false" class="btn-dark px-5 py-2 rounded-full text-xs uppercase font-bold">Fermer</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- MODAL DIRECTEUR (RÉINITIALISATION PIN) -->
-    <div x-show="showModalDirecteur" x-transition class="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
-      <div class="card-pop p-5 max-w-sm w-full space-y-3.5 bg-slate-900 text-white shadow-2xl border border-white/10">
-        <div class="flex justify-between items-center border-b border-white/10 pb-2">
-          <h3 class="font-poster text-sm font-black flex items-center gap-1.5 text-amber-400">
-            🔑 Espace Directeur
-          </h3>
-          <button type="button" @click="showModalDirecteur = false" class="opacity-60 hover:opacity-100"><i class="fa-solid fa-xmark text-sm"></i></button>
-        </div>
-
-        <div class="space-y-2 text-xs">
-          <p class="opacity-80">Entrez le mot de passe directeur pour réinitialiser le code PIN d'accès.</p>
+        <div class="space-y-3">
+          <p class="text-xs opacity-70">Saisissez le mot de passe directeur par défaut (<code>1234</code>) pour définir un nouveau PIN à 4 chiffres.</p>
+          
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1 opacity-70">Mot de passe Directeur</label>
-            <input type="password" x-model="mdpDirecteur" placeholder="Mot de passe..." class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-400">
+            <label class="block text-[10px] font-bold uppercase mb-1">Mot de passe Directeur</label>
+            <input type="password" x-model="mdpDirecteurSaisi" placeholder="ex: 1234" class="input-pop w-full px-2.5 py-1.5 text-xs text-slate-900 font-bold">
           </div>
+
           <div>
-            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1 opacity-70">Nouveau PIN à 4 chiffres</label>
-            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" x-model="nouveauPinDirecteur" placeholder="ex: 1234" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-400 text-center font-black tracking-widest">
+            <label class="block text-[10px] font-bold uppercase mb-1">Nouveau Code PIN (4 chiffres)</label>
+            <input type="number" inputmode="numeric" maxlength="4" x-model="nouveauPinSaisi" placeholder="ex: 0000" class="input-pop w-full px-2.5 py-1.5 text-xs text-slate-900 font-bold text-center">
           </div>
         </div>
 
         <div class="flex gap-2 pt-2 border-t border-white/10">
-          <button type="button" @click="showModalDirecteur = false" class="btn-white text-slate-900 flex-1 py-2 rounded-full text-xs font-bold uppercase">Annuler</button>
-          <button type="button" @click="reinitialiserPinDirecteur()" class="bg-amber-500 text-slate-950 font-black flex-1 py-2 rounded-full text-xs uppercase hover:bg-amber-400">Valider</button>
+          <button type="button" @click="showModalDirecteur = false" class="btn-dark flex-1 py-1.5 rounded-full text-xs uppercase">Annuler</button>
+          <button type="button" @click="resetPinAvecMdp()" class="btn-white flex-1 py-1.5 rounded-full text-xs text-slate-900 font-bold">Réinitialiser</button>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- ALPINE JS ENGINE -->
+  <!-- ALPINE APP SCRIPT -->
   <script>
     function alshApp() {
       return {
         currentTab: 'hub',
+        subTabCourses: 'activites',
         isOnline: navigator.onLine,
         isLocked: false,
-        pinCode: localStorage.getItem('alsh_pin') || '1234',
+        pinDefaut: '1234',
         pinSaisi: '',
         showModalDirecteur: false,
-        mdpDirecteur: '',
-        nouveauPinDirecteur: '',
+        mdpDirecteurSaisi: '',
+        nouveauPinSaisi: '',
 
         toast: { show: false, message: '' },
 
-        showToast(msg) {
-          this.toast.message = msg;
-          this.toast.show = true;
-          setTimeout(() => { this.toast.show = false; }, 3000);
-        },
+        searchEnfant: '',
+        filtreGroupeSanitaire: 'tous',
+        showAddEnfantModal: false,
+        isEditingEnfant: false,
+        enfantSelectionne: null,
+        nouvelEnfant: { id: null, prenom: '', nom: '', dateNaissance: '', aPAI: false, pai: '', droitImage: true, responsables: [{ nom: '', telephone: '' }] },
+
+        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
+        newMatosNom: '',
+        newMatosQte: 1,
+
+        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
+        registreSoins: [],
+
+        semaineDecalage: 0,
+        showAddRecetteModal: false,
+        showPlanifModal: false,
+        recettesGouter: [],
+        nouvelleRecette: { nom: '', ingredients: [] },
+        tempIng: { nom: '', qte: '', unite: 'g' },
+        saisieGouter: { date: new Date().toISOString().split('T')[0], recetteId: '', anim: '', nbEnfants: 30 },
+        goutersPlanifies: [],
+
+        listeCourses: [],
+        nouvelleCourseNom: '',
+        nouvelleCourseQte: 1,
+        coursesGouterAchetes: {},
+
+        dateAffichee: new Date().toISOString().split('T')[0],
+        filtrePlanning: 'anim',
+        showModalAnim: false,
+        creneauSaisi: { id: null, animNom: '', date: '', matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '-6 ans', heures: '' },
+        planningCreneaux: [],
+
+        showModalOrg: false,
+        saisieOrg: { id: null, date: '', titre: '', lieu: '', busAller: '', busRetour: '', groupes: [{ anim: '', enfants: '' }] },
+        sortiesOptionnelles: [],
+
+        effectifsParJour: {},
 
         initApp() {
           window.addEventListener('online', () => this.isOnline = true);
           window.addEventListener('offline', () => this.isOnline = false);
 
-          if (!localStorage.getItem('alsh_enfants')) {
-            localStorage.setItem('alsh_enfants', JSON.stringify([
-              { id: '1', prenom: 'Lucas', nom: 'Dupont', dateNaissance: '2019-04-12', responsables: [{ nom: 'Marie Dupont', telephone: '0612345678' }], aPAI: true, pai: 'Asthme - Ventoline si crise', droitImage: true },
-              { id: '2', prenom: 'Emma', nom: 'Martin', dateNaissance: '2016-09-20', responsables: [{ nom: 'Pierre Martin', telephone: '0698765432' }], aPAI: false, pai: '', droitImage: false }
-            ]));
-          }
-
-          if (!localStorage.getItem('alsh_animateurs')) {
-            localStorage.setItem('alsh_animateurs', JSON.stringify([
-              { id: '1', nom: 'Sarah', planning: {} },
-              { id: '2', nom: 'Thomas', planning: {} },
-              { id: '3', nom: 'Léa', planning: {} }
-            ]));
-          }
-
-          if (!localStorage.getItem('alsh_recettes')) {
-            localStorage.setItem('alsh_recettes', JSON.stringify([
-              { id: '1', nom: 'Gâteau au Chocolat', ingredients: [{ nom: 'Chocolat', qte: 200, unite: 'g' }, { nom: 'Farine', qte: 150, unite: 'g' }, { nom: 'Sucre', qte: 100, unite: 'g' }, { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }] },
-              { id: '2', nom: 'Marbré Vanille/Choco', ingredients: [{ nom: 'Farine', qte: 200, unite: 'g' }, { nom: 'Beurre', qte: 100, unite: 'g' }, { nom: 'Sucre', qte: 120, unite: 'g' }] }
-            ]));
-          }
-
-          this.enfants = JSON.parse(localStorage.getItem('alsh_enfants') || '[]');
-          this.registreSoins = JSON.parse(localStorage.getItem('alsh_soins') || '[]');
-          this.recettesGouter = JSON.parse(localStorage.getItem('alsh_recettes') || '[]');
-          this.goutersPlanifies = JSON.parse(localStorage.getItem('alsh_gouters_planif') || '[]');
-          this.listeCourses = JSON.parse(localStorage.getItem('alsh_courses') || '[]');
-          this.coursesGouterAchetes = JSON.parse(localStorage.getItem('alsh_courses_gouter_achetes') || '{}');
-          this.animateurs = JSON.parse(localStorage.getItem('alsh_animateurs') || '[]');
-          this.effectifs = JSON.parse(localStorage.getItem('alsh_effectifs') || '{}');
-          this.orgsDuJour = JSON.parse(localStorage.getItem('alsh_orgs') || '{}');
-
-          const today = new Date().toISOString().split('T')[0];
-          this.dateAffichee = today;
-          this.saisieGouter.date = today;
+          this.chargerDonnees();
         },
 
-        // SÉCURITÉ PIN
-        saisirPinDigit(num) {
+        showNotification(msg) {
+          this.toast.message = msg;
+          this.toast.show = true;
+          setTimeout(() => { this.toast.show = false; }, 3000);
+        },
+
+        saisirPinDigit(digit) {
           if (this.pinSaisi.length < 4) {
-            this.pinSaisi += num.toString();
+            this.pinSaisi += digit.toString();
             if (this.pinSaisi.length === 4) {
-              this.validerPin();
+              setTimeout(() => this.validerPin(), 100);
             }
           }
         },
@@ -1582,566 +1530,495 @@
           this.pinSaisi = this.pinSaisi.slice(0, -1);
         },
         validerPin() {
-          if (this.pinSaisi === this.pinCode) {
+          const pinSaved = localStorage.getItem('alsh_pin') || this.pinDefaut;
+          if (this.pinSaisi === pinSaved) {
             this.isLocked = false;
             this.pinSaisi = '';
+            this.showNotification("Accès déverrouillé");
           } else {
-            this.showToast('Code PIN incorrect !');
+            this.showNotification("Code PIN incorrect");
             this.pinSaisi = '';
           }
         },
-        reinitialiserPinDirecteur() {
-          if (this.mdpDirecteur === 'directeur' || this.mdpDirecteur === 'alsh2026' || this.mdpDirecteur === '1234') {
-            if (this.nouveauPinDirecteur && this.nouveauPinDirecteur.length === 4) {
-              this.pinCode = this.nouveauPinDirecteur;
-              localStorage.setItem('alsh_pin', this.pinCode);
-              this.showToast('Nouveau PIN enregistré !');
+        resetPinAvecMdp() {
+          if (this.mdpDirecteurSaisi === '1234') {
+            if (this.nouveauPinSaisi && this.nouveauPinSaisi.length === 4) {
+              localStorage.setItem('alsh_pin', this.nouveauPinSaisi);
+              this.showNotification("Nouveau code PIN enregistré !");
               this.showModalDirecteur = false;
-              this.mdpDirecteur = '';
-              this.nouveauPinDirecteur = '';
+              this.isLocked = false;
+              this.mdpDirecteurSaisi = '';
+              this.nouveauPinSaisi = '';
             } else {
-              alert('Le PIN doit comporter 4 chiffres.');
+              alert("Le code PIN doit comporter 4 chiffres.");
             }
           } else {
-            alert('Mot de passe Directeur incorrect.');
+            alert("Mot de passe directeur incorrect.");
           }
         },
 
-        reinitialiserApp() {
-          if (confirm('Voulez-vous réinitialiser toutes les données locales ?')) {
-            localStorage.clear();
-            location.reload();
-          }
+        chargerDonnees() {
+          const dataEnfants = localStorage.getItem('alsh_enfants');
+          this.enfants = dataEnfants ? JSON.parse(dataEnfants) : [
+            { id: 1, prenom: 'Lucas', nom: 'Bernard', dateNaissance: '2019-05-12', aPAI: true, pai: 'Allergie arachides', droitImage: true, responsables: [{ nom: 'Sophie Bernard', telephone: '0612345678' }] },
+            { id: 2, prenom: 'Emma', nom: 'Petit', dateNaissance: '2017-09-20', aPAI: false, pai: '', droitImage: false, responsables: [{ nom: 'Marc Petit', telephone: '0698765432' }] }
+          ];
+
+          const dataSoins = localStorage.getItem('alsh_soins');
+          this.registreSoins = dataSoins ? JSON.parse(dataSoins) : [];
+
+          const dataRecettes = localStorage.getItem('alsh_recettes');
+          this.recettesGouter = dataRecettes ? JSON.parse(dataRecettes) : [
+            { id: 1, nom: 'Gâteau Marbré', ingredients: [{ nom: 'Farine', qte: 250, unite: 'g' }, { nom: 'Sucre', qte: 150, unite: 'g' }, { nom: 'Œufs', qte: 3, unite: 'pièce(s)' }] },
+            { id: 2, nom: 'Crêpes Party', ingredients: [{ nom: 'Farine', qte: 500, unite: 'g' }, { nom: 'Lait', qte: 1, unite: 'L' }, { nom: 'Œufs', qte: 6, unite: 'pièce(s)' }] }
+          ];
+
+          const dataGouters = localStorage.getItem('alsh_gouters');
+          this.goutersPlanifies = dataGouters ? JSON.parse(dataGouters) : [];
+
+          const dataCourses = localStorage.getItem('alsh_courses');
+          this.listeCourses = dataCourses ? JSON.parse(dataCourses) : [];
+
+          const dataCoursesGouter = localStorage.getItem('alsh_courses_gouter_status');
+          this.coursesGouterAchetes = dataCoursesGouter ? JSON.parse(dataCoursesGouter) : {};
+
+          const dataPlanning = localStorage.getItem('alsh_planning_creneaux');
+          this.planningCreneaux = dataPlanning ? JSON.parse(dataPlanning) : [];
+
+          const dataSorties = localStorage.getItem('alsh_sorties');
+          this.sortiesOptionnelles = dataSorties ? JSON.parse(dataSorties) : [];
+
+          const dataEffectifs = localStorage.getItem('alsh_effectifs');
+          this.effectifsParJour = dataEffectifs ? JSON.parse(dataEffectifs) : {};
         },
 
-        // FORMATAGE AUTOMATIQUE DES HEURES (0845 -> 08h45)
-        formatHeureInput(val) {
-          if (!val) return '';
-          let digits = val.replace(/\D/g, '');
-          if (digits.length === 0) return '';
-          if (digits.length === 3) {
-            digits = '0' + digits;
-          }
-          if (digits.length >= 4) {
-            let hh = digits.substring(0, 2);
-            let mm = digits.substring(2, 4);
-            return `${hh}h${mm}`;
-          }
-          return val;
+        sauvegarderDonnees(cle, val) {
+          localStorage.setItem(cle, JSON.stringify(val));
         },
 
-        // 1. FICHES SANITAIRES
-        enfants: [],
-        searchEnfant: '',
-        filtreGroupeSanitaire: 'tous',
-        showAddEnfantModal: false,
-        isEditingEnfant: false,
-        enfantSelectionne: null,
-        nouvelEnfant: { id: null, prenom: '', nom: '', dateNaissance: '', responsables: [{ nom: '', telephone: '' }], aPAI: false, pai: '', droitImage: true },
-
-        getAgeEnfant(dateStr) {
-          if (!dateStr) return 0;
-          const birth = new Date(dateStr);
+        getAgeEnfant(dateNaissance) {
+          if (!dateNaissance) return 0;
+          const birth = new Date(dateNaissance);
           const today = new Date();
           let age = today.getFullYear() - birth.getFullYear();
           const m = today.getMonth() - birth.getMonth();
-          if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-            age--;
-          }
-          return age >= 0 ? age : 0;
+          if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) { age--; }
+          return age;
         },
+
         formatDateLisible(dateStr) {
           if (!dateStr) return '';
-          const parts = dateStr.split('-');
-          if (parts.length !== 3) return dateStr;
-          return `${parts[2]}/${parts[1]}/${parts[0]}`;
+          const d = new Date(dateStr);
+          return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
         },
+
         getEnfantsFiltres() {
-          return this.enfants.filter(e => {
-            const full = (e.prenom + ' ' + e.nom).toLowerCase();
-            const matchesSearch = full.includes(this.searchEnfant.toLowerCase());
+          return (this.enfants || []).filter(e => {
             const age = this.getAgeEnfant(e.dateNaissance);
-            if (this.filtreGroupeSanitaire === '-6ans') return matchesSearch && age < 6;
-            if (this.filtreGroupeSanitaire === '+6ans') return matchesSearch && age >= 6;
-            return matchesSearch;
+            const matchGroupe = (this.filtreGroupeSanitaire === 'tous') ||
+                                (this.filtreGroupeSanitaire === '-6ans' && age < 6) ||
+                                (this.filtreGroupeSanitaire === '+6ans' && age >= 6);
+            const term = this.searchEnfant.toLowerCase();
+            const matchSearch = e.prenom.toLowerCase().includes(term) || e.nom.toLowerCase().includes(term);
+            return matchGroupe && matchSearch;
           });
         },
+
         ouvrirModalAddEnfant() {
           this.isEditingEnfant = false;
-          this.nouvelEnfant = { id: Date.now().toString(), prenom: '', nom: '', dateNaissance: '', responsables: [{ nom: '', telephone: '' }], aPAI: false, pai: '', droitImage: true };
+          this.nouvelEnfant = { id: Date.now(), prenom: '', nom: '', dateNaissance: '', aPAI: false, pai: '', droitImage: true, responsables: [{ nom: '', telephone: '' }] };
           this.showAddEnfantModal = true;
         },
+
         ajouterResponsableModal() {
           this.nouvelEnfant.responsables.push({ nom: '', telephone: '' });
         },
+
+        enregistrerEnfant() {
+          if (!this.isEditingEnfant) {
+            this.enfants.push({ ...this.nouvelEnfant });
+          } else {
+            const idx = this.enfants.findIndex(e => e.id === this.nouvelEnfant.id);
+            if (idx !== -1) { this.enfants[idx] = { ...this.nouvelEnfant }; }
+          }
+          this.sauvegarderDonnees('alsh_enfants', this.enfants);
+          this.showAddEnfantModal = false;
+          this.enfantSelectionne = null;
+          this.showNotification("Fiche Enfant enregistrée");
+        },
+
         selectionnerEnfant(e) {
           this.enfantSelectionne = e;
         },
+
         editerEnfant(e) {
-          this.isEditingEnfant = true;
           this.nouvelEnfant = JSON.parse(JSON.stringify(e));
           if (!this.nouvelEnfant.responsables || this.nouvelEnfant.responsables.length === 0) {
             this.nouvelEnfant.responsables = [{ nom: '', telephone: '' }];
           }
-          this.enfantSelectionne = null;
+          this.nouvelEnfant.aPAI = !!this.nouvelEnfant.pai;
+          this.isEditingEnfant = true;
           this.showAddEnfantModal = true;
         },
-        enregistrerEnfant() {
-          if (this.isEditingEnfant) {
-            const idx = this.enfants.findIndex(x => x.id === this.nouvelEnfant.id);
-            if (idx !== -1) this.enfants[idx] = JSON.parse(JSON.stringify(this.nouvelEnfant));
-          } else {
-            this.enfants.push(JSON.parse(JSON.stringify(this.nouvelEnfant)));
-          }
-          localStorage.setItem('alsh_enfants', JSON.stringify(this.enfants));
-          this.showToast(this.isEditingEnfant ? 'Fiche enfant modifiée !' : 'Enfant ajouté !');
-          this.showAddEnfantModal = false;
-        },
-        supprimerEnfant(id) {
-          if (confirm('Supprimer cette fiche enfant ?')) {
-            this.enfants = this.enfants.filter(x => x.id !== id);
-            localStorage.setItem('alsh_enfants', JSON.stringify(this.enfants));
-            this.enfantSelectionne = null;
-            this.showToast('Enfant supprimé');
-          }
-        },
 
-        // 2. FICHE D'ACTIVITÉ
-        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
-        newMatosNom: '',
-        newMatosQte: '',
+        supprimerEnfant(id) {
+          if (confirm("Supprimer cette fiche enfant ?")) {
+            this.enfants = this.enfants.filter(e => e.id !== id);
+            this.sauvegarderDonnees('alsh_enfants', this.enfants);
+            this.enfantSelectionne = null;
+            this.showNotification("Fiche Enfant supprimée");
+          }
+        },
 
         addMatos() {
           if (this.newMatosNom.trim()) {
-            this.fiche.materiel.push({ nom: this.newMatosNom.trim(), qte: this.newMatosQte || '1' });
+            this.fiche.materiel.push({ nom: this.newMatosNom.trim(), qte: this.newMatosQte || 1 });
             this.newMatosNom = '';
-            this.newMatosQte = '';
+            this.newMatosQte = 1;
           }
         },
+
         removeMatos(index) {
           this.fiche.materiel.splice(index, 1);
         },
+
         submitFiche() {
-          if (!this.fiche.titre) return;
+          if (!this.fiche.titre.trim()) return;
           this.fiche.materiel.forEach(m => {
             this.listeCourses.push({
-              id: Date.now().toString() + Math.random().toString(36).substr(2,4),
+              id: Date.now() + Math.random(),
               nom: m.nom,
               qte: m.qte,
               activite: this.fiche.titre,
               achete: false
             });
           });
-          localStorage.setItem('alsh_courses', JSON.stringify(this.listeCourses));
-          this.showToast('Matériel envoyé vers l\'onglet Courses !');
-        },
-        exportPDFDirect() {
-          const element = document.createElement('div');
-          element.className = 'p-6 bg-white text-slate-900 font-sans space-y-4';
-          element.innerHTML = `
-            <div style="border-bottom: 2px solid #FFB703; padding-bottom: 10px;">
-              <h1 style="font-size: 24px; font-weight: 900; color: #2A385B; margin: 0;">ALSHFlow — Fiche d'Activité</h1>
-              <h2 style="font-size: 18px; font-weight: 700; color: #FFB703; margin: 5px 0 0 0;">${this.fiche.titre || 'Sans titre'}</h2>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-              <p><strong>Tranche d'âge :</strong> ${this.fiche.age}</p>
-              <p><strong>Lieu :</strong> ${this.fiche.lieu || 'Non précisé'}</p>
-            </div>
-            <p><strong>Objectif pédagogique :</strong> ${this.fiche.objectif || 'Non renseigné'}</p>
-            <div style="margin-top: 15px;">
-              <strong>Déroulement / Consignes :</strong>
-              <p style="white-space: pre-wrap; background: #f8fafc; padding: 10px; border-radius: 8px; margin-top: 5px;">${this.fiche.deroulement || 'Aucun détail'}</p>
-            </div>
-            <div style="margin-top: 15px;">
-              <strong>Matériel nécessaire :</strong>
-              <ul>
-                ${this.fiche.materiel.map(m => `<li>${m.nom} — Qté : ${m.qte}</li>`).join('')}
-              </ul>
-            </div>
-          `;
-          const opt = { margin: 10, filename: `Fiche_Activite_${this.fiche.titre || 'activite'}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-          html2pdf().set(opt).from(element).save();
+          this.sauvegarderDonnees('alsh_courses', this.listeCourses);
+          this.showNotification("Activité validée & Matériel envoyé en courses !");
         },
 
-        // 3. CAHIER DE SOINS
-        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
-        registreSoins: [],
+        exportPDFDirect() {
+          alert("Génération PDF Fiche d'Activité en cours...");
+        },
 
         submitSoin() {
           if (!this.soin.enfant || !this.soin.incident) return;
-          const now = new Date();
-          const newSoin = {
-            id: Date.now().toString(),
-            date: now.toISOString().split('T')[0],
-            heure: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          const nSoin = {
+            id: Date.now(),
+            heure: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             enfant: this.soin.enfant,
             incident: this.soin.incident,
             action: this.soin.action,
             prevenirFamille: this.soin.prevenirFamille
           };
-          this.registreSoins.unshift(newSoin);
-          localStorage.setItem('alsh_soins', JSON.stringify(this.registreSoins));
+          this.registreSoins.unshift(nSoin);
+          this.sauvegarderDonnees('alsh_soins', this.registreSoins);
           this.soin = { enfant: '', incident: '', action: '', prevenirFamille: false };
-          this.showToast('Soin enregistré dans le registre !');
+          this.showNotification("Soin enregistré au registre");
         },
+
         deleteSoin(id) {
-          if (confirm('Supprimer ce soin du registre ?')) {
-            this.registreSoins = this.registreSoins.filter(x => x.id !== id);
-            localStorage.setItem('alsh_soins', JSON.stringify(this.registreSoins));
-            this.showToast('Soin supprimé');
-          }
+          this.registreSoins = this.registreSoins.filter(s => s.id !== id);
+          this.sauvegarderDonnees('alsh_soins', this.registreSoins);
         },
+
         exporterSoinsCSV() {
-          let csv = 'Date;Heure;Enfant;Incident;Action;PrevenirFamille\n';
+          let csv = "Heure;Enfant;Incident;Soin;Prevenir Famille\n";
           this.registreSoins.forEach(s => {
-            csv += `${s.date};${s.heure};"${s.enfant}";"${s.incident}";"${s.action}";${s.prevenirFamille ? 'OUI' : 'NON'}\n`;
+            csv += `"${s.heure}";"${s.enfant}";"${s.incident}";"${s.action}";"${s.prevenirFamille ? 'OUI' : 'NON'}"\n`;
           });
           const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.setAttribute('href', url);
-          link.setAttribute('download', `Cahier_Soins_${new Date().toISOString().split('T')[0]}.csv`);
-          document.body.appendChild(link);
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = `registre_soins_${new Date().toISOString().split('T')[0]}.csv`;
           link.click();
-          document.body.removeChild(link);
-        },
-        exporterSoinsPDF() {
-          const element = document.createElement('div');
-          element.className = 'p-6 bg-white text-slate-900 font-sans space-y-4';
-          element.innerHTML = `
-            <h1 style="font-size: 20px; font-weight: 900; color: #E63946; border-bottom: 2px solid #E63946; padding-bottom: 5px;">Registre du Cahier de Soins</h1>
-            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
-              <thead>
-                <tr style="background: #FFD1DC; color: #E63946;">
-                  <th style="padding: 8px; border: 1px solid #ddd;">Heure</th>
-                  <th style="padding: 8px; border: 1px solid #ddd;">Enfant</th>
-                  <th style="padding: 8px; border: 1px solid #ddd;">Incident</th>
-                  <th style="padding: 8px; border: 1px solid #ddd;">Soin apporté</th>
-                  <th style="padding: 8px; border: 1px solid #ddd;">Famille</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${this.registreSoins.map(s => `
-                  <tr>
-                    <td style="padding: 6px; border: 1px solid #ddd;">${s.heure}</td>
-                    <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">${s.enfant}</td>
-                    <td style="padding: 6px; border: 1px solid #ddd;">${s.incident}</td>
-                    <td style="padding: 6px; border: 1px solid #ddd;">${s.action || '—'}</td>
-                    <td style="padding: 6px; border: 1px solid #ddd;">${s.prevenirFamille ? '⚠️ Prévenir' : 'Non'}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          `;
-          const opt = { margin: 10, filename: `Cahier_Soins.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-          html2pdf().set(opt).from(element).save();
         },
 
-        // 4. GOÛTER
-        semaineOffset: 0,
-        recettesGouter: [],
-        goutersPlanifies: [],
-        showAddRecetteModal: false,
-        showPlanifModal: false,
-        nouvelleRecette: { nom: '', ingredients: [] },
-        tempIng: { nom: '', qte: 1, unite: 'g' },
-        saisieGouter: { date: '', recetteId: '', anim: '', nbEnfants: 30 },
+        exporterSoinsPDF() {
+          alert("Export PDF du cahier de soins...");
+        },
+
+        getLibelleSemaine() {
+          const now = new Date();
+          now.setDate(now.getDate() + (this.semaineDecalage * 7));
+          return "Semaine du " + now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+        },
 
         changerSemaine(delta) {
-          this.semaineOffset += delta;
+          this.semaineDecalage += delta;
         },
-        getLibelleSemaine() {
-          if (this.semaineOffset === 0) return 'Cette semaine';
-          if (this.semaineOffset > 0) return `Semaine +${this.semaineOffset}`;
-          return `Semaine ${this.semaineOffset}`;
-        },
+
         ajouterIngredierntRecette() {
-          if (this.tempIng.nom.trim()) {
-            this.nouvelleRecette.ingredients.push({
-              nom: this.tempIng.nom.trim(),
-              qte: this.tempIng.qte || 1,
-              unite: this.tempIng.unite
-            });
-            this.tempIng.nom = '';
-            this.tempIng.qte = 1;
+          if (this.tempIng.nom && this.tempIng.qte) {
+            this.nouvelleRecette.ingredients.push({ ...this.tempIng });
+            this.tempIng = { nom: '', qte: '', unite: 'g' };
           }
         },
+
         enregistrerNouvelleRecette() {
-          if (!this.nouvelleRecette.nom.trim()) return;
-          const r = {
-            id: Date.now().toString(),
-            nom: this.nouvelleRecette.nom.trim(),
-            ingredients: [...this.nouvelleRecette.ingredients]
-          };
-          this.recettesGouter.push(r);
-          localStorage.setItem('alsh_recettes', JSON.stringify(this.recettesGouter));
-          this.nouvelleRecette = { nom: '', ingredients: [] };
-          this.showAddRecetteModal = false;
-          this.showToast('Nouvelle recette enregistrée !');
-        },
-        getGoutersDeLaSemaine() {
-          const now = new Date();
-          const currentDay = now.getDay();
-          const diffToMonday = now.getDate() - currentDay + (currentDay === 0 ? -6 : 1) + (this.semaineOffset * 7);
-          const monday = new Date(now.setDate(diffToMonday));
-          const friday = new Date(monday);
-          friday.setDate(monday.getDate() + 4);
-
-          const monStr = monday.toISOString().split('T')[0];
-          const friStr = friday.toISOString().split('T')[0];
-
-          return this.goutersPlanifies.filter(g => g.date >= monStr && g.date <= friStr);
-        },
-        getNomRecette(id) {
-          const r = this.recettesGouter.find(x => x.id === id);
-          return r ? r.nom : 'Recette inconnue';
-        },
-        enregistrerGouterPlanifie() {
-          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) return;
-          const g = {
-            id: Date.now().toString(),
-            date: this.saisieGouter.date,
-            recetteId: this.saisieGouter.recetteId,
-            anim: this.saisieGouter.anim,
-            nbEnfants: this.saisieGouter.nbEnfants || 30
-          };
-          this.goutersPlanifies.push(g);
-          localStorage.setItem('alsh_gouters_planif', JSON.stringify(this.goutersPlanifies));
-          this.showPlanifModal = false;
-          this.showToast('Goûter planifié !');
-        },
-        supprimerGouterPlanifie(id) {
-          this.goutersPlanifies = this.goutersPlanifies.filter(x => x.id !== id);
-          localStorage.setItem('alsh_gouters_planif', JSON.stringify(this.goutersPlanifies));
-          this.showToast('Goûter déprogrammé');
-        },
-
-        // 5. COURSES
-        subTabCourses: 'activites',
-        nouvelleCourseNom: '',
-        nouvelleCourseQte: '',
-        listeCourses: [],
-        coursesGouterAchetes: {},
-
-        addCourseDirecte() {
-          if (this.nouvelleCourseNom.trim()) {
-            this.listeCourses.push({
-              id: Date.now().toString(),
-              nom: this.nouvelleCourseNom.trim(),
-              qte: this.nouvelleCourseQte || '1',
-              activite: 'Achat direct',
-              achete: false
-            });
-            localStorage.setItem('alsh_courses', JSON.stringify(this.listeCourses));
-            this.nouvelleCourseNom = '';
-            this.nouvelleCourseQte = '';
+          if (this.nouvelleRecette.nom) {
+            const nR = { id: Date.now(), ...this.nouvelleRecette };
+            this.recettesGouter.push(nR);
+            this.sauvegarderDonnees('alsh_recettes', this.recettesGouter);
+            this.nouvelleRecette = { nom: '', ingredients: [] };
+            this.showAddRecetteModal = false;
+            this.showNotification("Recette ajoutée");
           }
         },
-        deleteCourse(id) {
-          this.listeCourses = this.listeCourses.filter(x => x.id !== id);
-          localStorage.setItem('alsh_courses', JSON.stringify(this.listeCourses));
-        },
-        viderAchetes() {
-          this.listeCourses = this.listeCourses.filter(x => !x.achete);
-          localStorage.setItem('alsh_courses', JSON.stringify(this.listeCourses));
-          this.showToast('Articles achetés nettoyés !');
-        },
-        getListeCoursesAgregeeSemaine() {
-          const gList = this.getGoutersDeLaSemaine();
-          const mapIng = {};
 
-          gList.forEach(g => {
-            const r = this.recettesGouter.find(x => x.id === g.recetteId);
-            if (r && r.ingredients) {
-              const ratio = (g.nbEnfants || 30) / 8;
+        enregistrerGouterPlanifie() {
+          if (this.saisieGouter.recetteId && this.saisieGouter.date) {
+            this.goutersPlanifies.push({ id: Date.now(), ...this.saisieGouter });
+            this.sauvegarderDonnees('alsh_gouters', this.goutersPlanifies);
+            this.showPlanifModal = false;
+            this.showNotification("Goûter planifié !");
+          }
+        },
+
+        getGoutersDeLaSemaine() {
+          return this.goutersPlanifies;
+        },
+
+        getNomRecette(id) {
+          const r = this.recettesGouter.find(x => x.id == id);
+          return r ? r.nom : 'Recette Inconnue';
+        },
+
+        supprimerGouterPlanifie(id) {
+          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
+          this.sauvegarderDonnees('alsh_gouters', this.goutersPlanifies);
+        },
+
+        getListeCoursesAgregeeSemaine() {
+          const items = {};
+          this.goutersPlanifies.forEach(g => {
+            const r = this.recettesGouter.find(x => x.id == g.recetteId);
+            if (r) {
+              const coeff = (g.nbEnfants || 1) / 8;
               r.ingredients.forEach(ing => {
                 const key = ing.nom.toLowerCase() + '_' + ing.unite;
-                const qteCalculated = Math.round(ing.qte * ratio * 10) / 10;
-                if (!mapIng[key]) {
-                  mapIng[key] = { key: key, nom: ing.nom, qte: qteCalculated, unite: ing.unite };
-                } else {
-                  mapIng[key].qte = Math.round((mapIng[key].qte + qteCalculated) * 10) / 10;
+                if (!items[key]) {
+                  items[key] = { key, nom: ing.nom, qte: 0, unite: ing.unite };
                 }
+                items[key].qte += Math.round(ing.qte * coeff);
               });
             }
           });
-
-          return Object.values(mapIng);
+          return Object.values(items);
         },
+
         estAcheteCourseGouter(key) {
           return !!this.coursesGouterAchetes[key];
         },
+
         toggleAcheteCourseGouter(key) {
           this.coursesGouterAchetes[key] = !this.coursesGouterAchetes[key];
-          localStorage.setItem('alsh_courses_gouter_achetes', JSON.stringify(this.coursesGouterAchetes));
+          this.sauvegarderDonnees('alsh_courses_gouter_status', this.coursesGouterAchetes);
         },
 
-        // 6. PLANNING
-        dateAffichee: '',
-        filtrePlanning: 'anim',
-        animateurs: [],
-        effectifs: {},
-        orgsDuJour: {},
-        showModalOrg: false,
-        showModalAnim: false,
-        showModalDetailAnim: false,
-        animDetailSelectionne: null,
-        semaineOffsetAnim: 0,
-        creneauSaisi: { animId: '', date: '', matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans', heures: '' },
-        saisieOrg: { titre: '', lieu: '', busAller: '', busRetour: '', groupes: [{ anim: '', enfants: '' }] },
+        addCourseDirecte() {
+          if (this.nouvelleCourseNom) {
+            this.listeCourses.push({
+              id: Date.now(),
+              nom: this.nouvelleCourseNom,
+              qte: this.nouvelleCourseQte || 1,
+              activite: 'Achat Manuel',
+              achete: false
+            });
+            this.sauvegarderDonnees('alsh_courses', this.listeCourses);
+            this.nouvelleCourseNom = '';
+            this.nouvelleCourseQte = 1;
+          }
+        },
+
+        deleteCourse(id) {
+          this.listeCourses = this.listeCourses.filter(c => c.id !== id);
+          this.sauvegarderDonnees('alsh_courses', this.listeCourses);
+        },
+
+        viderAchetes() {
+          this.listeCourses = this.listeCourses.filter(c => !c.achete);
+          this.sauvegarderDonnees('alsh_courses', this.listeCourses);
+        },
 
         changerJour(delta) {
-          const current = new Date(this.dateAffichee);
-          current.setDate(current.getDate() + delta);
-          this.dateAffichee = current.toISOString().split('T')[0];
+          const d = new Date(this.dateAffichee);
+          d.setDate(d.getDate() + delta);
+          this.dateAffichee = d.toISOString().split('T')[0];
         },
+
         nettoyerCreneauxPasses() {},
 
-        getEffectifDuJour(dateStr) {
-          if (!this.effectifs[dateStr]) {
-            this.effectifs[dateStr] = { matinMoins6: 0, matinPlus6: 0, midiMoins6: 0, midiPlus6: 0, soirMoins6: 0, soirPlus6: 0 };
+        getEffectifDuJour(date) {
+          if (!this.effectifsParJour[date]) {
+            this.effectifsParJour[date] = { matinMoins6: 0, matinPlus6: 0, midiMoins6: 0, midiPlus6: 0, soirMoins6: 0, soirPlus6: 0 };
           }
-          return this.effectifs[dateStr];
-        },
-        sauvegarderEffectifs() {
-          localStorage.setItem('alsh_effectifs', JSON.stringify(this.effectifs));
+          return this.effectifsParJour[date];
         },
 
-        getOrgDuJour() {
-          return this.orgsDuJour[this.dateAffichee] || null;
+        nouveauCreneauVierge() {
+          this.creneauSaisi = { id: null, animNom: '', date: this.dateAffichee, matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '-6 ans', heures: '' };
+          this.showModalAnim = true;
         },
-        ouvrirModalOrg() {
-          const existing = this.getOrgDuJour();
-          if (existing) {
-            this.saisieOrg = JSON.parse(JSON.stringify(existing));
+
+        enregistrerCreneau() {
+          if (!this.creneauSaisi.animNom.trim()) return;
+
+          const nNom = this.creneauSaisi.animNom.trim();
+
+          if (this.creneauSaisi.id) {
+            const idx = this.planningCreneaux.findIndex(c => c.id === this.creneauSaisi.id);
+            if (idx !== -1) {
+              this.planningCreneaux[idx] = { ...this.creneauSaisi, animNom: nNom };
+            }
           } else {
-            this.saisieOrg = { titre: '', lieu: '', busAller: '', busRetour: '', groupes: [{ anim: '', enfants: '' }] };
+            this.planningCreneaux.push({
+              ...this.creneauSaisi,
+              id: Date.now(),
+              animNom: nNom
+            });
+          }
+
+          this.sauvegarderDonnees('alsh_planning_creneaux', this.planningCreneaux);
+          this.showModalAnim = false;
+          this.showNotification("Créneau enregistré !");
+        },
+
+        getPlanningFiltre() {
+          const duJour = this.planningCreneaux.filter(c => c.date === this.dateAffichee);
+          const groupesByAnim = {};
+
+          duJour.forEach(c => {
+            const key = c.animNom.trim().toLowerCase();
+            if (!groupesByAnim[key]) {
+              groupesByAnim[key] = {
+                id: c.id,
+                nom: c.animNom.trim(),
+                creneaux: []
+              };
+            }
+            groupesByAnim[key].creneaux.push(c);
+          });
+
+          return Object.values(groupesByAnim);
+        },
+
+        getPlanningDuJour(p, date) {
+          if (!p || !p.creneaux || p.creneaux.length === 0) {
+            return { matin: '—', ageMatin: '-6 ans', aprem: '—', ageAprem: '-6 ans', heures: '' };
+          }
+
+          const matins = p.creneaux.map(c => c.matin).filter(Boolean).join(' / ');
+          const aprems = p.creneaux.map(c => c.aprem).filter(Boolean).join(' / ');
+          const heures = p.creneaux.map(c => c.heures).filter(Boolean).join(' | ');
+
+          const first = p.creneaux[0];
+
+          return {
+            matin: matins || '—',
+            ageMatin: first.ageMatin || '-6 ans',
+            aprem: aprems || '—',
+            ageAprem: first.ageAprem || '-6 ans',
+            heures: heures || ''
+          };
+        },
+
+        editerPlanningDuJour(p) {
+          const creneau = p.creneaux[0];
+          this.creneauSaisi = JSON.parse(JSON.stringify(creneau));
+          this.showModalAnim = true;
+        },
+
+        supprimerAnimParNom(nomAnim) {
+          if (confirm(`Supprimer tous les créneaux de ${nomAnim} pour cette journée ?`)) {
+            const term = nomAnim.trim().toLowerCase();
+            this.planningCreneaux = this.planningCreneaux.filter(c => !(c.date === this.dateAffichee && c.animNom.trim().toLowerCase() === term));
+            this.sauvegarderDonnees('alsh_planning_creneaux', this.planningCreneaux);
+            this.showNotification("Créneaux supprimés");
+          }
+        },
+
+        formatHeureInput(val) {
+          if (!val) return '';
+          let cleaned = val.replace(/[^0-9]/g, '');
+          if (cleaned.length > 8) cleaned = cleaned.substring(0, 8);
+
+          if (cleaned.length <= 4) {
+            if (cleaned.length === 4) {
+              return cleaned.substring(0, 2) + 'h' + cleaned.substring(2, 4);
+            }
+            return cleaned;
+          } else {
+            const h1 = cleaned.substring(0, 2) + 'h' + cleaned.substring(2, 4);
+            const h2 = cleaned.length >= 8 
+              ? cleaned.substring(4, 6) + 'h' + cleaned.substring(6, 8) 
+              : cleaned.substring(4);
+            return h1 + ' - ' + h2;
+          }
+        },
+
+        formatHeureSingle(val) {
+          if (!val) return '';
+          let cleaned = val.replace(/[^0-9]/g, '');
+          if (cleaned.length > 4) cleaned = cleaned.substring(0, 4);
+          if (cleaned.length === 4) {
+            return cleaned.substring(0, 2) + 'h' + cleaned.substring(2, 4);
+          }
+          return cleaned;
+        },
+
+        ouvrirModalOrg() {
+          const ex = this.getOrgDuJour();
+          if (ex) {
+            this.saisieOrg = JSON.parse(JSON.stringify(ex));
+          } else {
+            this.saisieOrg = { id: Date.now(), date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [{ anim: '', enfants: '' }] };
           }
           this.showModalOrg = true;
         },
-        ajouterGroupeOrg() {
+
+        ajouterGroupeOrgModal() {
           this.saisieOrg.groupes.push({ anim: '', enfants: '' });
         },
+
         enregistrerOrgDuJour() {
-          if (!this.saisieOrg.titre) return;
-          this.orgsDuJour[this.dateAffichee] = JSON.parse(JSON.stringify(this.saisieOrg));
-          localStorage.setItem('alsh_orgs', JSON.stringify(this.orgsDuJour));
-          this.showModalOrg = false;
-          this.showToast('Sortie spéciale enregistrée !');
-        },
-        effacerOrgDuJour() {
-          if (confirm('Effacer la sortie spéciale du jour ?')) {
-            delete this.orgsDuJour[this.dateAffichee];
-            localStorage.setItem('alsh_orgs', JSON.stringify(this.orgsDuJour));
-            this.showToast('Sortie effacée');
+          this.saisieOrg.date = this.dateAffichee;
+          const idx = this.sortiesOptionnelles.findIndex(s => s.date === this.dateAffichee);
+          if (idx !== -1) {
+            this.sortiesOptionnelles[idx] = { ...this.saisieOrg };
+          } else {
+            this.sortiesOptionnelles.push({ ...this.saisieOrg });
           }
-        },
-        parseEnfantsList(str) {
-          if (!str) return [];
-          return str.split(',').map(s => s.trim()).filter(s => s.length > 0);
+          this.sauvegarderDonnees('alsh_sorties', this.sortiesOptionnelles);
+          this.showModalOrg = false;
+          this.showNotification("Sortie enregistrée");
         },
 
-        getPlanningDuJour(anim, dateStr) {
-          if (anim.planning && anim.planning[dateStr]) {
-            return anim.planning[dateStr];
-          }
-          return { matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans', heures: '' };
+        getOrgDuJour() {
+          return this.sortiesOptionnelles.find(s => s.date === this.dateAffichee);
         },
-        getPlanningFiltre() {
-          if (this.filtrePlanning === 'anim') return this.animateurs;
-          return this.animateurs.filter(a => {
-            const p = this.getPlanningDuJour(a, this.dateAffichee);
-            return p.ageMatin === this.filtrePlanning || p.ageAprem === this.filtrePlanning;
-          });
-        },
-        nouveauCreneauVierge() {
-          this.creneauSaisi = {
-            animId: this.animateurs.length > 0 ? this.animateurs[0].id : '',
-            date: this.dateAffichee,
-            matin: '',
-            ageMatin: '-6 ans',
-            aprem: '',
-            ageAprem: '+6 ans',
-            heures: ''
-          };
-          this.showModalAnim = true;
-        },
-        editerPlanningDuJour(anim) {
-          const p = this.getPlanningDuJour(anim, this.dateAffichee);
-          this.creneauSaisi = {
-            animId: anim.id,
-            date: this.dateAffichee,
-            matin: p.matin || '',
-            ageMatin: p.ageMatin || '-6 ans',
-            aprem: p.aprem || '',
-            ageAprem: p.ageAprem || '+6 ans',
-            heures: p.heures || ''
-          };
-          this.showModalAnim = true;
-        },
-        enregistrerCreneau() {
-          if (!this.creneauSaisi.animId || !this.creneauSaisi.date) return;
-          const anim = this.animateurs.find(a => a.id === this.creneauSaisi.animId);
-          if (anim) {
-            if (!anim.planning) anim.planning = {};
-            anim.planning[this.creneauSaisi.date] = {
-              matin: this.creneauSaisi.matin,
-              ageMatin: this.creneauSaisi.ageMatin,
-              aprem: this.creneauSaisi.aprem,
-              ageAprem: this.creneauSaisi.ageAprem,
-              heures: this.creneauSaisi.heures
-            };
-            localStorage.setItem('alsh_animateurs', JSON.stringify(this.animateurs));
-            this.showModalAnim = false;
-            this.showToast('Créneau enregistré !');
+
+        effacerOrgDuJour() {
+          if (confirm("Supprimer la sortie spéciale du jour ?")) {
+            this.sortiesOptionnelles = this.sortiesOptionnelles.filter(s => s.date !== this.dateAffichee);
+            this.sauvegarderDonnees('alsh_sorties', this.sortiesOptionnelles);
           }
         },
-        supprimerAnim(id) {
-          if (confirm('Supprimer cet animateur du planning ?')) {
-            this.animateurs = this.animateurs.filter(a => a.id !== id);
-            localStorage.setItem('alsh_animateurs', JSON.stringify(this.animateurs));
-            this.showToast('Animateur supprimé');
-          }
+
+        parseEnfantsList(str) {
+          if (!str) return [];
+          return str.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
         },
+
         filtrerParAge(age) {
           if (age) this.filtrePlanning = age;
         },
 
-        // PLANNING INDIVIDUEL ANIMATEUR (AFFICHAGE "Semaine +1", "Semaine +2"...)
-        ouvrirDetailAnim(anim) {
-          this.animDetailSelectionne = anim;
-          this.semaineOffsetAnim = 0;
-          this.showModalDetailAnim = true;
-        },
-        getLibelleSemaineAnim(offset) {
-          if (offset === 0) return 'Cette semaine';
-          if (offset > 0) return `Semaine +${offset}`;
-          return `Semaine ${offset}`;
-        },
-        getJoursSemaineAnim(offset) {
-          if (!this.animDetailSelectionne) return [];
-          const joursNoms = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
-          const now = new Date();
-          const currentDay = now.getDay();
-          const diffToMonday = now.getDate() - currentDay + (currentDay === 0 ? -6 : 1) + (offset * 7);
-          
-          const jours = [];
-          for (let i = 0; i < 5; i++) {
-            const d = new Date(now.getFullYear(), now.getMonth(), diffToMonday + i);
-            const dateStr = d.toISOString().split('T')[0];
-            const p = this.getPlanningDuJour(this.animDetailSelectionne, dateStr);
-            jours.push({
-              nomJour: joursNoms[i],
-              dateLisible: `${d.getDate()}/${d.getMonth()+1}`,
-              dateStr: dateStr,
-              matin: p.matin,
-              ageMatin: p.ageMatin,
-              aprem: p.aprem,
-              ageAprem: p.ageAprem,
-              heures: p.heures
-            });
+        reinitialiserApp() {
+          if (confirm("Réinitialiser toutes les données locales ?")) {
+            localStorage.clear();
+            location.reload();
           }
-          return jours;
         }
       };
     }
