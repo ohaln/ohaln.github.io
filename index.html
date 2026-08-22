@@ -273,36 +273,9 @@
 
       <div class="pt-2">
         <button type="button" @click="showModalDirecteur = true" class="text-[11px] opacity-60 hover:opacity-100 font-bold underline">
-          Espace Directeur (Changer le PIN)
+          Espace Directeur (Réinitialisation PIN)
         </button>
       </div>
-    </div>
-  </div>
-
-  <!-- MODAL ESPACE DIRECTEUR -->
-  <div x-show="showModalDirecteur" x-transition class="fixed inset-0 z-[220] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
-    <div class="card-pop p-5 max-w-sm w-full space-y-4 bg-slate-900 text-white shadow-2xl border border-white/10">
-      <div class="flex justify-between items-center border-b border-white/10 pb-2">
-        <h3 class="font-poster text-base font-black">⚙️ Espace Directeur</h3>
-        <button type="button" @click="showModalDirecteur = false" class="opacity-60 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <form @submit.prevent="changerCodePinDirecteur()" class="space-y-3 text-left">
-        <div>
-          <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Mot de passe Directeur</label>
-          <input type="password" x-model="saisieMdpDirecteur" placeholder="Entrez le mot de passe (def: admin)" class="input-pop w-full px-3 py-2 text-xs text-slate-900 font-bold" required>
-        </div>
-
-        <div>
-          <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-300 mb-1">Nouveau Code PIN (4 chiffres)</label>
-          <input type="text" maxlength="4" pattern="\d{4}" x-model="nouveauPinForm" placeholder="ex: 1234" class="input-pop w-full px-3 py-2 text-xs text-slate-900 font-bold text-center">
-        </div>
-
-        <div class="pt-2 flex gap-2">
-          <button type="button" @click="showModalDirecteur = false" class="btn-dark flex-1 py-2 rounded-full text-xs">Annuler</button>
-          <button type="submit" class="btn-white flex-1 py-2 rounded-full text-xs text-slate-900">Valider</button>
-        </div>
-      </form>
     </div>
   </div>
 
@@ -434,6 +407,7 @@
       </div>
     </div>
 
+
     <!-- ==================== 1. ONGLET : FICHES SAN' ==================== -->
     <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
@@ -492,7 +466,7 @@
               </div>
 
               <div class="flex items-center space-x-1.5 shrink-0">
-                <span x-show="e.aPAI" title="PAI / Médical" class="w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
+                <span x-show="e.pai" title="PAI / Médical" class="w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
                   ⚠️
                 </span>
                 
@@ -622,10 +596,10 @@
           </div>
 
           <div class="p-3.5 rounded-2xl space-y-1.5 transition-all" 
-               :class="enfantSelectionne?.aPAI ? 'bg-amber-100/80 border border-amber-300 text-amber-950' : 'bg-white/40 border border-black/5'">
+               :class="enfantSelectionne?.pai ? 'bg-amber-100/80 border border-amber-300 text-amber-950' : 'bg-white/40 border border-black/5'">
             <div class="flex items-center justify-between">
               <span class="text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
-                ⚠️ PAI / Médical
+                ⚠️ PAI
               </span>
             </div>
             <p class="font-bold text-xs md:text-sm pt-0.5 break-words" x-text="enfantSelectionne?.pai || 'Aucun traitement ou PAI renseigné.'"></p>
@@ -656,6 +630,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- ==================== 2. ONGLET : FICHE D'ACTIVITÉ ==================== -->
     <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
@@ -791,6 +766,7 @@
       </div>
     </div>
 
+
     <!-- ==================== 3. ONGLET : CAHIER DE SOINS NUMÉRIQUE ==================== -->
     <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
@@ -870,9 +846,9 @@
       </div>
     </div>
 
-    <!-- TEMPLATE CACHÉ POUR EXPORT PDF DU CAHIER DE SOINS -->
+    <!-- TEMPLATE CACHÉ POUR EXPORT PDF DU CAHIER DE SOINS (A4 FORMATÉ PROPREMENT SANS TRONQUER ET AVEC DATE) -->
     <div class="fixed top-0 left-[-9999px] z-[-100]">
-      <div id="pdf-template-soins-simple" style="width: 190mm; padding: 10mm; background: white; color: #000; font-family: sans-serif; box-sizing: border-box;">
+      <div id="pdf-template-soins-simple" style="width: 190mm; padding: 10mm; bg-white; color: #000; font-family: sans-serif; box-sizing: border-box;">
         <h1 style="font-size: 15px; font-weight: 800; text-align: center; margin-bottom: 12px; border-bottom: 2px solid #000; padding-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
           REGISTRE RÉGLEMENTAIRE DU CAHIER DE SOINS
         </h1>
@@ -900,6 +876,7 @@
         </table>
       </div>
     </div>
+
 
     <!-- ==================== 4. ONGLET : GOÛTER ==================== -->
     <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
@@ -1066,6 +1043,7 @@
       </div>
     </div>
 
+
     <!-- ==================== 5. ONGLET : COURSES MATÉRIEL & GOÛTERS ==================== -->
     <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
@@ -1117,7 +1095,6 @@
           </button>
         </div>
 
-        <!-- Courses Goûters -->
         <div x-show="subTabCourses === 'gouter'" class="space-y-3">
           <div class="flex items-center justify-between card-item-pop px-3 py-1.5">
             <button type="button" @click="changerSemaine(-1)" class="opacity-60 hover:opacity-100 px-2 py-0.5"><i class="fa-solid fa-chevron-left text-xs"></i></button>
@@ -1156,6 +1133,7 @@
       </div>
     </div>
 
+
     <!-- ==================== 6. ONGLET : PLANNING ==================== -->
     <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
@@ -1166,6 +1144,7 @@
               <span>📅</span> Planning
             </h2>
             <div class="flex gap-1.5 shrink-0">
+              <!-- BOUTON SORTIE OPTIMISÉ POUR MOBILE -->
               <button type="button" @click.stop="ouvrirModalOrg()" class="btn-white text-[11px] px-3 py-1.5 rounded-full shrink-0 whitespace-nowrap active:scale-95 touch-manipulation cursor-pointer">
                 🚌 Sortie
               </button>
@@ -1186,7 +1165,7 @@
           </div>
         </div>
 
-        <!-- 1. ENCADRÉ SORTIE SPÉCIALE -->
+        <!-- 1. ENCADRÉ SORTIE SPÉCIALE (PLACÉ AVANT L'EFFECTIF DU JOUR) -->
         <template x-if="getOrgDuJour()">
           <div class="card-pop p-4 space-y-3 bg-white/95 text-gray-900 shadow-md border-2 border-rose-400/70 relative overflow-hidden">
             <div class="flex justify-between items-start border-b border-rose-100 pb-2">
@@ -1344,13 +1323,18 @@
                                ? 'bg-emerald-500/10 border-emerald-500 text-emerald-950' 
                                : 'bg-indigo-500/10 border-indigo-500 text-indigo-950'">
                     <div class="flex justify-between items-center mb-0.5">
-                      <span class="text-[8px] opacity-60 font-bold uppercase">🌆 Après-midi</span>
+                      <span class="text-[8px] opacity-60 font-bold uppercase">🌆 Aprem</span>
                       <span class="text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase"
                             :class="p.ageAprem === '-6 ans' ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'"
                             x-text="p.ageAprem || '+6 ans'"></span>
                     </div>
                     <p class="font-bold text-[11px] truncate" x-text="p.aprem || '—'"></p>
                   </div>
+
+                </div>
+
+                <div class="text-[9px] text-center opacity-60 font-bold pt-1 border-t border-black/5">
+                  🔍 Cliquez pour voir le planning semaine de cet anim'
                 </div>
 
               </div>
@@ -1361,234 +1345,331 @@
       </div>
     </div>
 
-    <!-- MODAL : CRÉER / MODIFIER CRÉNEAU PLANNING -->
-    <div x-show="showModalCreneau" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-sm w-full space-y-3 theme-planning shadow-xl">
-        <h3 class="font-poster text-base border-b border-black/5 pb-1.5" x-text="isEditingCreneau ? '✏️ Modifier Créneau' : '📅 Nouveau Créneau'"></h3>
-
-        <form @submit.prevent="enregistrerCreneau()" class="space-y-2.5">
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Nom de l'animateur</label>
-            <input type="text" x-model="creneauForm.animNom" placeholder="ex: Sarah" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
-          </div>
-
-          <div class="space-y-1.5 bg-white/50 p-2.5 rounded-xl border border-black/5">
-            <span class="text-[9px] font-black uppercase tracking-wider block">☀️ Matin</span>
-            <input type="text" x-model="creneauForm.matin" placeholder="Activité Matin" class="input-pop w-full px-2.5 py-1 text-xs">
-            <select x-model="creneauForm.ageMatin" class="input-pop w-full px-2 py-1 text-xs font-bold">
-              <option value="-6 ans">-6 ans</option>
-              <option value="+6 ans">+6 ans</option>
-            </select>
-          </div>
-
-          <div class="space-y-1.5 bg-white/50 p-2.5 rounded-xl border border-black/5">
-            <span class="text-[9px] font-black uppercase tracking-wider block">🌆 Après-midi</span>
-            <input type="text" x-model="creneauForm.aprem" placeholder="Activité Après-midi" class="input-pop w-full px-2.5 py-1 text-xs">
-            <select x-model="creneauForm.ageAprem" class="input-pop w-full px-2 py-1 text-xs font-bold">
-              <option value="-6 ans">-6 ans</option>
-              <option value="+6 ans">+6 ans</option>
-            </select>
-          </div>
-
-          <div class="flex gap-2 pt-2 border-t border-black/5">
-            <button type="button" @click="showModalCreneau = false" class="btn-dark flex-1 py-1.5 rounded-full text-xs uppercase">Annuler</button>
-            <button type="submit" class="btn-white flex-1 py-1.5 rounded-full text-xs">Valider</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- MODAL : ORGANISER SORTIE SPÉCIALE -->
-    <div x-show="showModalOrg" x-transition class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-lg w-full space-y-3 theme-planning max-h-[90vh] overflow-y-auto shadow-xl">
-        <h3 class="font-poster text-base border-b border-black/5 pb-1.5">🚌 Planifier une Sortie Spéciale</h3>
-
-        <form @submit.prevent="enregistrerOrg()" class="space-y-3">
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Intitulé de la sortie</label>
-            <input type="text" x-model="orgForm.titre" placeholder="ex: Journée à la Mer" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
+    <!-- MODAL : PLANNING DE L'ANIM' PAR SEMAINE -->
+    <div x-show="showModalAnimSemaine" x-transition class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm overflow-y-auto" style="display: none;">
+      <div class="card-pop p-4 sm:p-5 max-w-lg w-full space-y-4 theme-planning shadow-xl my-auto max-h-[85dvh] flex flex-col">
+        
+        <div class="flex justify-between items-center border-b border-black/5 pb-2 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">👤</span>
             <div>
-              <label class="block text-[9px] font-bold uppercase mb-0.5">Lieu</label>
-              <input type="text" x-model="orgForm.lieu" placeholder="ex: Plage Centrale" class="input-pop w-full px-2.5 py-1.5 text-xs">
-            </div>
-            <div>
-              <label class="block text-[9px] font-bold uppercase mb-0.5">Bus Départ</label>
-              <input type="text" x-model="orgForm.busAller" placeholder="ex: 09h00" class="input-pop w-full px-2.5 py-1.5 text-xs">
+              <h3 class="font-poster text-base font-black capitalize" x-text="'Planning de ' + animSemaineSelectionne"></h3>
+              <p class="text-[10px] font-bold opacity-60">Vue hebdomadaire</p>
             </div>
           </div>
+          <button type="button" @click="showModalAnimSemaine = false" class="opacity-50 hover:opacity-100 p-1"><i class="fa-solid fa-xmark text-base"></i></button>
+        </div>
 
-          <div>
-            <label class="block text-[9px] font-bold uppercase mb-0.5">Bus Retour</label>
-            <input type="text" x-model="orgForm.busRetour" placeholder="ex: 16h30" class="input-pop w-full px-2.5 py-1.5 text-xs">
+        <div class="flex items-center justify-between card-item-pop px-3 py-2 bg-white/90 shrink-0">
+          <button type="button" @click="changerSemaineAnim(-1)" class="btn-white px-2.5 py-1 text-xs rounded-lg">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          
+          <div class="text-center">
+            <span class="text-xs font-black uppercase" x-text="getLibelleSemaineAnim()"></span>
           </div>
 
-          <div class="space-y-2">
-            <div class="flex justify-between items-center">
-              <label class="text-[10px] font-black uppercase">Groupes d'enfants & Animateurs</label>
-              <button type="button" @click="orgForm.groupes.push({ id: Date.now(), anim: '', enfants: '' })" class="btn-white text-[9px] px-2 py-0.5 rounded-full uppercase">
-                + Groupe
-              </button>
-            </div>
+          <button type="button" @click="changerSemaineAnim(1)" class="btn-white px-2.5 py-1 text-xs rounded-lg">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
 
-            <template x-for="(g, idx) in orgForm.groupes" :key="g.id">
-              <div class="card-item-pop p-2.5 space-y-1.5 bg-white/70">
-                <div class="flex justify-between items-center">
-                  <span class="text-[9px] font-bold opacity-70" x-text="'Groupe ' + (idx + 1)"></span>
-                  <button type="button" x-show="orgForm.groupes.length > 1" @click="orgForm.groupes.splice(idx, 1)" class="text-rose-600 text-[9px] font-bold">Supprimer</button>
+        <div class="space-y-3 overflow-y-auto flex-1 pr-1">
+          <template x-for="j in getPlanningSemaineAnim()" :key="j.dateStr">
+            <div class="card-item-pop p-3 space-y-2 bg-white/90">
+              <div class="flex justify-between items-center border-b border-black/5 pb-1">
+                <span class="font-poster text-xs font-black text-indigo-950 uppercase" x-text="j.nomJour + ' (' + j.dateFormatted + ')'"></span>
+              </div>
+
+              <template x-if="j.creneau">
+                <div class="grid grid-cols-2 gap-1.5 text-xs">
+                  <div class="p-2 rounded-xl border-l-4 transition-all"
+                       :class="j.creneau.ageMatin === '-6 ans' 
+                               ? 'bg-emerald-500/10 border-emerald-500 text-emerald-950' 
+                               : 'bg-indigo-500/10 border-indigo-500 text-indigo-950'">
+                    <div class="flex justify-between items-center mb-0.5">
+                      <span class="text-[8px] opacity-60 font-bold uppercase">☀️ Matin</span>
+                      <span class="text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase"
+                            :class="j.creneau.ageMatin === '-6 ans' ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'"
+                            x-text="j.creneau.ageMatin || '-6 ans'"></span>
+                    </div>
+                    <p class="font-bold text-[11px] truncate" x-text="j.creneau.matin || '—'"></p>
+                  </div>
+
+                  <div class="p-2 rounded-xl border-l-4 transition-all"
+                       :class="j.creneau.ageAprem === '-6 ans' 
+                               ? 'bg-emerald-500/10 border-emerald-500 text-emerald-950' 
+                               : 'bg-indigo-500/10 border-indigo-500 text-indigo-950'">
+                    <div class="flex justify-between items-center mb-0.5">
+                      <span class="text-[8px] opacity-60 font-bold uppercase">🌆 Aprem</span>
+                      <span class="text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase"
+                            :class="j.creneau.ageAprem === '-6 ans' ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'"
+                            x-text="j.creneau.ageAprem || '+6 ans'"></span>
+                    </div>
+                    <p class="font-bold text-[11px] truncate" x-text="j.creneau.aprem || '—'"></p>
+                  </div>
                 </div>
-                <input type="text" x-model="g.anim" placeholder="Animateur Référent" class="input-pop w-full px-2 py-1 text-xs">
-                <input type="text" x-model="g.enfants" placeholder="Enfants (séparés par des virgules)" class="input-pop w-full px-2 py-1 text-xs">
-              </div>
-            </template>
-          </div>
+              </template>
 
-          <div class="flex gap-2 pt-2 border-t border-black/5">
-            <button type="button" @click="showModalOrg = false" class="btn-dark flex-1 py-1.5 rounded-full text-xs uppercase">Annuler</button>
-            <button type="submit" class="btn-white flex-1 py-1.5 rounded-full text-xs">Enregistrer</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- MODAL : VUE SEMAINE ANIMATEUR -->
-    <div x-show="modalAnimSemaine.show" x-transition class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
-      <div class="card-pop p-5 max-w-md w-full space-y-3 theme-planning shadow-xl max-h-[85vh] overflow-y-auto">
-        <div class="flex justify-between items-center border-b border-black/5 pb-2">
-          <h3 class="font-poster text-base font-black capitalize" x-text="'Planning Semaine : ' + modalAnimSemaine.animNom"></h3>
-          <button type="button" @click="modalAnimSemaine.show = false" class="opacity-60 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-
-        <div class="space-y-2 text-xs">
-          <template x-if="modalAnimSemaine.creneaux.length === 0">
-            <p class="text-center opacity-70 py-4 font-bold">Aucun créneau affecté cette semaine.</p>
-          </template>
-
-          <template x-for="item in modalAnimSemaine.creneaux" :key="item.id">
-            <div class="card-item-pop p-2.5 space-y-1 bg-white/80">
-              <span class="text-[9px] font-black uppercase text-indigo-900" x-text="formatDateLisible(item.date)"></span>
-              <div class="grid grid-cols-2 gap-1 text-[11px]">
-                <div>☀️ <strong>Matin :</strong> <span x-text="item.matin || '—'"></span></div>
-                <div>🌆 <strong>Aprem :</strong> <span x-text="item.aprem || '—'"></span></div>
-              </div>
+              <template x-if="!j.creneau">
+                <p class="text-[11px] font-bold opacity-40 italic text-center py-1">Repos / Non planifié</p>
+              </template>
             </div>
           </template>
         </div>
 
-        <button type="button" @click="modalAnimSemaine.show = false" class="btn-dark w-full py-2 rounded-full text-xs uppercase">
+        <button type="button" @click="showModalAnimSemaine = false" class="btn-dark w-full py-2 rounded-full text-xs uppercase shrink-0">
           Fermer
         </button>
       </div>
     </div>
 
+    <!-- MODAL : SORTIE SPÉCIALE (OPTIMISÉE MOBILE) -->
+    <div x-show="showModalOrg" x-transition class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm overflow-y-auto" style="display: none;">
+      <div class="card-pop p-4 sm:p-5 max-w-lg w-full space-y-3.5 theme-planning shadow-xl my-auto max-h-[85dvh] flex flex-col">
+        <h3 class="font-poster text-base border-b border-black/5 pb-2 shrink-0">
+          🚌 Organiser une Sortie Spéciale
+        </h3>
+
+        <div class="space-y-3 overflow-y-auto flex-1 pr-1">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Titre de la sortie</label>
+            <input type="text" x-model="orgSaisie.titre" placeholder="ex: Zoo d'Amnéville" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Lieu</label>
+            <input type="text" x-model="orgSaisie.lieu" placeholder="ex: Amnéville" class="input-pop w-full px-2.5 py-1.5 text-xs">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Bus Départ (Heure)</label>
+              <input type="text" inputmode="numeric" x-model="orgSaisie.busAller" @input="orgSaisie.busAller = formatHeureBus($event.target.value)" placeholder="08h30" class="input-pop w-full px-2.5 py-1.5 text-xs text-center font-bold">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Bus Retour (Heure)</label>
+              <input type="text" inputmode="numeric" x-model="orgSaisie.busRetour" @input="orgSaisie.busRetour = formatHeureBus($event.target.value)" placeholder="17h00" class="input-pop w-full px-2.5 py-1.5 text-xs text-center font-bold">
+            </div>
+          </div>
+
+          <div class="card-item-pop p-3 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase">👥 Groupes d'enfants</span>
+              <button type="button" @click="ajouterGroupeOrg()" class="btn-white text-[9px] px-2 py-0.5 rounded-full font-black uppercase">
+                + Ajouter groupe
+              </button>
+            </div>
+
+            <template x-for="(g, idx) in orgSaisie.groupes" :key="idx">
+              <div class="space-y-1.5 pt-2 border-t border-black/5 first:border-0 first:pt-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-bold opacity-70" x-text="'Groupe ' + (idx + 1)"></span>
+                  <button type="button" x-show="orgSaisie.groupes.length > 1" @click="orgSaisie.groupes.splice(idx, 1)" class="text-rose-600 text-[9px] font-bold hover:underline">
+                    Supprimer
+                  </button>
+                </div>
+                <input type="text" x-model="g.anim" placeholder="Nom de l'animateur référent" class="input-pop w-full px-2 py-1 text-xs">
+                <textarea x-model="g.enfants" placeholder="Prénoms des enfants (séparés par des virgules)..." class="input-pop w-full px-2 py-1 text-xs h-12 resize-none"></textarea>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t border-black/5 shrink-0 bg-inherit">
+          <button type="button" @click="showModalOrg = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase cursor-pointer">Annuler</button>
+          <button type="button" @click="enregistrerOrg()" class="btn-white flex-1 py-2 rounded-full text-xs cursor-pointer">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL : NOUVEAU / EDIT CRÉNEAU PLANNING -->
+    <div x-show="showModalCreneau" x-transition class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm overflow-y-auto" style="display: none;">
+      <div class="card-pop p-4 sm:p-5 max-w-md w-full space-y-3.5 theme-planning shadow-xl my-auto max-h-[85dvh] flex flex-col">
+        <h3 class="font-poster text-base border-b border-black/5 pb-2 shrink-0" x-text="isEditingCreneau ? '✏️ Modifier Créneau' : '➕ Nouveau Créneau'"></h3>
+
+        <div class="space-y-3 overflow-y-auto flex-1 pr-1">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Nom de l'Animateur</label>
+            <input type="text" x-model="creneauSaisie.animNom" placeholder="ex: Sarah" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider mb-1">Date</label>
+            <input type="date" x-model="creneauSaisie.date" class="input-pop w-full px-2.5 py-1.5 text-xs" required>
+          </div>
+
+          <div class="space-y-2 card-item-pop p-3">
+            <span class="text-[10px] font-bold uppercase block opacity-70">☀️ Matin</span>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" x-model="creneauSaisie.matin" placeholder="ex: Grand jeu" class="input-pop px-2 py-1 text-xs">
+              <select x-model="creneauSaisie.ageMatin" class="input-pop px-2 py-1 text-xs font-bold">
+                <option value="-6 ans">-6 ans</option>
+                <option value="+6 ans">+6 ans</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-y-2 card-item-pop p-3">
+            <span class="text-[10px] font-bold uppercase block opacity-70">🌆 Après-midi</span>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" x-model="creneauSaisie.aprem" placeholder="ex: Ateliers créatifs" class="input-pop px-2 py-1 text-xs">
+              <select x-model="creneauSaisie.ageAprem" class="input-pop px-2 py-1 text-xs font-bold">
+                <option value="-6 ans">-6 ans</option>
+                <option value="+6 ans">+6 ans</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2 pt-2 border-t border-black/5 shrink-0 bg-inherit">
+          <button type="button" @click="showModalCreneau = false" class="btn-dark flex-1 py-2 rounded-full text-xs uppercase cursor-pointer">Annuler</button>
+          <button type="button" @click="enregistrerCreneau()" class="btn-white flex-1 py-2 rounded-full text-xs cursor-pointer">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DIRECTEUR (RÉINITIALISATION PIN) -->
+    <div x-show="showModalDirecteur" x-transition class="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
+      <div class="card-pop p-5 max-w-xs w-full space-y-4 bg-slate-900 text-white shadow-2xl border border-white/10">
+        <div class="text-center space-y-1">
+          <h3 class="font-poster text-lg font-black">Espace Directeur</h3>
+          <p class="text-[11px] opacity-70">Entrez le mot de passe directeur pour réinitialiser le PIN à "1234".</p>
+        </div>
+
+        <div>
+          <input type="password" x-model="codeDirecteurInput" placeholder="Mot de passe directeur..." class="input-pop w-full px-3 py-2 text-xs text-black text-center font-bold">
+        </div>
+
+        <div class="flex gap-2">
+          <button type="button" @click="showModalDirecteur = false" class="btn-white flex-1 py-2 rounded-full text-xs text-black">Annuler</button>
+          <button type="button" @click="reinitialiserPinDirecteur()" class="btn-dark flex-1 py-2 rounded-full text-xs bg-rose-600 hover:bg-rose-700">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
+
   </main>
 
-  <!-- JAVASCRIPT ALPINE.JS -->
+  <!-- LOGIQUE ALPINE.JS DU HUB COMPLÈTE -->
   <script>
     function alshApp() {
       return {
         currentTab: 'hub',
+        subTabCourses: 'activites',
         isOnline: navigator.onLine,
         isLocked: false,
         pinSaisi: '',
-        codePin: localStorage.getItem('alsh_pin') || '1234',
-        mdpDirecteur: 'admin',
-        saisieMdpDirecteur: '',
-        nouveauPinForm: '',
+        codePinCorrect: '1234',
         showModalDirecteur: false,
-        toast: { show: false, message: '' },
+        codeDirecteurInput: '',
 
-        // Sanitaire
-        searchEnfant: '',
+        toast: {
+          show: false,
+          message: ''
+        },
+
+        // 1. FICHES SAN'
         filtreGroupeSanitaire: 'tous',
+        searchEnfant: '',
         showAddEnfantModal: false,
         isEditingEnfant: false,
         enfantSelectionne: null,
-        nouvelEnfant: { id: null, prenom: '', nom: '', dateNaissance: '', responsables: [{ nom: '', telephone: '' }], aPAI: false, pai: '', droitImage: true },
+        nouvelEnfant: {
+          id: null,
+          prenom: '',
+          nom: '',
+          dateNaissance: '',
+          responsables: [{ nom: '', telephone: '' }],
+          aPAI: false,
+          pai: '',
+          droitImage: true
+        },
         enfants: [],
 
-        // Fiche Activité
-        fiche: { titre: '', age: '-6 ans', lieu: '', objectif: '', deroulement: '', materiel: [] },
+        // 2. FICHE D'ACTIVITÉ
+        fiche: {
+          titre: '',
+          age: '-6 ans',
+          lieu: '',
+          objectif: '',
+          deroulement: '',
+          materiel: []
+        },
         newMatosNom: '',
-        newMatosQte: 1,
+        newMatosQte: '',
 
-        // Soins
-        soin: { enfant: '', incident: '', action: '', prevenirFamille: false },
+        // 3. CAHIER DE SOINS
+        soin: {
+          enfant: '',
+          incident: '',
+          action: '',
+          prevenirFamille: false
+        },
         registreSoins: [],
 
-        // Goûter
-        showAddRecetteModal: false,
-        showPlanifModal: false,
-        semaineOffset: 0,
+        // 4. GOÛTER
         recettesGouter: [],
-        nouvelleRecette: { nom: '', ingredients: [] },
-        tempIng: { nom: '', qte: 1, unite: 'g' },
-        saisieGouter: { date: new Date().toISOString().split('T')[0], recetteId: 1, anim: '', nbEnfants: 20 },
+        showAddRecetteModal: false,
+        nouvelleRecette: {
+          nom: '',
+          ingredients: []
+        },
+        tempIng: {
+          nom: '',
+          qte: '',
+          unite: 'g'
+        },
+        showPlanifModal: false,
+        saisieGouter: {
+          date: new Date().toISOString().split('T')[0],
+          recetteId: 1,
+          anim: '',
+          nbEnfants: ''
+        },
+        semaineDecalageGouter: 0,
         goutersPlanifies: [],
 
-        // Courses
-        subTabCourses: 'activites',
-        nouvelleCourseNom: '',
-        nouvelleCourseQte: 1,
+        // 5. COURSES
         listeCourses: [],
-        coursesGouterAchetees: {},
+        nouvelleCourseNom: '',
+        nouvelleCourseQte: '',
+        coursesAcheteesGouter: {},
 
-        // Planning
+        // 6. PLANNING
         dateAffichee: new Date().toISOString().split('T')[0],
+        showModalOrg: false,
+        orgSaisie: {
+          date: new Date().toISOString().split('T')[0],
+          titre: '',
+          lieu: '',
+          busAller: '',
+          busRetour: '',
+          groupes: [{ id: 1, anim: '', enfants: '' }]
+        },
+        orgsOutings: [],
         showModalCreneau: false,
         isEditingCreneau: false,
-        creneauForm: { id: null, date: '', animNom: '', matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' },
-        plannings: [],
-        effectifs: {},
-        showModalOrg: false,
-        orgForm: { date: '', titre: '', lieu: '', busAller: '', busRetour: '', groupes: [{ id: 1, anim: '', enfants: '' }] },
-        sortiesSpeciales: {},
-        modalAnimSemaine: { show: false, animNom: '', creneaux: [] },
+        creneauSaisie: {
+          id: null,
+          date: new Date().toISOString().split('T')[0],
+          animNom: '',
+          matin: '',
+          ageMatin: '-6 ans',
+          aprem: '',
+          ageAprem: '+6 ans'
+        },
+        planningCreneaux: [],
+        effectifsJours: {},
+        showModalAnimSemaine: false,
+        animSemaineSelectionne: '',
+        semaineDecalageAnim: 0,
 
+        // INITIALISATION
         initApp() {
           window.addEventListener('online', () => this.isOnline = true);
           window.addEventListener('offline', () => this.isOnline = false);
 
-          this.enfants = JSON.parse(localStorage.getItem('alsh_enfants')) || [
-            { id: 1, prenom: 'Lucas', nom: 'Dupont', dateNaissance: '2019-05-12', responsables: [{ nom: 'Marie Dupont', telephone: '0612345678' }], aPAI: true, pai: 'Asthme - Ventoline si crise', droitImage: true },
-            { id: 2, prenom: 'Emma', nom: 'Martin', dateNaissance: '2016-09-20', responsables: [{ nom: 'Pierre Martin', telephone: '0698765432' }], aPAI: false, pai: '', droitImage: false }
-          ];
-
-          this.fiche = JSON.parse(localStorage.getItem('alsh_fiche')) || {
-            titre: 'Grand Jeu Chasse au Trésor', age: '-6 ans', lieu: 'Parc municipal', objectif: 'Développer la coopération', deroulement: '1. Constituer 4 équipes\n2. Découvrir les indices\n3. Trouver le coffre', materiel: [{ nom: 'Feutres', qte: 10 }, { nom: 'Cartons', qte: 5 }]
-          };
-
-          this.registreSoins = JSON.parse(localStorage.getItem('alsh_soins')) || [
-            { id: 1, date: new Date().toISOString().split('T')[0], heure: '10:30', enfant: 'Lucas Dupont', incident: 'Écorchure au genou', action: 'Désinfecté + pansement', prevenirFamille: true }
-          ];
-
-          this.recettesGouter = JSON.parse(localStorage.getItem('alsh_recettes')) || [
-            { id: 1, nom: 'Gâteau Marbré', ingredients: [{ nom: 'Farine', qte: 250, unite: 'g' }, { nom: 'Sucre', qte: 150, unite: 'g' }, { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }] },
-            { id: 2, nom: 'Compote & Biscuits', ingredients: [{ nom: 'Pots de compote', qte: 8, unite: 'pièce(s)' }, { nom: 'Biscuits', qte: 2, unite: 'sachet(s)' }] }
-          ];
-
-          this.goutersPlanifies = JSON.parse(localStorage.getItem('alsh_gouters')) || [];
-          this.listeCourses = JSON.parse(localStorage.getItem('alsh_courses')) || [];
-          this.coursesGouterAchetees = JSON.parse(localStorage.getItem('alsh_courses_gouter_achetees')) || {};
-          this.plannings = JSON.parse(localStorage.getItem('alsh_plannings')) || [];
-          this.effectifs = JSON.parse(localStorage.getItem('alsh_effectifs')) || {};
-          this.sortiesSpeciales = JSON.parse(localStorage.getItem('alsh_sorties')) || {};
-        },
-
-        saveStorage() {
-          localStorage.setItem('alsh_enfants', JSON.stringify(this.enfants));
-          localStorage.setItem('alsh_fiche', JSON.stringify(this.fiche));
-          localStorage.setItem('alsh_soins', JSON.stringify(this.registreSoins));
-          localStorage.setItem('alsh_recettes', JSON.stringify(this.recettesGouter));
-          localStorage.setItem('alsh_gouters', JSON.stringify(this.goutersPlanifies));
-          localStorage.setItem('alsh_courses', JSON.stringify(this.listeCourses));
-          localStorage.setItem('alsh_courses_gouter_achetees', JSON.stringify(this.coursesGouterAchetees));
-          localStorage.setItem('alsh_plannings', JSON.stringify(this.plannings));
-          localStorage.setItem('alsh_effectifs', JSON.stringify(this.effectifs));
-          localStorage.setItem('alsh_sorties', JSON.stringify(this.sortiesSpeciales));
-          localStorage.setItem('alsh_pin', this.codePin);
+          this.chargerDonnees();
         },
 
         showToast(msg) {
@@ -1597,373 +1678,543 @@
           setTimeout(() => { this.toast.show = false; }, 3000);
         },
 
-        // PIN & Directeur
-        saisirPinDigit(num) {
+        // CODE PIN ET SÉCURITÉ
+        saisirPinDigit(digit) {
           if (this.pinSaisi.length < 4) {
-            this.pinSaisi += num;
+            this.pinSaisi += digit;
+            if (this.pinSaisi.length === 4) {
+              this.validerPin();
+            }
           }
         },
+
         effacerPinDigit() {
           this.pinSaisi = this.pinSaisi.slice(0, -1);
         },
+
         validerPin() {
-          if (this.pinSaisi === this.codePin) {
+          const pinSaved = localStorage.getItem('alsh_pin') || '1234';
+          if (this.pinSaisi === pinSaved) {
             this.isLocked = false;
             this.pinSaisi = '';
-            this.showToast('Accès déverrouillé');
+            this.showToast('Accès Déverrouillé');
           } else {
             this.showToast('Code PIN incorrect');
             this.pinSaisi = '';
           }
         },
-        changerCodePinDirecteur() {
-          if (this.saisieMdpDirecteur !== this.mdpDirecteur) {
-            this.showToast('Mot de passe directeur incorrect');
-            return;
-          }
-          const pin = this.nouveauPinForm.trim() || '1234';
-          if (!/^\d{4}$/.test(pin)) {
-            this.showToast('Le PIN doit contenir 4 chiffres');
-            return;
-          }
-          this.codePin = pin;
-          this.saveStorage();
-          this.saisieMdpDirecteur = '';
-          this.nouveauPinForm = '';
-          this.showModalDirecteur = false;
-          this.showToast(`Nouveau PIN enregistré : ${pin}`);
-        },
-        reinitialiserApp() {
-          if (confirm('Voulez-vous réinitialiser l\'application ?')) {
-            localStorage.clear();
-            location.reload();
+
+        reinitialiserPinDirecteur() {
+          if (this.codeDirecteurInput === 'dir1234' || this.codeDirecteurInput === 'ALSHFLOW') {
+            localStorage.setItem('alsh_pin', '1234');
+            this.showToast('PIN réinitialisé à : 1234');
+            this.showModalDirecteur = false;
+            this.codeDirecteurInput = '';
+          } else {
+            alert('Mot de passe directeur incorrect.');
           }
         },
 
-        // Sanitaire
-        getAgeEnfant(dateStr) {
-          if (!dateStr) return 0;
-          const birth = new Date(dateStr);
-          const now = new Date();
-          let age = now.getFullYear() - birth.getFullYear();
-          const m = now.getMonth() - birth.getMonth();
-          if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
-          return age >= 0 ? age : 0;
+        formatHeureBus(val) {
+          if (!val) return '';
+          let digits = val.replace(/\D/g, '').slice(0, 4);
+          if (digits.length <= 2) {
+            return digits;
+          } else {
+            return digits.slice(0, 2) + 'h' + digits.slice(2);
+          }
         },
-        formatDateLisible(dateStr) {
-          if (!dateStr) return '';
-          const parts = dateStr.split('-');
-          if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
-          return dateStr;
+
+        // SAUVEGARDE & CHARGEMENT
+        chargerDonnees() {
+          const defaultEnfants = [
+            { id: 1, prenom: 'Lucas', nom: 'Dupont', dateNaissance: '2019-05-12', responsables: [{ nom: 'Marie Dupont', telephone: '0612345678' }], aPAI: true, pai: 'Allergie arachides. Ventoline en cas de crise.', droitImage: true },
+            { id: 2, prenom: 'Emma', nom: 'Bernard', dateNaissance: '2016-09-20', responsables: [{ nom: 'Thomas Bernard', telephone: '0687654321' }], aPAI: false, pai: '', droitImage: false }
+          ];
+
+          const defaultRecettes = [
+            { id: 1, nom: 'Gâteau au Chocolat', ingredients: [{ nom: 'Farine', qte: 200, unite: 'g' }, { nom: 'Sucre', qte: 150, unite: 'g' }, { nom: 'Chocolat', qte: 200, unite: 'g' }, { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }] },
+            { id: 2, nom: 'Crêpes Party', ingredients: [{ nom: 'Farine', qte: 250, unite: 'g' }, { nom: 'Lait', qte: 50, unite: 'cl' }, { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }] }
+          ];
+
+          this.enfants = JSON.parse(localStorage.getItem('alsh_enfants')) || defaultEnfants;
+          this.registreSoins = JSON.parse(localStorage.getItem('alsh_soins')) || [];
+          this.recettesGouter = JSON.parse(localStorage.getItem('alsh_recettes')) || defaultRecettes;
+          this.goutersPlanifies = JSON.parse(localStorage.getItem('alsh_gouters_planif')) || [];
+          this.listeCourses = JSON.parse(localStorage.getItem('alsh_courses')) || [];
+          this.coursesAcheteesGouter = JSON.parse(localStorage.getItem('alsh_courses_gouter_achete')) || {};
+          this.planningCreneaux = JSON.parse(localStorage.getItem('alsh_planning')) || [];
+          this.orgsOutings = JSON.parse(localStorage.getItem('alsh_orgs')) || [];
+          this.effectifsJours = JSON.parse(localStorage.getItem('alsh_effectifs')) || {};
         },
-        getEnfantsFiltres() {
-          return this.enfants.filter(e => {
-            const nomComplet = `${e.prenom} ${e.nom}`.toLowerCase();
-            const matchSearch = nomComplet.includes(this.searchEnfant.toLowerCase());
-            const age = this.getAgeEnfant(e.dateNaissance);
-            let matchGroupe = true;
-            if (this.filtreGroupeSanitaire === '-6ans') matchGroupe = age < 6;
-            if (this.filtreGroupeSanitaire === '+6ans') matchGroupe = age >= 6;
-            return matchSearch && matchGroupe;
-          });
+
+        sauvegarderDonnees() {
+          localStorage.setItem('alsh_enfants', JSON.stringify(this.enfants));
+          localStorage.setItem('alsh_soins', JSON.stringify(this.registreSoins));
+          localStorage.setItem('alsh_recettes', JSON.stringify(this.recettesGouter));
+          localStorage.setItem('alsh_gouters_planif', JSON.stringify(this.goutersPlanifies));
+          localStorage.setItem('alsh_courses', JSON.stringify(this.listeCourses));
+          localStorage.setItem('alsh_courses_gouter_achete', JSON.stringify(this.coursesAcheteesGouter));
+          localStorage.setItem('alsh_planning', JSON.stringify(this.planningCreneaux));
+          localStorage.setItem('alsh_orgs', JSON.stringify(this.orgsOutings));
+          localStorage.setItem('alsh_effectifs', JSON.stringify(this.effectifsJours));
         },
-        selectionnerEnfant(e) {
-          this.enfantSelectionne = e;
+
+        reinitialiserApp() {
+          if (confirm('Voulez-vous réinitialiser toutes les données locales de l\'application ?')) {
+            localStorage.clear();
+            this.chargerDonnees();
+            this.showToast('Données réinitialisées');
+          }
         },
+
+        // FONCTIONS FICHES SAN'
         ouvrirModalAddEnfant() {
           this.isEditingEnfant = false;
-          this.nouvelEnfant = { id: Date.now(), prenom: '', nom: '', dateNaissance: '', responsables: [{ nom: '', telephone: '' }], aPAI: false, pai: '', droitImage: true };
+          this.nouvelEnfant = {
+            id: Date.now(),
+            prenom: '',
+            nom: '',
+            dateNaissance: '',
+            responsables: [{ nom: '', telephone: '' }],
+            aPAI: false,
+            pai: '',
+            droitImage: true
+          };
           this.showAddEnfantModal = true;
         },
+
         ajouterResponsableModal() {
           this.nouvelEnfant.responsables.push({ nom: '', telephone: '' });
         },
+
+        enregistrerEnfant() {
+          if (this.isEditingEnfant) {
+            const index = this.enfants.findIndex(e => e.id === this.nouvelEnfant.id);
+            if (index !== -1) {
+              this.enfants[index] = { ...this.nouvelEnfant };
+            }
+          } else {
+            this.enfants.unshift({ ...this.nouvelEnfant });
+          }
+          this.sauvegarderDonnees();
+          this.showAddEnfantModal = false;
+          this.enfantSelectionne = null;
+          this.showToast('Fiche sanitaire enregistrée');
+        },
+
+        selectionnerEnfant(e) {
+          this.enfantSelectionne = e;
+        },
+
         editerEnfant(e) {
           this.isEditingEnfant = true;
           this.nouvelEnfant = JSON.parse(JSON.stringify(e));
           this.showAddEnfantModal = true;
-          this.enfantSelectionne = null;
         },
-        enregistrerEnfant() {
-          if (!this.nouvelEnfant.prenom || !this.nouvelEnfant.nom) return;
-          if (this.isEditingEnfant) {
-            const idx = this.enfants.findIndex(item => item.id === this.nouvelEnfant.id);
-            if (idx !== -1) this.enfants[idx] = { ...this.nouvelEnfant };
-          } else {
-            this.enfants.push({ ...this.nouvelEnfant, id: Date.now() });
-          }
-          this.saveStorage();
-          this.showAddEnfantModal = false;
-          this.showToast(this.isEditingEnfant ? 'Fiche enfant modifiée' : 'Enfant ajouté');
-        },
+
         supprimerEnfant(id) {
-          if (confirm('Supprimer cet enfant ?')) {
+          if (confirm('Supprimer cette fiche sanitaire ?')) {
             this.enfants = this.enfants.filter(e => e.id !== id);
-            this.saveStorage();
+            this.sauvegarderDonnees();
             this.enfantSelectionne = null;
             this.showToast('Enfant supprimé');
           }
         },
 
-        // Fiche Activité
-        addMatos() {
-          if (this.newMatosNom.trim()) {
-            this.fiche.materiel.push({ nom: this.newMatosNom.trim(), qte: Number(this.newMatosQte) || 1 });
-            this.newMatosNom = '';
-            this.newMatosQte = 1;
-            this.saveStorage();
-          }
-        },
-        removeMatos(idx) {
-          this.fiche.materiel.splice(idx, 1);
-          this.saveStorage();
-        },
-        submitFiche() {
-          this.fiche.materiel.forEach(m => {
-            this.listeCourses.push({ id: Date.now() + Math.random(), nom: m.nom, qte: m.qte, activite: this.fiche.titre || 'Activité', achete: false });
+        getEnfantsFiltres() {
+          return this.enfants.filter(e => {
+            const age = this.getAgeEnfant(e.dateNaissance);
+            let matchGroupe = true;
+            if (this.filtreGroupeSanitaire === '-6ans') matchGroupe = age < 6;
+            if (this.filtreGroupeSanitaire === '+6ans') matchGroupe = age >= 6;
+
+            const query = this.searchEnfant.toLowerCase().trim();
+            let matchSearch = true;
+            if (query) {
+              matchSearch = e.prenom.toLowerCase().includes(query) || e.nom.toLowerCase().includes(query);
+            }
+
+            return matchGroupe && matchSearch;
           });
-          this.saveStorage();
-          this.showToast('Matériel envoyé vers les courses !');
-        },
-        exportPDFDirect() {
-          const el = document.getElementById('pdf-template-fiche');
-          if (!el || typeof html2pdf === 'undefined') {
-            alert('Erreur lors de l\'export PDF');
-            return;
-          }
-          const opt = {
-            margin: 5,
-            filename: `fiche_activite_${this.fiche.titre || 'animation'}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-          };
-          html2pdf().set(opt).from(el).save();
         },
 
-        // Soins
+        getAgeEnfant(dateNaissance) {
+          if (!dateNaissance) return 0;
+          const today = new Date();
+          const birthDate = new Date(dateNaissance);
+          let age = today.getFullYear() - birthDate.getFullYear();
+          const m = today.getMonth() - birthDate.getMonth();
+          if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+          }
+          return age;
+        },
+
+        formatDateLisible(dateStr) {
+          if (!dateStr) return '';
+          const [yyyy, mm, dd] = dateStr.split('-');
+          return `${dd}/${mm}/${yyyy}`;
+        },
+
+        // FONCTIONS ACTIVITÉS
+        addMatos() {
+          if (!this.newMatosNom.trim()) return;
+          this.fiche.materiel.push({
+            nom: this.newMatosNom.trim(),
+            qte: this.newMatosQte ? parseInt(this.newMatosQte) : null
+          });
+          this.newMatosNom = '';
+          this.newMatosQte = '';
+        },
+
+        removeMatos(idx) {
+          this.fiche.materiel.splice(idx, 1);
+        },
+
+        submitFiche() {
+          if (this.fiche.materiel.length > 0) {
+            this.fiche.materiel.forEach(item => {
+              this.listeCourses.unshift({
+                id: Date.now() + Math.random(),
+                nom: item.nom,
+                qte: item.qte || 1,
+                activite: this.fiche.titre || 'Activité',
+                achete: false
+              });
+            });
+            this.sauvegarderDonnees();
+            this.showToast('Matériel envoyé dans la liste de courses !');
+          } else {
+            this.showToast('Fiche validée');
+          }
+        },
+
+        exportPDFDirect() {
+          const element = document.getElementById('pdf-template-fiche');
+          const opt = {
+            margin:       0,
+            filename:     `fiche-activite-${this.fiche.titre || 'animation'}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
+          html2pdf().set(opt).from(element).save();
+        },
+
+        // CAHIER DE SOINS
         submitSoin() {
           if (!this.soin.enfant || !this.soin.incident) return;
           const now = new Date();
-          const heureStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-          this.registreSoins.unshift({
+          const nouveauSoin = {
             id: Date.now(),
-            date: this.dateAffichee || now.toISOString().split('T')[0],
-            heure: heureStr,
+            date: now.toISOString().split('T')[0],
+            heure: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
             enfant: this.soin.enfant,
             incident: this.soin.incident,
             action: this.soin.action,
             prevenirFamille: this.soin.prevenirFamille
-          });
+          };
+          this.registreSoins.unshift(nouveauSoin);
+          this.sauvegarderDonnees();
           this.soin = { enfant: '', incident: '', action: '', prevenirFamille: false };
-          this.saveStorage();
           this.showToast('Soin enregistré');
         },
+
         deleteSoin(id) {
-          if (confirm('Effacer ce soin ?')) {
+          if (confirm('Supprimer cette entrée du registre ?')) {
             this.registreSoins = this.registreSoins.filter(s => s.id !== id);
-            this.saveStorage();
+            this.sauvegarderDonnees();
             this.showToast('Soin supprimé');
           }
         },
+
         exporterSoinsPDF() {
-          const el = document.getElementById('pdf-template-soins-simple');
-          if (!el || typeof html2pdf === 'undefined') {
-            alert('Erreur PDF');
-            return;
-          }
+          const element = document.getElementById('pdf-template-soins-simple');
           const opt = {
-            margin: 10,
-            filename: `registre_soins_${new Date().toISOString().split('T')[0]}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            margin:       [10, 10, 10, 10],
+            filename:     `registre-soins-${new Date().toISOString().split('T')[0]}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
           };
-          html2pdf().set(opt).from(el).save();
+          html2pdf().set(opt).from(element).save();
         },
 
-        // Goûters
-        changerSemaine(dir) {
-          this.semaineOffset += dir;
-        },
-        getDatesSemaine() {
-          const d = new Date();
-          d.setDate(d.getDate() + (this.semaineOffset * 7));
-          const day = d.getDay();
-          const diffToMonday = d.getDate() - day + (day === 0 ? -6 : 1);
-          const monday = new Date(d.setDate(diffToMonday));
-          const dates = [];
-          for (let i = 0; i < 7; i++) {
-            const current = new Date(monday);
-            current.setDate(monday.getDate() + i);
-            dates.push(current.toISOString().split('T')[0]);
-          }
-          return dates;
-        },
-        getLibelleSemaine() {
-          const dates = this.getDatesSemaine();
-          return `Semaine du ${this.formatDateLisible(dates[0])} au ${this.formatDateLisible(dates[6])}`;
-        },
-        getGoutersDeLaSemaine() {
-          const dates = this.getDatesSemaine();
-          return this.goutersPlanifies.filter(g => dates.includes(g.date));
-        },
-        getNomRecette(recetteId) {
-          const r = this.recettesGouter.find(item => item.id == recetteId);
-          return r ? r.nom : 'Recette inconnue';
-        },
+        // GOÛTERS
         ajouterIngredierntRecette() {
-          if (this.tempIng.nom.trim()) {
-            this.nouvelleRecette.ingredients.push({ ...this.tempIng });
-            this.tempIng.nom = '';
-            this.tempIng.qte = 1;
-          }
+          if (!this.tempIng.nom.trim()) return;
+          this.nouvelleRecette.ingredients.push({ ...this.tempIng });
+          this.tempIng.nom = '';
+          this.tempIng.qte = '';
         },
+
         enregistrerNouvelleRecette() {
-          if (!this.nouvelleRecette.nom.trim()) return;
-          this.recettesGouter.push({ id: Date.now(), nom: this.nouvelleRecette.nom, ingredients: [...this.nouvelleRecette.ingredients] });
+          if (!this.nouvelleRecette.nom) return;
+          const rec = {
+            id: Date.now(),
+            nom: this.nouvelleRecette.nom,
+            ingredients: [...this.nouvelleRecette.ingredients]
+          };
+          this.recettesGouter.push(rec);
+          this.sauvegarderDonnees();
           this.nouvelleRecette = { nom: '', ingredients: [] };
           this.showAddRecetteModal = false;
-          this.saveStorage();
-          this.showToast('Recette enregistrée');
+          this.showToast('Recette créée');
         },
+
         enregistrerGouterPlanifie() {
-          if (!this.saisieGouter.date || !this.saisieGouter.recetteId) return;
-          this.goutersPlanifies.push({ id: Date.now(), ...this.saisieGouter });
+          if (!this.saisieGouter.recetteId) return;
+          const gouter = {
+            id: Date.now(),
+            date: this.saisieGouter.date,
+            recetteId: parseInt(this.saisieGouter.recetteId),
+            anim: this.saisieGouter.anim,
+            nbEnfants: parseInt(this.saisieGouter.nbEnfants || 8)
+          };
+          this.goutersPlanifies.push(gouter);
+          this.sauvegarderDonnees();
           this.showPlanifModal = false;
-          this.saveStorage();
           this.showToast('Goûter planifié');
         },
+
         supprimerGouterPlanifie(id) {
           this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
-          this.saveStorage();
+          this.sauvegarderDonnees();
           this.showToast('Goûter supprimé');
         },
 
-        // Courses
-        addCourseDirecte() {
-          if (this.nouvelleCourseNom.trim()) {
-            this.listeCourses.push({ id: Date.now(), nom: this.nouvelleCourseNom.trim(), qte: Number(this.nouvelleCourseQte) || 1, activite: 'Manuelle', achete: false });
-            this.nouvelleCourseNom = '';
-            this.nouvelleCourseQte = 1;
-            this.saveStorage();
-          }
+        getGoutersDeLaSemaine() {
+          return this.goutersPlanifies;
         },
+
+        getNomRecette(id) {
+          const r = this.recettesGouter.find(rec => rec.id === id);
+          return r ? r.nom : 'Recette inconnue';
+        },
+
+        changerSemaine(delta) {
+          this.semaineDecalageGouter += delta;
+        },
+
+        getLibelleSemaine() {
+          return `Semaine ${this.semaineDecalageGouter === 0 ? 'actuelle' : (this.semaineDecalageGouter > 0 ? '+' + this.semaineDecalageGouter : this.semaineDecalageGouter)}`;
+        },
+
+        // COURSES
+        addCourseDirecte() {
+          if (!this.nouvelleCourseNom.trim()) return;
+          this.listeCourses.unshift({
+            id: Date.now(),
+            nom: this.nouvelleCourseNom.trim(),
+            qte: this.nouvelleCourseQte ? parseInt(this.nouvelleCourseQte) : 1,
+            activite: 'Achat direct',
+            achete: false
+          });
+          this.sauvegarderDonnees();
+          this.nouvelleCourseNom = '';
+          this.nouvelleCourseQte = '';
+        },
+
         deleteCourse(id) {
           this.listeCourses = this.listeCourses.filter(c => c.id !== id);
-          this.saveStorage();
+          this.sauvegarderDonnees();
         },
+
         viderAchetes() {
           this.listeCourses = this.listeCourses.filter(c => !c.achete);
-          this.saveStorage();
+          this.sauvegarderDonnees();
           this.showToast('Articles achetés nettoyés');
         },
+
         getListeCoursesAgregeeSemaine() {
-          const gouters = this.getGoutersDeLaSemaine();
-          const map = {};
-          gouters.forEach(g => {
-            const r = this.recettesGouter.find(item => item.id == g.recetteId);
-            if (r && r.ingredients) {
+          let list = [];
+          this.goutersPlanifies.forEach(g => {
+            const rec = this.recettesGouter.find(r => r.id === g.recetteId);
+            if (rec && rec.ingredients) {
               const ratio = (g.nbEnfants || 8) / 8;
-              r.ingredients.forEach(ing => {
-                const key = `${ing.nom.toLowerCase()}_${ing.unite}`;
-                const qteTotal = (ing.qte || 1) * ratio;
-                if (!map[key]) {
-                  map[key] = { key, nom: ing.nom, qte: qteTotal, unite: ing.unite };
+              rec.ingredients.forEach(ing => {
+                const qteTotale = Math.ceil((ing.qte || 1) * ratio);
+                const key = ing.nom + '_' + ing.unite;
+                const existing = list.find(i => i.key === key);
+                if (existing) {
+                  existing.qte += qteTotale;
                 } else {
-                  map[key].qte += qteTotal;
+                  list.push({ key, nom: ing.nom, qte: qteTotale, unite: ing.unite });
                 }
               });
             }
           });
-          return Object.values(map).map(item => ({ ...item, qte: Math.ceil(item.qte * 10) / 10 }));
-        },
-        estAcheteCourseGouter(key) {
-          return !!this.coursesGouterAchetees[key];
-        },
-        toggleAcheteCourseGouter(key) {
-          this.coursesGouterAchetees[key] = !this.coursesGouterAchetees[key];
-          this.saveStorage();
+          return list;
         },
 
-        // Planning
-        changerJour(offset) {
-          const current = new Date(this.dateAffichee);
-          current.setDate(current.getDate() + offset);
-          this.dateAffichee = current.toISOString().split('T')[0];
+        estAcheteCourseGouter(key) {
+          return !!this.coursesAcheteesGouter[key];
         },
-        getEffectifDuJour(date) {
-          if (!this.effectifs[date]) {
-            this.effectifs[date] = { matinMoins6: 0, matinPlus6: 0, midiMoins6: 0, midiPlus6: 0, soirMoins6: 0, soirPlus6: 0 };
+
+        toggleAcheteCourseGouter(key) {
+          this.coursesAcheteesGouter[key] = !this.coursesAcheteesGouter[key];
+          this.sauvegarderDonnees();
+        },
+
+        // PLANNING & EFFECTIFS
+        changerJour(delta) {
+          let d = new Date(this.dateAffichee);
+          d.setDate(d.getDate() + delta);
+          this.dateAffichee = d.toISOString().split('T')[0];
+        },
+
+        getEffectifDuJour(dateStr) {
+          if (!this.effectifsJours[dateStr]) {
+            this.effectifsJours[dateStr] = {
+              matinMoins6: 0, matinPlus6: 0,
+              midiMoins6: 0, midiPlus6: 0,
+              soirMoins6: 0, soirPlus6: 0
+            };
           }
-          return this.effectifs[date];
+          return this.effectifsJours[dateStr];
         },
-        getPlanningFiltre() {
-          return this.plannings.filter(p => p.date === this.dateAffichee);
-        },
-        nouveauCreneauVierge() {
-          this.isEditingCreneau = false;
-          this.creneauForm = { id: Date.now(), date: this.dateAffichee, animNom: '', matin: '', ageMatin: '-6 ans', aprem: '', ageAprem: '+6 ans' };
-          this.showModalCreneau = true;
-        },
-        editerCreneau(p) {
-          this.isEditingCreneau = true;
-          this.creneauForm = JSON.parse(JSON.stringify(p));
-          this.showModalCreneau = true;
-        },
-        enregistrerCreneau() {
-          if (!this.creneauForm.animNom.trim()) return;
-          if (this.isEditingCreneau) {
-            const idx = this.plannings.findIndex(p => p.id === this.creneauForm.id);
-            if (idx !== -1) this.plannings[idx] = { ...this.creneauForm };
-          } else {
-            this.plannings.push({ ...this.creneauForm, id: Date.now() });
-          }
-          this.saveStorage();
-          this.showModalCreneau = false;
-          this.showToast('Créneau enregistré');
-        },
-        supprimerCreneau(id) {
-          if (confirm('Supprimer ce créneau ?')) {
-            this.plannings = this.plannings.filter(p => p.id !== id);
-            this.saveStorage();
-            this.showToast('Créneau supprimé');
-          }
-        },
+
+        // SORTIES SPÉCIALES
         ouvrirModalOrg() {
-          const sortieExistante = this.sortiesSpeciales[this.dateAffichee];
-          if (sortieExistante) {
-            this.orgForm = JSON.parse(JSON.stringify(sortieExistante));
+          const orgExistante = this.getOrgDuJour();
+          if (orgExistante) {
+            this.orgSaisie = JSON.parse(JSON.stringify(orgExistante));
           } else {
-            this.orgForm = { date: this.dateAffichee, titre: '', lieu: '', busAller: '', busRetour: '', groupes: [{ id: 1, anim: '', enfants: '' }] };
+            this.orgSaisie = {
+              date: this.dateAffichee,
+              titre: '',
+              lieu: '',
+              busAller: '',
+              busRetour: '',
+              groupes: [{ id: Date.now(), anim: '', enfants: '' }]
+            };
           }
           this.showModalOrg = true;
         },
+
+        ajouterGroupeOrg() {
+          this.orgSaisie.groupes.push({ id: Date.now(), anim: '', enfants: '' });
+        },
+
         enregistrerOrg() {
-          if (!this.orgForm.titre.trim()) return;
-          this.sortiesSpeciales[this.dateAffichee] = JSON.parse(JSON.stringify(this.orgForm));
-          this.saveStorage();
+          if (!this.orgSaisie.titre) return;
+          this.orgSaisie.date = this.dateAffichee;
+          const idx = this.orgsOutings.findIndex(o => o.date === this.dateAffichee);
+          if (idx !== -1) {
+            this.orgsOutings[idx] = { ...this.orgSaisie };
+          } else {
+            this.orgsOutings.push({ ...this.orgSaisie });
+          }
+          this.sauvegarderDonnees();
           this.showModalOrg = false;
-          this.showToast('Sortie planifiée');
+          this.showToast('Sortie enregistrée');
         },
+
         getOrgDuJour() {
-          return this.sortiesSpeciales[this.dateAffichee] || null;
+          return this.orgsOutings.find(o => o.date === this.dateAffichee);
         },
+
         effacerOrgDuJour() {
-          if (confirm('Supprimer cette sortie ?')) {
-            delete this.sortiesSpeciales[this.dateAffichee];
-            this.saveStorage();
+          if (confirm('Supprimer l\'organisation de la sortie pour ce jour ?')) {
+            this.orgsOutings = this.orgsOutings.filter(o => o.date !== this.dateAffichee);
+            this.sauvegarderDonnees();
             this.showToast('Sortie supprimée');
           }
         },
+
         parseEnfantsList(str) {
           if (!str) return [];
           return str.split(',').map(s => s.trim()).filter(Boolean);
         },
+
+        // CRENEAUX PLANNING
+        nouveauCreneauVierge() {
+          this.isEditingCreneau = false;
+          this.creneauSaisie = {
+            id: Date.now(),
+            date: this.dateAffichee,
+            animNom: '',
+            matin: '',
+            ageMatin: '-6 ans',
+            aprem: '',
+            ageAprem: '+6 ans'
+          };
+          this.showModalCreneau = true;
+        },
+
+        editerCreneau(p) {
+          this.isEditingCreneau = true;
+          this.creneauSaisie = JSON.parse(JSON.stringify(p));
+          this.showModalCreneau = true;
+        },
+
+        enregistrerCreneau() {
+          if (!this.creneauSaisie.animNom) return;
+          if (this.isEditingCreneau) {
+            const index = this.planningCreneaux.findIndex(c => c.id === this.creneauSaisie.id);
+            if (index !== -1) {
+              this.planningCreneaux[index] = { ...this.creneauSaisie };
+            }
+          } else {
+            this.planningCreneaux.unshift({ ...this.creneauSaisie });
+          }
+          this.sauvegarderDonnees();
+          this.showModalCreneau = false;
+          this.showToast('Créneau sauvegardé');
+        },
+
+        supprimerCreneau(id) {
+          if (confirm('Supprimer ce créneau ?')) {
+            this.planningCreneaux = this.planningCreneaux.filter(c => c.id !== id);
+            this.sauvegarderDonnees();
+            this.showToast('Créneau supprimé');
+          }
+        },
+
+        getPlanningFiltre() {
+          return this.planningCreneaux.filter(c => c.date === this.dateAffichee);
+        },
+
+        // PLANNING SEMAINE PAR ANIM'
         ouvrirPlanningSemaineAnim(animNom) {
-          const dates = this.getDatesSemaine();
-          const list = this.plannings.filter(p => p.animNom.toLowerCase() === animNom.toLowerCase() && dates.includes(p.date));
-          this.modalAnimSemaine = { show: true, animNom, creneaux: list };
+          this.animSemaineSelectionne = animNom;
+          this.semaineDecalageAnim = 0;
+          this.showModalAnimSemaine = true;
+        },
+
+        changerSemaineAnim(delta) {
+          this.semaineDecalageAnim += delta;
+        },
+
+        getLibelleSemaineAnim() {
+          return `Semaine ${this.semaineDecalageAnim === 0 ? 'actuelle' : (this.semaineDecalageAnim > 0 ? '+' + this.semaineDecalageAnim : this.semaineDecalageAnim)}`;
+        },
+
+        getPlanningSemaineAnim() {
+          let days = [];
+          let curr = new Date(this.dateAffichee);
+          let dayOfWeek = curr.getDay();
+          let distanceToMonday = (dayOfWeek + 6) % 7;
+          let monday = new Date(curr);
+          monday.setDate(curr.getDate() - distanceToMonday + (this.semaineDecalageAnim * 7));
+
+          const joursNoms = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+
+          for (let i = 0; i < 5; i++) {
+            let d = new Date(monday);
+            d.setDate(monday.getDate() + i);
+            let dateStr = d.toISOString().split('T')[0];
+            let creneau = this.planningCreneaux.find(c => c.date === dateStr && c.animNom.toLowerCase() === this.animSemaineSelectionne.toLowerCase());
+
+            days.push({
+              nomJour: joursNoms[i],
+              dateStr: dateStr,
+              dateFormatted: this.formatDateLisible(dateStr),
+              creneau: creneau || null
+            });
+          }
+          return days;
         }
       };
     }
