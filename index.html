@@ -329,6 +329,8 @@
     <button type="button" @click="toast.show = false" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark text-sm"></i></button>
   </div>
 
+  <div x-show="exportEnCours" class="fixed inset-0 z-[300] bg-slate-900 text-white flex items-center justify-center text-sm font-bold" style="display:none;">Génération du PDF…</div>
+
   <main class="max-w-5xl mx-auto w-full px-3 pb-2 flex-1 flex flex-col justify-start overflow-y-auto">
 
     <!-- ==================== 0. HUB PRINCIPAL ==================== -->
@@ -717,8 +719,8 @@
     </div>
 
     <!-- TEMPLATE CACHÉ POUR L'EXPORTATION PDF D'ACTIVITÉ -->
-    <div class="fixed top-0 left-[-9999px] z-[-100]">
-      <div id="pdf-template-fiche" class="w-[210mm] min-h-[297mm] p-8 bg-[#FFB703] text-[#2A385B] font-sans flex flex-col justify-between" style="font-family: 'Outfit', sans-serif; box-sizing: border-box;">
+    <div class="pdf-wrap fixed top-0 left-[-9999px] z-[-100]">
+      <div id="pdf-template-fiche" class="p-8 bg-[#FFB703] text-[#2A385B] font-sans flex flex-col justify-between" style="width:794px; min-height:1120px; font-family:'Outfit',sans-serif; box-sizing:border-box;">
         <div class="space-y-5">
           <div class="flex items-center justify-between border-b-4 border-[#2A385B] pb-4">
             <div class="flex items-center gap-3">
@@ -859,37 +861,57 @@
       </div>
     </div>
 
-    <!-- TEMPLATE CACHÉ POUR EXPORT PDF DU CAHIER DE SOINS (A4 FORMATÉ PROPREMENT SANS TRONQUER ET AVEC DATE) -->
-    <div class="fixed top-0 left-[-9999px] z-[-100]">
-      <div id="pdf-template-soins-simple" style="width: 190mm; padding: 10mm; background: #fff; color: #000; font-family: sans-serif; box-sizing: border-box;">
-        <h1 style="font-size: 15px; font-weight: 800; text-align: center; margin-bottom: 12px; border-bottom: 2px solid #000; padding-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">
-          REGISTRE RÉGLEMENTAIRE DU CAHIER DE SOINS
-        </h1>
-        <table style="width: 100%; border-collapse: collapse; font-size: 10px; font-family: sans-serif; table-layout: fixed;">
-          <thead>
-            <tr style="background-color: #f0f0f0; text-align: left;">
-              <th style="border: 1px solid #000; padding: 6px; width: 18%;">Date</th>
-              <th style="border: 1px solid #000; padding: 6px; width: 12%;">Heure</th>
-              <th style="border: 1px solid #000; padding: 6px; width: 22%;">Enfant</th>
-              <th style="border: 1px solid #000; padding: 6px; width: 24%;">Symptôme / Incident</th>
-              <th style="border: 1px solid #000; padding: 6px; width: 24%;">Soin apporté</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template x-for="item in registreSoins" :key="item.id">
-              <tr>
-                <td style="border: 1px solid #000; padding: 5px; word-wrap: break-word;" x-text="formatDateLisible(item.date || dateAffichee)"></td>
-                <td style="border: 1px solid #000; padding: 5px; word-wrap: break-word;" x-text="item.heure"></td>
-                <td style="border: 1px solid #000; padding: 5px; font-weight: bold; word-wrap: break-word;" x-text="item.enfant"></td>
-                <td style="border: 1px solid #000; padding: 5px; word-wrap: break-word;" x-text="(item.annule ? '[ANNULÉ] ' : '') + item.incident"></td>
-                <td style="border: 1px solid #000; padding: 5px; word-wrap: break-word;" x-text="(item.action || '—') + (item.soignant ? ' — par ' + item.soignant : '')"></td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+    <!-- PDF CAHIER DE SOINS (direction artistique ALSHFlow) -->
+    <div class="pdf-wrap fixed top-0 left-[-9999px] z-[-100]">
+      <div id="pdf-template-soins-simple" style="width:794px; box-sizing:border-box; background:#fff; color:#3B1F26; font-family:'Outfit',sans-serif;">
+        <div style="background:#FFD1DC; padding:28px 40px 24px; border-bottom:6px solid #E63946;">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:46px; height:46px; background:#fff; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:24px;">⚡</div>
+              <div>
+                <div style="font-family:'Syne',sans-serif; font-weight:900; font-size:22px; color:#E63946; line-height:1;">ALSH<span style="opacity:.6">FLOW</span></div>
+                <div style="font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#E63946; opacity:.7; margin-top:4px;">Les 3 z'ailes</div>
+              </div>
+            </div>
+            <div style="background:#E63946; color:#fff; font-size:11px; font-weight:800; padding:6px 14px; border-radius:999px; text-transform:uppercase; letter-spacing:.08em;" x-text="'Édité le ' + formatDateLisible(localISO())"></div>
+          </div>
+          <div style="font-family:'Syne',sans-serif; font-weight:900; font-size:30px; color:#E63946; text-transform:uppercase; margin-top:22px; line-height:1.05;">🩹 Cahier de soins</div>
+          <div style="margin-top:14px; display:flex; gap:10px;">
+            <span style="display:inline-block;background:#fff;color:#E63946;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;border:1px solid #FFB3C1;" x-text="soinsPourPDF().length + ' soin(s) enregistré(s)'"></span>
+            <span style="display:inline-block;background:#fff;color:#E63946;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;border:1px solid #FFB3C1;" x-text="soinsPourPDF().filter(s => s.prevenirFamille && !s.annule).length + ' famille(s) à prévenir'"></span>
+          </div>
+        </div>
+        <div style="padding:24px 40px 12px;">
+          <template x-if="soinsPourPDF().length === 0">
+            <p style="text-align:center; font-weight:700; opacity:.6; padding:30px 0;">Aucun soin enregistré.</p>
+          </template>
+          <template x-for="item in soinsPourPDF()" :key="item.id">
+            <div class="pdf-card" :style="item.annule ? 'opacity:.55;' : ''" style="break-inside:avoid; page-break-inside:avoid; background:#FFF0F3; border:1px solid #FFD1DC; border-left:6px solid #E63946; border-radius:18px; padding:14px 16px; margin-bottom:12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="display:inline-block;background:#fff;color:#E63946;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;border:1px solid #FFB3C1;" x-text="formatDateLisible(item.date) + ' · ' + item.heure"></span>
+                  <span style="font-family:'Syne',sans-serif; font-weight:900; font-size:16px; text-transform:uppercase; color:#7A1D2B;" x-text="item.enfant"></span>
+                </div>
+                <span x-show="item.annule" style="background:#6B7280; color:#fff; font-size:10px; font-weight:800; padding:4px 10px; border-radius:999px;">ANNULÉ</span>
+                <span x-show="!item.annule && item.prevenirFamille" style="background:#E63946; color:#fff; font-size:10px; font-weight:800; padding:4px 10px; border-radius:999px;">🔔 PARENTS À PRÉVENIR</span>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <div style="flex:1; background:#fff; border-radius:12px; padding:9px 12px;">
+                  <div style="font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:#E63946; margin-bottom:3px;">⚠️ Symptôme / Incident</div>
+                  <div style="font-size:12px; font-weight:700;" x-text="item.incident"></div>
+                </div>
+                <div style="flex:1; background:#fff; border-radius:12px; padding:9px 12px;">
+                  <div style="font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:#E63946; margin-bottom:3px;">🩺 Soin apporté</div>
+                  <div style="font-size:12px; font-weight:700;" x-text="item.action || 'Aucun soin particulier'"></div>
+                </div>
+              </div>
+              <div x-show="item.soignant" style="margin-top:8px; font-size:10px; font-weight:700; opacity:.65;" x-text="'Soigné par ' + item.soignant"></div>
+            </div>
+          </template>
+          <div style="text-align:center; padding-top:10px; font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#E63946; opacity:.6;">Registre généré via ALSHFlow — Accueil de Loisirs</div>
+        </div>
       </div>
     </div>
-
 
     <!-- ==================== 4. ONGLET : GOÛTER ==================== -->
     <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
@@ -901,10 +923,10 @@
               <span>🍪</span> Goûter
             </h2>
             <div class="flex gap-1.5 shrink-0">
-              <button type="button" @click="showAddRecetteModal = !showAddRecetteModal" class="btn-dark text-[11px] px-2.5 py-1.5 rounded-full uppercase shrink-0">
+              <button type="button" @click="ouvrirNouvelleRecette()" class="btn-dark text-[11px] px-2.5 py-1.5 rounded-full uppercase shrink-0">
                 + Recette
               </button>
-              <button type="button" @click="showPlanifModal = true" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full shrink-0">
+              <button type="button" @click="ouvrirPlanif()" class="btn-white text-[11px] px-2.5 py-1.5 rounded-full shrink-0">
                 Planifier
               </button>
             </div>
@@ -923,7 +945,7 @@
         <div x-show="showAddRecetteModal" x-transition class="card-item-pop p-3.5 space-y-2.5" style="display: none;">
           <div class="flex justify-between items-center border-b border-black/5 pb-1.5">
             <h3 class="text-xs font-bold uppercase">
-              🍰 Nouvelle Recette (Base 8 enfants)
+              <span x-text="nouvelleRecette.id ? '✏️ Modifier la recette' : '🍰 Nouvelle recette'"></span>
             </h3>
             <button type="button" @click="showAddRecetteModal = false"><i class="fa-solid fa-xmark text-xs opacity-50"></i></button>
           </div>
@@ -931,6 +953,8 @@
           <div>
             <label class="block text-[9px] font-bold uppercase mb-0.5">Nom de la recette</label>
             <input type="text" x-model="nouvelleRecette.nom" placeholder="ex: Gâteau Marbré" class="input-pop w-full px-2.5 py-1 text-xs">
+            <label class="block text-[9px] font-bold uppercase mb-0.5 mt-2">1 fournée = combien de parts ? (quantités ci-dessous pour 1 fournée)</label>
+            <input type="number" inputmode="numeric" min="1" x-model.number="nouvelleRecette.parts" class="input-pop w-24 px-2 py-1 text-xs text-center font-black">
           </div>
 
           <div class="space-y-1.5 pt-0.5">
@@ -966,11 +990,33 @@
           </button>
         </div>
 
+        <!-- MES RECETTES -->
+        <div class="space-y-2.5">
+          <h3 class="text-xs font-bold uppercase tracking-wider flex justify-between items-center">
+            <span>📖 Mes recettes</span>
+            <span class="bg-white px-2 rounded-full text-[9px] font-black border border-black/5" x-text="recettesGouter.length + ' recette(s)'"></span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+            <template x-for="r in recettesGouter" :key="r.id">
+              <div class="card-item-pop p-3 flex items-center justify-between gap-2">
+                <div class="overflow-hidden">
+                  <h4 class="text-xs font-bold truncate" x-text="r.nom"></h4>
+                  <p class="text-[11px] font-bold opacity-70 truncate" x-text="'1 fournée = ' + (r.parts || 8) + ' parts · ' + r.ingredients.length + ' ingrédient(s)'"></p>
+                </div>
+                <div class="flex shrink-0 gap-1">
+                  <button type="button" @click="editerRecette(r)" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="Modifier la recette">✏️</button>
+                  <button type="button" @click="supprimerRecette(r.id)" class="bg-red-600 text-white w-8 h-8 rounded-full text-xs" aria-label="Supprimer la recette"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
         <!-- LISTE GOÛTERS PROGRAMMÉS -->
         <div class="space-y-2.5">
           <h3 class="text-xs font-bold uppercase tracking-wider flex justify-between items-center">
             <span>Planning Goûters</span>
-            <span class="bg-white px-2 py-0.2 rounded-full text-[9px] font-black border border-black/5" x-text="getGoutersDeLaSemaine().length + ' prévu(s)'"></span>
+            <span class="bg-white px-2 py-0.2 rounded-full text-[9px] font-black border border-black/5" x-text="getGoutersDeLaSemaine().length + ' prévu(s) · ' + totalFournees() + ' fournée(s)'"></span>
           </h3>
 
           <template x-if="getGoutersDeLaSemaine().length === 0">
@@ -987,9 +1033,9 @@
                     <span class="text-[9px] font-black bg-white px-1.5 py-0.2 rounded-full uppercase border border-black/5" x-text="formatDateLisible(g.date)"></span>
                     <h4 class="text-xs font-bold mt-1 truncate" x-text="getNomRecette(g.recetteId)"></h4>
                   </div>
-                  <button type="button" @click="supprimerGouterPlanifie(g.id)" class="opacity-40 hover:opacity-100 p-1 shrink-0">
+                  <div class="flex shrink-0"><button type="button" @click="editerGouter(g)" class="opacity-40 hover:opacity-100 p-1 shrink-0" aria-label="Modifier le goûter"><i class="fa-solid fa-pen text-xs"></i></button><button type="button" @click="supprimerGouterPlanifie(g.id)" class="opacity-40 hover:opacity-100 p-1 shrink-0">
                     <i class="fa-solid fa-trash text-xs"></i>
-                  </button>
+                  </button></div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-1.5 text-xs">
@@ -999,7 +1045,7 @@
                   </div>
                   <div class="bg-white/50 p-1.5 rounded-lg">
                     <span class="text-[8px] opacity-60 block uppercase font-bold">Quantité</span>
-                    <span class="font-bold truncate block text-[11px]" x-text="g.nbEnfants + ' enfants'"></span>
+                    <span class="font-bold truncate block text-[11px]" x-text="g.nbEnfants + ' enfants → ' + fournees(g) + ' fournée' + (fournees(g) > 1 ? 's' : '')"></span>
                   </div>
                 </div>
               </div>
@@ -1020,7 +1066,7 @@
     <div role="dialog" aria-modal="true" x-show="showPlanifModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-sm w-full space-y-3 theme-gouter shadow-xl">
         <h3 class="font-poster text-base border-b border-black/5 pb-1.5">
-          📅 Planifier un Goûter
+          <span x-text="isEditingGouter ? '✏️ Modifier le goûter' : '📅 Planifier un goûter'"></span>
         </h3>
 
         <div class="space-y-2.5">
@@ -1046,6 +1092,7 @@
           <div>
             <label class="block text-[9px] font-bold uppercase mb-0.5">Nombre d'enfants</label>
             <input type="number" inputmode="numeric" pattern="[0-9]*" min="1" x-model.number="saisieGouter.nbEnfants" placeholder="Nombre d'enfants" class="input-pop w-full px-2.5 py-1.5 text-xs text-center font-black">
+            <p class="text-[12px] font-bold mt-1 text-center" x-text="apercuFournees()"></p>
           </div>
         </div>
 
@@ -1581,6 +1628,7 @@
         subTabCourses: 'activites',
         isOnline: navigator.onLine,
         isLocked: true,
+        exportEnCours: false,
         pinMode: 'verifier',
         inactiviteTimer: null,
         pinSaisi: '',
@@ -1635,10 +1683,7 @@
         // 4. GOÛTER
         recettesGouter: [],
         showAddRecetteModal: false,
-        nouvelleRecette: {
-          nom: '',
-          ingredients: []
-        },
+        nouvelleRecette: { id: null, nom: '', parts: 8, ingredients: [] },
         tempIng: {
           nom: '',
           qte: '',
@@ -1652,6 +1697,7 @@
           nbEnfants: ''
         },
         semaineDecalageGouter: 0,
+        isEditingGouter: false,
         goutersPlanifies: [],
 
         // 5. COURSES
@@ -2004,17 +2050,37 @@
           }
         },
 
+        async exporterElement(id, opt) {
+          const el = document.getElementById(id);
+          const wrap = el.parentElement;
+          this.exportEnCours = true;
+          wrap.style.left = '0';
+          try {
+            if (document.fonts && document.fonts.ready) await document.fonts.ready;
+            await new Promise(r => setTimeout(r, 80));
+            await html2pdf().set(opt).from(el).save();
+          } catch (e) {
+            alert('Erreur lors de la génération du PDF.');
+          } finally {
+            wrap.style.left = '';
+            this.exportEnCours = false;
+          }
+        },
+
         exportPDFDirect() {
           const element = document.getElementById('pdf-template-fiche');
+          const nom = (this.fiche.titre || 'animation').replace(/[^\w-]+/g, '_');
           const opt = {
-            margin:       0,
-            filename:     `fiche-activite-${this.fiche.titre || 'animation'}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            margin: 0,
+            filename: 'fiche-activite-' + nom + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'] }
           };
-          html2pdf().set(opt).from(element).save();
+          this.exporterElement(element.id, opt);
         },
+
 
         // CAHIER DE SOINS
         submitSoin() {
@@ -2045,55 +2111,110 @@
           }
         },
 
+        soinsPourPDF() {
+          return [...this.registreSoins].reverse();
+        },
+
         exporterSoinsPDF() {
           const element = document.getElementById('pdf-template-soins-simple');
           const opt = {
-            margin:       [10, 10, 10, 10],
-            pagebreak:    { mode: ['css', 'legacy'], avoid: 'tr' },
-            filename:     `registre-soins-${localISO()}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            margin: [12, 0, 12, 0],
+            filename: 'cahier-de-soins-' + localISO() + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'], avoid: '.pdf-card' }
           };
-          html2pdf().set(opt).from(element).save();
+          this.exporterElement(element.id, opt);
         },
+
 
         // GOÛTERS
         ajouterIngredierntRecette() {
-          if (!this.tempIng.nom.trim()) return;
+          if (!this.tempIng.nom.trim() || !(this.tempIng.qte > 0)) { this.showToast('Nom et quantité requis'); return; }
           this.nouvelleRecette.ingredients.push({ ...this.tempIng });
           this.tempIng.nom = '';
           this.tempIng.qte = '';
         },
 
-        enregistrerNouvelleRecette() {
-          if (!this.nouvelleRecette.nom) return;
-          const rec = {
-            id: Date.now(),
-            nom: this.nouvelleRecette.nom,
-            ingredients: [...this.nouvelleRecette.ingredients]
-          };
-          this.recettesGouter.push(rec);
-          this.sauvegarderDonnees();
-          this.nouvelleRecette = { nom: '', ingredients: [] };
-          this.showAddRecetteModal = false;
-          this.showToast('Recette créée');
+        partsRecette(id) {
+          const r = this.recettesGouter.find(x => x.id === id);
+          return Math.max(1, (r && parseInt(r.parts)) || 8);
         },
 
-        enregistrerGouterPlanifie() {
-          if (!this.saisieGouter.recetteId) return;
-          const gouter = {
-            id: Date.now(),
-            date: this.saisieGouter.date,
-            recetteId: parseInt(this.saisieGouter.recetteId),
-            anim: this.saisieGouter.anim,
-            nbEnfants: Math.max(1, parseInt(this.saisieGouter.nbEnfants) || 8)
-          };
-          this.goutersPlanifies.push(gouter);
-          this.sauvegarderDonnees();
-          this.showPlanifModal = false;
-          this.showToast('Goûter planifié');
+        fournees(g) {
+          return Math.max(1, Math.ceil((g.nbEnfants || 8) / this.partsRecette(g.recetteId)));
         },
+
+        totalFournees() {
+          return this.getGoutersDeLaSemaine().reduce((t, g) => t + this.fournees(g), 0);
+        },
+
+        apercuFournees() {
+          const n = parseInt(this.saisieGouter.nbEnfants);
+          if (!n || !this.saisieGouter.recetteId) return 'Saisissez le nombre d\'enfants';
+          const p = this.partsRecette(parseInt(this.saisieGouter.recetteId));
+          const f = Math.ceil(n / p);
+          return '→ ' + f + ' fournée' + (f > 1 ? 's' : '') + ' de ' + p + ' parts (' + (f * p) + ' parts, ' + (f * p - n) + ' en trop)';
+        },
+
+        ouvrirNouvelleRecette() {
+          this.nouvelleRecette = { id: null, nom: '', parts: 8, ingredients: [] };
+          this.showAddRecetteModal = true;
+        },
+
+        editerRecette(r) {
+          this.nouvelleRecette = JSON.parse(JSON.stringify(r));
+          this.nouvelleRecette.parts = r.parts || 8;
+          this.showAddRecetteModal = true;
+        },
+
+        supprimerRecette(id) {
+          const nb = this.goutersPlanifies.filter(g => g.recetteId === id).length;
+          const msg = nb ? 'Supprimer cette recette et les ' + nb + ' goûter(s) planifié(s) associé(s) ?' : 'Supprimer cette recette ?';
+          if (!confirm(msg)) return;
+          this.recettesGouter = this.recettesGouter.filter(r => r.id !== id);
+          this.goutersPlanifies = this.goutersPlanifies.filter(g => g.recetteId !== id);
+          this.showToast('Recette supprimée');
+        },
+
+        enregistrerNouvelleRecette() {
+          const n = this.nouvelleRecette;
+          if (!n.nom.trim()) { this.showToast('Donnez un nom à la recette'); return; }
+          if (!n.ingredients.length) { this.showToast('Ajoutez au moins un ingrédient'); return; }
+          const rec = { id: n.id || Date.now(), nom: n.nom.trim(), parts: Math.max(1, parseInt(n.parts) || 8), ingredients: n.ingredients.map(i => ({ ...i })) };
+          const idx = this.recettesGouter.findIndex(r => r.id === rec.id);
+          if (idx !== -1) this.recettesGouter[idx] = rec; else this.recettesGouter.push(rec);
+          this.nouvelleRecette = { id: null, nom: '', parts: 8, ingredients: [] };
+          this.showAddRecetteModal = false;
+          this.showToast(idx !== -1 ? 'Recette modifiée' : 'Recette créée');
+        },
+
+        ouvrirPlanif() {
+          this.isEditingGouter = false;
+          const [a, b] = this.getBornesSemaine();
+          const auj = localISO();
+          this.saisieGouter = { id: null, date: (auj >= a && auj <= b) ? auj : a, recetteId: (this.recettesGouter[0] || {}).id || '', anim: '', nbEnfants: '' };
+          this.showPlanifModal = true;
+        },
+
+        editerGouter(g) {
+          this.isEditingGouter = true;
+          this.saisieGouter = { ...g };
+          this.showPlanifModal = true;
+        },
+
+
+        enregistrerGouterPlanifie() {
+          const s = this.saisieGouter;
+          if (!s.recetteId || !s.date) { this.showToast('Date et recette requises'); return; }
+          const g = { id: s.id || Date.now(), date: s.date, recetteId: parseInt(s.recetteId), anim: s.anim, nbEnfants: Math.max(1, parseInt(s.nbEnfants) || 8) };
+          const idx = this.goutersPlanifies.findIndex(x => x.id === g.id);
+          if (idx !== -1) this.goutersPlanifies[idx] = g; else this.goutersPlanifies.push(g);
+          this.showPlanifModal = false;
+          this.showToast(idx !== -1 ? 'Goûter modifié' : 'Goûter planifié');
+        },
+
 
         supprimerGouterPlanifie(id) {
           this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
@@ -2159,7 +2280,7 @@
           this.getGoutersDeLaSemaine().forEach(g => {
             const rec = this.recettesGouter.find(r => r.id === g.recetteId);
             if (!rec || !rec.ingredients) return;
-            const ratio = (g.nbEnfants || 8) / 8;
+            const ratio = this.fournees(g);
             rec.ingredients.forEach(ing => {
               let q = (parseFloat(ing.qte) || 1) * ratio, u = ing.unite;
               if (u === 'kg') { q *= 1000; u = 'g'; }
