@@ -938,33 +938,11 @@
           </button>
         </div>
 
-        <!-- MES RECETTES -->
-        <div class="space-y-2.5">
-          <h3 class="text-xs font-bold uppercase tracking-wider flex justify-between items-center">
-            <span>📖 Mes recettes</span>
-            <span class="bg-white px-2 rounded-full text-[9px] font-black border border-black/5" x-text="recettesGouter.length + ' recette(s)'"></span>
-          </h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-            <template x-for="r in recettesGouter" :key="r.id">
-              <div class="card-item-pop p-3 flex items-center justify-between gap-2">
-                <div class="overflow-hidden">
-                  <h4 class="text-xs font-bold truncate" x-text="r.nom"></h4>
-                  <p class="text-[11px] font-bold opacity-70 truncate" x-text="'1 fournée = ' + (r.parts || 8) + ' parts · ' + r.ingredients.length + ' ingrédient(s)'"></p>
-                </div>
-                <div class="flex shrink-0 gap-1">
-                  <button type="button" @click="editerRecette(r)" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="Modifier la recette">✏️</button>
-                  <button type="button" @click="supprimerRecette(r.id)" class="bg-red-600 text-white w-8 h-8 rounded-full text-xs" aria-label="Supprimer la recette"><i class="fa-solid fa-trash"></i></button>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-
         <!-- LISTE GOÛTERS PROGRAMMÉS -->
         <div class="space-y-2.5">
           <h3 class="text-xs font-bold uppercase tracking-wider flex justify-between items-center">
             <span>Planning Goûters</span>
-            <span class="bg-white px-2 py-0.2 rounded-full text-[9px] font-black border border-black/5" x-text="getGoutersDeLaSemaine().length + ' prévu(s) · ' + totalFournees() + ' fournée(s)'"></span>
+            <span class="bg-white px-2.5 py-0.5 rounded-full text-[11px] font-black border border-black/5" x-text="getGoutersDeLaSemaine().length + ' prévu(s)'"></span>
           </h3>
 
           <template x-if="getGoutersDeLaSemaine().length === 0">
@@ -975,31 +953,47 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
             <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
-              <div class="card-item-pop p-3 space-y-2">
-                <div class="flex justify-between items-start">
-                  <div class="overflow-hidden pr-2">
-                    <span class="text-[9px] font-black bg-white px-1.5 py-0.2 rounded-full uppercase border border-black/5" x-text="formatDateLisible(g.date)"></span>
-                    <h4 class="text-xs font-bold mt-1 truncate" x-text="getNomRecette(g.recetteId)"></h4>
-                  </div>
-                  <div class="flex shrink-0"><button type="button" @click="editerGouter(g)" class="opacity-40 hover:opacity-100 p-1 shrink-0" aria-label="Modifier le goûter"><i class="fa-solid fa-pen text-xs"></i></button><button type="button" @click="supprimerGouterPlanifie(g.id)" class="opacity-40 hover:opacity-100 p-1 shrink-0">
-                    <i class="fa-solid fa-trash text-xs"></i>
-                  </button></div>
+              <div class="card-item-pop p-3 flex items-center gap-3" :class="g.date === localISO() ? 'ring-2 ring-[#4A2810]' : ''">
+                <div class="shrink-0 bg-[#4A2810] text-white rounded-2xl px-3 py-2 text-center leading-none shadow-md min-w-[64px]">
+                  <span class="block font-poster text-2xl font-black" x-text="fournees(g)"></span>
+                  <span class="block text-[10px] font-bold uppercase tracking-wide mt-1" x-text="fournees(g) > 1 ? 'fournées' : 'fournée'"></span>
                 </div>
-
-                <div class="grid grid-cols-2 gap-1.5 text-xs">
-                  <div class="bg-white/50 p-1.5 rounded-lg">
-                    <span class="text-[8px] opacity-60 block uppercase font-bold">Animateur</span>
-                    <span class="font-bold truncate block text-[11px]" x-text="g.anim || 'Non assigné'"></span>
-                  </div>
-                  <div class="bg-white/50 p-1.5 rounded-lg">
-                    <span class="text-[8px] opacity-60 block uppercase font-bold">Quantité</span>
-                    <span class="font-bold truncate block text-[11px]" x-text="g.nbEnfants + ' enfants → ' + fournees(g) + ' fournée' + (fournees(g) > 1 ? 's' : '')"></span>
-                  </div>
+                <div class="flex-1 min-w-0">
+                  <span class="text-[10px] font-black bg-white px-2 py-0.5 rounded-full uppercase border border-black/5" x-text="g.date === localISO() ? 'Aujourd\'hui' : formatDateLisible(g.date)"></span>
+                  <h4 class="text-sm font-bold mt-1 truncate" x-text="getNomRecette(g.recetteId)"></h4>
+                  <p class="text-[11px] font-bold opacity-70 truncate" x-text="(g.anim || 'Non assigné') + ' · ' + g.nbEnfants + ' enfants'"></p>
+                </div>
+                <div class="flex shrink-0 flex-col gap-1">
+                  <button type="button" @click="editerGouter(g)" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="Modifier le goûter"><i class="fa-solid fa-pen"></i></button>
+                  <button type="button" @click="supprimerGouterPlanifie(g.id)" class="bg-red-600 text-white w-8 h-8 rounded-full text-xs" aria-label="Supprimer le goûter"><i class="fa-solid fa-trash"></i></button>
                 </div>
               </div>
             </template>
           </div>
         </div>
+
+        <!-- MES RECETTES (repliable) -->
+        <div class="space-y-2">
+          <button type="button" @click="showRecettes = !showRecettes" class="w-full flex items-center justify-between card-item-pop px-3 py-2.5">
+            <span class="text-xs font-bold uppercase tracking-wider">📖 Mes recettes</span>
+            <span class="flex items-center gap-2">
+              <span class="bg-white px-2.5 rounded-full text-[11px] font-black border border-black/5" x-text="recettesGouter.length"></span>
+              <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="showRecettes ? 'rotate-180' : ''"></i>
+            </span>
+          </button>
+          <div x-show="showRecettes" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1" style="display:none;">
+            <template x-for="r in recettesGouter" :key="r.id">
+              <div class="card-item-pop px-3 py-2 flex items-center justify-between gap-2">
+                <h4 class="text-xs font-bold truncate" x-text="r.nom"></h4>
+                <div class="flex shrink-0 gap-1">
+                  <button type="button" @click="editerRecette(r)" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="Modifier la recette">✏️</button>
+                  <button type="button" @click="supprimerRecette(r.id)" class="bg-red-600 text-white w-8 h-8 rounded-full text-xs" aria-label="Supprimer la recette"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
 
         <div class="pt-1 text-center">
           <button type="button" @click="currentTab = 'courses'; subTabCourses = 'gouter'" class="btn-white text-xs px-3.5 py-2 rounded-full inline-flex items-center gap-1.5">
@@ -1564,6 +1558,9 @@
       const p = n => String(n).padStart(2, '0');
       return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
     }
+    function esc(t) {
+      return String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
     function mondayOf(dateStr, offsetWeeks = 0) {
       const d = new Date(dateStr + 'T12:00:00');
       d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + 7 * offsetWeeks);
@@ -1577,6 +1574,7 @@
         isOnline: navigator.onLine,
         isLocked: true,
         exportEnCours: false,
+        showRecettes: false,
         pinMode: 'verifier',
         inactiviteTimer: null,
         pinSaisi: '',
@@ -2071,6 +2069,11 @@
         },
 
         async exporterSoinsPDF() {
+          try { await this._soinsPDF(); }
+          catch (e) { console.error(e); this.exportEnCours = false; alert('Erreur PDF : ' + e.message); }
+        },
+
+        async _soinsPDF() {
           const items = [...this.registreSoins].reverse();
           if (!items.length) { this.showToast('Aucun soin à exporter'); return; }
           const lab = 'display:block;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(230,57,70,.7);margin-bottom:4px;';
