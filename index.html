@@ -255,27 +255,23 @@
         <p class="text-xs opacity-60 font-medium" x-text="pinMode === 'creer' ? 'Première utilisation : choisissez un code PIN à 4 chiffres.' : 'Entrez votre code PIN à 4 chiffres pour accéder aux données réglementaires.'"></p>
       </div>
 
-      <div class="flex justify-center items-center gap-3 py-2">
-        <template x-for="i in [0,1,2,3]" :key="i">
-          <div class="w-4 h-4 rounded-full border-2 border-white/40 transition-all duration-200"
-               :class="pinSaisi.length > i ? 'bg-white border-white scale-110 shadow-lg' : ''"></div>
-        </template>
+      <div class="relative py-3" @click="$refs.pinInput.focus()">
+        <div class="flex justify-center items-center gap-4">
+          <template x-for="i in [0,1,2,3]" :key="i">
+            <div class="w-5 h-5 rounded-full border-2 border-white/40 transition-all duration-200"
+                 :class="pinSaisi.length > i ? 'bg-white border-white scale-110 shadow-lg' : ''"></div>
+          </template>
+        </div>
+        <input x-ref="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" autocapitalize="off" aria-label="Code PIN"
+               x-model="pinSaisi"
+               @input="pinSaisi = pinSaisi.replace(/\D/g, '').slice(0, 4); if (pinSaisi.length === 4) validerPin()"
+               @keydown.enter="validerPin()"
+               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
       </div>
 
-      <div class="grid grid-cols-3 gap-2.5 pt-2">
-        <template x-for="num in [1,2,3,4,5,6,7,8,9]" :key="num">
-          <button type="button" @click="saisirPinDigit(num)" class="keypad-btn text-lg py-3.5 bg-white/10 hover:bg-white/20 text-white border-white/10 active:scale-95">
-            <span x-text="num"></span>
-          </button>
-        </template>
-        <button type="button" @click="effacerPinDigit()" class="keypad-btn text-xs py-3.5 bg-rose-500/20 text-rose-300 border-rose-500/20 active:scale-95">
-          <i class="fa-solid fa-backspace"></i>
-        </button>
-        <button type="button" @click="saisirPinDigit(0)" class="keypad-btn text-lg py-3.5 bg-white/10 hover:bg-white/20 text-white border-white/10 active:scale-95">0</button>
-        <button type="button" @click="validerPin()" class="keypad-btn text-xs py-3.5 bg-emerald-500/30 text-emerald-300 border-emerald-500/30 active:scale-95 font-black uppercase">
-          OK
-        </button>
-      </div>
+      <button type="button" @click="$refs.pinInput.focus()" class="keypad-btn w-full text-sm py-3.5 bg-white/10 hover:bg-white/20 text-white border-white/10 active:scale-95 uppercase tracking-wide">
+        <i class="fa-solid fa-keyboard mr-1.5"></i> Saisir le code
+      </button>
 
       <div class="pt-2">
         <button type="button" @click="showModalDirecteur = true" class="text-[11px] opacity-60 hover:opacity-100 font-bold underline">
@@ -1725,6 +1721,9 @@
 
         demarrerSurveillance() {
           this.pinMode = localStorage.getItem('alsh_pin_hash') ? 'verifier' : 'creer';
+          const focusPin = () => this.$nextTick(() => { if (this.isLocked && this.$refs.pinInput) this.$refs.pinInput.focus(); });
+          this.$watch('isLocked', v => { if (v) { this.pinSaisi = ''; focusPin(); } });
+          setTimeout(focusPin, 300);
           ['enfants', 'registreSoins', 'recettesGouter', 'goutersPlanifies', 'listeCourses',
            'coursesAcheteesGouter', 'planningCreneaux', 'orgsOutings', 'effectifsJours']
             .forEach(k => this.$watch(k, () => this.sauvegarderDonnees()));
