@@ -331,6 +331,22 @@
 
   <div x-show="exportEnCours" class="fixed inset-0 z-[300] bg-slate-900 text-white flex items-center justify-center text-sm font-bold" style="display:none;">Génération du PDF…</div>
 
+  <!-- BOÎTE DE DIALOGUE (remplace confirm / alert / prompt) -->
+  <div x-show="dialog.show" x-transition.opacity class="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" style="display:none;" role="alertdialog" aria-modal="true" @click.self="fermerDialog(dialog.type === 'pin' ? null : false)">
+    <div class="card-pop p-5 max-w-xs w-full space-y-4 shadow-xl" style="background-color:#fff;color:#1E1E24;">
+      <div class="text-center space-y-1.5">
+        <div class="w-12 h-12 mx-auto rounded-2xl flex items-center justify-center text-2xl" :class="dialog.danger ? 'bg-rose-100' : 'bg-slate-100'" x-text="dialog.type === 'pin' ? '🔒' : (dialog.danger ? '⚠️' : (dialog.type === 'alert' ? 'ℹ️' : '❓'))"></div>
+        <h3 class="font-poster text-base font-black" x-text="dialog.titre"></h3>
+        <p class="text-xs font-semibold opacity-75 whitespace-pre-line" x-text="dialog.message"></p>
+      </div>
+      <input x-show="dialog.type === 'pin'" x-ref="dialogPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" x-model="dialog.valeur" @keydown.enter="fermerDialog(dialog.valeur)" placeholder="••••" aria-label="Code PIN" class="input-pop w-full px-3 py-3 text-center text-2xl tracking-[0.5em] font-black">
+      <div class="flex gap-2">
+        <button x-show="dialog.type !== 'alert'" type="button" @click="fermerDialog(dialog.type === 'pin' ? null : false)" class="btn-white flex-1 py-2.5 rounded-full text-xs">Annuler</button>
+        <button type="button" @click="fermerDialog(dialog.type === 'pin' ? dialog.valeur : true)" :class="dialog.danger ? 'bg-red-600 text-white font-bold' : 'btn-dark'" class="flex-1 py-2.5 rounded-full text-xs uppercase" x-text="dialog.ok"></button>
+      </div>
+    </div>
+  </div>
+
   <main class="max-w-5xl mx-auto w-full px-3 pb-2 flex-1 flex flex-col justify-start overflow-y-auto">
 
     <!-- ==================== 0. HUB PRINCIPAL ==================== -->
@@ -826,8 +842,22 @@
         <hr class="border-black/5 my-3">
 
         <h3 class="text-xs font-bold uppercase tracking-wider opacity-80">📋 Registre des soins</h3>
+        <div class="space-y-2">
+          <div class="flex gap-1.5">
+            <div class="relative flex-1">
+              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-xs"></i>
+              <input type="search" x-model="rechercheSoin" placeholder="Enfant, symptôme, soin, soignant..." class="input-pop w-full pl-9 pr-3 py-2 text-xs">
+            </div>
+            <input type="date" x-model="dateSoin" aria-label="Filtrer par date" class="input-pop px-2 py-1.5 text-xs w-36">
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-bold opacity-70" x-show="rechercheSoin || dateSoin">
+            <span x-text="soinsFiltres().length + ' résultat(s) sur ' + registreSoins.length"></span>
+            <button type="button" @click="rechercheSoin = ''; dateSoin = ''" class="underline">Effacer les filtres</button>
+          </div>
+          <div x-show="registreSoins.length && !soinsFiltres().length" class="card-item-pop p-4 text-center text-xs font-bold opacity-70">Aucun soin ne correspond à cette recherche.</div>
+        </div>
         <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-          <template x-for="item in registreSoins" :key="item.id">
+          <template x-for="item in soinsFiltres()" :key="item.id">
             <div :class="item.annule ? 'opacity-50 line-through' : ''" class="card-item-pop p-3.5 space-y-2 border-l-4 border-rose-500 shadow-sm bg-white/90">
               <div class="flex items-center justify-between border-b border-black/5 pb-2">
                 <div class="flex items-center gap-2 overflow-hidden pr-2">
@@ -1574,6 +1604,9 @@
         isOnline: navigator.onLine,
         isLocked: true,
         exportEnCours: false,
+        dialog: { show: false, type: 'confirm', titre: '', message: '', ok: 'OK', danger: false, valeur: '', resolve: null },
+        rechercheSoin: '',
+        dateSoin: '',
         showRecettes: false,
         pinMode: 'verifier',
         inactiviteTimer: null,
@@ -1709,6 +1742,7 @@
         },
 
         fermerModales() {
+          if (this.dialog.show) { this.fermerDialog(this.dialog.type === 'pin' ? null : false); return; }
           this.showAddEnfantModal = false; this.enfantSelectionne = null; this.showPlanifModal = false;
           this.showModalAnimSemaine = false; this.showModalOrg = false; this.showModalCreneau = false;
           this.showModalDirecteur = false; this.showAddRecetteModal = false;
@@ -1737,16 +1771,16 @@
           const f = ev.target.files[0];
           if (!f) return;
           const rd = new FileReader();
-          rd.onload = () => {
+          rd.onload = async () => {
             try {
               const data = JSON.parse(rd.result);
               const keys = Object.keys(data).filter(k => k.startsWith('alsh_') && k !== 'alsh_pin_hash' && k !== 'alsh_salt');
               if (!keys.length) throw new Error('vide');
-              if (!confirm('Remplacer les données actuelles par cette sauvegarde ?')) return;
+              if (!(await this.confirmer('Remplacer les données actuelles par cette sauvegarde ?', { titre: 'Importer', ok: 'Remplacer', danger: true }))) return;
               keys.forEach(k => localStorage.setItem(k, data[k]));
               this.chargerDonnees();
               this.showToast('Sauvegarde importée');
-            } catch (e) { alert('Fichier de sauvegarde invalide.'); }
+            } catch (e) { this.alerter('Fichier de sauvegarde invalide.'); }
             ev.target.value = '';
           };
           rd.readAsText(f);
@@ -1855,8 +1889,8 @@
         },
 
         async reinitialiserApp() {
-          if (confirm('Voulez-vous réinitialiser toutes les données locales de l\'application ?')) {
-            const pin = prompt('Entrez votre PIN pour confirmer la réinitialisation :');
+          if (await this.confirmer("Voulez-vous réinitialiser toutes les données de cet appareil ?\nUne sauvegarde sera exportée avant.", { titre: 'Réinitialiser', ok: 'Continuer', danger: true })) {
+            const pin = await this.demanderPin('Entrez votre PIN pour confirmer la réinitialisation.');
             if (pin === null || (await this.hashPin(pin)) !== localStorage.getItem('alsh_pin_hash')) { this.showToast('PIN incorrect : annulé'); return; }
             this.exporterSauvegarde();
             this.effacerToutesDonnees(true);
@@ -1918,8 +1952,8 @@
           this.showAddEnfantModal = true;
         },
 
-        supprimerEnfant(id) {
-          if (confirm('Supprimer cette fiche sanitaire ?')) {
+        async supprimerEnfant(id) {
+          if (await this.confirmer('Supprimer cette fiche sanitaire ?', { titre: 'Supprimer', ok: 'Supprimer', danger: true })) {
             this.enfants = this.enfants.filter(e => e.id !== id);
             this.sauvegarderDonnees();
             this.enfantSelectionne = null;
@@ -2012,7 +2046,7 @@
             await new Promise(r => setTimeout(r, 80));
             await this.rendrePDF(el, opt, pages);
           } catch (e) {
-            alert('Erreur lors de la génération du PDF.');
+            this.alerter('Erreur lors de la génération du PDF.');
           } finally {
             wrap.style.left = '';
             this.exportEnCours = false;
@@ -2055,13 +2089,44 @@
           this.showToast('Soin enregistré');
         },
 
-        deleteSoin(id) {
-          if (confirm('Annuler cette entrée ? Elle restera visible, barrée, dans le registre réglementaire.')) {
+        async deleteSoin(id) {
+          if (await this.confirmer('Elle restera visible, barrée, dans le registre réglementaire.', { titre: 'Annuler ce soin ?', ok: 'Annuler le soin', danger: true })) {
             const s = this.registreSoins.find(x => x.id === id);
             if (s) { s.annule = true; s.annuleLe = new Date().toISOString(); }
             this.sauvegarderDonnees();
             this.showToast('Soin annulé');
           }
+        },
+
+        _ouvrirDialog(cfg) {
+          return new Promise(res => {
+            this.dialog = { show: true, type: 'confirm', titre: '', message: '', ok: 'OK', danger: false, valeur: '', ...cfg, resolve: res };
+            if (cfg.type === 'pin') this.$nextTick(() => this.$refs.dialogPin && this.$refs.dialogPin.focus());
+          });
+        },
+        confirmer(message, o = {}) {
+          return this._ouvrirDialog({ type: 'confirm', message, titre: o.titre || 'Confirmation', ok: o.ok || 'Confirmer', danger: !!o.danger });
+        },
+        alerter(message, titre = 'Information') {
+          return this._ouvrirDialog({ type: 'alert', message, titre, ok: 'OK' });
+        },
+        demanderPin(message) {
+          return this._ouvrirDialog({ type: 'pin', message, titre: 'Code PIN', ok: 'Valider' });
+        },
+        fermerDialog(valeur) {
+          const res = this.dialog.resolve;
+          this.dialog.show = false;
+          this.dialog.resolve = null;
+          if (res) res(valeur);
+        },
+
+        soinsFiltres() {
+          const norm = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+          const q = norm(this.rechercheSoin).trim();
+          return this.registreSoins.filter(x =>
+            (!this.dateSoin || x.date === this.dateSoin) &&
+            (!q || norm([x.enfant, x.incident, x.action, x.soignant].join(' ')).includes(q))
+          );
         },
 
         soinsPourPDF() {
@@ -2070,7 +2135,7 @@
 
         async exporterSoinsPDF() {
           try { await this._soinsPDF(); }
-          catch (e) { console.error(e); this.exportEnCours = false; alert('Erreur PDF : ' + e.message); }
+          catch (e) { console.error(e); this.exportEnCours = false; this.alerter('Erreur PDF : ' + e.message); }
         },
 
         async _soinsPDF() {
@@ -2140,7 +2205,7 @@
               pagebreak: { mode: ['css'] }
             }, pages.length);
           } catch (e) {
-            alert('Erreur lors de la génération du PDF.');
+            this.alerter('Erreur lors de la génération du PDF.');
           } finally {
             wrap.remove();
             this.exportEnCours = false;
@@ -2189,10 +2254,10 @@
           this.showAddRecetteModal = true;
         },
 
-        supprimerRecette(id) {
+        async supprimerRecette(id) {
           const nb = this.goutersPlanifies.filter(g => g.recetteId === id).length;
           const msg = nb ? 'Supprimer cette recette et les ' + nb + ' goûter(s) planifié(s) associé(s) ?' : 'Supprimer cette recette ?';
-          if (!confirm(msg)) return;
+          if (!(await this.confirmer(msg, { titre: 'Supprimer la recette', ok: 'Supprimer', danger: true }))) return;
           this.recettesGouter = this.recettesGouter.filter(r => r.id !== id);
           this.goutersPlanifies = this.goutersPlanifies.filter(g => g.recetteId !== id);
           this.showToast('Recette supprimée');
@@ -2388,8 +2453,8 @@
           return this.orgsOutings.find(o => o.date === this.dateAffichee);
         },
 
-        effacerOrgDuJour() {
-          if (confirm('Supprimer l\'organisation de la sortie pour ce jour ?')) {
+        async effacerOrgDuJour() {
+          if (await this.confirmer('Supprimer l\'organisation de la sortie pour ce jour ?', { titre: 'Supprimer la sortie', ok: 'Supprimer', danger: true })) {
             this.orgsOutings = this.orgsOutings.filter(o => o.date !== this.dateAffichee);
             this.sauvegarderDonnees();
             this.showToast('Sortie supprimée');
@@ -2437,8 +2502,8 @@
           this.showToast('Créneau sauvegardé');
         },
 
-        supprimerCreneau(id) {
-          if (confirm('Supprimer ce créneau ?')) {
+        async supprimerCreneau(id) {
+          if (await this.confirmer('Supprimer ce créneau ?', { titre: 'Supprimer', ok: 'Supprimer', danger: true })) {
             this.planningCreneaux = this.planningCreneaux.filter(c => c.id !== id);
             this.sauvegarderDonnees();
             this.showToast('Créneau supprimé');
