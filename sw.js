@@ -1,4 +1,4 @@
-const CACHE = 'alshflow-v1';
+const CACHE = 'alshflow-v2';
 const CORE = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
@@ -13,16 +13,26 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Cache d'abord, puis réseau ; les ressources CDN (Alpine, Tailwind, polices, html2pdf) sont mises en cache à la volée
+const stocker = (req, res) => {
+  if (res && (res.ok || res.type === 'opaque')) {
+    const copy = res.clone();
+    caches.open(CACHE).then(c => c.put(req, copy));
+  }
+  return res;
+};
+
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(
-    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
-      if (res && (res.ok || res.type === 'opaque')) {
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy));
-      }
-      return res;
-    }).catch(() => caches.match('./index.html')))
-  );
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const memeOrigine = new URL(req.url).origin === self.location.origin;
+  if (memeOrigine) {
+    // Le code de l'app : réseau d'abord (toujours la dernière version), cache si hors ligne
+    e.respondWith(
+      fetch(req).then(res => stocker(req, res))
+        .catch(() => caches.match(req).then(hit => hit || caches.match('./index.html')))
+    );
+  } else {
+    // Bibliothèques CDN (Alpine, Tailwind, polices…) : cache d'abord
+    e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => stocker(req, res))));
+  }
 });

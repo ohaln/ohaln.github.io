@@ -861,58 +861,6 @@
       </div>
     </div>
 
-    <!-- PDF CAHIER DE SOINS (direction artistique ALSHFlow) -->
-    <div class="pdf-wrap fixed top-0 left-[-9999px] z-[-100]">
-      <div id="pdf-template-soins-simple" style="width:794px; box-sizing:border-box; background:#fff; color:#3B1F26; font-family:'Outfit',sans-serif;">
-        <div style="background:#FFD1DC; padding:28px 40px 24px; border-bottom:6px solid #E63946;">
-          <div style="display:flex; align-items:center; justify-content:space-between;">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <div style="width:46px; height:46px; background:#fff; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:24px;">⚡</div>
-              <div>
-                <div style="font-family:'Syne',sans-serif; font-weight:900; font-size:22px; color:#E63946; line-height:1;">ALSH<span style="opacity:.6">FLOW</span></div>
-                <div style="font-size:10px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#E63946; opacity:.7; margin-top:4px;">Les 3 z'ailes</div>
-              </div>
-            </div>
-            <div style="background:#E63946; color:#fff; font-size:11px; font-weight:800; padding:6px 14px; border-radius:999px; text-transform:uppercase; letter-spacing:.08em;" x-text="'Édité le ' + formatDateLisible(localISO())"></div>
-          </div>
-          <div style="font-family:'Syne',sans-serif; font-weight:900; font-size:30px; color:#E63946; text-transform:uppercase; margin-top:22px; line-height:1.05;">🩹 Cahier de soins</div>
-          <div style="margin-top:14px; display:flex; gap:10px;">
-            <span style="display:inline-block;background:#fff;color:#E63946;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;border:1px solid #FFB3C1;" x-text="soinsPourPDF().length + ' soin(s) enregistré(s)'"></span>
-            <span style="display:inline-block;background:#fff;color:#E63946;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;border:1px solid #FFB3C1;" x-text="soinsPourPDF().filter(s => s.prevenirFamille && !s.annule).length + ' famille(s) à prévenir'"></span>
-          </div>
-        </div>
-        <div style="padding:24px 40px 12px;">
-          <template x-if="soinsPourPDF().length === 0">
-            <p style="text-align:center; font-weight:700; opacity:.6; padding:30px 0;">Aucun soin enregistré.</p>
-          </template>
-          <template x-for="item in soinsPourPDF()" :key="item.id">
-            <div class="pdf-card" :style="item.annule ? 'opacity:.55;' : ''" style="break-inside:avoid; page-break-inside:avoid; background:#FFF0F3; border:1px solid #FFD1DC; border-left:6px solid #E63946; border-radius:18px; padding:14px 16px; margin-bottom:12px;">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                  <span style="display:inline-block;background:#fff;color:#E63946;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px;border:1px solid #FFB3C1;" x-text="formatDateLisible(item.date) + ' · ' + item.heure"></span>
-                  <span style="font-family:'Syne',sans-serif; font-weight:900; font-size:16px; text-transform:uppercase; color:#7A1D2B;" x-text="item.enfant"></span>
-                </div>
-                <span x-show="item.annule" style="background:#6B7280; color:#fff; font-size:10px; font-weight:800; padding:4px 10px; border-radius:999px;">ANNULÉ</span>
-                <span x-show="!item.annule && item.prevenirFamille" style="background:#E63946; color:#fff; font-size:10px; font-weight:800; padding:4px 10px; border-radius:999px;">🔔 PARENTS À PRÉVENIR</span>
-              </div>
-              <div style="display:flex; gap:10px;">
-                <div style="flex:1; background:#fff; border-radius:12px; padding:9px 12px;">
-                  <div style="font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:#E63946; margin-bottom:3px;">⚠️ Symptôme / Incident</div>
-                  <div style="font-size:12px; font-weight:700;" x-text="item.incident"></div>
-                </div>
-                <div style="flex:1; background:#fff; border-radius:12px; padding:9px 12px;">
-                  <div style="font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:#E63946; margin-bottom:3px;">🩺 Soin apporté</div>
-                  <div style="font-size:12px; font-weight:700;" x-text="item.action || 'Aucun soin particulier'"></div>
-                </div>
-              </div>
-              <div x-show="item.soignant" style="margin-top:8px; font-size:10px; font-weight:700; opacity:.65;" x-text="'Soigné par ' + item.soignant"></div>
-            </div>
-          </template>
-          <div style="text-align:center; padding-top:10px; font-size:9px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#E63946; opacity:.6;">Registre généré via ALSHFlow — Accueil de Loisirs</div>
-        </div>
-      </div>
-    </div>
-
     <!-- ==================== 4. ONGLET : GOÛTER ==================== -->
     <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
@@ -2050,7 +1998,13 @@
           }
         },
 
-        async exporterElement(id, opt) {
+        async rendrePDF(el, opt, pages) {
+          await html2pdf().set(opt).from(el).toPdf().get('pdf').then(pdf => {
+            if (pages) while (pdf.internal.getNumberOfPages() > pages) pdf.deletePage(pdf.internal.getNumberOfPages());
+          }).save();
+        },
+
+        async exporterElement(id, opt, pages) {
           const el = document.getElementById(id);
           const wrap = el.parentElement;
           this.exportEnCours = true;
@@ -2058,7 +2012,7 @@
           try {
             if (document.fonts && document.fonts.ready) await document.fonts.ready;
             await new Promise(r => setTimeout(r, 80));
-            await html2pdf().set(opt).from(el).save();
+            await this.rendrePDF(el, opt, pages);
           } catch (e) {
             alert('Erreur lors de la génération du PDF.');
           } finally {
@@ -2066,6 +2020,7 @@
             this.exportEnCours = false;
           }
         },
+
 
         exportPDFDirect() {
           const element = document.getElementById('pdf-template-fiche');
@@ -2078,7 +2033,7 @@
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             pagebreak: { mode: ['css', 'legacy'] }
           };
-          this.exporterElement(element.id, opt);
+          this.exporterElement(element.id, opt, element.scrollHeight <= 1130 ? 1 : 0);
         },
 
 
@@ -2115,18 +2070,80 @@
           return [...this.registreSoins].reverse();
         },
 
-        exporterSoinsPDF() {
-          const element = document.getElementById('pdf-template-soins-simple');
-          const opt = {
-            margin: [12, 0, 12, 0],
-            filename: 'cahier-de-soins-' + localISO() + '.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: ['css', 'legacy'], avoid: '.pdf-card' }
-          };
-          this.exporterElement(element.id, opt);
+        async exporterSoinsPDF() {
+          const items = [...this.registreSoins].reverse();
+          if (!items.length) { this.showToast('Aucun soin à exporter'); return; }
+          const lab = 'display:block;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(230,57,70,.7);margin-bottom:4px;';
+          const bloc = 'flex:1;background:rgba(255,209,220,.45);border-radius:12px;padding:9px 12px;';
+          const carte = 'background:rgba(255,255,255,.95);border-radius:20px;padding:14px 18px;margin-bottom:12px;';
+          const cartes = items.map(x => {
+            const gris = !!x.annule;
+            return `<div style="${carte}${gris ? 'opacity:.6;' : ''}">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;">
+                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;text-transform:uppercase;color:#E63946;">${esc(x.enfant)}</div>
+                <div style="background:#E63946;color:#fff;border-radius:999px;padding:4px 14px;font-size:12px;font-weight:800;white-space:nowrap;">${esc(this.formatDateLisible(x.date || ''))} · ${esc(x.heure)}</div>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <div style="${bloc}"><span style="${lab}">⚠️ Symptôme / incident</span><div style="font-size:13px;font-weight:700;color:#5b1a22;">${gris ? '[ANNULÉ] ' : ''}${esc(x.incident)}</div></div>
+                <div style="${bloc}"><span style="${lab}">🩺 Soin apporté</span><div style="font-size:13px;font-weight:700;color:#5b1a22;">${esc(x.action || 'Aucun soin particulier')}</div></div>
+              </div>
+              ${(x.soignant || x.prevenirFamille) ? `<div style="display:flex;gap:8px;margin-top:10px;font-size:11px;font-weight:800;">
+                ${x.soignant ? `<span style="background:#2A385B;color:#fff;border-radius:999px;padding:3px 12px;">Soigné par ${esc(x.soignant)}</span>` : ''}
+                ${x.prevenirFamille ? '<span style="background:#E63946;color:#fff;border-radius:999px;padding:3px 12px;">🔔 Avertir la famille</span>' : ''}</div>` : ''}
+            </div>`;
+          });
+          cartes.push(`<div style="${carte}display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#E63946;"><span>Visa du directeur : ____________________</span><span>Date : ____ / ____ / ________</span></div>`);
+
+          this.exportEnCours = true;
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'position:fixed;top:0;left:0;z-index:-9999;width:794px;';
+          document.body.appendChild(wrap);
+          try {
+            wrap.innerHTML = `<div style="width:794px;box-sizing:border-box;padding:0 36px;font-family:'Outfit',sans-serif;">${cartes.join('')}</div>`;
+            if (document.fonts && document.fonts.ready) await document.fonts.ready;
+            await new Promise(r => setTimeout(r, 80));
+            const hs = Array.from(wrap.firstElementChild.children).map(c => c.offsetHeight + 12);
+            const PAGE = 1120, PAD = 34, FOOT = 34, HEAD1 = 132, HEADN = 62;
+            const pages = []; let cur = [], used = 0, cap = PAGE - 2 * PAD - HEAD1 - FOOT - 10;
+            hs.forEach((h, i) => {
+              if (cur.length && used + h > cap) { pages.push(cur); cur = []; used = 0; cap = PAGE - 2 * PAD - HEADN - FOOT - 10; }
+              cur.push(cartes[i]); used += h;
+            });
+            pages.push(cur);
+            const entete1 = `<div style="height:112px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;border-bottom:4px solid #E63946;padding-bottom:16px;box-sizing:border-box;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                  <div style="width:56px;height:56px;background:#fff;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;">🩹</div>
+                  <div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:28px;line-height:1;text-transform:uppercase;color:#E63946;">Cahier de soins</div>
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E63946;opacity:.75;margin-top:6px;">ALSHFlow · Les 3 z'ailes · Registre réglementaire</div></div>
+                </div>
+                <div style="text-align:right;"><div style="background:#E63946;color:#fff;border-radius:999px;padding:6px 18px;font-size:13px;font-weight:800;">${items.length} soin${items.length > 1 ? 's' : ''}</div>
+                <div style="font-size:11px;font-weight:700;color:#E63946;opacity:.75;margin-top:6px;">Exporté le ${esc(this.formatDateLisible(localISO()))}</div></div>
+              </div>`;
+            const enteteN = `<div style="height:42px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #E63946;box-sizing:border-box;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;text-transform:uppercase;color:#E63946;"><span>⚡ ALSHFlow · Cahier de soins</span><span style="font-family:'Outfit',sans-serif;font-size:11px;opacity:.75;">suite</span></div>`;
+            const html = `<div style="width:794px;">` + pages.map((pg, i) =>
+              `<div style="width:794px;height:${PAGE}px;box-sizing:border-box;overflow:hidden;padding:${PAD}px 36px;background:#FFD1DC;color:#1E1E24;font-family:'Outfit',sans-serif;display:flex;flex-direction:column;${i < pages.length - 1 ? 'page-break-after:always;break-after:page;' : ''}">
+                ${i === 0 ? entete1 : enteteN}
+                <div style="flex:1;">${pg.join('')}</div>
+                <div style="height:${FOOT}px;display:flex;align-items:flex-end;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#E63946;opacity:.65;"><span>Document généré via ALSHFlow — Accueil de loisirs</span><span>Page ${i + 1} / ${pages.length}</span></div>
+              </div>`).join('') + `</div>`;
+            wrap.innerHTML = html;
+            await new Promise(r => setTimeout(r, 80));
+            await this.rendrePDF(wrap.firstElementChild, {
+              margin: 0,
+              filename: 'cahier-de-soins-' + localISO() + '.pdf',
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+              pagebreak: { mode: ['css'] }
+            }, pages.length);
+          } catch (e) {
+            alert('Erreur lors de la génération du PDF.');
+          } finally {
+            wrap.remove();
+            this.exportEnCours = false;
+          }
         },
+
 
 
         // GOÛTERS
