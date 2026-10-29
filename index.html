@@ -217,6 +217,57 @@
     [class*="text-[8px]"], [class*="text-[9px]"] { font-size: 11px !important; }
     [class*="text-[10px]"] { font-size: 12px !important; }
     :focus-visible { outline: 3px solid #1E1E24; outline-offset: 2px; }
+
+    /* ===== ANIMATIONS ===== */
+    main { overflow-x: hidden; }
+    @keyframes tabFwd  { from { opacity: 0; transform: translateX(28px); }  to { opacity: 1; transform: none; } }
+    @keyframes tabBack { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+    .tab-fwd  { animation: tabFwd .28s cubic-bezier(.16, 1, .3, 1) backwards; }
+    .tab-back { animation: tabBack .28s cubic-bezier(.16, 1, .3, 1) backwards; }
+
+    @keyframes cardIn { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+    .card-item-pop { animation: cardIn .32s cubic-bezier(.16, 1, .3, 1) backwards; }
+    .grid > .card-item-pop:nth-child(3) { animation-delay: 40ms; }
+    .grid > .card-item-pop:nth-child(4) { animation-delay: 80ms; }
+    .grid > .card-item-pop:nth-child(5) { animation-delay: 120ms; }
+    .grid > .card-item-pop:nth-child(6) { animation-delay: 160ms; }
+    .grid > .card-item-pop:nth-child(7) { animation-delay: 200ms; }
+    .grid > .card-item-pop:nth-child(n+8) { animation-delay: 240ms; }
+    @keyframes cardOut { to { opacity: 0; transform: translateX(28px) scale(.96); } }
+    .card-out { animation: cardOut .22s ease-in forwards !important; pointer-events: none; }
+
+    @keyframes tileIn { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
+    .hub-tile { animation: tileIn .42s cubic-bezier(.34, 1.56, .64, 1) backwards; }
+    .hub-tile:nth-child(2) { animation-delay: 50ms; }
+    .hub-tile:nth-child(3) { animation-delay: 100ms; }
+    .hub-tile:nth-child(4) { animation-delay: 150ms; }
+    .hub-tile:nth-child(5) { animation-delay: 200ms; }
+    .hub-tile:nth-child(6) { animation-delay: 250ms; }
+
+    @keyframes modalIn { from { opacity: 0; transform: translateY(26px) scale(.96); } to { opacity: 1; transform: none; } }
+    [role="dialog"] > .card-pop, [role="alertdialog"] > .card-pop { animation: modalIn .34s cubic-bezier(.34, 1.56, .64, 1) backwards; }
+
+    @keyframes badgePop { 0% { opacity: 0; transform: scale(.4) rotate(-8deg); } 70% { transform: scale(1.12); } 100% { opacity: 1; transform: none; } }
+    .badge-pop { animation: badgePop .45s cubic-bezier(.34, 1.56, .64, 1) backwards; }
+    @keyframes numBump { 0% { transform: scale(1.5); } 100% { transform: scale(1); } }
+    .num-bump { display: inline-block; animation: numBump .3s cubic-bezier(.34, 1.56, .64, 1); }
+
+    @keyframes dotPop { 0% { transform: scale(.6); } 60% { transform: scale(1.35); } 100% { transform: scale(1.1); } }
+    .dot-pop { animation: dotPop .25s ease-out; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-12px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-8px); } 80% { transform: translateX(6px); } }
+    .shake { animation: shake .45s ease-in-out; }
+
+    @keyframes checkPop { 0% { transform: scale(1); } 50% { transform: scale(1.35); } 100% { transform: scale(1); } }
+    input[type="checkbox"]:checked { animation: checkPop .25s ease-out; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 44px; height: 44px; border: 4px solid rgba(255, 255, 255, .25); border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; }
+
+    button:not(.hub-tile):active { transform: scale(.96); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; }
+    }
   </style>
 </head>
 
@@ -239,7 +290,7 @@
   </div>
 
   <!-- ECRAN DE VERROUILLAGE PIN -->
-  <div x-show="isLocked" 
+  <div x-show="isLocked" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-110" 
        x-transition:enter="transition ease-out duration-300"
        x-transition:enter-start="opacity-0 scale-95"
        x-transition:enter-end="opacity-100 scale-100"
@@ -256,10 +307,10 @@
       </div>
 
       <div class="relative py-3" @click="$refs.pinInput.focus()">
-        <div class="flex justify-center items-center gap-4">
+        <div class="flex justify-center items-center gap-4" :class="pinShake ? 'shake' : ''">
           <template x-for="i in [0,1,2,3]" :key="i">
             <div class="w-5 h-5 rounded-full border-2 border-white/40 transition-all duration-200"
-                 :class="pinSaisi.length > i ? 'bg-white border-white scale-110 shadow-lg' : ''"></div>
+                 :class="pinSaisi.length > i ? 'bg-white border-white scale-110 shadow-lg dot-pop' : ''"></div>
           </template>
         </div>
         <input x-ref="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" autocapitalize="off" aria-label="Code PIN"
@@ -315,7 +366,7 @@
        x-transition:enter-end="opacity-100 scale-100"
        x-transition:leave="transition ease-in duration-200"
        x-transition:leave-start="opacity-100 scale-100"
-       x-transition:leave-end="opacity-0 scale-95"
+       x-transition:leave-end="opacity-0 -translate-y-4"
        class="fixed top-4 right-4 left-4 z-[180] max-w-md mx-auto bg-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-black/5"
        style="display: none;">
     <div class="flex items-center space-x-2">
@@ -325,7 +376,7 @@
     <button type="button" @click="toast.show = false" class="opacity-50 hover:opacity-100"><i class="fa-solid fa-xmark text-sm"></i></button>
   </div>
 
-  <div x-show="exportEnCours" class="fixed inset-0 z-[300] bg-slate-900 text-white flex items-center justify-center text-sm font-bold" style="display:none;">Génération du PDF…</div>
+  <div x-show="exportEnCours" class="fixed inset-0 z-[300] bg-slate-900 text-white flex items-center justify-center text-sm font-bold" style="display:none;"><div class="flex flex-col items-center gap-4"><div class="spinner"></div><span>Génération du PDF…</span></div></div>
 
   <!-- BOÎTE DE DIALOGUE (remplace confirm / alert / prompt) -->
   <div x-show="dialog.show" x-transition.opacity class="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" style="display:none;" role="alertdialog" aria-modal="true" @click.self="fermerDialog(dialog.type === 'pin' ? null : false)">
@@ -346,10 +397,7 @@
   <main class="max-w-5xl mx-auto w-full px-3 pb-2 flex-1 flex flex-col justify-start overflow-y-auto">
 
     <!-- ==================== 0. HUB PRINCIPAL ==================== -->
-    <div x-show="currentTab === 'hub'" 
-         x-transition:enter="transition ease-out duration-200" 
-         x-transition:enter-start="opacity-0 scale-95" 
-         x-transition:enter-end="opacity-100 scale-100" 
+    <div x-show="currentTab === 'hub'" :class="tabDir === 'back' ? 'tab-back' : 'tab-fwd'" 
          class="w-full flex-1 flex flex-col justify-between h-[calc(100dvh-70px)] max-h-[calc(100dvh-70px)] py-2 gap-2 overflow-hidden">
       
       <div class="grid grid-cols-2 grid-rows-3 gap-3 sm:gap-4 w-full flex-1 h-full min-h-0">
@@ -431,7 +479,7 @@
 
 
     <!-- ==================== 1. ONGLET : FICHES SAN' ==================== -->
-    <div x-show="currentTab === 'sanitaire'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'sanitaire'" :class="tabDir === 'back' ? 'tab-back' : 'tab-fwd'" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b border-black/5 pb-3 gap-2">
@@ -655,7 +703,7 @@
 
 
     <!-- ==================== 2. ONGLET : FICHE D'ACTIVITÉ ==================== -->
-    <div x-show="currentTab === 'fiche'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'fiche'" :class="tabDir === 'back' ? 'tab-back' : 'tab-fwd'" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
@@ -790,7 +838,7 @@
 
 
     <!-- ==================== 3. ONGLET : CAHIER DE SOINS NUMÉRIQUE ==================== -->
-    <div x-show="currentTab === 'soins'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'soins'" :class="tabDir === 'back' ? 'tab-back' : 'tab-fwd'" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
@@ -888,7 +936,7 @@
     </div>
 
     <!-- ==================== 4. ONGLET : GOÛTER ==================== -->
-    <div x-show="currentTab === 'gouter'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'gouter'" :class="tabDir === 'back' ? 'tab-back' : 'tab-fwd'" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-3">
@@ -979,9 +1027,9 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
             <template x-for="g in getGoutersDeLaSemaine()" :key="g.id">
-              <div class="card-item-pop p-3 flex items-center gap-3" :class="g.date === localISO() ? 'ring-2 ring-[#4A2810]' : ''">
-                <div class="shrink-0 bg-[#4A2810] text-white rounded-2xl px-3 py-2 text-center leading-none shadow-md min-w-[64px]">
-                  <span class="block font-poster text-2xl font-black" x-text="fournees(g)"></span>
+              <div class="card-item-pop p-3 flex items-center gap-3" :class="[g.date === localISO() ? 'ring-2 ring-[#4A2810]' : '', sortant[g.id] ? 'card-out' : '']">
+                <div class="badge-pop shrink-0 bg-[#4A2810] text-white rounded-2xl px-3 py-2 text-center leading-none shadow-md min-w-[64px]">
+                  <span class="block font-poster text-2xl font-black" x-text="fournees(g)" x-effect="fournees(g); $el.classList.remove('num-bump'); void $el.offsetWidth; $el.classList.add('num-bump')"></span>
                   <span class="block text-[10px] font-bold uppercase tracking-wide mt-1" x-text="fournees(g) > 1 ? 'fournées' : 'fournée'"></span>
                 </div>
                 <div class="flex-1 min-w-0">
@@ -1009,7 +1057,7 @@
           </button>
           <div x-show="showRecettes" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1" style="display:none;">
             <template x-for="r in recettesGouter" :key="r.id">
-              <div class="card-item-pop px-3 py-2 flex items-center justify-between gap-2">
+              <div :class="sortant[r.id] ? 'card-out' : ''" class="card-item-pop px-3 py-2 flex items-center justify-between gap-2">
                 <h4 class="text-xs font-bold truncate" x-text="r.nom"></h4>
                 <div class="flex shrink-0 gap-1">
                   <button type="button" @click="editerRecette(r)" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="Modifier la recette">✏️</button>
@@ -1073,7 +1121,7 @@
 
 
     <!-- ==================== 5. ONGLET : COURSES MATÉRIEL & GOÛTERS ==================== -->
-    <div x-show="currentTab === 'courses'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'courses'" :class="tabDir === 'back' ? 'tab-back' : 'tab-fwd'" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="flex items-center justify-between border-b border-black/5 pb-3">
@@ -1105,7 +1153,7 @@
 
           <div class="space-y-1.5">
             <template x-for="item in listeCourses" :key="item.id">
-              <div class="card-item-pop p-2.5 flex items-center justify-between transition-opacity" :class="item.achete ? 'opacity-40 line-through' : ''">
+              <div class="card-item-pop p-2.5 flex items-center justify-between transition-opacity" :class="[item.achete ? 'opacity-40 line-through' : '', sortant[item.id] ? 'card-out' : '']">
                 <div class="flex items-center space-x-2.5 overflow-hidden pr-2">
                   <input type="checkbox" x-model="item.achete" class="w-4 h-4 accent-emerald-600 cursor-pointer shrink-0">
                   <div class="truncate">
@@ -1163,7 +1211,7 @@
 
 
     <!-- ==================== 6. ONGLET : PLANNING ==================== -->
-    <div x-show="currentTab === 'planning'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="space-y-4 py-2" style="display: none;">
+    <div x-show="currentTab === 'planning'" :class="tabDir === 'back' ? 'tab-back' : 'tab-fwd'" class="space-y-4 py-2" style="display: none;">
       <div class="card-pop p-4 md:p-5 space-y-4">
         
         <div class="space-y-2.5 border-b border-black/5 pb-3">
@@ -1312,7 +1360,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
             <template x-for="p in getPlanningFiltre()" :key="p.id">
-              <div class="card-item-pop p-3 space-y-2.5 cursor-pointer hover:border-indigo-300 transition-colors" @click="ouvrirPlanningSemaineAnim(p.animNom)">
+              <div :class="sortant[p.id] ? 'card-out' : ''" class="card-item-pop p-3 space-y-2.5 cursor-pointer hover:border-indigo-300 transition-colors" @click="ouvrirPlanningSemaineAnim(p.animNom)">
                 
                 <div class="flex justify-between items-center border-b border-black/5 pb-2">
                   <div class="font-poster text-xs sm:text-sm font-black flex items-center gap-1.5 truncate pr-2">
@@ -1600,6 +1648,9 @@
         isOnline: navigator.onLine,
         isLocked: true,
         exportEnCours: false,
+        tabDir: 'fwd',
+        pinShake: false,
+        sortant: {},
         dialog: { show: false, type: 'confirm', titre: '', message: '', ok: 'OK', danger: false, valeur: '', resolve: null },
         rechercheSoin: '',
         dateSoin: '',
@@ -1721,6 +1772,10 @@
 
         demarrerSurveillance() {
           this.pinMode = localStorage.getItem('alsh_pin_hash') ? 'verifier' : 'creer';
+          this.$watch('currentTab', (n, o) => {
+            this.tabDir = n === 'hub' ? 'back' : 'fwd';
+            const m = document.querySelector('main'); if (m) m.scrollTo(0, 0);
+          });
           const focusPin = () => this.$nextTick(() => { if (this.isLocked && this.$refs.pinInput) this.$refs.pinInput.focus(); });
           this.$watch('isLocked', v => { if (v) { this.pinSaisi = ''; focusPin(); } });
           setTimeout(focusPin, 300);
@@ -1786,6 +1841,7 @@
         },
 
         showToast(msg) {
+          this.vibrer(15);
           this.toast.message = msg;
           this.toast.show = true;
           setTimeout(() => { this.toast.show = false; }, 3000);
@@ -1823,8 +1879,12 @@
           } else if (h === saved) {
             this.isLocked = false;
             this.showToast('Accès déverrouillé');
+            this.vibrer(20);
           } else {
             this.showToast('Code PIN incorrect');
+            this.pinShake = true;
+            setTimeout(() => { this.pinShake = false; }, 500);
+            this.vibrer(140);
           }
           this.pinSaisi = '';
         },
@@ -2119,6 +2179,15 @@
           if (res) res(valeur);
         },
 
+        sortie(id) {
+          this.sortant[id] = true;
+          return new Promise(res => setTimeout(() => { delete this.sortant[id]; res(); }, 230));
+        },
+
+        vibrer(ms = 15) {
+          try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {}
+        },
+
         soinsFiltres() {
           const norm = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
           const q = norm(this.rechercheSoin).trim();
@@ -2258,6 +2327,7 @@
           const msg = nb ? 'Supprimer cette recette et les ' + nb + ' goûter(s) planifié(s) associé(s) ?' : 'Supprimer cette recette ?';
           if (!(await this.confirmer(msg, { titre: 'Supprimer la recette', ok: 'Supprimer', danger: true }))) return;
           this.recettesGouter = this.recettesGouter.filter(r => r.id !== id);
+          await this.sortie(id);
           this.goutersPlanifies = this.goutersPlanifies.filter(g => g.recetteId !== id);
           this.showToast('Recette supprimée');
         },
@@ -2300,7 +2370,8 @@
         },
 
 
-        supprimerGouterPlanifie(id) {
+        async supprimerGouterPlanifie(id) {
+          await this.sortie(id);
           this.goutersPlanifies = this.goutersPlanifies.filter(g => g.id !== id);
           this.sauvegarderDonnees();
           this.showToast('Goûter supprimé');
@@ -2347,7 +2418,8 @@
           this.nouvelleCourseQte = '';
         },
 
-        deleteCourse(id) {
+        async deleteCourse(id) {
+          await this.sortie(id);
           this.listeCourses = this.listeCourses.filter(c => c.id !== id);
           this.sauvegarderDonnees();
         },
@@ -2503,6 +2575,7 @@
 
         async supprimerCreneau(id) {
           if (await this.confirmer('Supprimer ce créneau ?', { titre: 'Supprimer', ok: 'Supprimer', danger: true })) {
+            await this.sortie(id);
             this.planningCreneaux = this.planningCreneaux.filter(c => c.id !== id);
             this.sauvegarderDonnees();
             this.showToast('Créneau supprimé');
