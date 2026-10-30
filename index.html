@@ -94,6 +94,75 @@
     }
 
     .btn-dark:active { transform: scale(0.96); }
+
+    /* ====== Finitions & animations ====== */
+    :root { --brown: #6B3F23; --ease-out: cubic-bezier(.2,.8,.2,1); --spring: cubic-bezier(.34,1.56,.64,1); }
+
+    body {
+      background-image:
+        radial-gradient(900px 420px at 0% -10%, rgba(255,255,255,.30), transparent 60%),
+        linear-gradient(165deg, #FFB347 0%, #FF9F1C 48%, #F28705 100%);
+      background-attachment: fixed;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection { background: rgba(107,63,35,.25); }
+    * { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--brown); outline-offset: 2px;
+    }
+
+    /* Scrollbar discrète */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(74,40,16,.25); border-radius: 99px; }
+
+    /* Cartes : profondeur douce */
+    .card-pop {
+      box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 18px 40px -18px rgba(74,40,16,.35);
+    }
+    .card-item-pop {
+      transition: box-shadow .35s var(--ease-out), border-color .35s ease, transform .35s var(--ease-out);
+      box-shadow: 0 6px 16px -12px rgba(74,40,16,.35);
+    }
+    .card-item-pop.day-active {
+      border-color: rgba(107,63,35,.40);
+      box-shadow: 0 10px 24px -12px rgba(107,63,35,.55);
+    }
+    @media (hover: hover) {
+      .card-item-pop:hover { transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(74,40,16,.45); }
+      .btn-white:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.08); }
+      .btn-dark:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,.25); }
+    }
+
+    /* Champs */
+    .input-pop:focus { border-color: var(--brown); box-shadow: 0 0 0 4px rgba(107,63,35,.14); transform: translateY(-1px); }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* Entrées en cascade */
+    @keyframes rise { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+    @keyframes drop { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
+    @keyframes wobble { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-10deg); } 75% { transform: rotate(10deg); } }
+    @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+    .rise { animation: rise .55s var(--ease-out) backwards; }
+    .drop { animation: drop .5s var(--ease-out) backwards; }
+    .logo-wobble { animation: wobble 1.2s .6s ease-in-out 1; transform-origin: 50% 80%; }
+    .bump { animation: bump .35s var(--spring); }
+
+    /* Transitions Alpine */
+    .pop-enter { transition: opacity .3s ease, transform .45s var(--spring); }
+    .pop-start { opacity: 0; transform: scale(.4); }
+    .pop-end { opacity: 1; transform: scale(1); }
+    .toast-enter { transition: opacity .3s ease, transform .45s var(--spring); }
+    .toast-start { opacity: 0; transform: translateY(-24px) scale(.96); }
+    .toast-end { opacity: 1; transform: none; }
+    .toast-leave { transition: opacity .2s ease, transform .2s ease; }
+    .toast-leave-end { opacity: 0; transform: translateY(-12px); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after { animation: none !important; transition: none !important; }
+    }
   </style>
 </head>
 
@@ -102,9 +171,9 @@
       x-init="initApp()">
 
   <!-- HEADER BRANDING -->
-  <header class="max-w-4xl mx-auto w-full px-4 pt-3 pb-2 flex items-center justify-between shrink-0 h-[60px]">
+  <header class="drop max-w-4xl mx-auto w-full px-4 pt-3 pb-2 flex items-center justify-between shrink-0 h-[60px]">
     <div class="flex items-center gap-2.5">
-      <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-lg font-black shadow-sm border border-black/5">
+      <div class="logo-wobble w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-lg font-black shadow-sm border border-black/5">
         🍪
       </div>
       <div>
@@ -122,7 +191,8 @@
 
   <!-- TOAST NOTIFICATION -->
   <div x-show="toast.show" 
-       x-transition
+       x-transition:enter="toast-enter" x-transition:enter-start="toast-start" x-transition:enter-end="toast-end"
+       x-transition:leave="toast-leave" x-transition:leave-start="toast-end" x-transition:leave-end="toast-leave-end"
        class="fixed top-4 right-4 left-4 z-[180] max-w-md mx-auto bg-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-black/5"
        style="display: none;">
     <div class="flex items-center space-x-2">
@@ -174,8 +244,10 @@
 
         <!-- Liste des jours de la semaine (Lundi - Vendredi) -->
         <div class="space-y-2.5">
-          <template x-for="jour in getJoursSemaine()" :key="jour.date">
-            <div class="card-item-pop p-3 space-y-2 bg-white/90">
+          <template x-for="(jour, i) in getJoursSemaine()" :key="jour.date">
+            <div class="card-item-pop rise p-3 space-y-2 bg-white/90"
+                 :class="getCalculFournees(jour.date) > 0 ? 'day-active' : ''"
+                 :style="{ animationDelay: (i * 70) + 'ms' }">
               <div class="flex justify-between items-center border-b border-black/5 pb-1.5">
                 <span class="font-poster text-xs font-black uppercase text-amber-950" x-text="jour.nomAffichage"></span>
                 
@@ -186,8 +258,11 @@
 
                 <!-- Pastille compacte : nombre de fournées -->
                 <span x-show="getCalculFournees(jour.date) > 0"
-                      class="inline-flex items-baseline gap-1 bg-[#6B3F23] text-amber-50 rounded-full pl-3 pr-3 py-1 shadow-sm">
-                  <span class="font-poster text-xl font-black leading-none" x-text="getCalculFournees(jour.date)"></span>
+                      x-transition:enter="pop-enter" x-transition:enter-start="pop-start" x-transition:enter-end="pop-end"
+                      class="inline-flex items-baseline gap-1 bg-[#6B3F23] text-amber-50 rounded-full pl-3 pr-3 py-1 shadow-md">
+                  <span class="font-poster text-xl font-black leading-none inline-block"
+                        x-text="getCalculFournees(jour.date)"
+                        x-effect="getCalculFournees(jour.date); $el.classList.remove('bump'); void $el.offsetWidth; $el.classList.add('bump')"></span>
                   <span class="text-[10px] font-black uppercase" x-text="getCalculFournees(jour.date) > 1 ? 'fournées' : 'fournée'"></span>
                 </span>
               </div>
