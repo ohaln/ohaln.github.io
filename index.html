@@ -179,10 +179,9 @@
               <div class="flex justify-between items-center border-b border-black/5 pb-1.5">
                 <span class="font-poster text-xs font-black uppercase text-amber-950" x-text="jour.nomAffichage"></span>
                 
-                <!-- Badge Calcul de fournées -->
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full uppercase"
-                      :class="getCalculFournees(jour.date) > 0 ? 'bg-amber-500 text-white' : 'bg-gray-200 text-gray-600'"
-                      x-text="getCalculFournees(jour.date) > 0 ? getCalculFournees(jour.date) + ' fournée(s) (base 8)' : 'Aucun goûter'">
+                <span x-show="getCalculFournees(jour.date) === 0"
+                      class="text-[10px] font-black px-2 py-0.5 rounded-full uppercase bg-gray-200 text-gray-600">
+                  Aucun goûter
                 </span>
               </div>
 
@@ -208,6 +207,19 @@
                       <option :value="r.id" x-text="r.nom"></option>
                     </template>
                   </select>
+                </div>
+              </div>
+
+              <!-- Bandeau : nombre de fournées à préparer -->
+              <div x-show="getCalculFournees(jour.date) > 0"
+                   class="flex items-center justify-between gap-3 bg-amber-500 text-white rounded-2xl px-4 py-3 shadow-sm">
+                <div class="min-w-0">
+                  <p class="text-[10px] font-bold uppercase tracking-wider opacity-90">À préparer</p>
+                  <p class="text-xs font-bold truncate" x-text="getNomRecette(jour.date)"></p>
+                </div>
+                <div class="flex items-baseline gap-1.5 shrink-0">
+                  <span class="font-poster text-4xl font-black leading-none" x-text="getCalculFournees(jour.date)"></span>
+                  <span class="text-xs font-black uppercase" x-text="getCalculFournees(jour.date) > 1 ? 'fournées' : 'fournée'"></span>
                 </div>
               </div>
             </div>
@@ -514,6 +526,11 @@
           const recetteId = this.planningGouters[dateStr];
           if (!recetteId || nbKids <= 0) return 0;
           return Math.ceil(nbKids / 8);
+        },
+
+        getNomRecette(dateStr) {
+          const rec = this.recettes.find(r => r.id == this.planningGouters[dateStr]);
+          return rec ? rec.nom : '';
         },
 
         // RECETTES
