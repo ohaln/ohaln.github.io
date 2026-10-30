@@ -183,12 +183,19 @@
                       class="text-[10px] font-black px-2 py-0.5 rounded-full uppercase bg-gray-200 text-gray-600">
                   Aucun goûter
                 </span>
+
+                <!-- Pastille compacte : nombre de fournées -->
+                <span x-show="getCalculFournees(jour.date) > 0"
+                      class="inline-flex items-baseline gap-1 bg-[#6B3F23] text-amber-50 rounded-full pl-3 pr-3 py-1 shadow-sm">
+                  <span class="font-poster text-xl font-black leading-none" x-text="getCalculFournees(jour.date)"></span>
+                  <span class="text-[10px] font-black uppercase" x-text="getCalculFournees(jour.date) > 1 ? 'fournées' : 'fournée'"></span>
+                </span>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              <div class="grid grid-cols-[5.5rem_1fr] gap-2.5 text-xs">
                 <!-- Saisie Effectif -->
                 <div>
-                  <label class="block text-[9px] font-bold uppercase mb-0.5 opacity-70">👶 Nombre d'enfants</label>
+                  <label class="block text-[9px] font-bold uppercase mb-0.5 opacity-70">👶 Enfants</label>
                   <input type="number" min="0" inputmode="numeric" pattern="[0-9]*"
                          x-model.number="effectifs[jour.date]" 
                          @input="sauvegarderDonnees()" 
@@ -198,7 +205,7 @@
 
                 <!-- Choix de la Recette -->
                 <div>
-                  <label class="block text-[9px] font-bold uppercase mb-0.5 opacity-70">🍰 Recette prévue</label>
+                  <label class="block text-[9px] font-bold uppercase mb-0.5 opacity-70">🍰 Recette</label>
                   <select x-model="planningGouters[jour.date]" 
                           @change="sauvegarderDonnees()" 
                           class="input-pop w-full px-2.5 py-1.5 text-xs font-bold">
@@ -207,19 +214,6 @@
                       <option :value="r.id" x-text="r.nom"></option>
                     </template>
                   </select>
-                </div>
-              </div>
-
-              <!-- Bandeau : nombre de fournées à préparer -->
-              <div x-show="getCalculFournees(jour.date) > 0"
-                   class="flex items-center justify-between gap-3 bg-[#6B3F23] text-amber-50 rounded-2xl px-4 py-3 shadow-sm">
-                <div class="min-w-0">
-                  <p class="text-[10px] font-bold uppercase tracking-wider opacity-90">À préparer</p>
-                  <p class="text-xs font-bold truncate" x-text="getNomRecette(jour.date)"></p>
-                </div>
-                <div class="flex items-baseline gap-1.5 shrink-0">
-                  <span class="font-poster text-4xl font-black leading-none" x-text="getCalculFournees(jour.date)"></span>
-                  <span class="text-xs font-black uppercase" x-text="getCalculFournees(jour.date) > 1 ? 'fournées' : 'fournée'"></span>
                 </div>
               </div>
             </div>
