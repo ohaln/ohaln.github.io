@@ -212,7 +212,7 @@
 
               <!-- Bandeau : nombre de fournées à préparer -->
               <div x-show="getCalculFournees(jour.date) > 0"
-                   class="flex items-center justify-between gap-3 bg-amber-500 text-white rounded-2xl px-4 py-3 shadow-sm">
+                   class="flex items-center justify-between gap-3 bg-[#6B3F23] text-amber-50 rounded-2xl px-4 py-3 shadow-sm">
                 <div class="min-w-0">
                   <p class="text-[10px] font-bold uppercase tracking-wider opacity-90">À préparer</p>
                   <p class="text-xs font-bold truncate" x-text="getNomRecette(jour.date)"></p>
@@ -313,6 +313,12 @@
             + Recette
           </button>
         </div>
+
+        <template x-if="recettes.length === 0">
+          <div class="card-item-pop p-5 text-center">
+            <p class="text-xs font-bold opacity-70">Aucune recette pour le moment. Appuie sur « + Recette » pour créer la première.</p>
+          </div>
+        </template>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <template x-for="r in recettes" :key="r.id">
@@ -442,10 +448,7 @@
         },
 
         chargerDonnees() {
-          const defaultRecettes = [
-            { id: 1, nom: 'Gâteau au Chocolat', ingredients: [{ nom: 'Farine', qte: 200, unite: 'g' }, { nom: 'Sucre', qte: 150, unite: 'g' }, { nom: 'Chocolat', qte: 200, unite: 'g' }, { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }] },
-            { id: 2, nom: 'Crêpes Party', ingredients: [{ nom: 'Farine', qte: 250, unite: 'g' }, { nom: 'Lait', qte: 50, unite: 'cl' }, { nom: 'Œufs', qte: 4, unite: 'pièce(s)' }] }
-          ];
+          const defaultRecettes = [];
 
           const lire = (cle, defaut) => {
             try {
