@@ -218,6 +218,10 @@
     [class*="text-[10px]"] { font-size: 12px !important; }
     :focus-visible { outline: 3px solid #1E1E24; outline-offset: 2px; }
 
+    /* iOS zoome sur les champs < 16px : on force 16px sur écran tactile */
+    @media (hover: none) and (pointer: coarse) {
+      input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea { font-size: 16px !important; }
+    }
     /* ===== ANIMATIONS ===== */
     main { overflow-x: hidden; }
     @keyframes tabFwd  { from { opacity: 0; transform: translateX(28px); }  to { opacity: 1; transform: none; } }
@@ -1011,6 +1015,10 @@
             Enregistrer la recette
           </button>
         </div>
+
+        <button type="button" @click="exporterGouterSemainePDF()" class="btn-white w-full py-2.5 rounded-full text-xs flex items-center justify-center gap-2">
+          <i class="fa-solid fa-file-pdf"></i> PDF des goûters pour les parents
+        </button>
 
         <!-- LISTE GOÛTERS PROGRAMMÉS -->
         <div class="space-y-2.5">
@@ -2089,23 +2097,74 @@
           }
         },
 
-        async rendrePDF(el, opt, pages) {
-          await html2pdf().set(opt).from(el).toPdf().get('pdf').then(pdf => {
+        async rendrePDF(el, opt, pages, onglet) {
+          const blob = await html2pdf().set(opt).from(el).toPdf().get('pdf').then(pdf => {
             if (pages) while (pdf.internal.getNumberOfPages() > pages) pdf.deletePage(pdf.internal.getNumberOfPages());
-          }).save();
+          }).outputPdf('blob');
+          this.afficherPDF(onglet, blob, opt.filename || 'document.pdf');
         },
+
+        erreurPDF(onglet) {
+          if (onglet) onglet.close();
+          this.alerter('Erreur lors de la génération du PDF.');
+        },
+
+        ouvrirOnglet() {
+          const w = window.open('', '_blank');
+          if (w) {
+            try { w.document.write('<title>PDF</title><body style="margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#1E1E24;color:#fff;font:600 16px sans-serif">Génération du PDF…</body>'); } catch (e) {}
+          }
+          return w;
+        },
+
+        afficherPDF(onglet, blob, nom) {
+          const url = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+          if (onglet && !onglet.closed) {
+            onglet.location.href = url;
+          } else {
+            const a = document.createElement('a');
+            a.href = url; a.download = nom; a.click();
+          }
+          setTimeout(() => URL.revokeObjectURL(url), 180000);
+        },
+
+        async pdfDepuisHtml(html, filename, pages, onglet) {
+          this.exportEnCours = true;
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'position:fixed;top:0;left:0;z-index:-9999;width:794px;';
+          wrap.innerHTML = html;
+          document.body.appendChild(wrap);
+          try {
+            if (document.fonts && document.fonts.ready) await document.fonts.ready;
+            await new Promise(r => setTimeout(r, 80));
+            await this.rendrePDF(wrap.firstElementChild, {
+              margin: 0, filename,
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+              pagebreak: { mode: ['css'] }
+            }, pages, onglet);
+          } catch (e) {
+            this.erreurPDF(onglet);
+          } finally {
+            wrap.remove();
+            this.exportEnCours = false;
+          }
+        },
+
 
         async exporterElement(id, opt, pages) {
           const el = document.getElementById(id);
+          const onglet = this.ouvrirOnglet();
           const wrap = el.parentElement;
           this.exportEnCours = true;
           wrap.style.left = '0';
           try {
             if (document.fonts && document.fonts.ready) await document.fonts.ready;
             await new Promise(r => setTimeout(r, 80));
-            await this.rendrePDF(el, opt, pages);
+            await this.rendrePDF(el, opt, pages, onglet);
           } catch (e) {
-            this.alerter('Erreur lors de la génération du PDF.');
+            this.erreurPDF(onglet);
           } finally {
             wrap.style.left = '';
             this.exportEnCours = false;
@@ -2179,6 +2238,39 @@
           if (res) res(valeur);
         },
 
+        async exporterGouterSemainePDF() {
+          const [lundi] = this.getBornesSemaine();
+          const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'].map((nom, i) => {
+            const d = new Date(lundi + 'T12:00:00'); d.setDate(d.getDate() + i);
+            const ds = localISO(d);
+            return { nom, num: d.getDate(), ds, noms: this.goutersPlanifies.filter(g => g.date === ds).map(g => this.getNomRecette(g.recetteId)) };
+          });
+          const court = ds => this.formatDateLisible(ds).slice(0, 5);
+          const onglet = this.ouvrirOnglet();
+          const lignes = jours.map(j => {
+            const vide = !j.noms.length;
+            const txt = vide ? 'Pas de goûter' : j.noms.join(' + ');
+            const taille = txt.length > 28 ? 24 : (txt.length > 18 ? 30 : 36);
+            return `<div style="display:flex;align-items:center;gap:26px;height:118px;box-sizing:border-box;padding:0 34px;border-radius:999px;background:#FBE0AE;text-align:left;">
+              <div style="width:76px;height:76px;flex-shrink:0;border-radius:50%;background:#B08A6B;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:38px;">${j.num}</div>
+              <div style="min-width:0;">
+                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:.08em;text-transform:uppercase;color:#4A2810;">${esc(j.nom)}</div>
+                <div style="font-weight:700;font-size:${taille}px;line-height:1.1;color:${vide ? 'rgba(74,40,16,.6)' : '#4A2810'};">${esc(txt)}</div>
+              </div>
+            </div>`;
+          }).join('');
+          const html = `<div style="width:794px;height:1120px;box-sizing:border-box;overflow:hidden;padding:44px 40px;background:linear-gradient(180deg,#F5AB40 0%,#EF9A3A 100%);color:#4A2810;font-family:'Outfit',sans-serif;display:flex;flex-direction:column;justify-content:space-between;text-align:center;">
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:84px;line-height:1;text-transform:uppercase;">Le goûter</div>
+              <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:38px;line-height:1.1;text-transform:uppercase;margin-top:6px;">de la semaine</div>
+              <div style="display:inline-block;margin-top:16px;background:#5E3A1E;color:#fff;border-radius:999px;padding:12px 34px;font-weight:800;font-size:22px;letter-spacing:.06em;text-transform:uppercase;">Semaine du ${court(jours[0].ds)} au ${court(jours[4].ds)}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">${lignes}</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:30px;text-transform:uppercase;">Bon appétit ! 😋</div>
+          </div>`;
+          await this.pdfDepuisHtml(html, 'gouters-semaine-' + lundi + '.pdf', 1, onglet);
+        },
+
         sortie(id) {
           this.sortant[id] = true;
           return new Promise(res => setTimeout(() => { delete this.sortant[id]; res(); }, 230));
@@ -2209,6 +2301,7 @@
         async _soinsPDF() {
           const items = [...this.registreSoins].reverse();
           if (!items.length) { this.showToast('Aucun soin à exporter'); return; }
+          const onglet = this.ouvrirOnglet();
           const lab = 'display:block;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(230,57,70,.7);margin-bottom:4px;';
           const bloc = 'flex:1;background:rgba(255,209,220,.45);border-radius:12px;padding:9px 12px;';
           const carte = 'background:rgba(255,255,255,.95);border-radius:20px;padding:14px 18px;margin-bottom:12px;';
@@ -2271,9 +2364,9 @@
               html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
               jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
               pagebreak: { mode: ['css'] }
-            }, pages.length);
+            }, pages.length, onglet);
           } catch (e) {
-            this.alerter('Erreur lors de la génération du PDF.');
+            this.erreurPDF(onglet);
           } finally {
             wrap.remove();
             this.exportEnCours = false;
