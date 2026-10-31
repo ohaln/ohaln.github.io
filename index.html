@@ -6,7 +6,9 @@
   <title>ALSH Goûter - Planning & Courses</title>
 
   <!-- PWA Theme Color -->
-  <meta name="theme-color" content="#FFB347">
+  <meta name="theme-color" content="#FF9F1C" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#FF9F1C" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light only">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="ALSH Goûter">
@@ -101,16 +103,13 @@
     /* ====== Finitions & animations ====== */
     :root { --brown: #6B3F23; --ease-out: cubic-bezier(.2,.8,.2,1); --spring: cubic-bezier(.34,1.56,.64,1); }
 
-    html {
-      min-height: 100%;
+    html { height: 100%; color-scheme: light; background-color: #FF9F1C; }
+    body {
       background-color: #FF9F1C;
       background-image:
-        radial-gradient(900px 420px at 0% -10%, rgba(255,255,255,.30), transparent 60%),
-        linear-gradient(165deg, #FFB347 0%, #FF9F1C 48%, #F28705 100%);
+        radial-gradient(700px 460px at 100% 100%, rgba(255,255,255,.22), transparent 65%),
+        radial-gradient(620px 420px at 0% 100%, rgba(190,80,0,.16), transparent 70%);
       background-repeat: no-repeat;
-    }
-    body {
-      background: transparent;
       -webkit-font-smoothing: antialiased;
       /* Zones sûres iPhone (encoche, barre d'état, barre d'accueil) */
       padding-top: env(safe-area-inset-top, 0px);
