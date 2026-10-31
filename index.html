@@ -2,11 +2,14 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ALSH Goûter - Planning & Courses</title>
 
   <!-- PWA Theme Color -->
-  <meta name="theme-color" content="#FF9F1C">
+  <meta name="theme-color" content="#FFB347">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ALSH Goûter">
 
   <!-- Google Fonts: Outfit & Syne -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,12 +101,22 @@
     /* ====== Finitions & animations ====== */
     :root { --brown: #6B3F23; --ease-out: cubic-bezier(.2,.8,.2,1); --spring: cubic-bezier(.34,1.56,.64,1); }
 
-    body {
+    html {
+      min-height: 100%;
+      background-color: #FF9F1C;
       background-image:
         radial-gradient(900px 420px at 0% -10%, rgba(255,255,255,.30), transparent 60%),
         linear-gradient(165deg, #FFB347 0%, #FF9F1C 48%, #F28705 100%);
-      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
+    body {
+      background: transparent;
       -webkit-font-smoothing: antialiased;
+      /* Zones sûres iPhone (encoche, barre d'état, barre d'accueil) */
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
     }
 
     ::selection { background: rgba(107,63,35,.25); }
@@ -160,6 +173,25 @@
     .toast-leave { transition: opacity .2s ease, transform .2s ease; }
     .toast-leave-end { opacity: 0; transform: translateY(-12px); }
 
+    /* Changement d'onglet : sortie rapide, entrée douce (sans chevauchement) */
+    .tab-enter { transition: opacity .4s var(--ease-out) .14s, transform .45s var(--ease-out) .14s; }
+    .tab-start { opacity: 0; transform: translateY(12px); }
+    .tab-end { opacity: 1; transform: none; }
+    .tab-leave { transition: opacity .14s ease; }
+    .tab-leave-start { opacity: 1; }
+    .tab-leave-end { opacity: 0; }
+
+    /* Fenêtre de recette */
+    .modal-enter { transition: opacity .3s ease; }
+    .modal-enter > div { transition: transform .5s var(--spring); }
+    .modal-start { opacity: 0; }
+    .modal-start > div { transform: translateY(28px) scale(.96); }
+    .modal-end { opacity: 1; }
+    .modal-end > div { transform: none; }
+    .modal-leave { transition: opacity .2s ease; }
+    .modal-leave-start { opacity: 1; }
+    .modal-leave-end { opacity: 0; }
+
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after { animation: none !important; transition: none !important; }
     }
@@ -194,7 +226,7 @@
        x-transition:enter="toast-enter" x-transition:enter-start="toast-start" x-transition:enter-end="toast-end"
        x-transition:leave="toast-leave" x-transition:leave-start="toast-end" x-transition:leave-end="toast-leave-end"
        class="fixed top-4 right-4 left-4 z-[180] max-w-md mx-auto bg-white p-3 rounded-2xl shadow-xl flex items-center justify-between border border-black/5"
-       style="display: none;">
+       style="display: none; top: calc(env(safe-area-inset-top, 0px) + 1rem);">
     <div class="flex items-center space-x-2">
       <i class="fa-solid fa-circle-check text-base text-emerald-500"></i>
       <span class="text-xs font-bold uppercase tracking-wide" x-text="toast.message"></span>
@@ -226,7 +258,7 @@
   <main class="max-w-4xl mx-auto w-full px-3 pb-3 flex-1 flex flex-col justify-start overflow-y-auto">
 
     <!-- ==================== 1. PLANNING & EFFECTIFS ==================== -->
-    <div x-show="currentTab === 'planning'" x-transition class="space-y-3 py-1">
+    <div x-show="currentTab === 'planning'" x-transition:enter="tab-enter" x-transition:enter-start="tab-start" x-transition:enter-end="tab-end" x-transition:leave="tab-leave" x-transition:leave-start="tab-leave-start" x-transition:leave-end="tab-leave-end" class="space-y-3 py-1">
       <div class="card-pop p-4 space-y-3">
         
         <!-- Navigation Semaine -->
@@ -247,7 +279,7 @@
           <template x-for="(jour, i) in getJoursSemaine()" :key="jour.date">
             <div class="card-item-pop rise p-3 space-y-2 bg-white/90"
                  :class="getCalculFournees(jour.date) > 0 ? 'day-active' : ''"
-                 :style="{ animationDelay: (i * 70) + 'ms' }">
+                 :style="{ animationDelay: (100 + Math.min(i, 12) * 70) + 'ms' }">
               <div class="flex justify-between items-center border-b border-black/5 pb-1.5">
                 <span class="font-poster text-xs font-black uppercase text-amber-950" x-text="jour.nomAffichage"></span>
                 
@@ -300,7 +332,7 @@
 
 
     <!-- ==================== 2. LISTE DE COURSES ==================== -->
-    <div x-show="currentTab === 'courses'" x-transition class="space-y-3 py-1" style="display: none;">
+    <div x-show="currentTab === 'courses'" x-transition:enter="tab-enter" x-transition:enter-start="tab-start" x-transition:enter-end="tab-end" x-transition:leave="tab-leave" x-transition:leave-start="tab-leave-start" x-transition:leave-end="tab-leave-end" class="space-y-3 py-1" style="display: none;">
       <div class="card-pop p-4 space-y-3">
         
         <!-- Navigation Semaine -->
@@ -316,7 +348,8 @@
           <h2 class="text-xs font-bold uppercase tracking-wider">
             🛒 Liste d'ingrédients calculée
           </h2>
-          <span class="bg-white px-2.5 py-0.5 rounded-full text-[10px] font-black border border-black/5" x-text="getListeCoursesGouter().length + ' article(s)'"></span>
+          <span class="bg-white px-2.5 py-0.5 rounded-full text-[10px] font-black border border-black/5" x-text="getListeCoursesGouter().length + ' article(s)'"
+                x-effect="getListeCoursesGouter().length; $el.classList.remove('bump'); void $el.offsetWidth; $el.classList.add('bump')"></span>
         </div>
 
         <p class="text-[10px] font-medium opacity-70">
@@ -326,13 +359,14 @@
         <!-- Ingrédients Auto-Calculés -->
         <div class="space-y-1.5">
           <template x-if="getListeCoursesGouter().length === 0">
-            <div class="card-item-pop p-5 text-center">
+            <div class="card-item-pop rise p-5 text-center">
               <p class="text-xs font-bold opacity-70">Aucun goûter ou effectif renseigné pour cette semaine.</p>
             </div>
           </template>
 
-          <template x-for="item in getListeCoursesGouter()" :key="item.key">
-            <div class="card-item-pop p-2.5 flex items-center justify-between transition-opacity" :class="coursesAchetees[item.key] ? 'opacity-40 line-through' : ''">
+          <template x-for="(item, i) in getListeCoursesGouter()" :key="item.key">
+            <div class="card-item-pop rise p-2.5 flex items-center justify-between transition-opacity" :class="coursesAchetees[item.key] ? 'opacity-40 line-through' : ''"
+                 :style="{ animationDelay: (120 + Math.min(i, 12) * 45) + 'ms' }">
               <div class="flex items-center space-x-2.5 overflow-hidden pr-2">
                 <input type="checkbox" :checked="coursesAchetees[item.key]" @change="toggleCourse(item.key)" class="w-4 h-4 accent-amber-600 cursor-pointer shrink-0">
                 <span class="text-xs font-bold truncate capitalize" x-text="item.nom"></span>
@@ -354,8 +388,9 @@
           </div>
 
           <div class="space-y-1.5 pt-1">
-            <template x-for="item in coursesManuelles" :key="item.id">
-              <div class="card-item-pop p-2 flex items-center justify-between" :class="item.achete ? 'opacity-40 line-through' : ''">
+            <template x-for="(item, i) in coursesManuelles" :key="item.id">
+              <div class="card-item-pop rise p-2 flex items-center justify-between" :class="item.achete ? 'opacity-40 line-through' : ''"
+                   :style="{ animationDelay: (0 + Math.min(i, 12) * 45) + 'ms' }">
                 <div class="flex items-center space-x-2 overflow-hidden pr-2">
                   <input type="checkbox" x-model="item.achete" @change="sauvegarderDonnees()" class="w-4 h-4 accent-amber-600 cursor-pointer shrink-0">
                   <span class="text-xs font-bold truncate" x-text="item.nom + (item.qte ? ' (' + item.qte + ')' : '')"></span>
@@ -371,7 +406,7 @@
 
 
     <!-- ==================== 3. GESTION DES RECETTES ==================== -->
-    <div x-show="currentTab === 'recettes'" x-transition class="space-y-3 py-1" style="display: none;">
+    <div x-show="currentTab === 'recettes'" x-transition:enter="tab-enter" x-transition:enter-start="tab-start" x-transition:enter-end="tab-end" x-transition:leave="tab-leave" x-transition:leave-start="tab-leave-start" x-transition:leave-end="tab-leave-end" class="space-y-3 py-1" style="display: none;">
       <div class="card-pop p-4 space-y-3">
         
         <div class="flex items-center justify-between border-b border-black/5 pb-2">
@@ -384,14 +419,15 @@
         </div>
 
         <template x-if="recettes.length === 0">
-          <div class="card-item-pop p-5 text-center">
+          <div class="card-item-pop rise p-5 text-center">
             <p class="text-xs font-bold opacity-70">Aucune recette pour le moment. Appuie sur « + Recette » pour créer la première.</p>
           </div>
         </template>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <template x-for="r in recettes" :key="r.id">
-            <div class="card-item-pop p-3 space-y-2 bg-white/90">
+          <template x-for="(r, i) in recettes" :key="r.id">
+            <div class="card-item-pop rise p-3 space-y-2 bg-white/90"
+                 :style="{ animationDelay: (100 + Math.min(i, 12) * 80) + 'ms' }">
               <div class="flex justify-between items-center border-b border-black/5 pb-1.5">
                 <h4 class="font-poster text-xs font-black truncate" x-text="r.nom"></h4>
                 <div class="flex items-center gap-1">
@@ -404,7 +440,9 @@
                 <span class="text-[9px] font-bold uppercase opacity-60 block">Ingrédients :</span>
                 <div class="flex flex-wrap gap-1">
                   <template x-for="(ing, idx) in r.ingredients" :key="idx">
-                    <span class="bg-amber-100 text-amber-950 font-bold px-2 py-0.5 rounded-md text-[10px] border border-amber-200" x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
+                    <span class="rise bg-amber-100 text-amber-950 font-bold px-2 py-0.5 rounded-md text-[10px] border border-amber-200"
+                          :style="{ animationDelay: (260 + Math.min(idx, 12) * 40) + 'ms' }"
+                          x-text="ing.nom + ' : ' + ing.qte + ' ' + ing.unite"></span>
                   </template>
                 </div>
               </div>
@@ -416,7 +454,7 @@
     </div>
 
     <!-- MODAL : AJOUTER / MODIFIER RECETTE -->
-    <div x-show="showRecetteModal" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
+    <div x-show="showRecetteModal" x-transition:enter="modal-enter" x-transition:enter-start="modal-start" x-transition:enter-end="modal-end" x-transition:leave="modal-leave" x-transition:leave-start="modal-leave-start" x-transition:leave-end="modal-leave-end" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
       <div class="card-pop p-5 max-w-md w-full space-y-3.5 shadow-xl max-h-[85vh] overflow-y-auto">
         <div class="flex justify-between items-center border-b border-black/5 pb-2">
           <h3 class="font-poster text-xs font-black uppercase" x-text="isEditingRecette ? '✏️ Modifier Recette' : '🍰 Nouvelle Recette (Base 8 pers.)'"></h3>
