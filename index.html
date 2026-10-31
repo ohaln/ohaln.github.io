@@ -906,7 +906,7 @@
         </div>
         <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
           <template x-for="item in soinsFiltres()" :key="item.id">
-            <div :class="item.annule ? 'opacity-50 line-through' : ''" class="card-item-pop p-3.5 space-y-2 border-l-4 border-rose-500 shadow-sm bg-white/90">
+            <div :class="[item.annule ? 'opacity-50 line-through' : '', sortant[item.id] ? 'card-out' : '']" class="card-item-pop p-3.5 space-y-2 border-l-4 border-rose-500 shadow-sm bg-white/90">
               <div class="flex items-center justify-between border-b border-black/5 pb-2">
                 <div class="flex items-center gap-2 overflow-hidden pr-2">
                   <span class="text-xs font-black bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md" x-text="(item.date ? formatDateLisible(item.date) + ' - ' : '') + item.heure"></span>
@@ -1041,7 +1041,7 @@
                   <span class="block text-[10px] font-bold uppercase tracking-wide mt-1" x-text="fournees(g) > 1 ? 'fournées' : 'fournée'"></span>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <span class="text-[10px] font-black bg-white px-2 py-0.5 rounded-full uppercase border border-black/5" x-text="g.date === localISO() ? 'Aujourd\'hui' : formatDateLisible(g.date)"></span>
+                  <span class="text-[10px] font-black bg-white px-2 py-0.5 rounded-full uppercase border border-black/5" x-text="(g.date === localISO() ? 'Aujourd\'hui · ' : '') + dateLongue(g.date)"></span>
                   <h4 class="text-sm font-bold mt-1 truncate" x-text="getNomRecette(g.recetteId)"></h4>
                   <p class="text-[11px] font-bold opacity-70 truncate" x-text="(g.anim || 'Non assigné') + ' · ' + g.nbEnfants + ' enfants'"></p>
                 </div>
@@ -1613,6 +1613,27 @@
       </div>
     </div>
 
+    <!-- MODAL : RÉINITIALISER PAR CATÉGORIE -->
+    <div role="dialog" aria-modal="true" x-show="showModalReset" x-transition class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" style="display: none;">
+      <div class="card-pop p-5 max-w-sm w-full space-y-3.5 shadow-xl max-h-[90vh] overflow-y-auto" style="background-color:#fff;color:#1E1E24;">
+        <h3 class="font-poster text-base border-b border-black/5 pb-2">🧹 Réinitialiser</h3>
+        <p class="text-xs font-semibold opacity-70">Choisis ce que tu veux effacer. Une sauvegarde complète est exportée avant.</p>
+        <div class="space-y-1.5">
+          <template x-for="c in categoriesReset" :key="c.id">
+            <label class="card-item-pop p-3 flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" x-model="resetChoix[c.id]" class="w-4 h-4 accent-rose-600 cursor-pointer shrink-0">
+              <span class="text-base" x-text="c.icone"></span>
+              <span class="text-xs font-bold" x-text="c.nom"></span>
+            </label>
+          </template>
+        </div>
+        <div class="flex gap-2 pt-2 border-t border-black/5">
+          <button type="button" @click="showModalReset = false" class="btn-dark flex-1 py-2.5 rounded-full text-xs uppercase">Annuler</button>
+          <button type="button" @click="validerReinitialisation()" class="bg-red-600 text-white font-bold flex-1 py-2.5 rounded-full text-xs uppercase">Effacer</button>
+        </div>
+      </div>
+    </div>
+
     <!-- MODAL DIRECTEUR (RÉINITIALISATION PIN) -->
     <div role="dialog" aria-modal="true" x-show="showModalDirecteur" x-transition class="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" style="display: none;">
       <div class="card-pop p-5 max-w-xs w-full space-y-4 bg-slate-900 text-white shadow-2xl border border-white/10">
@@ -1656,6 +1677,16 @@
         isOnline: navigator.onLine,
         isLocked: true,
         exportEnCours: false,
+        showModalReset: false,
+        resetChoix: {},
+        categoriesReset: [
+          { id: 'enfants', icone: '🩺', nom: "Fiches san'" },
+          { id: 'soins', icone: '🩹', nom: 'Cahier de soins' },
+          { id: 'gouters', icone: '🍪', nom: 'Goûters planifiés' },
+          { id: 'recettes', icone: '📖', nom: 'Recettes (et goûters liés)' },
+          { id: 'courses', icone: '🛍️', nom: 'Courses et matériel' },
+          { id: 'planning', icone: '📅', nom: 'Planning, sorties et effectifs' }
+        ],
         tabDir: 'fwd',
         pinShake: false,
         sortant: {},
@@ -1807,7 +1838,7 @@
           if (this.dialog.show) { this.fermerDialog(this.dialog.type === 'pin' ? null : false); return; }
           this.showAddEnfantModal = false; this.enfantSelectionne = null; this.showPlanifModal = false;
           this.showModalAnimSemaine = false; this.showModalOrg = false; this.showModalCreneau = false;
-          this.showModalDirecteur = false; this.showAddRecetteModal = false;
+          this.showModalDirecteur = false; this.showAddRecetteModal = false; this.showModalReset = false;
         },
 
         effacerToutesDonnees(garderPin = false) {
@@ -1955,16 +1986,31 @@
           localStorage.setItem('alsh_effectifs', JSON.stringify(eff));
         },
 
-        async reinitialiserApp() {
-          if (await this.confirmer("Voulez-vous réinitialiser toutes les données de cet appareil ?\nUne sauvegarde sera exportée avant.", { titre: 'Réinitialiser', ok: 'Continuer', danger: true })) {
-            const pin = await this.demanderPin('Entrez votre PIN pour confirmer la réinitialisation.');
-            if (pin === null || (await this.hashPin(pin)) !== localStorage.getItem('alsh_pin_hash')) { this.showToast('PIN incorrect : annulé'); return; }
-            this.exporterSauvegarde();
-            this.effacerToutesDonnees(true);
-            this.chargerDonnees();
-            this.showToast('Données réinitialisées');
-          }
+        reinitialiserApp() {
+          this.resetChoix = { enfants: false, soins: false, gouters: false, recettes: false, courses: false, planning: false };
+          this.showModalReset = true;
         },
+
+        async validerReinitialisation() {
+          const c = this.resetChoix;
+          const choisies = this.categoriesReset.filter(x => c[x.id]);
+          if (!choisies.length) { this.showToast('Choisis au moins une catégorie'); return; }
+          const liste = choisies.map(x => x.nom).join(', ');
+          if (!(await this.confirmer('Effacer : ' + liste + ' ?\nUne sauvegarde complète sera exportée avant.', { titre: 'Réinitialiser', ok: 'Continuer', danger: true }))) return;
+          const pin = await this.demanderPin('Entrez votre PIN pour confirmer.');
+          if (pin === null || (await this.hashPin(pin)) !== localStorage.getItem('alsh_pin_hash')) { this.showToast('PIN incorrect : annulé'); return; }
+          this.exporterSauvegarde();
+          if (c.enfants) { this.enfants = []; this.enfantSelectionne = null; }
+          if (c.soins) this.registreSoins = [];
+          if (c.gouters) this.goutersPlanifies = [];
+          if (c.recettes) { this.recettesGouter = []; this.goutersPlanifies = []; }
+          if (c.courses) { this.listeCourses = []; this.coursesAcheteesGouter = {}; }
+          if (c.planning) { this.planningCreneaux = []; this.orgsOutings = []; this.effectifsJours = {}; }
+          this.sauvegarderDonnees();
+          this.showModalReset = false;
+          this.showToast('Données réinitialisées');
+        },
+
 
         // FONCTIONS FICHES SAN'
         ouvrirModalAddEnfant() {
@@ -2208,11 +2254,11 @@
         },
 
         async deleteSoin(id) {
-          if (await this.confirmer('Elle restera visible, barrée, dans le registre réglementaire.', { titre: 'Annuler ce soin ?', ok: 'Annuler le soin', danger: true })) {
-            const s = this.registreSoins.find(x => x.id === id);
-            if (s) { s.annule = true; s.annuleLe = new Date().toISOString(); }
+          if (await this.confirmer('Ce soin sera supprimé définitivement du registre. Cette action est irréversible.', { titre: 'Supprimer ce soin ?', ok: 'Supprimer', danger: true })) {
+            await this.sortie(id);
+            this.registreSoins = this.registreSoins.filter(s => s.id !== id);
             this.sauvegarderDonnees();
-            this.showToast('Soin annulé');
+            this.showToast('Soin supprimé');
           }
         },
 
@@ -2252,7 +2298,7 @@
             const txt = vide ? 'Pas de goûter' : j.noms.join(' + ');
             const taille = txt.length > 28 ? 24 : (txt.length > 18 ? 30 : 36);
             return `<div style="display:flex;align-items:center;gap:26px;height:118px;box-sizing:border-box;padding:0 34px;border-radius:999px;background:#FBE0AE;text-align:left;">
-              <div style="width:76px;height:76px;flex-shrink:0;border-radius:50%;background:#B08A6B;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:38px;">${j.num}</div>
+              <div style="width:76px;height:76px;flex-shrink:0;border-radius:50%;background:#B08A6B;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:40px;line-height:1;">${j.num}</div>
               <div style="min-width:0;">
                 <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:.08em;text-transform:uppercase;color:#4A2810;">${esc(j.nom)}</div>
                 <div style="font-weight:700;font-size:${taille}px;line-height:1.1;color:${vide ? 'rgba(74,40,16,.6)' : '#4A2810'};">${esc(txt)}</div>
@@ -2269,6 +2315,12 @@
             <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:30px;text-transform:uppercase;">Bon appétit ! 😋</div>
           </div>`;
           await this.pdfDepuisHtml(html, 'gouters-semaine-' + lundi + '.pdf', 1, onglet);
+        },
+
+        dateLongue(ds) {
+          if (!ds) return '';
+          const t = new Date(ds + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+          return t.charAt(0).toUpperCase() + t.slice(1);
         },
 
         sortie(id) {
