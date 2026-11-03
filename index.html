@@ -2390,48 +2390,80 @@
           this.showToast('Sortie déverrouillée');
         },
 
+        async pdfPagine({ blocs, entete1, enteteN, h1, hN, pied, fond, filename, onglet }) {
+          this.exportEnCours = true;
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'position:fixed;top:0;left:0;z-index:-9999;width:794px;';
+          document.body.appendChild(wrap);
+          try {
+            wrap.innerHTML = `<div style="width:794px;box-sizing:border-box;padding:0 36px;font-family:'Outfit',sans-serif;">${blocs.join('')}</div>`;
+            if (document.fonts && document.fonts.ready) await document.fonts.ready;
+            await new Promise(r => setTimeout(r, 80));
+            const hs = Array.from(wrap.firstElementChild.children).map(c => c.offsetHeight + 12);
+            const PAGE = 1120, PAD = 34, FOOT = 34;
+            const pages = []; let cur = [], used = 0, cap = PAGE - 2 * PAD - h1 - FOOT - 10;
+            hs.forEach((h, i) => {
+              if (cur.length && used + h > cap) { pages.push(cur); cur = []; used = 0; cap = PAGE - 2 * PAD - hN - FOOT - 10; }
+              cur.push(blocs[i]); used += h;
+            });
+            pages.push(cur);
+            const html = '<div style="width:794px;">' + pages.map((pg, i) =>
+              `<div style="width:794px;height:${PAGE}px;box-sizing:border-box;overflow:hidden;padding:${PAD}px 36px;background:${fond};color:#3A0CA3;font-family:'Outfit',sans-serif;display:flex;flex-direction:column;${i < pages.length - 1 ? 'page-break-after:always;break-after:page;' : ''}">
+                ${i === 0 ? entete1 : enteteN}
+                <div style="flex:1;">${pg.join('')}</div>
+                <div style="height:${FOOT}px;display:flex;align-items:flex-end;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.7;">${pied(i + 1, pages.length)}</div>
+              </div>`).join('') + '</div>';
+            wrap.innerHTML = html;
+            await new Promise(r => setTimeout(r, 80));
+            await this.rendrePDF(wrap.firstElementChild, {
+              margin: 0, filename,
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+              pagebreak: { mode: ['css'] }
+            }, pages.length, onglet);
+          } catch (e) {
+            this.erreurPDF(onglet);
+          } finally {
+            wrap.remove();
+            this.exportEnCours = false;
+          }
+        },
+
         async exporterSortiePDF() {
           const o = this.getOrgDuJour();
           if (!o) { this.showToast('Aucune sortie ce jour'); return; }
           const onglet = this.ouvrirOnglet();
           const groupes = (o.groupes || []).filter(g => g.anim || g.enfants);
           const total = groupes.reduce((t, g) => t + this.parseEnfantsList(g.enfants).length, 0);
-          const card = 'background:rgba(255,255,255,.92);border-radius:22px;padding:16px 22px;';
+          const card = 'background:rgba(255,255,255,.92);border-radius:22px;padding:16px 22px;margin-bottom:12px;box-sizing:border-box;';
           const lab = 'display:block;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(58,12,163,.6);margin-bottom:4px;';
-          const bus = (titre, h) => `<div class="pdf-avoid" style="${card}flex:1;display:flex;align-items:center;gap:14px;"><div style="font-size:30px;">🚌</div><div><span style="${lab}">${titre}</span><div style="font-size:26px;font-weight:900;">${esc(h || 'Non défini')}</div></div></div>`;
-          const cartes = groupes.map(g => {
+          const bus = (titre, h) => `<div style="flex:1;background:rgba(255,255,255,.92);border-radius:22px;padding:16px 22px;box-sizing:border-box;display:flex;align-items:center;gap:14px;"><div style="font-size:30px;">🚌</div><div><span style="${lab}">${titre}</span><div style="font-size:26px;font-weight:900;">${esc(h || 'Non défini')}</div></div></div>`;
+          const blocs = [];
+          blocs.push(`<div style="${card}"><span style="${lab}">🚌 Sortie spéciale</span><div style="font-size:28px;font-weight:900;line-height:1.15;">${esc(o.titre)}</div>${o.lieu ? `<div style="margin-top:8px;font-size:14px;font-weight:700;">📍 ${esc(o.lieu)}</div>` : ''}</div>`);
+          blocs.push(`<div style="display:flex;gap:12px;margin-bottom:12px;">${bus('Bus départ', o.busAller)}${bus('Bus retour', o.busRetour)}</div>`);
+          blocs.push(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;">👥 Groupes &amp; animateurs</span><span style="background:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:800;">${total} enfant${total > 1 ? 's' : ''} au total</span></div>`);
+          groupes.forEach(g => {
             const enf = this.parseEnfantsList(g.enfants);
             const chips = enf.map(e => `<span style="background:rgba(76,201,240,.28);border:1px solid rgba(58,12,163,.15);border-radius:10px;padding:4px 12px;font-size:13px;font-weight:700;">${esc(e)}</span>`).join('') || '<span style="font-size:12px;opacity:.6;">Aucun enfant renseigné.</span>';
-            return `<div class="pdf-avoid" style="${card}margin-bottom:12px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;">
-                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;">👤 ${esc(g.anim || 'Animateur')}</div>
-                <div style="background:#3A0CA3;color:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:800;white-space:nowrap;">${enf.length} enfant${enf.length > 1 ? 's' : ''}</div>
-              </div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px;">${chips}</div>
-            </div>`;
-          }).join('') || `<div style="${card}font-size:13px;font-weight:600;">Aucun groupe renseigné.</div>`;
+            blocs.push(`<div style="${card}"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;"><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;">👤 ${esc(g.anim || 'Animateur')}</div><div style="background:#3A0CA3;color:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:800;white-space:nowrap;">${enf.length} enfant${enf.length > 1 ? 's' : ''}</div></div><div style="display:flex;flex-wrap:wrap;gap:6px;">${chips}</div></div>`);
+          });
+          if (!groupes.length) blocs.push(`<div style="${card}font-size:13px;font-weight:600;">Aucun groupe renseigné.</div>`);
           const statut = o.valide ? '🔒 Validée à ' + new Date(o.valideLe).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : 'Non validée';
-          const html = `<div style="width:794px;min-height:1100px;box-sizing:border-box;padding:40px;background:#4CC9F0;color:#3A0CA3;font-family:'Outfit',sans-serif;">
-            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid #3A0CA3;padding-bottom:16px;margin-bottom:20px;">
+          const entete1 = `<div style="height:92px;margin-bottom:20px;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid #3A0CA3;padding-bottom:16px;">
               <div style="display:flex;align-items:center;gap:12px;">
                 <div style="width:48px;height:48px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;">⚡</div>
                 <div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:26px;line-height:1;">ALSH<span style="opacity:.6;">FLOW</span></div>
                 <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.8;margin-top:4px;">Organisation de sortie</div></div>
               </div>
               <div style="background:#3A0CA3;color:#fff;border-radius:999px;padding:6px 18px;font-size:12px;font-weight:800;">${esc(this.dateLongue(this.dateAffichee))}</div>
-            </div>
-            <div class="pdf-avoid" style="${card}margin-bottom:14px;"><span style="${lab}">🚌 Sortie spéciale</span>
-              <div style="font-size:28px;font-weight:900;line-height:1.15;">${esc(o.titre)}</div>
-              ${o.lieu ? `<div style="margin-top:8px;font-size:14px;font-weight:700;">📍 ${esc(o.lieu)}</div>` : ''}</div>
-            <div style="display:flex;gap:12px;margin-bottom:18px;">${bus('Bus départ', o.busAller)}${bus('Bus retour', o.busRetour)}</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-              <span style="font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;">👥 Groupes &amp; animateurs référents</span>
-              <span style="background:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:800;">${total} enfant${total > 1 ? 's' : ''} au total</span>
-            </div>
-            ${cartes}
-            <div style="margin-top:18px;padding-top:12px;border-top:1px solid rgba(58,12,163,.25);display:flex;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.7;"><span>Document généré via ALSHFlow — Accueil de loisirs</span><span>${statut}</span></div>
-          </div>`;
-          await this.pdfDepuisHtml(html, 'sortie-' + this.dateAffichee + '.pdf', 'auto', onglet);
+            </div>`;
+          const enteteN = `<div style="height:42px;margin-bottom:20px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #3A0CA3;font-family:'Syne',sans-serif;font-weight:800;font-size:15px;text-transform:uppercase;"><span>⚡ ALSHFlow · ${esc(o.titre)}</span><span style="font-family:'Outfit',sans-serif;font-size:11px;opacity:.75;">suite</span></div>`;
+          await this.pdfPagine({
+            blocs, entete1, enteteN, h1: 112, hN: 62, fond: '#4CC9F0',
+            pied: (n, t) => `<span>ALSHFlow — ${statut}</span><span>Page ${n} / ${t}</span>`,
+            filename: 'sortie-' + this.dateAffichee + '.pdf', onglet
+          });
         },
 
         sortie(id) {
