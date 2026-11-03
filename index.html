@@ -1252,22 +1252,22 @@
         <!-- 1. ENCADRÉ SORTIE SPÉCIALE (PLACÉ AVANT L'EFFECTIF DU JOUR) -->
         <template x-if="getOrgDuJour()">
           <div class="card-pop p-5 space-y-4 bg-white/95 text-gray-900 shadow-md border-2 border-rose-400/70 relative overflow-hidden">
-            <div class="space-y-3 border-b border-rose-100 pb-4">
-              <div class="flex flex-wrap items-center gap-2">
+            <div class="space-y-2.5 border-b border-rose-100 pb-3">
+              <div class="flex items-center justify-between gap-2">
                 <span class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black uppercase tracking-wider">🚌 Sortie spéciale</span>
-                <span x-show="getOrgDuJour().valide" class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider">🔒 Validée</span>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button type="button" x-show="!getOrgDuJour().valide" @click="ouvrirModalOrg()" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="Modifier la sortie"><i class="fa-solid fa-pen"></i></button>
+                  <button type="button" @click="getOrgDuJour().valide ? deverrouillerOrg() : validerOrg()" :class="getOrgDuJour().valide ? 'bg-emerald-600 text-white' : 'btn-white'" class="w-8 h-8 rounded-full text-xs" :aria-label="getOrgDuJour().valide ? 'Déverrouiller la sortie' : 'Valider la sortie'"><i class="fa-solid" :class="getOrgDuJour().valide ? 'fa-lock' : 'fa-lock-open'"></i></button>
+                  <button type="button" @click="exporterSortiePDF()" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="PDF de la sortie"><i class="fa-solid fa-file-pdf"></i></button>
+                  <button type="button" x-show="!getOrgDuJour().valide" @click="effacerOrgDuJour()" class="bg-red-600 text-white w-8 h-8 rounded-full text-xs" aria-label="Supprimer la sortie"><i class="fa-solid fa-trash"></i></button>
+                </div>
               </div>
               <div class="space-y-1.5">
                 <h3 class="font-poster text-xl font-black text-rose-700 leading-tight break-words" x-text="getOrgDuJour().titre"></h3>
                 <p class="text-sm font-bold text-gray-600 flex items-center gap-1.5" x-show="getOrgDuJour().lieu">
                   <span>📍</span> <span x-text="getOrgDuJour().lieu"></span>
                 </p>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                <button type="button" x-show="!getOrgDuJour().valide" @click="ouvrirModalOrg()" class="btn-white px-4 py-2 rounded-full text-[11px] flex items-center gap-1.5"><i class="fa-solid fa-pen"></i> Modifier</button>
-                <button type="button" @click="getOrgDuJour().valide ? deverrouillerOrg() : validerOrg()" :class="getOrgDuJour().valide ? 'bg-emerald-600 text-white font-bold' : 'btn-white'" class="px-4 py-2 rounded-full text-[11px] uppercase flex items-center gap-1.5"><i class="fa-solid" :class="getOrgDuJour().valide ? 'fa-lock' : 'fa-lock-open'"></i> <span x-text="getOrgDuJour().valide ? 'Déverrouiller' : 'Valider'"></span></button>
-                <button type="button" @click="exporterSortiePDF()" class="btn-white px-4 py-2 rounded-full text-[11px] flex items-center gap-1.5"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                <button type="button" x-show="!getOrgDuJour().valide" @click="effacerOrgDuJour()" class="bg-red-600 text-white font-bold px-4 py-2 rounded-full text-[11px] uppercase flex items-center gap-1.5"><i class="fa-solid fa-trash"></i> Supprimer</button>
+                <span x-show="getOrgDuJour().valide" class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider">🔒 Validée</span>
               </div>
             </div>
 
@@ -1294,19 +1294,19 @@
                 👥 Groupes & Animateurs référents
               </span>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <template x-for="g in getOrgDuJour().groupes" :key="g.id">
-                  <div class="bg-gray-50/90 p-2.5 rounded-xl border border-gray-200/80 space-y-1.5">
+                <template x-for="(g, gi) in getOrgDuJour().groupes" :key="g.id">
+                  <div class="bg-gray-50/90 p-2.5 rounded-xl border border-gray-200/80 space-y-1.5" :style="'border-left:6px solid ' + couleurHex(g, gi)">
                     <div class="font-black text-xs flex items-center justify-between text-indigo-950 border-b border-gray-200/50 pb-1">
                       <span class="flex items-center gap-1.5">
                         <i class="fa-solid fa-user text-indigo-600 text-xs"></i>
-                        <span x-text="g.anim"></span>
+                        <span class="inline-block w-3 h-3 rounded-full shrink-0" :style="'background:' + couleurHex(g, gi)"></span><span x-text="g.anim"></span>
                       </span>
                       <span class="text-[9px] font-bold text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200" x-text="parseEnfantsList(g.enfants).length + ' enfants'"></span>
                     </div>
                     
                     <div class="flex flex-wrap gap-1 pt-0.5">
                       <template x-for="(ef, index) in parseEnfantsList(g.enfants)" :key="index">
-                        <span class="bg-white px-2 py-0.5 rounded-md text-[10px] font-bold text-gray-800 shadow-2xs border border-gray-200" x-text="ef"></span>
+                        <span class="bg-white px-2 py-0.5 rounded-md text-[10px] font-bold text-gray-800 shadow-2xs border border-gray-200" :style="'background:' + couleurHex(g, gi) + '22; border-color:' + couleurHex(g, gi) + '77'" x-text="ef"></span>
                       </template>
                     </div>
                   </div>
@@ -1558,6 +1558,11 @@
                   </button>
                 </div>
                 <input type="text" x-model="g.anim" placeholder="Nom de l'animateur référent" class="input-pop w-full px-2 py-1 text-xs">
+                <div class="flex flex-wrap gap-2 py-1" role="radiogroup" aria-label="Couleur du groupe">
+                  <template x-for="c in couleursGroupe" :key="c.id">
+                    <button type="button" @click="g.couleur = c.id" :aria-label="c.nom" :style="'background:' + c.hex" class="w-7 h-7 rounded-full border-2 border-white shadow transition-transform" :class="idCouleur(g, idx) === c.id ? 'ring-2 ring-offset-1 ring-gray-800 scale-110' : ''"></button>
+                  </template>
+                </div>
                 <textarea x-model="g.enfants" placeholder="Prénoms des enfants (séparés par des virgules)..." class="input-pop w-full px-2 py-1 text-xs h-12 resize-none"></textarea>
               </div>
             </template>
@@ -1682,6 +1687,16 @@
         isOnline: navigator.onLine,
         isLocked: true,
         exportEnCours: false,
+        couleursGroupe: [
+          { id: 'rouge', nom: 'Rouge', hex: '#E63946' },
+          { id: 'orange', nom: 'Orange', hex: '#F07F13' },
+          { id: 'vert', nom: 'Vert', hex: '#2BA84A' },
+          { id: 'turquoise', nom: 'Turquoise', hex: '#0E9AA7' },
+          { id: 'bleu', nom: 'Bleu', hex: '#2563EB' },
+          { id: 'violet', nom: 'Violet', hex: '#7C3AED' },
+          { id: 'rose', nom: 'Rose', hex: '#DB2777' },
+          { id: 'marron', nom: 'Marron', hex: '#8B5E3C' }
+        ],
         dirJusqua: 0,
         showModalReset: false,
         resetChoix: {},
@@ -1786,7 +1801,7 @@
           lieu: '',
           busAller: '',
           busRetour: '',
-          groupes: [{ id: 1, anim: '', enfants: '' }]
+          groupes: [{ id: 1, anim: '', enfants: '', couleur: 'rouge' }]
         },
         orgsOutings: [],
         showModalCreneau: false,
@@ -2334,6 +2349,14 @@
           await this.pdfDepuisHtml(html, 'gouters-semaine-' + lundi + '.pdf', 1, onglet);
         },
 
+        idCouleur(g, i) {
+          return this.couleursGroupe.some(c => c.id === g.couleur) ? g.couleur : this.couleursGroupe[(i || 0) % this.couleursGroupe.length].id;
+        },
+
+        couleurHex(g, i) {
+          return this.couleursGroupe.find(c => c.id === this.idCouleur(g, i)).hex;
+        },
+
         dateLongue(ds) {
           if (!ds) return '';
           const t = new Date(ds + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -2435,7 +2458,7 @@
           const o = this.getOrgDuJour();
           if (!o) { this.showToast('Aucune sortie ce jour'); return; }
           const onglet = this.ouvrirOnglet();
-          const groupes = (o.groupes || []).filter(g => g.anim || g.enfants);
+          const groupes = (o.groupes || []).map((g, i) => ({ ...g, _i: i })).filter(g => g.anim || g.enfants);
           const total = groupes.reduce((t, g) => t + this.parseEnfantsList(g.enfants).length, 0);
           const card = 'background:rgba(255,255,255,.92);border-radius:22px;padding:16px 22px;margin-bottom:12px;box-sizing:border-box;';
           const lab = 'display:block;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(58,12,163,.6);margin-bottom:4px;';
@@ -2445,9 +2468,10 @@
           blocs.push(`<div style="display:flex;gap:12px;margin-bottom:12px;">${bus('Bus départ', o.busAller)}${bus('Bus retour', o.busRetour)}</div>`);
           blocs.push(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;">👥 Groupes &amp; animateurs</span><span style="background:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:800;">${total} enfant${total > 1 ? 's' : ''} au total</span></div>`);
           groupes.forEach(g => {
+            const col = this.couleurHex(g, g._i);
             const enf = this.parseEnfantsList(g.enfants);
-            const chips = enf.map(e => `<span style="background:rgba(76,201,240,.28);border:1px solid rgba(58,12,163,.15);border-radius:10px;padding:4px 12px;font-size:13px;font-weight:700;">${esc(e)}</span>`).join('') || '<span style="font-size:12px;opacity:.6;">Aucun enfant renseigné.</span>';
-            blocs.push(`<div style="${card}"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;"><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;">👤 ${esc(g.anim || 'Animateur')}</div><div style="background:#3A0CA3;color:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:800;white-space:nowrap;">${enf.length} enfant${enf.length > 1 ? 's' : ''}</div></div><div style="display:flex;flex-wrap:wrap;gap:6px;">${chips}</div></div>`);
+            const chips = enf.map(e => `<span style="background:${col}26;border:1px solid ${col}77;border-radius:10px;padding:4px 12px;font-size:13px;font-weight:700;">${esc(e)}</span>`).join('') || '<span style="font-size:12px;opacity:.6;">Aucun enfant renseigné.</span>';
+            blocs.push(`<div style="${card}border-left:10px solid ${col};"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;"><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;">👤 ${esc(g.anim || 'Animateur')}</div><div style="background:${col};color:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:800;white-space:nowrap;">${enf.length} enfant${enf.length > 1 ? 's' : ''}</div></div><div style="display:flex;flex-wrap:wrap;gap:6px;">${chips}</div></div>`);
           });
           if (!groupes.length) blocs.push(`<div style="${card}font-size:13px;font-weight:600;">Aucun groupe renseigné.</div>`);
           const statut = o.valide ? '🔒 Validée à ' + new Date(o.valideLe).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : 'Non validée';
@@ -2786,14 +2810,14 @@
               lieu: '',
               busAller: '',
               busRetour: '',
-              groupes: [{ id: Date.now(), anim: '', enfants: '' }]
+              groupes: [{ id: Date.now(), anim: '', enfants: '', couleur: 'rouge' }]
             };
           }
           this.showModalOrg = true;
         },
 
         ajouterGroupeOrg() {
-          this.orgSaisie.groupes.push({ id: Date.now(), anim: '', enfants: '' });
+          this.orgSaisie.groupes.push({ id: Date.now(), anim: '', enfants: '', couleur: this.couleursGroupe[this.orgSaisie.groupes.length % this.couleursGroupe.length].id });
         },
 
         enregistrerOrg() {
