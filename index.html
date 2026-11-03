@@ -1251,26 +1251,27 @@
 
         <!-- 1. ENCADRÉ SORTIE SPÉCIALE (PLACÉ AVANT L'EFFECTIF DU JOUR) -->
         <template x-if="getOrgDuJour()">
-          <div class="card-pop p-4 space-y-3 bg-white/95 text-gray-900 shadow-md border-2 border-rose-400/70 relative overflow-hidden">
-            <div class="flex justify-between items-start border-b border-rose-100 pb-2">
-              <div class="space-y-0.5">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider shadow-xs">
-                  🚌 SORTIE SPÉCIALE<template x-if="getOrgDuJour().valide"><span> · 🔒 VALIDÉE</span></template>
-                </span>
-                <h3 class="font-poster text-base sm:text-lg font-black text-rose-700 leading-tight" x-text="getOrgDuJour().titre"></h3>
-                <p class="text-xs font-bold text-gray-600 flex items-center gap-1 mt-0.5" x-show="getOrgDuJour().lieu">
+          <div class="card-pop p-5 space-y-4 bg-white/95 text-gray-900 shadow-md border-2 border-rose-400/70 relative overflow-hidden">
+            <div class="space-y-3 border-b border-rose-100 pb-4">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black uppercase tracking-wider">🚌 Sortie spéciale</span>
+                <span x-show="getOrgDuJour().valide" class="inline-flex items-center whitespace-nowrap px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider">🔒 Validée</span>
+              </div>
+              <div class="space-y-1.5">
+                <h3 class="font-poster text-xl font-black text-rose-700 leading-tight break-words" x-text="getOrgDuJour().titre"></h3>
+                <p class="text-sm font-bold text-gray-600 flex items-center gap-1.5" x-show="getOrgDuJour().lieu">
                   <span>📍</span> <span x-text="getOrgDuJour().lieu"></span>
                 </p>
               </div>
-              <div class="flex items-center gap-1.5 shrink-0">
-                <button type="button" x-show="!getOrgDuJour().valide" @click="ouvrirModalOrg()" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="Modifier la sortie"><i class="fa-solid fa-pen"></i></button>
-                <button type="button" @click="getOrgDuJour().valide ? deverrouillerOrg() : validerOrg()" :class="getOrgDuJour().valide ? 'bg-emerald-600 text-white' : 'btn-white'" class="w-8 h-8 rounded-full text-xs" :aria-label="getOrgDuJour().valide ? 'Déverrouiller la sortie' : 'Valider la sortie'"><i class="fa-solid" :class="getOrgDuJour().valide ? 'fa-lock' : 'fa-lock-open'"></i></button>
-                <button type="button" @click="exporterSortiePDF()" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="PDF de la sortie"><i class="fa-solid fa-file-pdf"></i></button>
-                <button type="button" x-show="!getOrgDuJour().valide" @click="effacerOrgDuJour()" class="bg-red-600 text-white w-8 h-8 rounded-full text-xs" aria-label="Supprimer la sortie"><i class="fa-solid fa-trash"></i></button>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" x-show="!getOrgDuJour().valide" @click="ouvrirModalOrg()" class="btn-white px-4 py-2 rounded-full text-[11px] flex items-center gap-1.5"><i class="fa-solid fa-pen"></i> Modifier</button>
+                <button type="button" @click="getOrgDuJour().valide ? deverrouillerOrg() : validerOrg()" :class="getOrgDuJour().valide ? 'bg-emerald-600 text-white font-bold' : 'btn-white'" class="px-4 py-2 rounded-full text-[11px] uppercase flex items-center gap-1.5"><i class="fa-solid" :class="getOrgDuJour().valide ? 'fa-lock' : 'fa-lock-open'"></i> <span x-text="getOrgDuJour().valide ? 'Déverrouiller' : 'Valider'"></span></button>
+                <button type="button" @click="exporterSortiePDF()" class="btn-white px-4 py-2 rounded-full text-[11px] flex items-center gap-1.5"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                <button type="button" x-show="!getOrgDuJour().valide" @click="effacerOrgDuJour()" class="bg-red-600 text-white font-bold px-4 py-2 rounded-full text-[11px] uppercase flex items-center gap-1.5"><i class="fa-solid fa-trash"></i> Supprimer</button>
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="grid grid-cols-2 gap-3 text-xs">
               <div class="bg-indigo-50/60 p-2.5 rounded-xl border border-indigo-100/80 flex items-center gap-2">
                 <span class="text-base">🚌</span>
                 <div class="overflow-hidden">
