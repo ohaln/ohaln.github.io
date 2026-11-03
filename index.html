@@ -398,11 +398,11 @@
     </div>
   </div>
 
-  <main class="max-w-5xl mx-auto w-full px-3 pb-2 flex-1 flex flex-col justify-start overflow-y-auto">
+  <main class="max-w-5xl mx-auto w-full px-4 pt-2 pb-4 flex-1 flex flex-col justify-start overflow-y-auto">
 
     <!-- ==================== 0. HUB PRINCIPAL ==================== -->
     <div x-show="currentTab === 'hub'" :class="tabDir === 'back' ? 'tab-back' : 'tab-fwd'" 
-         class="w-full flex-1 flex flex-col justify-between h-[calc(100dvh-70px)] max-h-[calc(100dvh-70px)] py-2 gap-2 overflow-hidden">
+         class="w-full flex-1 flex flex-col justify-between h-[calc(100dvh-96px)] max-h-[calc(100dvh-96px)] py-3 px-1 gap-2 overflow-visible">
       
       <div class="grid grid-cols-2 grid-rows-3 gap-3 sm:gap-4 w-full flex-1 h-full min-h-0">
         
@@ -904,7 +904,7 @@
           </div>
           <div x-show="registreSoins.length && !soinsFiltres().length" class="card-item-pop p-4 text-center text-xs font-bold opacity-70">Aucun soin ne correspond à cette recherche.</div>
         </div>
-        <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+        <div class="space-y-2.5 max-h-80 overflow-y-auto p-1.5">
           <template x-for="item in soinsFiltres()" :key="item.id">
             <div :class="[item.annule ? 'opacity-50 line-through' : '', sortant[item.id] ? 'card-out' : '']" class="card-item-pop p-3.5 space-y-2 border-l-4 border-rose-500 shadow-sm bg-white/90">
               <div class="flex items-center justify-between border-b border-black/5 pb-2">
@@ -1063,7 +1063,7 @@
               <i class="fa-solid fa-chevron-down text-xs transition-transform" :class="showRecettes ? 'rotate-180' : ''"></i>
             </span>
           </button>
-          <div x-show="showRecettes" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1" style="display:none;">
+          <div x-show="showRecettes" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-72 overflow-y-auto p-1.5" style="display:none;">
             <template x-for="r in recettesGouter" :key="r.id">
               <div :class="sortant[r.id] ? 'card-out' : ''" class="card-item-pop px-3 py-2 flex items-center justify-between gap-2">
                 <h4 class="text-xs font-bold truncate" x-text="r.nom"></h4>
@@ -1255,16 +1255,19 @@
             <div class="flex justify-between items-start border-b border-rose-100 pb-2">
               <div class="space-y-0.5">
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider shadow-xs">
-                  🚌 SORTIE SPÉCIALE
+                  🚌 SORTIE SPÉCIALE<template x-if="getOrgDuJour().valide"><span> · 🔒 VALIDÉE</span></template>
                 </span>
                 <h3 class="font-poster text-base sm:text-lg font-black text-rose-700 leading-tight" x-text="getOrgDuJour().titre"></h3>
                 <p class="text-xs font-bold text-gray-600 flex items-center gap-1 mt-0.5" x-show="getOrgDuJour().lieu">
                   <span>📍</span> <span x-text="getOrgDuJour().lieu"></span>
                 </p>
               </div>
-              <button type="button" @click="effacerOrgDuJour()" class="text-rose-400 hover:text-rose-700 p-1.5 transition-colors">
-                <i class="fa-solid fa-trash text-xs"></i>
-              </button>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" x-show="!getOrgDuJour().valide" @click="ouvrirModalOrg()" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="Modifier la sortie"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" @click="getOrgDuJour().valide ? deverrouillerOrg() : validerOrg()" :class="getOrgDuJour().valide ? 'bg-emerald-600 text-white' : 'btn-white'" class="w-8 h-8 rounded-full text-xs" :aria-label="getOrgDuJour().valide ? 'Déverrouiller la sortie' : 'Valider la sortie'"><i class="fa-solid" :class="getOrgDuJour().valide ? 'fa-lock' : 'fa-lock-open'"></i></button>
+                <button type="button" @click="exporterSortiePDF()" class="btn-white w-8 h-8 rounded-full text-xs" aria-label="PDF de la sortie"><i class="fa-solid fa-file-pdf"></i></button>
+                <button type="button" x-show="!getOrgDuJour().valide" @click="effacerOrgDuJour()" class="bg-red-600 text-white w-8 h-8 rounded-full text-xs" aria-label="Supprimer la sortie"><i class="fa-solid fa-trash"></i></button>
+              </div>
             </div>
 
             <div class="grid grid-cols-2 gap-2 text-xs">
@@ -1330,10 +1333,10 @@
             <!-- Matin -->
             <div class="font-bold text-[10px] uppercase flex items-center gap-1 justify-start">☀️ Matin</div>
             <div>
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).matinMoins6" class="input-pop w-full text-center py-1 text-xs font-bold">
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).matinMoins6" placeholder="0" class="input-pop w-full text-center py-1 text-xs font-bold">
             </div>
             <div>
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).matinPlus6" class="input-pop w-full text-center py-1 text-xs font-bold">
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).matinPlus6" placeholder="0" class="input-pop w-full text-center py-1 text-xs font-bold">
             </div>
             <div class="font-black text-xs flex items-center justify-center bg-indigo-50 rounded-lg text-indigo-900" 
                  x-text="(getEffectifDuJour(dateAffichee).matinMoins6 || 0) + (getEffectifDuJour(dateAffichee).matinPlus6 || 0)"></div>
@@ -1341,10 +1344,10 @@
             <!-- Midi -->
             <div class="font-bold text-[10px] uppercase flex items-center gap-1 justify-start">🍽️ Midi</div>
             <div>
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).midiMoins6" class="input-pop w-full text-center py-1 text-xs font-bold">
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).midiMoins6" placeholder="0" class="input-pop w-full text-center py-1 text-xs font-bold">
             </div>
             <div>
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).midiPlus6" class="input-pop w-full text-center py-1 text-xs font-bold">
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).midiPlus6" placeholder="0" class="input-pop w-full text-center py-1 text-xs font-bold">
             </div>
             <div class="font-black text-xs flex items-center justify-center bg-indigo-50 rounded-lg text-indigo-900" 
                  x-text="(getEffectifDuJour(dateAffichee).midiMoins6 || 0) + (getEffectifDuJour(dateAffichee).midiPlus6 || 0)"></div>
@@ -1352,10 +1355,10 @@
             <!-- Soir -->
             <div class="font-bold text-[10px] uppercase flex items-center gap-1 justify-start">🌆 Soir</div>
             <div>
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).soirMoins6" class="input-pop w-full text-center py-1 text-xs font-bold">
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).soirMoins6" placeholder="0" class="input-pop w-full text-center py-1 text-xs font-bold">
             </div>
             <div>
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).soirPlus6" class="input-pop w-full text-center py-1 text-xs font-bold">
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" x-model.number="getEffectifDuJour(dateAffichee).soirPlus6" placeholder="0" class="input-pop w-full text-center py-1 text-xs font-bold">
             </div>
             <div class="font-black text-xs flex items-center justify-center bg-indigo-50 rounded-lg text-indigo-900" 
                  x-text="(getEffectifDuJour(dateAffichee).soirMoins6 || 0) + (getEffectifDuJour(dateAffichee).soirPlus6 || 0)"></div>
@@ -1627,6 +1630,7 @@
             </label>
           </template>
         </div>
+        <button type="button" @click="changerCodeDirecteur()" class="w-full text-[11px] font-bold underline opacity-70">🔑 Définir ou changer le code directeur</button>
         <div class="flex gap-2 pt-2 border-t border-black/5">
           <button type="button" @click="showModalReset = false" class="btn-dark flex-1 py-2.5 rounded-full text-xs uppercase">Annuler</button>
           <button type="button" @click="validerReinitialisation()" class="bg-red-600 text-white font-bold flex-1 py-2.5 rounded-full text-xs uppercase">Effacer</button>
@@ -1677,6 +1681,7 @@
         isOnline: navigator.onLine,
         isLocked: true,
         exportEnCours: false,
+        dirJusqua: 0,
         showModalReset: false,
         resetChoix: {},
         categoriesReset: [
@@ -1816,7 +1821,7 @@
             const m = document.querySelector('main'); if (m) m.scrollTo(0, 0);
           });
           const focusPin = () => this.$nextTick(() => { if (this.isLocked && this.$refs.pinInput) this.$refs.pinInput.focus(); });
-          this.$watch('isLocked', v => { if (v) { this.pinSaisi = ''; focusPin(); } });
+          this.$watch('isLocked', v => { if (v) { this.pinSaisi = ''; this.dirJusqua = 0; focusPin(); } });
           setTimeout(focusPin, 300);
           ['enfants', 'registreSoins', 'recettesGouter', 'goutersPlanifies', 'listeCourses',
            'coursesAcheteesGouter', 'planningCreneaux', 'orgsOutings', 'effectifsJours']
@@ -1843,13 +1848,13 @@
 
         effacerToutesDonnees(garderPin = false) {
           Object.keys(localStorage)
-            .filter(k => k.startsWith('alsh_') && !(garderPin && (k === 'alsh_pin_hash' || k === 'alsh_salt')))
+            .filter(k => k.startsWith('alsh_') && !(garderPin && (k === 'alsh_pin_hash' || k === 'alsh_salt' || k === 'alsh_dir_hash')))
             .forEach(k => localStorage.removeItem(k));
         },
 
         exporterSauvegarde() {
           const data = {};
-          Object.keys(localStorage).filter(k => k.startsWith('alsh_') && k !== 'alsh_pin_hash' && k !== 'alsh_salt')
+          Object.keys(localStorage).filter(k => k.startsWith('alsh_') && k !== 'alsh_pin_hash' && k !== 'alsh_salt' && k !== 'alsh_dir_hash')
             .forEach(k => { data[k] = localStorage.getItem(k); });
           const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
           const a = document.createElement('a');
@@ -1867,7 +1872,7 @@
           rd.onload = async () => {
             try {
               const data = JSON.parse(rd.result);
-              const keys = Object.keys(data).filter(k => k.startsWith('alsh_') && k !== 'alsh_pin_hash' && k !== 'alsh_salt');
+              const keys = Object.keys(data).filter(k => k.startsWith('alsh_') && k !== 'alsh_pin_hash' && k !== 'alsh_salt' && k !== 'alsh_dir_hash');
               if (!keys.length) throw new Error('vide');
               if (!(await this.confirmer('Remplacer les données actuelles par cette sauvegarde ?', { titre: 'Importer', ok: 'Remplacer', danger: true }))) return;
               keys.forEach(k => localStorage.setItem(k, data[k]));
@@ -1928,8 +1933,9 @@
           this.pinSaisi = '';
         },
 
-        reinitialiserPinDirecteur() {
+        async reinitialiserPinDirecteur() {
           if (this.codeDirecteurInput.trim() !== 'EFFACER') { this.showToast('Tapez EFFACER pour confirmer'); return; }
+          if (localStorage.getItem('alsh_dir_hash') && !(await this.verifierDirecteur('tout effacer'))) return;
           this.effacerToutesDonnees();
           this.chargerDonnees();
           this.pinMode = 'creer';
@@ -1970,6 +1976,7 @@
           this.planningCreneaux = this.lire('alsh_planning', []);
           this.orgsOutings = this.lire('alsh_orgs', []);
           this.effectifsJours = this.lire('alsh_effectifs', {});
+          Object.values(this.effectifsJours).forEach(v => Object.keys(v).forEach(k => { if (v[k] === 0) v[k] = ''; }));
         },
 
         sauvegarderDonnees() {
@@ -1997,8 +2004,7 @@
           if (!choisies.length) { this.showToast('Choisis au moins une catégorie'); return; }
           const liste = choisies.map(x => x.nom).join(', ');
           if (!(await this.confirmer('Effacer : ' + liste + ' ?\nUne sauvegarde complète sera exportée avant.', { titre: 'Réinitialiser', ok: 'Continuer', danger: true }))) return;
-          const pin = await this.demanderPin('Entrez votre PIN pour confirmer.');
-          if (pin === null || (await this.hashPin(pin)) !== localStorage.getItem('alsh_pin_hash')) { this.showToast('PIN incorrect : annulé'); return; }
+          if (!(await this.verifierDirecteur('confirmer la réinitialisation'))) return;
           this.exporterSauvegarde();
           if (c.enfants) { this.enfants = []; this.enfantSelectionne = null; }
           if (c.soins) this.registreSoins = [];
@@ -2013,7 +2019,8 @@
 
 
         // FONCTIONS FICHES SAN'
-        ouvrirModalAddEnfant() {
+        async ouvrirModalAddEnfant() {
+          if (!(await this.verifierDirecteur("ajouter une fiche san'", true))) return;
           this.isEditingEnfant = false;
           this.nouvelEnfant = {
             id: Date.now(),
@@ -2058,7 +2065,8 @@
           this.enfantSelectionne = e;
         },
 
-        editerEnfant(e) {
+        async editerEnfant(e) {
+          if (!(await this.verifierDirecteur("modifier une fiche san'", true))) return;
           this.isEditingEnfant = true;
           this.nouvelEnfant = JSON.parse(JSON.stringify(e));
           this.nouvelEnfant.aPAI = !!e.pai;
@@ -2066,6 +2074,7 @@
         },
 
         async supprimerEnfant(id) {
+          if (!(await this.verifierDirecteur("supprimer une fiche san'", true))) return;
           if (await this.confirmer('Supprimer cette fiche sanitaire ?', { titre: 'Supprimer', ok: 'Supprimer', danger: true })) {
             this.enfants = this.enfants.filter(e => e.id !== id);
             this.sauvegarderDonnees();
@@ -2183,13 +2192,19 @@
           try {
             if (document.fonts && document.fonts.ready) await document.fonts.ready;
             await new Promise(r => setTimeout(r, 80));
+            let n = pages;
+            if (pages === 'auto') {
+              const el = wrap.firstElementChild;
+              n = Math.max(1, Math.ceil((el.scrollHeight - 2) / 1120));
+              el.style.minHeight = (n * 1120) + 'px';
+            }
             await this.rendrePDF(wrap.firstElementChild, {
               margin: 0, filename,
               image: { type: 'jpeg', quality: 0.98 },
               html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
               jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-              pagebreak: { mode: ['css'] }
-            }, pages, onglet);
+              pagebreak: { mode: ['css'], avoid: '.pdf-avoid' }
+            }, n, onglet);
           } catch (e) {
             this.erreurPDF(onglet);
           } finally {
@@ -2254,6 +2269,7 @@
         },
 
         async deleteSoin(id) {
+          if (!(await this.verifierDirecteur('supprimer un soin'))) return;
           if (await this.confirmer('Ce soin sera supprimé définitivement du registre. Cette action est irréversible.', { titre: 'Supprimer ce soin ?', ok: 'Supprimer', danger: true })) {
             await this.sortie(id);
             this.registreSoins = this.registreSoins.filter(s => s.id !== id);
@@ -2321,6 +2337,101 @@
           if (!ds) return '';
           const t = new Date(ds + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
           return t.charAt(0).toUpperCase() + t.slice(1);
+        },
+
+        async verifierDirecteur(action, session = false) {
+          if (session && Date.now() < this.dirJusqua) return true;
+          const ok = await this._verifierDirecteur(action);
+          if (ok && session) this.dirJusqua = Date.now() + 5 * 60 * 1000;
+          return ok;
+        },
+
+        async _verifierDirecteur(action) {
+          const stocke = localStorage.getItem('alsh_dir_hash');
+          if (!stocke) {
+            const c1 = await this.demanderPin('Crée le code directeur (4 chiffres), différent du PIN d\'accès. Il sera demandé pour ' + action + '.');
+            if (c1 === null || !/^\d{4}$/.test(c1)) { this.showToast('Code de 4 chiffres requis'); return false; }
+            const c2 = await this.demanderPin('Saisis-le une seconde fois pour confirmer.');
+            if (c2 !== c1) { this.showToast('Les codes ne correspondent pas'); return false; }
+            localStorage.setItem('alsh_dir_hash', await this.hashPin('dir:' + c1));
+            this.showToast('Code directeur créé');
+            return true;
+          }
+          const c = await this.demanderPin('Code directeur requis pour ' + action + '.');
+          if (c === null || (await this.hashPin('dir:' + c)) !== stocke) { this.showToast('Code directeur incorrect'); return false; }
+          return true;
+        },
+
+        async changerCodeDirecteur() {
+          if (localStorage.getItem('alsh_dir_hash')) {
+            if (!(await this.verifierDirecteur('changer le code'))) return;
+            localStorage.removeItem('alsh_dir_hash');
+          }
+          await this.verifierDirecteur('les actions réservées');
+        },
+
+        async validerOrg() {
+          const o = this.getOrgDuJour();
+          if (!o) return;
+          if (!(await this.confirmer('Une fois validée, la sortie ne pourra plus être modifiée sans ton PIN.', { titre: 'Valider la sortie ?', ok: 'Valider' }))) return;
+          o.valide = true;
+          o.valideLe = new Date().toISOString();
+          this.sauvegarderDonnees();
+          this.showToast('Sortie validée');
+        },
+
+        async deverrouillerOrg() {
+          const o = this.getOrgDuJour();
+          if (!o) return;
+          if (!(await this.verifierDirecteur('déverrouiller la sortie'))) return;
+          o.valide = false;
+          delete o.valideLe;
+          this.sauvegarderDonnees();
+          this.showToast('Sortie déverrouillée');
+        },
+
+        async exporterSortiePDF() {
+          const o = this.getOrgDuJour();
+          if (!o) { this.showToast('Aucune sortie ce jour'); return; }
+          const onglet = this.ouvrirOnglet();
+          const groupes = (o.groupes || []).filter(g => g.anim || g.enfants);
+          const total = groupes.reduce((t, g) => t + this.parseEnfantsList(g.enfants).length, 0);
+          const card = 'background:rgba(255,255,255,.92);border-radius:22px;padding:16px 22px;';
+          const lab = 'display:block;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(58,12,163,.6);margin-bottom:4px;';
+          const bus = (titre, h) => `<div class="pdf-avoid" style="${card}flex:1;display:flex;align-items:center;gap:14px;"><div style="font-size:30px;">🚌</div><div><span style="${lab}">${titre}</span><div style="font-size:26px;font-weight:900;">${esc(h || 'Non défini')}</div></div></div>`;
+          const cartes = groupes.map(g => {
+            const enf = this.parseEnfantsList(g.enfants);
+            const chips = enf.map(e => `<span style="background:rgba(76,201,240,.28);border:1px solid rgba(58,12,163,.15);border-radius:10px;padding:4px 12px;font-size:13px;font-weight:700;">${esc(e)}</span>`).join('') || '<span style="font-size:12px;opacity:.6;">Aucun enfant renseigné.</span>';
+            return `<div class="pdf-avoid" style="${card}margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;">
+                <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;">👤 ${esc(g.anim || 'Animateur')}</div>
+                <div style="background:#3A0CA3;color:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:800;white-space:nowrap;">${enf.length} enfant${enf.length > 1 ? 's' : ''}</div>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">${chips}</div>
+            </div>`;
+          }).join('') || `<div style="${card}font-size:13px;font-weight:600;">Aucun groupe renseigné.</div>`;
+          const statut = o.valide ? '🔒 Validée à ' + new Date(o.valideLe).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : 'Non validée';
+          const html = `<div style="width:794px;min-height:1100px;box-sizing:border-box;padding:40px;background:#4CC9F0;color:#3A0CA3;font-family:'Outfit',sans-serif;">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid #3A0CA3;padding-bottom:16px;margin-bottom:20px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:48px;height:48px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;">⚡</div>
+                <div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:26px;line-height:1;">ALSH<span style="opacity:.6;">FLOW</span></div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.8;margin-top:4px;">Organisation de sortie</div></div>
+              </div>
+              <div style="background:#3A0CA3;color:#fff;border-radius:999px;padding:6px 18px;font-size:12px;font-weight:800;">${esc(this.dateLongue(this.dateAffichee))}</div>
+            </div>
+            <div class="pdf-avoid" style="${card}margin-bottom:14px;"><span style="${lab}">🚌 Sortie spéciale</span>
+              <div style="font-size:28px;font-weight:900;line-height:1.15;">${esc(o.titre)}</div>
+              ${o.lieu ? `<div style="margin-top:8px;font-size:14px;font-weight:700;">📍 ${esc(o.lieu)}</div>` : ''}</div>
+            <div style="display:flex;gap:12px;margin-bottom:18px;">${bus('Bus départ', o.busAller)}${bus('Bus retour', o.busRetour)}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <span style="font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;">👥 Groupes &amp; animateurs référents</span>
+              <span style="background:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:800;">${total} enfant${total > 1 ? 's' : ''} au total</span>
+            </div>
+            ${cartes}
+            <div style="margin-top:18px;padding-top:12px;border-top:1px solid rgba(58,12,163,.25);display:flex;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.7;"><span>Document généré via ALSHFlow — Accueil de loisirs</span><span>${statut}</span></div>
+          </div>`;
+          await this.pdfDepuisHtml(html, 'sortie-' + this.dateAffichee + '.pdf', 'auto', onglet);
         },
 
         sortie(id) {
@@ -2621,9 +2732,9 @@
         getEffectifDuJour(dateStr) {
           if (!this.effectifsJours[dateStr]) {
             this.effectifsJours[dateStr] = {
-              matinMoins6: 0, matinPlus6: 0,
-              midiMoins6: 0, midiPlus6: 0,
-              soirMoins6: 0, soirPlus6: 0
+              matinMoins6: '', matinPlus6: '',
+              midiMoins6: '', midiPlus6: '',
+              soirMoins6: '', soirPlus6: ''
             };
           }
           return this.effectifsJours[dateStr];
@@ -2632,6 +2743,7 @@
         // SORTIES SPÉCIALES
         ouvrirModalOrg() {
           const orgExistante = this.getOrgDuJour();
+          if (orgExistante && orgExistante.valide) { this.showToast('Sortie validée : déverrouille-la pour modifier'); return; }
           if (orgExistante) {
             this.orgSaisie = JSON.parse(JSON.stringify(orgExistante));
           } else {
