@@ -21,7 +21,7 @@
   --tab-factures: #00B894;
   --tab-factures-light: #E6F8F4;
 
-  /* Class Palette (Theme system per class) */
+  /* Class Palette System */
   --cls-tps-bg: #FFE5EC; --cls-tps-txt: #D63031; --cls-tps-border: #FFB8C6;
   --cls-ps-bg:  #FFEAA7; --cls-ps-txt:  #D63031; --cls-ps-border: #FDCB6E;
   --cls-ms-bg:  #FFF4CC; --cls-ms-txt:  #E17055; --cls-ms-border: #FFEAA7;
@@ -198,18 +198,19 @@ h2 {
   background: var(--tab-pointage);
   color: #FFFFFF;
   cursor: pointer;
-  min-height: 46px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
   transition: all 0.2s ease;
 }
 .btn:active { transform: scale(0.96); }
 .btn.alt { background: #FFEAA7; color: #D63031; }
 .btn.ghost { background: #EBE5F5; color: var(--text-dark); box-shadow: none; }
-.btn.danger { background: #FF7675; color: white; }
+.btn.edit-btn { background: #E0E7FF; color: #4338CA; border: 1px solid #C7D2FE; box-shadow: none; }
+.btn.danger { background: #FFE4E6; color: #E11D48; border: 1px solid #FECDD3; box-shadow: none; }
 .btn.sm { min-height: 38px; padding: 6px 14px; font-size: 14px; border-radius: 12px; }
 
 /* Inputs & Search */
@@ -341,15 +342,21 @@ input:focus, select:focus {
 .kid .main b { font-size: 17px; font-weight: 800; font-family: 'Baloo 2', cursive; line-height: 1.1; }
 .kid .main small { font-size: 13px; font-weight: 700; opacity: 0.7; }
 
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  font-family: 'Baloo 2', cursive;
+  line-height: 1;
+}
+
 .kid .tag {
   align-self: flex-start;
   margin: 4px 12px 8px;
-  padding: 2px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .kid .tm {
@@ -378,18 +385,24 @@ input:focus, select:focus {
   opacity: 0.6;
 }
 
-/* Kids list view */
-.list { display: flex; flex-direction: column; gap: 8px; }
+/* Kids list view (Onglet Enfants Refondu) */
+.list { display: flex; flex-direction: column; gap: 10px; }
 .item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   background: #FFFFFF;
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
 }
-.item b { flex: 1; font-weight: 700; }
+.item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+.item-info b { font-size: 16px; font-weight: 800; font-family: 'Baloo 2', cursive; color: var(--text-dark); line-height: 1.1; }
+.item-info .fam { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+
+.item-actions { display: flex; gap: 8px; align-items: center; }
+
 .hint { font-size: 14px; color: var(--text-muted); margin: 0 0 10px; font-weight: 600; }
 
 /* Factures & Accordions */
@@ -667,7 +680,7 @@ function render(){
   app.innerHTML = (tab !== 'pointage' && !unlocked) ? vLock() : (tab === 'pointage' ? vPointage() : (tab === 'enfants' ? vEnfants() : vFacture()));
   
   if(tab !== 'pointage' && unlocked) {
-    app.insertAdjacentHTML('afterbegin', '<div class="row noprint" style="justify-index:flex-end; justify-content:flex-end"><button class="btn ghost sm" data-chpin="1">🔑 Code PIN</button><button class="btn alt sm" data-lock="1">🔒 Verrouiller</button></div>');
+    app.insertAdjacentHTML('afterbegin', '<div class="row noprint" style="justify-content:flex-end"><button class="btn ghost sm" data-chpin="1">🔑 Code PIN</button><button class="btn alt sm" data-lock="1">🔒 Verrouiller</button></div>');
   }
   
   app.classList.add('enter');
@@ -767,9 +780,14 @@ function lEnfants(){
     h += `<div class="ch">${esc(c)} <span>${g.length} enfant${g.length>1?'s':''}</span></div><div class="list">` + 
     g.map(k => `<div class="item">
       <span class="tag ${badgeCls}">${esc(cn(k))}</span>
-      <b>${esc(k.prenom)} ${esc(k.nom)} <span class="hint">· Famille ${esc(k.famille||'non renseignée')}</span></b>
-      <button class="btn alt sm" data-ed="${k.id}">Modifier</button>
-      <button class="btn danger sm" data-del="${k.id}">Supprimer</button>
+      <div class="item-info">
+        <b>${esc(k.prenom)} ${esc(k.nom)}</b>
+        <span class="fam">Famille ${esc(k.famille||'non renseignée')}</span>
+      </div>
+      <div class="item-actions">
+        <button class="btn edit-btn sm" data-ed="${k.id}">Modifier</button>
+        <button class="btn danger sm" data-del="${k.id}">Supprimer</button>
+      </div>
     </div>`).join('') + '</div>';
   }
   return h;
@@ -883,7 +901,7 @@ async function pdfFactures(only){
       doc.setFillColor(...cSoirHead);
       doc.rect(X[2], y, W[2], h, 'F');
       
-      // Coins arrondis aux extrémités de l'en-tête
+      // Lignes de séparation
       doc.setDrawColor(220, 220, 230); doc.setLineWidth(0.1);
       doc.line(X[0], y, X[3]+W[3], y);
       doc.line(X[0], y+h, X[3]+W[3], y+h);
@@ -988,7 +1006,7 @@ async function pdfFactures(only){
       // Ligne Sous-total
       drawRow(y, ['Sous-total', '', '', eur(c.tot)], false, true);
       
-      // CRUCIAL : ESPACEMENT SUFFISANT ENTRE ENFANTS (Évite tout chevauchement !)
+      // ESPACEMENT SUFFISANT ENTRE ENFANTS (Évite tout chevauchement !)
       y += 16;
     }
     
