@@ -13,25 +13,22 @@
   --text-muted: #7A6B94;
   --border-light: #EBE5F5;
   
-  /* Tab Colors */
+  /* Couleurs des Onglets */
   --tab-pointage: #6C5CE7;
-  --tab-pointage-light: #EEECFD;
   --tab-enfants: #FF7675;
-  --tab-enfants-light: #FFF0F0;
   --tab-factures: #00B894;
-  --tab-factures-light: #E6F8F4;
 
-  /* Class Palette System */
-  --cls-tps-bg: #FFE5EC; --cls-tps-txt: #D63031; --cls-tps-border: #FFB8C6;
-  --cls-ps-bg:  #FFEAA7; --cls-ps-txt:  #D63031; --cls-ps-border: #FDCB6E;
-  --cls-ms-bg:  #FFF4CC; --cls-ms-txt:  #E17055; --cls-ms-border: #FFEAA7;
-  --cls-gs-bg:  #FFE3D8; --cls-gs-txt:  #D63031; --cls-gs-border: #FAB1A0;
-  --cls-cp-bg:  #E3FCEF; --cls-cp-txt:  #00875A; --cls-cp-border: #ABF5D1;
-  --cls-ce1-bg: #E6FCFF; --cls-ce1-txt: #00B894; --cls-ce1-border: #81ECEC;
-  --cls-ce2-bg: #E0F2FE; --cls-ce2-txt: #0984E3; --cls-ce2-border: #74B9FF;
-  --cls-cm1-bg: #EBE4FF; --cls-cm1-txt: #6C5CE7; --cls-cm1-border: #A29BFE;
-  --cls-cm2-bg: #F3E5F5; --cls-cm2-txt: #8E44AD; --cls-cm2-border: #D7BDE2;
-  --cls-def-bg: #F0F2F5; --cls-def-txt: #4A5568; --cls-def-border: #CBD5E0;
+  /* Palette Pastel par Classe */
+  --cls-tps-bg: #FFF0F3; --cls-tps-txt: #C0392B; --cls-tps-border: #FFCCD5;
+  --cls-ps-bg:  #FFF3BF; --cls-ps-txt:  #B45309; --cls-ps-border: #FFE066;
+  --cls-ms-bg:  #FFE8D6; --cls-ms-txt:  #D35400; --cls-ms-border: #FFD7BA;
+  --cls-gs-bg:  #FFE3D8; --cls-gs-txt:  #C0392B; --cls-gs-border: #FFC6FF;
+  --cls-cp-bg:  #E6FCF5; --cls-cp-txt:  #099268; --cls-cp-border: #96F2D7;
+  --cls-ce1-bg: #E0F2FE; --cls-ce1-txt: #0284C7; --cls-ce1-border: #BAE6FD;
+  --cls-ce2-bg: #E0E7FF; --cls-ce2-txt: #3730A3; --cls-ce2-border: #C7D2FE;
+  --cls-cm1-bg: #F3E8FF; --cls-cm1-txt: #6B21A8; --cls-cm1-border: #E9D5FF;
+  --cls-cm2-bg: #FAE8FF; --cls-cm2-txt: #86198F; --cls-cm2-border: #F5D0FE;
+  --cls-def-bg: #FFFFFF; --cls-def-txt: #2D1B4E; --cls-def-border: #EBE5F5;
 
   --shadow-sm: 0 4px 12px rgba(45, 27, 78, 0.05);
   --shadow-md: 0 8px 24px rgba(45, 27, 78, 0.08);
@@ -51,14 +48,13 @@ body {
   line-height: 1.3;
   min-height: 100vh;
   -webkit-tap-highlight-color: transparent;
-  padding-bottom: 20px;
+  padding-bottom: 24px;
 }
 
-/* Header & Mascot */
+/* En-tête */
 header {
-  background: #6C5CE7;
   background: linear-gradient(135deg, #6C5CE7 0%, #8C7AE6 100%);
-  padding: 16px 20px 24px;
+  padding: 18px 20px 26px;
   color: white;
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   box-shadow: var(--shadow-md);
@@ -112,7 +108,7 @@ header {
 }
 .logo-text span.dot { color: #FFEAA7; }
 
-/* Navigation Tabs */
+/* Onglets de navigation */
 nav {
   display: flex;
   gap: 10px;
@@ -145,7 +141,6 @@ nav button {
 
 nav button:active { transform: scale(0.95); }
 
-/* Tab-Specific Active Colors */
 nav button[data-t="pointage"][aria-selected="true"] {
   background: var(--tab-pointage);
   color: #FFFFFF;
@@ -162,14 +157,9 @@ nav button[data-t="facture"][aria-selected="true"] {
   box-shadow: 0 8px 20px rgba(0, 184, 148, 0.35);
 }
 
-/* App Main Container */
-main {
-  padding: 0 16px;
-}
-.wrap {
-  max-width: 900px;
-  margin: 0 auto;
-}
+/* Conteneur principal */
+main { padding: 0 16px; }
+.wrap { max-width: 900px; margin: 0 auto; }
 
 h2 {
   font-family: 'Baloo 2', cursive;
@@ -187,7 +177,7 @@ h2 {
   margin-bottom: 12px;
 }
 
-/* Buttons Styling */
+/* Style des boutons */
 .btn {
   border: 0;
   border-radius: var(--radius-md);
@@ -213,7 +203,7 @@ h2 {
 .btn.danger { background: #FFE4E6; color: #E11D48; border: 1px solid #FECDD3; box-shadow: none; }
 .btn.sm { min-height: 38px; padding: 6px 14px; font-size: 14px; border-radius: 12px; }
 
-/* Inputs & Search */
+/* Formulaires & Recherche */
 input, select {
   font-size: 15px;
   font-weight: 700;
@@ -233,7 +223,7 @@ input:focus, select:focus {
 }
 .search { flex: 1; min-width: 180px; }
 
-/* Chips for Classes Filtering */
+/* Filtres par classes (Chips) */
 .chips {
   display: flex;
   gap: 8px;
@@ -265,7 +255,7 @@ input:focus, select:focus {
   box-shadow: 0 4px 10px rgba(45, 27, 78, 0.2);
 }
 
-/* Class Headers & Badge themes */
+/* Titres de classes */
 .ch {
   margin: 18px 0 10px;
   font-family: 'Baloo 2', cursive;
@@ -276,23 +266,23 @@ input:focus, select:focus {
   align-items: center;
   padding: 6px 14px;
   border-radius: var(--radius-md);
-  background: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.7);
 }
 .ch span { font-size: 14px; font-weight: 700; opacity: 0.8; }
 
-/* Dynamic Class Card Color Classes */
-.badge-tps { background: var(--cls-tps-bg); color: var(--cls-tps-txt); border: 1.5px solid var(--cls-tps-border); }
-.badge-ps  { background: var(--cls-ps-bg);  color: var(--cls-ps-txt);  border: 1.5px solid var(--cls-ps-border); }
-.badge-ms  { background: var(--cls-ms-bg);  color: var(--cls-ms-txt);  border: 1.5px solid var(--cls-ms-border); }
-.badge-gs  { background: var(--cls-gs-bg);  color: var(--cls-gs-txt);  border: 1.5px solid var(--cls-gs-border); }
-.badge-cp  { background: var(--cls-cp-bg);  color: var(--cls-cp-txt);  border: 1.5px solid var(--cls-cp-border); }
-.badge-ce1 { background: var(--cls-ce1-bg); color: var(--cls-ce1-txt); border: 1.5px solid var(--cls-ce1-border); }
-.badge-ce2 { background: var(--cls-ce2-bg); color: var(--cls-ce2-txt); border: 1.5px solid var(--cls-ce2-border); }
-.badge-cm1 { background: var(--cls-cm1-bg); color: var(--cls-cm1-txt); border: 1.5px solid var(--cls-cm1-border); }
-.badge-cm2 { background: var(--cls-cm2-bg); color: var(--cls-cm2-txt); border: 1.5px solid var(--cls-cm2-border); }
-.badge-def { background: var(--cls-def-bg); color: var(--cls-def-txt); border: 1.5px solid var(--cls-def-border); }
+/* Classes de Couleurs pour Cartes */
+.card-tps { background: var(--cls-tps-bg) !important; color: var(--cls-tps-txt); border: 1.5px solid var(--cls-tps-border) !important; }
+.card-ps  { background: var(--cls-ps-bg)  !important; color: var(--cls-ps-txt);  border: 1.5px solid var(--cls-ps-border)  !important; }
+.card-ms  { background: var(--cls-ms-bg)  !important; color: var(--cls-ms-txt);  border: 1.5px solid var(--cls-ms-border)  !important; }
+.card-gs  { background: var(--cls-gs-bg)  !important; color: var(--cls-gs-txt);  border: 1.5px solid var(--cls-gs-border)  !important; }
+.card-cp  { background: var(--cls-cp-bg)  !important; color: var(--cls-cp-txt);  border: 1.5px solid var(--cls-cp-border)  !important; }
+.card-ce1 { background: var(--cls-ce1-bg) !important; color: var(--cls-ce1-txt); border: 1.5px solid var(--cls-ce1-border) !important; }
+.card-ce2 { background: var(--cls-ce2-bg) !important; color: var(--cls-ce2-txt); border: 1.5px solid var(--cls-ce2-border) !important; }
+.card-cm1 { background: var(--cls-cm1-bg) !important; color: var(--cls-cm1-txt); border: 1.5px solid var(--cls-cm1-border) !important; }
+.card-cm2 { background: var(--cls-cm2-bg) !important; color: var(--cls-cm2-txt); border: 1.5px solid var(--cls-cm2-border) !important; }
+.card-def { background: var(--cls-def-bg) !important; color: var(--cls-def-txt); border: 1.5px solid var(--cls-def-border) !important; }
 
-/* Grid of Kids */
+/* Grille des enfants (Pointage) */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
@@ -304,33 +294,29 @@ input:focus, select:focus {
   flex-direction: column;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: #FFFFFF;
   box-shadow: var(--shadow-sm);
-  border: 2px solid transparent;
   transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
 }
 
 .kid.checked-m {
-  border-color: #FDCB6E;
-  background: #FFFBF0;
-  box-shadow: 0 8px 18px rgba(253, 203, 110, 0.25);
+  box-shadow: 0 8px 18px rgba(253, 203, 110, 0.4);
+  transform: translateY(-2px);
 }
 .kid.checked-s {
-  border-color: #74B9FF;
-  background: #F0F7FF;
-  box-shadow: 0 8px 18px rgba(116, 185, 255, 0.25);
+  box-shadow: 0 8px 18px rgba(116, 185, 255, 0.4);
+  transform: translateY(-2px);
 }
 
 .kid .main {
   flex: 1;
   border: 0;
   background: transparent;
-  color: var(--text-dark);
+  color: inherit;
   font-family: inherit;
   text-align: left;
-  padding: 12px 14px 4px;
-  min-height: 56px;
+  padding: 14px 14px 8px;
+  min-height: 60px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -339,28 +325,11 @@ input:focus, select:focus {
   -webkit-user-select: none;
   touch-action: manipulation;
 }
-.kid .main b { font-size: 17px; font-weight: 800; font-family: 'Baloo 2', cursive; line-height: 1.1; }
-.kid .main small { font-size: 13px; font-weight: 700; opacity: 0.7; }
-
-.tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  font-family: 'Baloo 2', cursive;
-  line-height: 1;
-}
-
-.kid .tag {
-  align-self: flex-start;
-  margin: 4px 12px 8px;
-}
+.kid .main b { font-size: 18px; font-weight: 800; font-family: 'Baloo 2', cursive; line-height: 1.1; }
+.kid .main small { font-size: 13px; font-weight: 700; opacity: 0.75; }
 
 .kid .tm {
-  margin: 2px 10px 10px;
+  margin: 4px 10px 10px;
   align-self: stretch;
   border: 0;
   border-radius: 12px;
@@ -381,31 +350,27 @@ input:focus, select:focus {
   margin: 0 12px 10px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-muted);
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
-/* Kids list view (Onglet Enfants Refondu) */
+/* Liste de l'onglet Enfants (Design épuré) */
 .list { display: flex; flex-direction: column; gap: 10px; }
 .item {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: #FFFFFF;
   border-radius: var(--radius-lg);
-  padding: 12px 16px;
+  padding: 14px 16px;
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-light);
 }
 .item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
-.item-info b { font-size: 16px; font-weight: 800; font-family: 'Baloo 2', cursive; color: var(--text-dark); line-height: 1.1; }
-.item-info .fam { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+.item-info b { font-size: 17px; font-weight: 800; font-family: 'Baloo 2', cursive; line-height: 1.1; }
+.item-info .fam { font-size: 13px; font-weight: 700; opacity: 0.75; }
 
 .item-actions { display: flex; gap: 8px; align-items: center; }
-
 .hint { font-size: 14px; color: var(--text-muted); margin: 0 0 10px; font-weight: 600; }
 
-/* Factures & Accordions */
+/* Factures */
 details.fact {
   background: #FFFFFF;
   border-radius: var(--radius-lg);
@@ -450,7 +415,6 @@ th.cs, td.cs { background: #EBF5FF; }
 .scroll { overflow-x: auto; }
 .empty { padding: 30px 20px; text-align: center; background: #FFFFFF; border-radius: var(--radius-lg); color: var(--text-muted); font-weight: 700; box-shadow: var(--shadow-sm); }
 
-/* Status & Sticky Headers */
 .sticky {
   position: sticky;
   top: 0;
@@ -475,7 +439,7 @@ th.cs, td.cs { background: #EBF5FF; }
 .bar.m { background: #FFF4CC; color: #D63031; }
 .bar.s { background: #E0F2FE; color: #0984E3; }
 
-/* Overlay Modal */
+/* Modales */
 #ov {
   position: fixed;
   inset: 0;
@@ -499,7 +463,7 @@ th.cs, td.cs { background: #EBF5FF; }
 }
 #ov .box input, #ov .box select { width: 100%; margin-bottom: 8px; }
 
-/* Lock View */
+/* Écran PIN */
 .lock {
   max-width: 360px;
   margin: 40px auto;
@@ -564,7 +528,6 @@ th.cs, td.cs { background: #EBF5FF; }
   <div class="header-content">
     <div class="brand">
       <div class="mascot-avatar">
-        <!-- SVG Mascot Icon -->
         <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
           <circle cx="18" cy="18" r="16" fill="#FF7675"/>
           <circle cx="12" cy="14" r="5" fill="white"/>
@@ -637,19 +600,19 @@ const CL = ['TPS','PS','MS','GS','CP','CE1','CE2','CM1','CM2'];
 const ord = c => { const i = CL.indexOf(c); return i < 0 ? 99 : i; };
 const classes = () => [...new Set(S.kids.map(cn))].sort((a,b) => ord(a) - ord(b));
 
-// Class Color Themes Map
-const getClassBadgeClass = (c) => {
+/* Association des Couleurs Pastel par Classe */
+const getCardColorClass = (c) => {
   const key = String(c).toUpperCase();
-  if(key.includes('TPS')) return 'badge-tps';
-  if(key.includes('PS')) return 'badge-ps';
-  if(key.includes('MS')) return 'badge-ms';
-  if(key.includes('GS')) return 'badge-gs';
-  if(key.includes('CP')) return 'badge-cp';
-  if(key.includes('CE1')) return 'badge-ce1';
-  if(key.includes('CE2')) return 'badge-ce2';
-  if(key.includes('CM1')) return 'badge-cm1';
-  if(key.includes('CM2')) return 'badge-cm2';
-  return 'badge-def';
+  if(key.includes('TPS')) return 'card-tps';
+  if(key.includes('PS')) return 'card-ps';
+  if(key.includes('MS')) return 'card-ms';
+  if(key.includes('GS')) return 'card-gs';
+  if(key.includes('CP')) return 'card-cp';
+  if(key.includes('CE1')) return 'card-ce1';
+  if(key.includes('CE2')) return 'card-ce2';
+  if(key.includes('CM1')) return 'card-cm1';
+  if(key.includes('CM2')) return 'card-cm2';
+  return 'card-def';
 };
 
 const filt = () => {
@@ -709,24 +672,23 @@ function vPointage(){
 function lPointage(){
   const day = S.rec[date] || {}, ks = filt();
   if(!S.kids.length) return `<div class="empty">Aucun enfant inscrit. Ajoute-les dans l'onglet Enfants.</div>`;
-  if(!ks.length) return `<div class="empty">Aucun enfant trouvé pour cette recherche.</div>`;
+  if(!ks.length) return `<div class="empty">Aucun enfant trouvé.</div>`;
   
   let h = '';
   for(const c of classes()){
     const g = ks.filter(k => cn(k) === c).sort(byName);
     if(!g.length) continue;
     const n = g.filter(k => (day[k.id] || {})[mode]).length;
-    const badgeCls = getClassBadgeClass(c);
+    const cardCls = getCardColorClass(c);
     
     h += `<div class="ch">${esc(c)} <span>${n} / ${g.length} présent${n>1?'s':''}</span></div><div class="grid">` + 
     g.map(k => {
       const t = (day[k.id] || {})[mode];
-      return `<div class="kid ${t ? (mode === 'm' ? 'checked-m' : 'checked-s') : ''}">
+      return `<div class="kid ${cardCls} ${t ? (mode === 'm' ? 'checked-m' : 'checked-s') : ''}">
         <button class="main" data-pt="${k.id}">
           <b>${esc(k.prenom)}</b>
           <small>${esc(k.nom)}</small>
         </button>
-        <span class="tag ${badgeCls}">${esc(cn(k))}</span>
         ${t ? `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${t}</button>` : `<div class="not-pointed">À pointer</div>`}
       </div>`;
     }).join('') + '</div>';
@@ -775,11 +737,10 @@ function lEnfants(){
   for(const c of classes()){
     const g = ks.filter(k => cn(k) === c).sort(byName);
     if(!g.length) continue;
-    const badgeCls = getClassBadgeClass(c);
+    const cardCls = getCardColorClass(c);
     
     h += `<div class="ch">${esc(c)} <span>${g.length} enfant${g.length>1?'s':''}</span></div><div class="list">` + 
-    g.map(k => `<div class="item">
-      <span class="tag ${badgeCls}">${esc(cn(k))}</span>
+    g.map(k => `<div class="item ${cardCls}">
       <div class="item-info">
         <b>${esc(k.prenom)} ${esc(k.nom)}</b>
         <span class="fam">Famille ${esc(k.famille||'non renseignée')}</span>
@@ -822,7 +783,7 @@ function lFacture(){
   filt().forEach(k => { const f = k.famille || 'Sans famille'; (fams[f] = fams[f] || []).push(k); });
   const names = Object.keys(fams).sort((a,b) => a.localeCompare(b, 'fr'));
   
-  if(!S.kids.length) return `<div class="empty">Aucun enfant configuré pour les factures.</div>`;
+  if(!S.kids.length) return `<div class="empty">Aucun enfant configuré.</div>`;
   if(!names.length) return `<div class="empty">Aucune famille trouvée.</div>`;
   
   const mois = new Date(month+'-01T12:00').toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
@@ -865,7 +826,7 @@ async function pdfFactures(only){
   };
   
   if(!dl){ toast('Téléchargement indisponible'); return; }
-  if(!window.jspdf){ toast('Module PDF non chargé'); return; }
+  if(!window.jspdf){ toast('Module PDF non disponible'); return; }
   
   const fams = {};
   filt().forEach(k => { const n = k.famille || 'Sans famille'; (fams[n] = fams[n] || []).push(k); });
@@ -876,32 +837,28 @@ async function pdfFactures(only){
   const doc = new window.jspdf.jsPDF({unit:'mm', format:'a4'});
   const mois = new Date(month+'-01T12:00').toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
   
-  // Largeurs et positions des colonnes (Largeur totale : 180mm)
+  // Coordonnées exactes (Largeur max du tableau : 180mm)
   const X = [15, 55, 105, 155], W = [40, 50, 50, 40];
   
-  // Palette de couleurs pour les cellules du tableau
-  const cMatHead = [255, 243, 191], cMatTxt = [180, 83, 9];      // Jaune/Orange soleil
-  const cSoirHead = [224, 231, 255], cSoirTxt = [67, 56, 202];    // Nuit/Indigo
-  const cDefHead = [241, 245, 249], cDefTxt = [51, 65, 85];      // Gris/Gris clair
-  const cMatBg = [254, 252, 232], cSoirBg = [238, 242, 255];     // Lignes teintées Matin/Soir
+  // Palette de couleurs nettoyée des émojis
+  const cMatHead = [255, 243, 191], cMatTxt = [180, 83, 9];      // Jaune Matin
+  const cSoirHead = [224, 231, 255], cSoirTxt = [67, 56, 202];    // Indigo Soir
+  const cDefHead = [241, 245, 249];
+  const cMatBg = [254, 252, 232], cSoirBg = [238, 242, 255];
 
-  // Dessin d'une ligne de tableau avec colonnes colorées distinctes
+  // Tracé pur des lignes du tableau (Aucun émoji corrompu)
   const drawRow = (y, vals, isHeader = false, isSubtotal = false) => {
     const h = isHeader ? 8 : 7;
     
     if(isHeader) {
-      // Fond Jour & Total
       doc.setFillColor(...cDefHead);
       doc.rect(X[0], y, W[0], h, 'F');
       doc.rect(X[3], y, W[3], h, 'F');
-      // Fond Matin
       doc.setFillColor(...cMatHead);
       doc.rect(X[1], y, W[1], h, 'F');
-      // Fond Soir
       doc.setFillColor(...cSoirHead);
       doc.rect(X[2], y, W[2], h, 'F');
       
-      // Lignes de séparation
       doc.setDrawColor(220, 220, 230); doc.setLineWidth(0.1);
       doc.line(X[0], y, X[3]+W[3], y);
       doc.line(X[0], y+h, X[3]+W[3], y+h);
@@ -909,7 +866,6 @@ async function pdfFactures(only){
       doc.setFillColor(248, 247, 252);
       doc.roundedRect(15, y, 180, h, 1.5, 1.5, 'F');
     } else {
-      // Fond teinté pour les cellules Matin et Soir
       if(vals[1] !== '-') { doc.setFillColor(...cMatBg); doc.rect(X[1], y, W[1], h, 'F'); }
       if(vals[2] !== '-') { doc.setFillColor(...cSoirBg); doc.rect(X[2], y, W[2], h, 'F'); }
       
@@ -917,23 +873,22 @@ async function pdfFactures(only){
       doc.line(15, y+h, 195, y+h);
     }
 
-    // Écriture du texte dans les colonnes
     doc.setFont('helvetica', isHeader || isSubtotal ? 'bold' : 'normal');
     doc.setFontSize(isHeader ? 10 : 9.5);
 
-    // Jour / Libellé
+    // Colonne 0 : Date / Jour
     doc.setTextColor(45, 27, 78);
     doc.text(String(vals[0]), X[0] + 3, y + (h/2) + 1.5);
     
-    // Matin
+    // Colonne 1 : Matin (Sans émojis)
     doc.setTextColor(isHeader ? cMatTxt[0] : (vals[1] !== '-' ? 180 : 140), isHeader ? cMatTxt[1] : (vals[1] !== '-' ? 83 : 140), isHeader ? cMatTxt[2] : (vals[1] !== '-' ? 9 : 140));
     doc.text(String(vals[1]), X[1] + 3, y + (h/2) + 1.5);
     
-    // Soir
+    // Colonne 2 : Soir (Sans émojis)
     doc.setTextColor(isHeader ? cSoirTxt[0] : (vals[2] !== '-' ? 67 : 140), isHeader ? cSoirTxt[1] : (vals[2] !== '-' ? 56 : 140), isHeader ? cSoirTxt[2] : (vals[2] !== '-' ? 202 : 140));
     doc.text(String(vals[2]), X[2] + 3, y + (h/2) + 1.5);
 
-    // Total
+    // Colonne 3 : Total
     doc.setTextColor(45, 27, 78);
     if(isHeader || isSubtotal) doc.setFont('helvetica', 'bold');
     doc.text(String(vals[3]), X[3] + 3, y + (h/2) + 1.5);
@@ -943,7 +898,7 @@ async function pdfFactures(only){
     if(i) doc.addPage();
     let y = 16, total = 0;
     
-    // En-tête style App Pointiii
+    // Bandeau d'en-tête Violet
     doc.setFillColor(108, 92, 231);
     doc.roundedRect(15, y, 180, 22, 4, 4, 'F');
     
@@ -957,44 +912,34 @@ async function pdfFactures(only){
     doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(255, 255, 255);
     doc.text(mois.charAt(0).toUpperCase() + mois.slice(1), 188, y + 16, {align: 'right'});
     
-    y += 30;
+    y += 32;
     
-    // Parcourir chaque enfant de la famille
     for(const k of fams[f]){
       const c = calc(k); total += c.tot;
       
-      // Vérification saut de page
-      if(y + 40 > 275){ doc.addPage(); y = 20; }
+      if(y + 45 > 275){ doc.addPage(); y = 20; }
       
-      // Nom de l'enfant + Badge Classe
+      // En-tête Enfant : Prénom Nom (Classe)
       doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(45, 27, 78);
-      doc.text(k.prenom + ' ' + k.nom, 15, y);
+      doc.text(k.prenom + ' ' + k.nom + ' (' + cn(k) + ')', 15, y);
       
-      // Badge de classe pastel
-      const classeText = cn(k);
-      doc.setFillColor(238, 236, 253);
-      doc.roundedRect(15 + doc.getTextWidth(k.prenom + ' ' + k.nom) + 4, y - 4, doc.getTextWidth(classeText) + 6, 5.5, 1.5, 1.5, 'F');
-      doc.setFontSize(9); doc.setTextColor(108, 92, 231);
-      doc.text(classeText, 15 + doc.getTextWidth(k.prenom + ' ' + k.nom) + 7, y - 0.2);
-      
-      y += 5;
+      y += 6;
       
       if(!c.lines.length){
         doc.setFont('helvetica', 'italic'); doc.setFontSize(9.5); doc.setTextColor(130, 130, 150);
         doc.text('Aucune garderie facturée ce mois-ci.', 15, y + 4);
-        y += 14; // ESPACEMENT suffisant
+        y += 16;
         continue;
       }
       
-      // Table Header
-      drawRow(y, ['Jour', '☀️ Matin', '🌙 Soir', 'Total'], true);
+      // En-tête du tableau (Intitulés propres sans émoji)
+      drawRow(y, ['Jour', 'Matin', 'Soir', 'Total'], true);
       y += 8;
       
-      // Lignes de pointage
       for(const l of c.lines){
         if(y + 8 > 275){
           doc.addPage(); y = 20;
-          drawRow(y, ['Jour', '☀️ Matin', '🌙 Soir', 'Total'], true);
+          drawRow(y, ['Jour', 'Matin', 'Soir', 'Total'], true);
           y += 8;
         }
         const mStr = l.m ? `${l.mt} (${eur(l.m)})` : '-';
@@ -1003,15 +948,15 @@ async function pdfFactures(only){
         y += 7;
       }
       
-      // Ligne Sous-total
-      drawRow(y, ['Sous-total', '', '', eur(c.tot)], false, true);
+      // Ligne du sous-total
+      drawRow(y, ['Sous-total ' + k.prenom, '', '', eur(c.tot)], false, true);
       
-      // ESPACEMENT SUFFISANT ENTRE ENFANTS (Évite tout chevauchement !)
+      // MARGE DE SÉCURITÉ VERTICALE : Empêche l'enfant suivant de coller
       y += 16;
     }
     
-    // Encadré GRAND TOTAL À PAYER
-    if(y + 18 > 275){ doc.addPage(); y = 20; }
+    // Encadré Vert Menthe : Total à Payer
+    if(y + 20 > 275){ doc.addPage(); y = 20; }
     doc.setFillColor(0, 184, 148);
     doc.roundedRect(15, y, 180, 14, 3, 3, 'F');
     doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(255, 255, 255);
@@ -1038,11 +983,11 @@ function vLock(){
   return `<div class="lock">
     <div class="lockic">🔒</div>
     <h2>Espace Direction</h2>
-    <p class="hint">${has ? 'Entrez votre code PIN pour accéder à cet espace.' : 'Créez un code PIN pour sécuriser la gestion des enfants et la facturation.'}</p>
+    <p class="hint">${has ? 'Saisis ton code PIN pour accéder à cette section.' : 'Crée un code PIN à 4 ou 6 chiffres pour protéger la gestion des enfants et factures.'}</p>
     <input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="Code PIN" aria-label="Code PIN">
-    ${has ? '' : '<input id="pin2" type="password" inputmode="numeric" maxlength="6" placeholder="Confirmez le PIN">'}
+    ${has ? '' : '<input id="pin2" type="password" inputmode="numeric" maxlength="6" placeholder="Confirme le PIN">'}
     <p class="err" id="perr" role="alert"></p>
-    <button class="btn" data-unlock="1">${has ? 'Déverrouiller' : 'Créer le code PIN'}</button>
+    <button class="btn" data-unlock="1">${has ? 'Déverrouiller' : 'Créer le PIN'}</button>
   </div>`;
 }
 
@@ -1054,7 +999,7 @@ async function doUnlock(){
   if(!st){
     if($('#pin2').value.trim() !== p){ err('Les codes ne correspondent pas.'); return; }
     try { localStorage.setItem('garderie_pin', await sha(p)); } catch(e){ err('Erreur de sauvegarde.'); return; }
-    unlocked = true; lastAct = Date.now(); toast('Code PIN créé !'); render(); return;
+    unlocked = true; lastAct = Date.now(); toast('Code PIN configuré'); render(); return;
   }
   if(await sha(p) === st){ unlocked = true; lastAct = Date.now(); render(); }
   else { err('Code PIN incorrect.'); $('#pin').value = ''; }
@@ -1063,7 +1008,7 @@ async function doUnlock(){
 function openPin(){
   $('#ovb').innerHTML = `<h2>Changer le code PIN</h2>
   <div class="row">
-    <input id="np1" type="password" inputmode="numeric" maxlength="6" placeholder="Nouveau code">
+    <input id="np1" type="password" inputmode="numeric" maxlength="6" placeholder="Nouveau PIN">
     <input id="np2" type="password" inputmode="numeric" maxlength="6" placeholder="Confirmation">
   </div>
   <p class="err" id="nperr" role="alert"></p>
@@ -1076,9 +1021,9 @@ function openPin(){
 
 async function savePin(){
   const a = $('#np1').value.trim(), b = $('#np2').value.trim(), e = $('#nperr');
-  if(!/^\d{4,6}$/.test(a)){ e.textContent = 'Le code doit contenir 4 à 6 chiffres.'; return; }
+  if(!/^\d{4,6}$/.test(a)){ e.textContent = '4 à 6 chiffres requis.'; return; }
   if(a !== b){ e.textContent = 'Les deux codes diffèrent.'; return; }
-  try { localStorage.setItem('garderie_pin', await sha(a)); closeEdit(); toast('PIN modifié'); } catch(x){ e.textContent = 'Erreur d’enregistrement.'; }
+  try { localStorage.setItem('garderie_pin', await sha(a)); closeEdit(); toast('PIN mis à jour'); } catch(x){ e.textContent = 'Erreur d’enregistrement.'; }
 }
 
 const monthsData = () => {
@@ -1093,35 +1038,35 @@ const monthsData = () => {
 
 function openReset(){
   const ms = monthsData();
-  $('#ovb').innerHTML = ms.length ? `<h2>Clôturer un mois</h2>
-  <p class="hint">Cochez les mois à réinitialiser. Un PDF sera généré puis les pointages seront supprimés.</p>
-  <div class="list">${ms.map(([m,n]) => `<label class="item"><input type="checkbox" name="rm" value="${m}"><b>${m}</b><span class="hint">${n} jours enregistrés</span></label>`).join('')}</div>
+  $('#ovb').innerHTML = ms.length ? `<h2>Clôturer des mois</h2>
+  <p class="hint">Coche les mois à réinitialiser. Un PDF sera d'abord généré pour chaque mois avant suppression des pointages.</p>
+  <div class="list">${ms.map(([m,n]) => `<label class="item"><input type="checkbox" name="rm" value="${m}"><b>${m}</b><span class="hint">${n} jours de présence</span></label>`).join('')}</div>
   <div class="row" style="margin-top:14px">
-    <button class="btn" data-doreset="1" style="width:100%">Exporter & Nettoyer</button>
+    <button class="btn" data-doreset="1" style="width:100%">Exporter et Clôturer</button>
     <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
-  </div>` : `<h2>Clôture</h2><p class="hint">Aucun historique à réinitialiser.</p><button class="btn ghost" data-mclose="1">Fermer</button>`;
+  </div>` : `<h2>Clôture</h2><p class="hint">Aucun mois à réinitialiser.</p><button class="btn ghost" data-mclose="1">Fermer</button>`;
   showOv();
 }
 
 async function exportMonth(m){ const sm=month, sq=q, sc=cls; month=m; q=''; cls=''; try{ return await pdfFactures(null); } finally { month=sm; q=sq; cls=sc; } }
 async function doReset(){
   const ms = [...document.querySelectorAll('#ovb input[name=rm]:checked')].map(i => i.value);
-  if(!ms.length){ toast('Sélectionnez au moins un mois'); return; }
+  if(!ms.length){ toast('Sélectionne au moins un mois'); return; }
   const done = [];
   for(const m of ms){ try{ if(!(await exportMonth(m))) break; done.push(m); }catch(e){ break; } }
   done.forEach(m => { for(const d of Object.keys(S.rec)) if(d.startsWith(m)) delete S.rec[d]; });
   save(); closeEdit(); render();
-  toast(done.length + ' mois nettoyé(s)');
+  toast(done.length + ' mois clôturé(s)');
 }
 
 function openEdit(id){
   const k = S.kids.find(x => x.id === id), t = ((S.rec[date] || {})[id] || {})[mode] || '';
   $('#ovb').innerHTML = `<h2>${esc(k.prenom)} ${esc(k.nom)}</h2>
-  <p class="hint">${mode === 'm' ? 'Heure d’arrivée (Matin)' : 'Heure de départ (Soir)'}</p>
+  <p class="hint">${mode === 'm' ? 'Matin · Heure d’arrivée' : 'Soir · Heure de départ'}</p>
   <div class="row"><input type="time" id="mt" value="${t}" aria-label="Heure"></div>
   <div class="row">
-    <button class="btn" data-msave="${id}" style="width:100%">Valider l'heure</button>
-    ${t ? `<button class="btn danger" data-mdel="${id}" style="width:100%">Effacer le pointage</button>` : ''}
+    <button class="btn" data-msave="${id}" style="width:100%">Enregistrer l'heure</button>
+    ${t ? `<button class="btn danger" data-mdel="${id}" style="width:100%">Effacer</button>` : ''}
     <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
   </div>`;
   showOv(); $('#mt').focus();
@@ -1148,7 +1093,7 @@ document.addEventListener('click', e => {
     if(el) anim(el.parentElement, [{transform:'scale(0.92)'}, {transform:'scale(1.05)'}, {transform:'scale(1)'}], {duration:250});
   }
   else if(d.edt) openEdit(d.edt);
-  else if(d.msave){ const t = $('#mt').value; if(!t){ toast('Choisissez une heure'); return; } setT(d.msave, t); closeEdit(); toast('Heure enregistrée'); relist(); }
+  else if(d.msave){ const t = $('#mt').value; if(!t){ toast('Saisis une heure'); return; } setT(d.msave, t); closeEdit(); toast('Heure enregistrée'); relist(); }
   else if(d.mdel){ setT(d.mdel, ''); closeEdit(); relist(); }
   else if(d.mclose) closeEdit();
   else if(d.unlock) doUnlock();
@@ -1159,10 +1104,10 @@ document.addEventListener('click', e => {
   else if(d.doreset) doReset();
   else if(d.sk){
     const p = $('#fp').value.trim(), n = $('#fn').value.trim(), c = $('#fc').value.trim(), f = $('#ff').value.trim();
-    if(!p || !n){ toast('Prénom et nom obligatoires'); return; }
+    if(!p || !n){ toast('Prénom et nom requis'); return; }
     if(editKid){ Object.assign(S.kids.find(k => k.id === editKid), {prenom:p, nom:n, classe:c, famille:f}); editKid = null; }
     else S.kids.push({id:'k'+Date.now(), prenom:p, nom:n, classe:c, famille:f});
-    save(); closeEdit(); toast('Enfant enregistré'); render();
+    save(); closeEdit(); toast('Enregistré'); render();
   }
   else if(d.ed) openKid(d.ed);
   else if(d.addkid) openKid();
