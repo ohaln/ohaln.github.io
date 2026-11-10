@@ -12,13 +12,9 @@
   --text-dark: #2D1B4E;
   --text-muted: #7A6B94;
   --border-light: #EBE5F5;
-  
-  /* Couleurs des Onglets */
   --tab-pointage: #6C5CE7;
   --tab-enfants: #FF7675;
   --tab-factures: #00B894;
-
-  /* Palette Pastel par Classe */
   --cls-tps-bg: #FFF0F3; --cls-tps-txt: #C0392B; --cls-tps-border: #FFCCD5;
   --cls-ps-bg:  #FFF3BF; --cls-ps-txt:  #B45309; --cls-ps-border: #FFE066;
   --cls-ms-bg:  #FFE8D6; --cls-ms-txt:  #D35400; --cls-ms-border: #FFD7BA;
@@ -29,7 +25,6 @@
   --cls-cm1-bg: #F3E8FF; --cls-cm1-txt: #6B21A8; --cls-cm1-border: #E9D5FF;
   --cls-cm2-bg: #FAE8FF; --cls-cm2-txt: #86198F; --cls-cm2-border: #F5D0FE;
   --cls-def-bg: #FFFFFF; --cls-def-txt: #2D1B4E; --cls-def-border: #EBE5F5;
-
   --shadow-sm: 0 4px 12px rgba(45, 27, 78, 0.05);
   --shadow-md: 0 8px 24px rgba(45, 27, 78, 0.08);
   --shadow-lg: 0 16px 32px rgba(45, 27, 78, 0.12);
@@ -37,240 +32,43 @@
   --radius-lg: 20px;
   --radius-md: 14px;
 }
-
 * { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--bg-main);
-  color: var(--text-dark);
-  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
-  font-size: 16px;
-  line-height: 1.3;
-  min-height: 100vh;
-  -webkit-tap-highlight-color: transparent;
-  padding-bottom: 24px;
-}
-
-/* En-tête */
-header {
-  background: linear-gradient(135deg, #6C5CE7 0%, #8C7AE6 100%);
-  padding: 18px 20px 26px;
-  color: white;
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-}
-
-.header-decor {
-  position: absolute;
-  right: -10px;
-  top: -10px;
-  opacity: 0.15;
-  pointer-events: none;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.mascot-avatar {
-  width: 48px;
-  height: 48px;
-  background: #FFEAA7;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  transform: rotate(-4deg);
-}
-
-.logo-text {
-  font-family: 'Baloo 2', cursive;
-  font-size: 32px;
-  font-weight: 800;
-  margin: 0;
-  line-height: 1;
-  color: #FFFFFF;
-  letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
+body { margin: 0; background: var(--bg-main); color: var(--text-dark); font-family: 'Nunito', system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.3; min-height: 100vh; -webkit-tap-highlight-color: transparent; padding-bottom: 24px; }
+header { background: linear-gradient(135deg, #6C5CE7 0%, #8C7AE6 100%); padding: 18px 20px 26px; color: white; border-radius: 0 0 var(--radius-xl) var(--radius-xl); box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+.header-decor { position: absolute; right: -10px; top: -10px; opacity: 0.15; pointer-events: none; }
+.header-content { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.mascot-avatar { width: 48px; height: 48px; background: #FFEAA7; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transform: rotate(-4deg); }
+.logo-text { font-family: 'Baloo 2', cursive; font-size: 32px; font-weight: 800; margin: 0; line-height: 1; color: #FFFFFF; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.15); }
 .logo-text span.dot { color: #FFEAA7; }
-
-/* Onglets de navigation */
-nav {
-  display: flex;
-  gap: 10px;
-  padding: 0 16px;
-  max-width: 900px;
-  margin: -18px auto 16px;
-  position: relative;
-  z-index: 10;
-}
-
-nav button {
-  flex: 1;
-  border: 0;
-  border-radius: var(--radius-lg);
-  padding: 12px 10px;
-  font-size: 15px;
-  font-weight: 800;
-  font-family: 'Baloo 2', cursive;
-  background: #FFFFFF;
-  color: var(--text-muted);
-  cursor: pointer;
-  min-height: 52px;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
+.gear { border: 0; width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,0.22); color: #fff; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease; }
+.gear:active { transform: rotate(60deg) scale(0.92); }
+nav { display: flex; gap: 10px; padding: 0 16px; max-width: 900px; margin: -18px auto 16px; position: relative; z-index: 10; }
+nav button { flex: 1; border: 0; border-radius: var(--radius-lg); padding: 12px 10px; font-size: 15px; font-weight: 800; font-family: 'Baloo 2', cursive; background: #FFFFFF; color: var(--text-muted); cursor: pointer; min-height: 52px; box-shadow: var(--shadow-sm); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; gap: 6px; }
 nav button:active { transform: scale(0.95); }
-
-nav button[data-t="pointage"][aria-selected="true"] {
-  background: var(--tab-pointage);
-  color: #FFFFFF;
-  box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35);
-}
-nav button[data-t="enfants"][aria-selected="true"] {
-  background: var(--tab-enfants);
-  color: #FFFFFF;
-  box-shadow: 0 8px 20px rgba(255, 118, 117, 0.35);
-}
-nav button[data-t="facture"][aria-selected="true"] {
-  background: var(--tab-factures);
-  color: #FFFFFF;
-  box-shadow: 0 8px 20px rgba(0, 184, 148, 0.35);
-}
-
-/* Conteneur principal */
+nav button[data-t="pointage"][aria-selected="true"] { background: var(--tab-pointage); color: #FFFFFF; box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35); }
+nav button[data-t="enfants"][aria-selected="true"] { background: var(--tab-enfants); color: #FFFFFF; box-shadow: 0 8px 20px rgba(255, 118, 117, 0.35); }
+nav button[data-t="facture"][aria-selected="true"] { background: var(--tab-factures); color: #FFFFFF; box-shadow: 0 8px 20px rgba(0, 184, 148, 0.35); }
 main { padding: 0 16px; }
 .wrap { max-width: 900px; margin: 0 auto; }
-
-h2 {
-  font-family: 'Baloo 2', cursive;
-  margin: 0 0 12px;
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--text-dark);
-}
-
-.row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-/* Style des boutons */
-.btn {
-  border: 0;
-  border-radius: var(--radius-md);
-  padding: 10px 18px;
-  font-size: 15px;
-  font-weight: 800;
-  font-family: 'Baloo 2', cursive;
-  background: var(--tab-pointage);
-  color: #FFFFFF;
-  cursor: pointer;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  transition: all 0.2s ease;
-}
+h2 { font-family: 'Baloo 2', cursive; margin: 0 0 12px; font-size: 24px; font-weight: 800; color: var(--text-dark); }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.btn { border: 0; border-radius: var(--radius-md); padding: 10px 18px; font-size: 15px; font-weight: 800; font-family: 'Baloo 2', cursive; background: var(--tab-pointage); color: #FFFFFF; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: all 0.2s ease; }
 .btn:active { transform: scale(0.96); }
 .btn.alt { background: #FFEAA7; color: #D63031; }
 .btn.ghost { background: #EBE5F5; color: var(--text-dark); box-shadow: none; }
 .btn.edit-btn { background: #E0E7FF; color: #4338CA; border: 1px solid #C7D2FE; box-shadow: none; }
 .btn.danger { background: #FFE4E6; color: #E11D48; border: 1px solid #FECDD3; box-shadow: none; }
 .btn.sm { min-height: 38px; padding: 6px 14px; font-size: 14px; border-radius: 12px; }
-
-/* Formulaires & Recherche */
-input, select {
-  font-size: 15px;
-  font-weight: 700;
-  font-family: inherit;
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  border: 2px solid var(--border-light);
-  background: #FFFFFF;
-  color: var(--text-dark);
-  min-height: 46px;
-  transition: all 0.2s ease;
-}
-input:focus, select:focus {
-  outline: none;
-  border-color: var(--tab-pointage);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
-}
+input, select { font-size: 15px; font-weight: 700; font-family: inherit; padding: 10px 14px; border-radius: var(--radius-md); border: 2px solid var(--border-light); background: #FFFFFF; color: var(--text-dark); min-height: 46px; transition: all 0.2s ease; }
+input:focus, select:focus { outline: none; border-color: var(--tab-pointage); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15); }
 .search { flex: 1; min-width: 180px; }
-
-/* Filtres par classes (Chips) */
-.chips {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 4px 2px 12px;
-  margin-bottom: 4px;
-  scrollbar-width: none;
-}
+.chips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 12px; margin-bottom: 4px; scrollbar-width: none; }
 .chips::-webkit-scrollbar { display: none; }
-
-.chip {
-  border: 2px solid var(--border-light);
-  background: #FFFFFF;
-  color: var(--text-muted);
-  border-radius: 999px;
-  padding: 4px 16px;
-  font-size: 14px;
-  font-weight: 800;
-  font-family: 'Baloo 2', cursive;
-  white-space: nowrap;
-  cursor: pointer;
-  min-height: 36px;
-  transition: all 0.2s ease;
-}
-.chip[aria-pressed="true"] {
-  background: var(--text-dark);
-  color: #FFFFFF;
-  border-color: var(--text-dark);
-  box-shadow: 0 4px 10px rgba(45, 27, 78, 0.2);
-}
-
-/* Titres de classes */
-.ch {
-  margin: 18px 0 10px;
-  font-family: 'Baloo 2', cursive;
-  font-size: 20px;
-  font-weight: 800;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 14px;
-  border-radius: var(--radius-md);
-  background: rgba(255,255,255,0.7);
-}
+.chip { border: 2px solid var(--border-light); background: #FFFFFF; color: var(--text-muted); border-radius: 999px; padding: 4px 16px; font-size: 14px; font-weight: 800; font-family: 'Baloo 2', cursive; white-space: nowrap; cursor: pointer; min-height: 36px; transition: all 0.2s ease; }
+.chip[aria-pressed="true"] { background: var(--text-dark); color: #FFFFFF; border-color: var(--text-dark); box-shadow: 0 4px 10px rgba(45, 27, 78, 0.2); }
+.ch { margin: 18px 0 10px; font-family: 'Baloo 2', cursive; font-size: 20px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; padding: 6px 14px; border-radius: var(--radius-md); background: rgba(255,255,255,0.7); }
 .ch span { font-size: 14px; font-weight: 700; opacity: 0.8; }
-
-/* Classes de Couleurs pour Cartes */
 .card-tps { background: var(--cls-tps-bg) !important; color: var(--cls-tps-txt); border: 1.5px solid var(--cls-tps-border) !important; }
 .card-ps  { background: var(--cls-ps-bg)  !important; color: var(--cls-ps-txt);  border: 1.5px solid var(--cls-ps-border)  !important; }
 .card-ms  { background: var(--cls-ms-bg)  !important; color: var(--cls-ms-txt);  border: 1.5px solid var(--cls-ms-border)  !important; }
@@ -281,235 +79,63 @@ input:focus, select:focus {
 .card-cm1 { background: var(--cls-cm1-bg) !important; color: var(--cls-cm1-txt); border: 1.5px solid var(--cls-cm1-border) !important; }
 .card-cm2 { background: var(--cls-cm2-bg) !important; color: var(--cls-cm2-txt); border: 1.5px solid var(--cls-cm2-border) !important; }
 .card-def { background: var(--cls-def-bg) !important; color: var(--cls-def-txt); border: 1.5px solid var(--cls-def-border) !important; }
-
-/* Grille des enfants (Pointage) */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-  gap: 12px;
-}
-
-.kid {
-  display: flex;
-  flex-direction: column;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative;
-}
-
-.kid.checked-m {
-  box-shadow: 0 8px 18px rgba(253, 203, 110, 0.4);
-  transform: translateY(-2px);
-}
-.kid.checked-s {
-  box-shadow: 0 8px 18px rgba(116, 185, 255, 0.4);
-  transform: translateY(-2px);
-}
-
-.kid .main {
-  flex: 1;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font-family: inherit;
-  text-align: left;
-  padding: 14px 14px 8px;
-  min-height: 60px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 12px; }
+.kid { display: flex; flex-direction: column; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
+.kid.checked-m { box-shadow: 0 8px 18px rgba(253, 203, 110, 0.4); transform: translateY(-2px); }
+.kid.checked-s { box-shadow: 0 8px 18px rgba(116, 185, 255, 0.4); transform: translateY(-2px); }
+.kid.checked-c { box-shadow: 0 8px 18px rgba(0, 184, 148, 0.35); transform: translateY(-2px); }
+.kid .main { flex: 1; border: 0; background: transparent; color: inherit; font-family: inherit; text-align: left; padding: 14px 14px 8px; min-height: 60px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 .kid .main b { font-size: 18px; font-weight: 800; font-family: 'Baloo 2', cursive; line-height: 1.1; }
 .kid .main small { font-size: 13px; font-weight: 700; opacity: 0.75; }
-
-.kid .tm {
-  margin: 4px 10px 10px;
-  align-self: stretch;
-  border: 0;
-  border-radius: 12px;
-  padding: 6px 10px;
-  font-size: 14px;
-  font-weight: 800;
-  font-family: inherit;
-  cursor: pointer;
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
+.kid .tm { margin: 4px 10px 10px; align-self: stretch; border: 0; border-radius: 12px; padding: 6px 10px; font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer; min-height: 34px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.kid div.tm { cursor: default; }
 .checked-m .tm { background: #FFEAA7; color: #D63031; }
 .checked-s .tm { background: #74B9FF; color: #0984E3; }
-.kid .not-pointed {
-  margin: 0 12px 10px;
-  font-size: 12px;
-  font-weight: 700;
-  opacity: 0.5;
-}
-
-/* Liste de l'onglet Enfants (Design épuré) */
+.checked-c .tm { background: #A7F3D0; color: #047857; }
+.kid .not-pointed { margin: 0 12px 10px; font-size: 12px; font-weight: 700; opacity: 0.5; }
 .list { display: flex; flex-direction: column; gap: 10px; }
-.item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-radius: var(--radius-lg);
-  padding: 14px 16px;
-  box-shadow: var(--shadow-sm);
-}
+.item { display: flex; align-items: center; gap: 14px; border-radius: var(--radius-lg); padding: 14px 16px; box-shadow: var(--shadow-sm); }
 .item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
 .item-info b { font-size: 17px; font-weight: 800; font-family: 'Baloo 2', cursive; line-height: 1.1; }
 .item-info .fam { font-size: 13px; font-weight: 700; opacity: 0.75; }
-
 .item-actions { display: flex; gap: 8px; align-items: center; }
 .hint { font-size: 14px; color: var(--text-muted); margin: 0 0 10px; font-weight: 600; }
-
-/* Factures */
-details.fact {
-  background: #FFFFFF;
-  border-radius: var(--radius-lg);
-  padding: 0 16px;
-  margin-bottom: 10px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-light);
-}
-details.fact summary {
-  cursor: pointer;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  min-height: 54px;
-  font-weight: 800;
-  font-family: 'Baloo 2', cursive;
-  font-size: 17px;
-  list-style: none;
-}
+details.fact { background: #FFFFFF; border-radius: var(--radius-lg); padding: 0 16px; margin-bottom: 10px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); }
+details.fact summary { cursor: pointer; display: flex; gap: 10px; align-items: center; min-height: 54px; font-weight: 800; font-family: 'Baloo 2', cursive; font-size: 17px; list-style: none; }
 details.fact summary::-webkit-details-marker { display: none; }
 details.fact summary::before { content: "➔"; font-size: 12px; transition: transform 0.2s ease; color: var(--tab-factures); }
 details.fact[open] summary::before { transform: rotate(90deg); }
 details.fact summary .n { flex: 1; }
-
 .fb { padding: 4px 0 16px; border-top: 1px solid var(--border-light); }
 .tot { font-weight: 800; font-size: 20px; margin: 14px 0 0; color: var(--tab-factures); font-family: 'Baloo 2'; }
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #F9F8FD;
-  border-radius: 12px;
-  overflow: hidden;
-  font-size: 14px;
-  margin-top: 8px;
-}
+table { width: 100%; border-collapse: collapse; background: #F9F8FD; border-radius: 12px; overflow: hidden; font-size: 14px; margin-top: 8px; }
 th, td { padding: 8px 12px; text-align: left; }
 th { background: #EBE5F5; color: var(--text-dark); font-weight: 800; }
 th.cm, td.cm { background: #FFF9E6; }
 th.cs, td.cs { background: #EBF5FF; }
-
+th.cc, td.cc { background: #E8FAF4; }
 .scroll { overflow-x: auto; }
 .empty { padding: 30px 20px; text-align: center; background: #FFFFFF; border-radius: var(--radius-lg); color: var(--text-muted); font-weight: 700; box-shadow: var(--shadow-sm); }
-
-.sticky {
-  position: sticky;
-  top: 0;
-  z-index: 6;
-  background: var(--bg-main);
-  margin: 0 -16px 8px;
-  padding: 10px 16px 4px;
-}
-
-.bar {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
-  font-weight: 800;
-  font-family: 'Baloo 2', cursive;
-  margin: 0 0 12px;
-  box-shadow: var(--shadow-sm);
-}
+.sticky { position: sticky; top: 0; z-index: 6; background: var(--bg-main); margin: 0 -16px 8px; padding: 10px 16px 4px; }
+.bar { position: relative; display: flex; justify-content: space-between; align-items: center; border-radius: var(--radius-md); padding: 12px 16px; font-weight: 800; font-family: 'Baloo 2', cursive; margin: 0 0 12px; box-shadow: var(--shadow-sm); }
 .bar.m { background: #FFF4CC; color: #D63031; }
 .bar.s { background: #E0F2FE; color: #0984E3; }
-
-/* Modales */
-#ov {
-  position: fixed;
-  inset: 0;
-  background: rgba(45, 27, 78, 0.4);
-  backdrop-filter: blur(4px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  z-index: 100;
-}
-#ov .box {
-  background: #FFFFFF;
-  border-radius: var(--radius-xl);
-  padding: 24px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: var(--shadow-lg);
-  max-height: 90vh;
-  overflow: auto;
-}
+.bar.c { background: #D1FAE5; color: #047857; }
+#ov { position: fixed; inset: 0; background: rgba(45, 27, 78, 0.4); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+#ov .box { background: #FFFFFF; border-radius: var(--radius-xl); padding: 24px; width: 100%; max-width: 420px; box-shadow: var(--shadow-lg); max-height: 90vh; overflow: auto; }
 #ov .box input, #ov .box select { width: 100%; margin-bottom: 8px; }
-
-/* Écran PIN */
-.lock {
-  max-width: 360px;
-  margin: 40px auto;
-  text-align: center;
-  background: #FFFFFF;
-  padding: 32px 24px;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.sh { font-family: 'Baloo 2', cursive; font-size: 17px; margin: 16px 0 6px; }
+.setf { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+#ov .box .setf input { width: 110px; margin: 0; text-align: right; min-height: 40px; }
+.lock { max-width: 360px; margin: 40px auto; text-align: center; background: #FFFFFF; padding: 32px 24px; border-radius: var(--radius-xl); box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 12px; }
 .lock input { text-align: center; font-size: 26px; letter-spacing: 0.4em; }
 .lockic { font-size: 52px; line-height: 1; }
 .err { margin: 0; min-height: 1.3em; font-weight: 700; color: #FF7675; }
-
-/* Animations */
-.kid, .btn, .chip, nav button {
-  transition: transform 0.15s ease, background-color 0.25s ease, box-shadow 0.2s ease;
-}
+.kid, .btn, .chip, nav button { transition: transform 0.15s ease, background-color 0.25s ease, box-shadow 0.2s ease; }
 .kid:active, .btn:active, .chip:active, nav button:active { transform: scale(0.96); }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-#app.enter .kid, #app.enter .item, #app.enter details.fact, #app.enter .ch {
-  animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-}
-
-#toast {
-  position: fixed;
-  left: 50%;
-  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-  transform: translateX(-50%);
-  background: var(--text-dark);
-  color: #FFFFFF;
-  padding: 10px 20px;
-  border-radius: 999px;
-  display: none;
-  font-weight: 800;
-  font-family: 'Baloo 2', cursive;
-  z-index: 200;
-  box-shadow: var(--shadow-lg);
-}
-
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+#app.enter .kid, #app.enter .item, #app.enter details.fact, #app.enter .ch { animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+#toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--text-dark); color: #FFFFFF; padding: 10px 20px; border-radius: 999px; display: none; font-weight: 800; font-family: 'Baloo 2', cursive; z-index: 200; box-shadow: var(--shadow-lg); }
 @media print {
   body { background: #fff; }
   header, nav, .noprint, #toast, #ov { display: none !important; }
@@ -539,19 +165,14 @@ th.cs, td.cs { background: #EBF5FF; }
       </div>
       <h1 class="logo-text">Point<span class="dot">iii</span></h1>
     </div>
+    <button class="gear" data-gear="1" aria-label="Paramètres des tarifs">⚙️</button>
   </div>
 </header>
 
 <nav role="tablist" id="nav">
-  <button data-t="pointage" aria-selected="true">
-    <span>☀️ Pointage</span>
-  </button>
-  <button data-t="enfants">
-    <span>🔒 Enfants</span>
-  </button>
-  <button data-t="facture">
-    <span>🔒 Factures</span>
-  </button>
+  <button data-t="pointage" aria-selected="true"><span>☀️ Pointage</span></button>
+  <button data-t="enfants"><span>🔒 Enfants</span></button>
+  <button data-t="facture"><span>🔒 Factures</span></button>
 </nav>
 
 <main>
@@ -572,6 +193,12 @@ try {
   if(r) S = JSON.parse(r);
 } catch(e){}
 
+/* Tarifs par défaut (modifiables via ⚙️) */
+const DEF = { mat:[2.7,1.8,0.9], soir:[0.9,1.8,2.7,3.9,5.1], plein:4.85, aide:{a:1.25,b:1,c:0} };
+S.kids = S.kids || []; S.rec = S.rec || {};
+S.cfg = Object.assign(JSON.parse(JSON.stringify(DEF)), S.cfg || {});
+S.cfg.aide = Object.assign({}, DEF.aide, S.cfg.aide);
+
 const save = () => { try { localStorage.setItem('garderie', JSON.stringify(S)); } catch(e){} };
 const pad = n => String(n).padStart(2, '0');
 const today = () => { const d = new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); };
@@ -581,8 +208,13 @@ const eur = n => n.toFixed(2).replace('.',',')+' €';
 const r2 = n => Math.round(n*100)/100;
 
 /* Une heure pile tombe dans la tranche la plus chère */
-const prixMatin = h => { const t=mins(h); return t>510?0:t>480?.9:t>450?1.8:2.7; };
-const prixSoir  = h => { const t=mins(h); return t<1000?0:t<1030?.9:t<1060?1.8:t<1090?2.7:t<1120?3.9:5.1; };
+const prixMatin = h => { const t=mins(h), p=S.cfg.mat; return t>510?0:t>480?p[2]:t>450?p[1]:p[0]; };
+const prixSoir  = h => { const t=mins(h), p=S.cfg.soir; return t<1000?0:t<1030?p[0]:t<1060?p[1]:t<1090?p[2]:t<1120?p[3]:p[4]; };
+
+/* Cantine : tarif plein moins l'aide de la tranche de la famille */
+const TL = { a:'-1k€', b:'-1,1k€', c:'+1,1k€' };
+const tier = k => k.tier || 'c';
+const prixCantine = k => r2(Math.max(0, S.cfg.plein - (S.cfg.aide[tier(k)] || 0)));
 
 let tab = 'pointage', mode = new Date().getHours() < 12 ? 'm' : 's', date = today(), month = today().slice(0,7), editKid = null, cls = '', q = '', long = false, timer = null;
 
@@ -600,7 +232,6 @@ const CL = ['TPS','PS','MS','GS','CP','CE1','CE2','CM1','CM2'];
 const ord = c => { const i = CL.indexOf(c); return i < 0 ? 99 : i; };
 const classes = () => [...new Set(S.kids.map(cn))].sort((a,b) => ord(a) - ord(b));
 
-/* Association des Couleurs Pastel par Classe */
 const getCardColorClass = (c) => {
   const key = String(c).toUpperCase();
   if(key.includes('TPS')) return 'card-tps';
@@ -634,7 +265,8 @@ const showOv = () => {
 const barHtml = () => {
   const day = S.rec[date] || {}, ks = filt();
   const n = ks.filter(k => (day[k.id] || {})[mode]).length;
-  return `<div class="bar ${mode}"><span>${mode==='m'?'☀️ Arrivées du Matin':'🌙 Départs du Soir'}</span><span><b>${n}</b> / ${ks.length} présent${n>1?'s':''}</span></div>`;
+  const lbl = {m:'☀️ Arrivées du Matin', s:'🌙 Départs du Soir', c:'🍽️ Repas à la Cantine'}[mode];
+  return `<div class="bar ${mode}"><span>${lbl}</span><span><b>${n}</b> / ${ks.length} présent${n>1?'s':''}</span></div>`;
 };
 
 function render(){
@@ -661,11 +293,12 @@ function vPointage(){
       <input type="date" id="date" value="${date}" aria-label="Date">
       <button class="btn ${mode==='m'?'alt':'ghost'}" data-mode="m">☀️ Matin</button>
       <button class="btn ${mode==='s'?'alt':'ghost'}" data-mode="s">🌙 Soir</button>
+      <button class="btn ${mode==='c'?'alt':'ghost'}" data-mode="c">🍽️ Cantine</button>
     </div>
     ${searchBox('Rechercher un enfant, une classe…')}
     ${chips()}
   </div>
-  <p class="hint">Touche un enfant pour enregistrer son arrivée/départ. Maintiens appuyé pour modifier l'heure.</p>
+  <p class="hint">${mode==='c' ? 'Touche un enfant pour noter qu’il mange à la cantine.' : 'Touche un enfant pour enregistrer son arrivée/départ. Maintiens appuyé pour modifier l’heure.'}</p>
   <div id="list">${barHtml() + lPointage()}</div>`;
 }
 
@@ -684,12 +317,12 @@ function lPointage(){
     h += `<div class="ch">${esc(c)} <span>${n} / ${g.length} présent${n>1?'s':''}</span></div><div class="grid">` + 
     g.map(k => {
       const t = (day[k.id] || {})[mode];
-      return `<div class="kid ${cardCls} ${t ? (mode === 'm' ? 'checked-m' : 'checked-s') : ''}">
+      return `<div class="kid ${cardCls} ${t ? 'checked-'+mode : ''}">
         <button class="main" data-pt="${k.id}">
           <b>${esc(k.prenom)}</b>
           <small>${esc(k.nom)}</small>
         </button>
-        ${t ? `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${t}</button>` : `<div class="not-pointed">À pointer</div>`}
+        ${t ? (mode === 'c' ? `<div class="tm">🍽️ Au menu</div>` : `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${t}</button>`) : `<div class="not-pointed">À pointer</div>`}
       </div>`;
     }).join('') + '</div>';
   }
@@ -711,8 +344,9 @@ function openKid(id){
 }
 
 function kidForm(){
-  const e = S.kids.find(k => k.id === editKid) || {prenom:'', nom:'', classe:'', famille:''};
+  const e = S.kids.find(k => k.id === editKid) || {prenom:'', nom:'', classe:'', famille:'', tier:'c'};
   const dl = (id, a) => `<datalist id="${id}">${a.map(x => `<option value="${esc(x)}">`).join('')}</datalist>`;
+  const opts = [['c','+1,1k€ · tarif plein'],['b','-1,1k€ · aide'],['a','-1k€ · aide']];
   return `<h2>${editKid ? 'Modifier l’enfant' : 'Ajouter un enfant'}</h2>
   <div class="row">
     <input id="fp" placeholder="Prénom" value="${esc(e.prenom)}">
@@ -722,7 +356,9 @@ function kidForm(){
       ${CL.map(c => `<option ${e.classe===c ? 'selected':''}>${c}</option>`).join('')}
     </select>
     <input id="ff" placeholder="Nom de Famille (Factures)" value="${esc(e.famille)}" list="fams">
+    <select id="ft" aria-label="Tranche cantine de la famille">${opts.map(([v,l]) => `<option value="${v}" ${(e.tier||'c')===v?'selected':''}>Cantine : ${l}</option>`).join('')}</select>
     ${dl('fams', [...new Set(S.kids.map(k => k.famille).filter(Boolean))])}
+    <p class="hint" style="margin:0">La tranche s’applique à tous les enfants de la même famille.</p>
     <button class="btn" data-sk="1" style="width:100%">${editKid ? 'Enregistrer' : 'Ajouter l’enfant'}</button>
     <button class="btn ghost" data-cancel="1" style="width:100%">Annuler</button>
   </div>`;
@@ -743,7 +379,7 @@ function lEnfants(){
     g.map(k => `<div class="item ${cardCls}">
       <div class="item-info">
         <b>${esc(k.prenom)} ${esc(k.nom)}</b>
-        <span class="fam">Famille ${esc(k.famille||'non renseignée')}</span>
+        <span class="fam">Famille ${esc(k.famille||'non renseignée')} · 🍽️ ${TL[tier(k)]}</span>
       </div>
       <div class="item-actions">
         <button class="btn edit-btn sm" data-ed="${k.id}">Modifier</button>
@@ -759,7 +395,8 @@ function calc(kid){
   for(const d of Object.keys(S.rec).filter(d => d.startsWith(month)).sort()){
     const r = S.rec[d][kid.id]; if(!r) continue;
     const m = r.m ? prixMatin(r.m) : 0, s = r.s ? prixSoir(r.s) : 0;
-    if(m || s){ lines.push({d, mt:r.m, m, st:r.s, s}); tot += m + s; }
+    const cOn = !!r.c, c = cOn ? prixCantine(kid) : 0;
+    if(m || s || cOn){ lines.push({d, mt:r.m, m, st:r.s, s, cOn, c}); tot += m + s + c; }
   }
   return {lines, tot: r2(tot)};
 }
@@ -793,10 +430,10 @@ function lFacture(){
     let total = 0, body = '';
     for(const k of fams[f]){
       const c = calc(k); total += c.tot;
-      body += `<h3 style="margin:14px 0 6px;font-size:16px">${esc(k.prenom)} ${esc(k.nom)} <span class="hint">· ${esc(cn(k))}</span></h3>` + 
-      (c.lines.length ? `<div class="scroll"><table><tr><th>Date</th><th class="cm">☀️ Matin</th><th class="cs">🌙 Soir</th><th>Total</th></tr>${
-        c.lines.map(l => `<tr><td>${fd(l.d)}</td><td class="cm">${l.m ? `${l.mt} (${eur(l.m)})` : '—'}</td><td class="cs">${l.s ? `${l.st} (${eur(l.s)})` : '—'}</td><td><b>${eur(r2(l.m+l.s))}</b></td></tr>`).join('')
-      }<tr><th colspan="3">Sous-total ${esc(k.prenom)}</th><th>${eur(c.tot)}</th></tr></table></div>` : `<p class="hint">Aucun pointage ce mois-ci.</p>`);
+      body += `<h3 style="margin:14px 0 6px;font-size:16px">${esc(k.prenom)} ${esc(k.nom)} <span class="hint">· ${esc(cn(k))} · 🍽️ ${TL[tier(k)]}</span></h3>` + 
+      (c.lines.length ? `<div class="scroll"><table><tr><th>Date</th><th class="cm">☀️ Matin</th><th class="cs">🌙 Soir</th><th class="cc">🍽️ Cantine</th><th>Total</th></tr>${
+        c.lines.map(l => `<tr><td>${fd(l.d)}</td><td class="cm">${l.m ? `${l.mt} (${eur(l.m)})` : '—'}</td><td class="cs">${l.s ? `${l.st} (${eur(l.s)})` : '—'}</td><td class="cc">${l.cOn ? eur(l.c) : '—'}</td><td><b>${eur(r2(l.m+l.s+l.c))}</b></td></tr>`).join('')
+      }<tr><th colspan="4">Sous-total ${esc(k.prenom)}</th><th>${eur(c.tot)}</th></tr></table></div>` : `<p class="hint">Aucun pointage ce mois-ci.</p>`);
     }
     return `<details class="fact" data-fam="${esc(f)}"${open}>
       <summary><span class="n">Famille ${esc(f)} <span class="hint">(${fams[f].length} enfant${fams[f].length>1?'s':''})</span></span><span>${eur(r2(total))}</span></summary>
@@ -837,68 +474,44 @@ async function pdfFactures(only){
   const doc = new window.jspdf.jsPDF({unit:'mm', format:'a4'});
   const mois = new Date(month+'-01T12:00').toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
   
-  // Coordonnées exactes (Largeur max du tableau : 180mm)
-  const X = [15, 55, 105, 155], W = [40, 50, 50, 40];
-  
-  // Palette de couleurs nettoyée des émojis
-  const cMatHead = [255, 243, 191], cMatTxt = [180, 83, 9];      // Jaune Matin
-  const cSoirHead = [224, 231, 255], cSoirTxt = [67, 56, 202];    // Indigo Soir
-  const cDefHead = [241, 245, 249];
-  const cMatBg = [254, 252, 232], cSoirBg = [238, 242, 255];
+  // Colonnes : Jour, Matin, Soir, Cantine, Total (largeur 180mm)
+  const X = [15, 45, 85, 125, 160], W = [30, 40, 40, 35, 35];
+  const COL = [
+    {head:[241,245,249], txt:[45,27,78],  bg:null},
+    {head:[255,243,191], txt:[180,83,9],  bg:[254,252,232]},
+    {head:[224,231,255], txt:[67,56,202], bg:[238,242,255]},
+    {head:[209,250,229], txt:[4,120,87],  bg:[236,253,245]},
+    {head:[241,245,249], txt:[45,27,78],  bg:null}
+  ];
 
-  // Tracé pur des lignes du tableau (Aucun émoji corrompu)
   const drawRow = (y, vals, isHeader = false, isSubtotal = false) => {
     const h = isHeader ? 8 : 7;
-    
-    if(isHeader) {
-      doc.setFillColor(...cDefHead);
-      doc.rect(X[0], y, W[0], h, 'F');
-      doc.rect(X[3], y, W[3], h, 'F');
-      doc.setFillColor(...cMatHead);
-      doc.rect(X[1], y, W[1], h, 'F');
-      doc.setFillColor(...cSoirHead);
-      doc.rect(X[2], y, W[2], h, 'F');
-      
-      doc.setDrawColor(220, 220, 230); doc.setLineWidth(0.1);
-      doc.line(X[0], y, X[3]+W[3], y);
-      doc.line(X[0], y+h, X[3]+W[3], y+h);
-    } else if(isSubtotal) {
+    if(isSubtotal){
       doc.setFillColor(248, 247, 252);
       doc.roundedRect(15, y, 180, h, 1.5, 1.5, 'F');
+    } else if(isHeader){
+      COL.forEach((c, i) => { doc.setFillColor(...c.head); doc.rect(X[i], y, W[i], h, 'F'); });
+      doc.setDrawColor(220, 220, 230); doc.setLineWidth(0.1);
+      doc.line(15, y, 195, y);
+      doc.line(15, y+h, 195, y+h);
     } else {
-      if(vals[1] !== '-') { doc.setFillColor(...cMatBg); doc.rect(X[1], y, W[1], h, 'F'); }
-      if(vals[2] !== '-') { doc.setFillColor(...cSoirBg); doc.rect(X[2], y, W[2], h, 'F'); }
-      
+      COL.forEach((c, i) => { if(c.bg && vals[i] !== '-'){ doc.setFillColor(...c.bg); doc.rect(X[i], y, W[i], h, 'F'); } });
       doc.setDrawColor(235, 235, 245); doc.setLineWidth(0.15);
       doc.line(15, y+h, 195, y+h);
     }
-
     doc.setFont('helvetica', isHeader || isSubtotal ? 'bold' : 'normal');
     doc.setFontSize(isHeader ? 10 : 9.5);
-
-    // Colonne 0 : Date / Jour
-    doc.setTextColor(45, 27, 78);
-    doc.text(String(vals[0]), X[0] + 3, y + (h/2) + 1.5);
-    
-    // Colonne 1 : Matin (Sans émojis)
-    doc.setTextColor(isHeader ? cMatTxt[0] : (vals[1] !== '-' ? 180 : 140), isHeader ? cMatTxt[1] : (vals[1] !== '-' ? 83 : 140), isHeader ? cMatTxt[2] : (vals[1] !== '-' ? 9 : 140));
-    doc.text(String(vals[1]), X[1] + 3, y + (h/2) + 1.5);
-    
-    // Colonne 2 : Soir (Sans émojis)
-    doc.setTextColor(isHeader ? cSoirTxt[0] : (vals[2] !== '-' ? 67 : 140), isHeader ? cSoirTxt[1] : (vals[2] !== '-' ? 56 : 140), isHeader ? cSoirTxt[2] : (vals[2] !== '-' ? 202 : 140));
-    doc.text(String(vals[2]), X[2] + 3, y + (h/2) + 1.5);
-
-    // Colonne 3 : Total
-    doc.setTextColor(45, 27, 78);
-    if(isHeader || isSubtotal) doc.setFont('helvetica', 'bold');
-    doc.text(String(vals[3]), X[3] + 3, y + (h/2) + 1.5);
+    vals.forEach((v, i) => {
+      const dim = !isHeader && !isSubtotal && v === '-';
+      doc.setTextColor(...(dim ? [140,140,140] : COL[i].txt));
+      doc.text(String(v), X[i] + 3, y + (h/2) + 1.5);
+    });
   };
 
   names.forEach((f, i) => {
     if(i) doc.addPage();
     let y = 16, total = 0;
     
-    // Bandeau d'en-tête Violet
     doc.setFillColor(108, 92, 231);
     doc.roundedRect(15, y, 180, 22, 4, 4, 'F');
     
@@ -919,7 +532,6 @@ async function pdfFactures(only){
       
       if(y + 45 > 275){ doc.addPage(); y = 20; }
       
-      // En-tête Enfant : Prénom Nom (Classe)
       doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(45, 27, 78);
       doc.text(k.prenom + ' ' + k.nom + ' (' + cn(k) + ')', 15, y);
       
@@ -927,35 +539,31 @@ async function pdfFactures(only){
       
       if(!c.lines.length){
         doc.setFont('helvetica', 'italic'); doc.setFontSize(9.5); doc.setTextColor(130, 130, 150);
-        doc.text('Aucune garderie facturée ce mois-ci.', 15, y + 4);
+        doc.text('Aucune garderie ni cantine facturée ce mois-ci.', 15, y + 4);
         y += 16;
         continue;
       }
       
-      // En-tête du tableau (Intitulés propres sans émoji)
-      drawRow(y, ['Jour', 'Matin', 'Soir', 'Total'], true);
+      drawRow(y, ['Jour', 'Matin', 'Soir', 'Cantine', 'Total'], true);
       y += 8;
       
       for(const l of c.lines){
         if(y + 8 > 275){
           doc.addPage(); y = 20;
-          drawRow(y, ['Jour', 'Matin', 'Soir', 'Total'], true);
+          drawRow(y, ['Jour', 'Matin', 'Soir', 'Cantine', 'Total'], true);
           y += 8;
         }
         const mStr = l.m ? `${l.mt} (${eur(l.m)})` : '-';
         const sStr = l.s ? `${l.st} (${eur(l.s)})` : '-';
-        drawRow(y, [fd(l.d), mStr, sStr, eur(r2(l.m + l.s))]);
+        const cStr = l.cOn ? eur(l.c) : '-';
+        drawRow(y, [fd(l.d), mStr, sStr, cStr, eur(r2(l.m + l.s + l.c))]);
         y += 7;
       }
       
-      // Ligne du sous-total
-      drawRow(y, ['Sous-total ' + k.prenom, '', '', eur(c.tot)], false, true);
-      
-      // MARGE DE SÉCURITÉ VERTICALE : Empêche l'enfant suivant de coller
+      drawRow(y, ['Sous-total ' + k.prenom, '', '', '', eur(c.tot)], false, true);
       y += 16;
     }
     
-    // Encadré Vert Menthe : Total à Payer
     if(y + 20 > 275){ doc.addPage(); y = 20; }
     doc.setFillColor(0, 184, 148);
     doc.roundedRect(15, y, 180, 14, 3, 3, 'F');
@@ -1026,10 +634,41 @@ async function savePin(){
   try { localStorage.setItem('garderie_pin', await sha(a)); closeEdit(); toast('PIN mis à jour'); } catch(x){ e.textContent = 'Erreur d’enregistrement.'; }
 }
 
+/* Paramètres : tarifs garderie + cantine (protégés par le PIN) */
+function openSettings(){
+  if(!unlocked){ tab = 'enfants'; q = ''; cls = ''; render(); toast('Déverrouille pour modifier les tarifs'); return; }
+  const c = S.cfg, v = n => String(n).replace('.', ',');
+  const f = (id, l, x) => `<label class="setf"><span>${l}</span><input id="${id}" inputmode="decimal" value="${v(x)}"></label>`;
+  $('#ovb').innerHTML = `<h2>⚙️ Tarifs</h2>
+  <h3 class="sh">☀️ Garderie du matin (€)</h3>
+  ${f('cm0','Arrivée jusqu’à 7h30',c.mat[0])}${f('cm1','7h30 – 8h00',c.mat[1])}${f('cm2','8h00 – 8h30',c.mat[2])}
+  <h3 class="sh">🌙 Garderie du soir (€)</h3>
+  ${f('cs0','16h40 – 17h10',c.soir[0])}${f('cs1','17h10 – 17h40',c.soir[1])}${f('cs2','17h40 – 18h10',c.soir[2])}${f('cs3','18h10 – 18h40',c.soir[3])}${f('cs4','Après 18h40',c.soir[4])}
+  <h3 class="sh">🍽️ Cantine (€)</h3>
+  ${f('cp','Tarif plein (+1,1k€)',c.plein)}
+  ${f('ca','Aide famille -1k€ (réduction)',c.aide.a)}
+  ${f('cb','Aide famille -1,1k€ (réduction)',c.aide.b)}
+  <p class="hint" style="margin-top:6px">Prix payé = tarif plein − aide. Les changements s’appliquent aussi aux mois non clôturés.</p>
+  <div class="row">
+    <button class="btn" data-savecfg="1" style="width:100%">Enregistrer les tarifs</button>
+    <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
+  </div>`;
+  showOv();
+}
+
+function saveSettings(){
+  const g = id => parseFloat($('#' + id).value.replace(',', '.'));
+  const mat = [0,1,2].map(i => g('cm'+i)), soir = [0,1,2,3,4].map(i => g('cs'+i));
+  const plein = g('cp'), aide = {a:g('ca'), b:g('cb'), c:0};
+  if([...mat, ...soir, plein, aide.a, aide.b].some(x => isNaN(x) || x < 0)){ toast('Valeur invalide'); return; }
+  S.cfg = {mat, soir, plein, aide};
+  save(); closeEdit(); toast('Tarifs enregistrés'); render();
+}
+
 const monthsData = () => {
   const m = {};
   for(const d in S.rec){
-    if(Object.values(S.rec[d]).some(x => x.m || x.s)){
+    if(Object.values(S.rec[d]).some(x => x.m || x.s || x.c)){
       const k = d.slice(0,7); m[k] = (m[k] || 0) + 1;
     }
   }
@@ -1087,7 +726,7 @@ document.addEventListener('click', e => {
     if(long){ long = false; return; }
     const t = (S.rec[date] || {})[d.pt];
     if(t && t[mode]){ setT(d.pt, ''); toast('Pointage annulé'); }
-    else { setT(d.pt, nowHM()); toast('Pointé à ' + nowHM()); }
+    else { setT(d.pt, nowHM()); toast(mode === 'c' ? 'Cantine notée' : 'Pointé à ' + nowHM()); }
     relist();
     const el = document.querySelector('[data-pt="'+d.pt+'"]');
     if(el) anim(el.parentElement, [{transform:'scale(0.92)'}, {transform:'scale(1.05)'}, {transform:'scale(1)'}], {duration:250});
@@ -1096,6 +735,8 @@ document.addEventListener('click', e => {
   else if(d.msave){ const t = $('#mt').value; if(!t){ toast('Saisis une heure'); return; } setT(d.msave, t); closeEdit(); toast('Heure enregistrée'); relist(); }
   else if(d.mdel){ setT(d.mdel, ''); closeEdit(); relist(); }
   else if(d.mclose) closeEdit();
+  else if(d.gear) openSettings();
+  else if(d.savecfg) saveSettings();
   else if(d.unlock) doUnlock();
   else if(d.lock){ unlocked = false; render(); }
   else if(d.chpin) openPin();
@@ -1103,10 +744,11 @@ document.addEventListener('click', e => {
   else if(d.reset) openReset();
   else if(d.doreset) doReset();
   else if(d.sk){
-    const p = $('#fp').value.trim(), n = $('#fn').value.trim(), c = $('#fc').value.trim(), f = $('#ff').value.trim();
+    const p = $('#fp').value.trim(), n = $('#fn').value.trim(), c = $('#fc').value.trim(), f = $('#ff').value.trim(), t = $('#ft').value;
     if(!p || !n){ toast('Prénom et nom requis'); return; }
-    if(editKid){ Object.assign(S.kids.find(k => k.id === editKid), {prenom:p, nom:n, classe:c, famille:f}); editKid = null; }
-    else S.kids.push({id:'k'+Date.now(), prenom:p, nom:n, classe:c, famille:f});
+    if(editKid){ Object.assign(S.kids.find(k => k.id === editKid), {prenom:p, nom:n, classe:c, famille:f, tier:t}); editKid = null; }
+    else S.kids.push({id:'k'+Date.now(), prenom:p, nom:n, classe:c, famille:f, tier:t});
+    if(f) S.kids.forEach(x => { if(x.famille === f) x.tier = t; });
     save(); closeEdit(); toast('Enregistré'); render();
   }
   else if(d.ed) openKid(d.ed);
@@ -1127,11 +769,13 @@ document.addEventListener('input', e => { lastAct = Date.now(); if(e.target.id =
 document.addEventListener('change', e => {
   if(e.target.id === 'date' && e.target.value){ date = e.target.value; render(); }
   if(e.target.id === 'month' && e.target.value){ month = e.target.value; render(); }
+  if(e.target.id === 'ff'){ const m = S.kids.find(k => k.famille === e.target.value.trim() && k.id !== editKid); if(m && $('#ft')) $('#ft').value = tier(m); }
 });
 
 document.addEventListener('pointerdown', e => {
   const b = e.target.closest('.main[data-pt]'); if(!b) return;
   long = false;
+  if(mode === 'c') return;
   timer = setTimeout(() => { long = true; openEdit(b.dataset.pt); }, 500);
 });
 ['pointerup','pointerleave','pointercancel','scroll'].forEach(ev => document.addEventListener(ev, () => clearTimeout(timer), true));
