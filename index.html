@@ -142,8 +142,23 @@ th.cc, td.cc { background: #E8FAF4; }
 .kid, .btn, .chip, nav button { transition: transform 0.15s ease, background-color 0.25s ease, box-shadow 0.2s ease; }
 .btn:active, .chip:active, nav button:active { transform: scale(0.96); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-#app.enter .kid, #app.enter .item, #app.enter details.fact, #app.enter .ch { animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+#app.enter .kid, #app.enter .item, #app.enter details.fact, #app.enter .ch { animation: fadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; animation-delay: calc(var(--i, 0) * 30ms); }
 #toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--text-dark); color: #FFFFFF; padding: 10px 20px; border-radius: 999px; display: none; font-weight: 800; font-family: 'Baloo 2', cursive; z-index: 200; box-shadow: var(--shadow-lg); }
+/* Alignement des icônes + animations */
+nav button span { display: inline-flex; align-items: center; gap: 6px; }
+nav button svg { display: block; flex-shrink: 0; transform: translateY(2px); }
+header { animation: dropIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+nav button { animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+nav button:nth-child(2) { animation-delay: 0.06s; }
+nav button:nth-child(3) { animation-delay: 0.12s; }
+@keyframes dropIn { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: none; } }
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes ring { from { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.35); } to { box-shadow: 0 0 0 12px rgba(108, 92, 231, 0); } }
+.kid .tm.pop { animation: popIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.kid.flash { animation: ring 0.55s ease-out; }
+details.fact[open] .fb { animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.bar, .modes .btn, .chip, .gear { transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 @media print {
   body { background: #fff; }
   header, nav, .noprint, #toast, #ov { display: none !important; }
@@ -277,7 +292,7 @@ const barHtml = () => {
   return `<div class="bar ${mode}"><span>${lbl}</span><span><b>${n}</b> / ${ks.length} présent${n>1?'s':''}</span></div>`;
 };
 
-function render(){
+function render(a){
   document.querySelectorAll('#nav button').forEach(b => b.setAttribute('aria-selected', b.dataset.t === tab));
   const app = $('#app');
   app.innerHTML = (tab !== 'pointage' && !unlocked) ? vLock() : (tab === 'pointage' ? vPointage() : (tab === 'enfants' ? vEnfants() : vFacture()));
@@ -286,9 +301,12 @@ function render(){
     app.insertAdjacentHTML('afterbegin', '<div class="row noprint" style="justify-content:flex-end"><button class="btn ghost sm" data-chpin="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Code PIN</button><button class="btn alt sm" data-lock="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Verrouiller</button></div>');
   }
   
-  app.classList.add('enter');
-  clearTimeout(render.t);
-  render.t = setTimeout(() => app.classList.remove('enter'), 500);
+  if(a){
+    app.querySelectorAll('.kid, .item, details.fact, .ch').forEach((el, i) => el.style.setProperty('--i', Math.min(i, 14)));
+    app.classList.add('enter');
+    clearTimeout(render.t);
+    render.t = setTimeout(() => app.classList.remove('enter'), 1000);
+  }
 }
 
 const lists = { pointage: () => barHtml() + lPointage(), enfants: () => lEnfants(), facture: () => lFacture() };
@@ -332,7 +350,7 @@ function lPointage(){
           <b>${esc(k.prenom)}</b>
           <small>${esc(k.nom)}</small>
         </button>
-        ${t ? (mode === 'c' ? `<div class="tm">🍽️</div>` : `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${t}</button>`) : `<div class="not-pointed">À pointer</div>`}
+        ${t ? (mode === 'c' ? `<div class="tm">🍽️</div>` : `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${mode === 'm' ? '☀️ '+t+' ☀️' : '🌙 '+t+' 🌙'}</button>`) : `<div class="not-pointed">À pointer</div>`}
       </div>`;
     }).join('') + '</div>';
   }
@@ -417,8 +435,10 @@ function vFacture(){
   return `<h2 class="noprint">Facturation Périscolaire</h2>
   <div class="row noprint">
     <input type="month" id="month" value="${month}" aria-label="Mois">
-    <button class="btn" data-print="all"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export PDF Tout</button>
-    <button class="btn ghost" data-reset="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Clôturer un mois…</button>
+  </div>
+  <div class="modes noprint">
+    <button class="btn" data-print="all"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exporter tout</button>
+    <button class="btn ghost" data-reset="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Clôturer un mois</button>
   </div>
   ${searchBox('Rechercher une famille, un enfant…')}
   ${chips()}
@@ -618,9 +638,9 @@ async function doUnlock(){
   if(!st){
     if($('#pin2').value.trim() !== p){ err('Les codes ne correspondent pas.'); return; }
     try { localStorage.setItem('garderie_pin', await sha(p)); } catch(e){ err('Erreur de sauvegarde.'); return; }
-    unlocked = true; unlockExp = Date.now() + 300000; lastAct = Date.now(); toast('Code PIN configuré'); render(); return;
+    unlocked = true; unlockExp = Date.now() + 300000; lastAct = Date.now(); toast('Code PIN configuré'); render(true); return;
   }
-  if(await sha(p) === st){ unlocked = true; unlockExp = Date.now() + 300000; lastAct = Date.now(); render(); }
+  if(await sha(p) === st){ unlocked = true; unlockExp = Date.now() + 300000; lastAct = Date.now(); render(true); }
   else { err('Code PIN incorrect.'); $('#pin').value = ''; }
 }
 
@@ -731,7 +751,7 @@ document.addEventListener('click', e => {
   const b = e.target.closest('button'); if(!b) return;
   const d = b.dataset;
   
-  if(d.t !== undefined){ tab = d.t; q = ''; cls = ''; render(); }
+  if(d.t !== undefined){ tab = d.t; q = ''; cls = ''; render(true); }
   else if(d.cls !== undefined){ cls = d.cls; render(); }
   else if(d.mode){ mode = d.mode; render(); }
   else if(d.pt){
@@ -740,7 +760,8 @@ document.addEventListener('click', e => {
     if(t && t[mode]){ setT(d.pt, ''); toast('Pointage annulé'); }
     else { setT(d.pt, nowHM()); toast(mode === 'c' ? 'Cantine notée' : 'Pointé à ' + nowHM()); }
     relist();
-    const el = document.querySelector('[data-pt="'+d.pt+'"]');
+    const kc = document.querySelector('[data-pt="'+d.pt+'"]')?.parentElement;
+    if(kc){ const tm = kc.querySelector('.tm'); if(tm) tm.classList.add('pop'); kc.classList.add('flash'); }
   }
   else if(d.edt) openEdit(d.edt);
   else if(d.msave){ const t = $('#mt').value; if(!t){ toast('Saisis une heure'); return; } setT(d.msave, t); closeEdit(); toast('Heure enregistrée'); relist(); }
@@ -749,7 +770,7 @@ document.addEventListener('click', e => {
   else if(d.gear) openSettings();
   else if(d.savecfg) saveSettings();
   else if(d.unlock) doUnlock();
-  else if(d.lock){ unlocked = false; render(); }
+  else if(d.lock){ unlocked = false; render(true); }
   else if(d.chpin) openPin();
   else if(d.savepin) savePin();
   else if(d.reset) openReset();
