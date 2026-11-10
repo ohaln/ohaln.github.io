@@ -89,18 +89,18 @@ input:focus, select:focus { outline: none; border-color: var(--tab-pointage); bo
 .card-def { background: var(--cls-def-bg) !important; color: var(--cls-def-txt); border: 1.5px solid var(--cls-def-border) !important; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 12px; }
 .kid { display: flex; flex-direction: column; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
-.kid.checked-m { box-shadow: 0 8px 18px rgba(253, 203, 110, 0.4); transform: translateY(-2px); }
-.kid.checked-s { box-shadow: 0 8px 18px rgba(116, 185, 255, 0.4); transform: translateY(-2px); }
-.kid.checked-c { box-shadow: 0 8px 18px rgba(0, 184, 148, 0.35); transform: translateY(-2px); }
+.kid.checked-m { box-shadow: 0 8px 18px rgba(253, 203, 110, 0.4); }
+.kid.checked-s { box-shadow: 0 8px 18px rgba(116, 185, 255, 0.4); }
+.kid.checked-c { box-shadow: 0 8px 18px rgba(0, 184, 148, 0.35); }
 .kid .main { flex: 1; border: 0; background: transparent; color: inherit; font-family: inherit; text-align: left; padding: 14px 14px 8px; min-height: 60px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 .kid .main b { font-size: 18px; font-weight: 800; font-family: 'Baloo 2', cursive; line-height: 1.1; }
 .kid .main small { font-size: 13px; font-weight: 700; opacity: 0.75; }
-.kid .tm { margin: 4px 10px 10px; align-self: stretch; border: 0; border-radius: 12px; padding: 6px 10px; font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer; min-height: 34px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+.kid .tm { margin: 4px 10px 10px; align-self: stretch; border: 0; border-radius: 12px; padding: 6px 10px; font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer; height: 34px; display: flex; align-items: center; justify-content: center; gap: 4px; }
 .kid div.tm { cursor: default; }
 .checked-m .tm { background: #FFEAA7; color: #D63031; }
 .checked-s .tm { background: #74B9FF; color: #0984E3; }
 .checked-c .tm { background: #A7F3D0; color: #047857; }
-.kid .not-pointed { margin: 0 12px 10px; font-size: 12px; font-weight: 700; opacity: 0.5; }
+.kid .not-pointed { margin: 4px 10px 10px; height: 34px; padding: 6px 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; opacity: 0.5; }
 .list { display: flex; flex-direction: column; gap: 10px; }
 .item { display: flex; align-items: center; gap: 14px; border-radius: var(--radius-lg); padding: 14px 16px; box-shadow: var(--shadow-sm); }
 .item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
@@ -140,7 +140,7 @@ th.cc, td.cc { background: #E8FAF4; }
 .lockic { font-size: 52px; line-height: 1; }
 .err { margin: 0; min-height: 1.3em; font-weight: 700; color: #FF7675; }
 .kid, .btn, .chip, nav button { transition: transform 0.15s ease, background-color 0.25s ease, box-shadow 0.2s ease; }
-.kid:active, .btn:active, .chip:active, nav button:active { transform: scale(0.96); }
+.btn:active, .chip:active, nav button:active { transform: scale(0.96); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 #app.enter .kid, #app.enter .item, #app.enter details.fact, #app.enter .ch { animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
 #toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--text-dark); color: #FFFFFF; padding: 10px 20px; border-radius: 999px; display: none; font-weight: 800; font-family: 'Baloo 2', cursive; z-index: 200; box-shadow: var(--shadow-lg); }
@@ -178,9 +178,9 @@ th.cc, td.cc { background: #E8FAF4; }
 </header>
 
 <nav role="tablist" id="nav">
-  <button data-t="pointage" aria-selected="true"><span>☀️ Pointage</span></button>
-  <button data-t="enfants"><span>🔒 Enfants</span></button>
-  <button data-t="facture"><span>🔒 Factures</span></button>
+  <button data-t="pointage" aria-selected="true"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Pointage</span></button>
+  <button data-t="enfants"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Enfants</span></button>
+  <button data-t="facture"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Factures</span></button>
 </nav>
 
 <main>
@@ -201,7 +201,7 @@ try {
   if(r) S = JSON.parse(r);
 } catch(e){}
 
-/* Tarifs par défaut (modifiables via ⚙️) */
+/* Tarifs par défaut (modifiables via les paramètres) */
 const DEF = { mat:[2.7,1.8,0.9], soir:[0.9,1.8,2.7,3.9,5.1], plein:4.85, aide:{a:1.25,b:1,c:0} };
 S.kids = S.kids || []; S.rec = S.rec || {};
 S.cfg = Object.assign(JSON.parse(JSON.stringify(DEF)), S.cfg || {});
@@ -273,7 +273,7 @@ const showOv = () => {
 const barHtml = () => {
   const day = S.rec[date] || {}, ks = filt();
   const n = ks.filter(k => (day[k.id] || {})[mode]).length;
-  const lbl = {m:'☀️ Arrivées du Matin', s:'🌙 Départs du Soir', c:'🍽️ Repas à la Cantine'}[mode];
+  const lbl = {m:'Arrivées du Matin', s:'Départs du Soir', c:'Repas à la Cantine'}[mode];
   return `<div class="bar ${mode}"><span>${lbl}</span><span><b>${n}</b> / ${ks.length} présent${n>1?'s':''}</span></div>`;
 };
 
@@ -283,7 +283,7 @@ function render(){
   app.innerHTML = (tab !== 'pointage' && !unlocked) ? vLock() : (tab === 'pointage' ? vPointage() : (tab === 'enfants' ? vEnfants() : vFacture()));
   
   if(tab !== 'pointage' && unlocked) {
-    app.insertAdjacentHTML('afterbegin', '<div class="row noprint" style="justify-content:flex-end"><button class="btn ghost sm" data-chpin="1">🔑 Code PIN</button><button class="btn alt sm" data-lock="1">🔒 Verrouiller</button></div>');
+    app.insertAdjacentHTML('afterbegin', '<div class="row noprint" style="justify-content:flex-end"><button class="btn ghost sm" data-chpin="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Code PIN</button><button class="btn alt sm" data-lock="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Verrouiller</button></div>');
   }
   
   app.classList.add('enter');
@@ -332,7 +332,7 @@ function lPointage(){
           <b>${esc(k.prenom)}</b>
           <small>${esc(k.nom)}</small>
         </button>
-        ${t ? (mode === 'c' ? `<div class="tm">🍽️ Au menu</div>` : `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${t}</button>`) : `<div class="not-pointed">À pointer</div>`}
+        ${t ? (mode === 'c' ? `<div class="tm">🍽️</div>` : `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${t}</button>`) : `<div class="not-pointed">À pointer</div>`}
       </div>`;
     }).join('') + '</div>';
   }
@@ -389,7 +389,7 @@ function lEnfants(){
     g.map(k => `<div class="item ${cardCls}">
       <div class="item-info">
         <b>${esc(k.prenom)} ${esc(k.nom)}</b>
-        <span class="fam">Famille ${esc(k.famille||'non renseignée')} · 🍽️ ${TL[tier(k)]}</span>
+        <span class="fam">Famille ${esc(k.famille||'non renseignée')} · Cantine ${TL[tier(k)]}</span>
       </div>
       <div class="item-actions">
         <button class="btn edit-btn sm" data-ed="${k.id}">Modifier</button>
@@ -417,7 +417,7 @@ function vFacture(){
   return `<h2 class="noprint">Facturation Périscolaire</h2>
   <div class="row noprint">
     <input type="month" id="month" value="${month}" aria-label="Mois">
-    <button class="btn" data-print="all">📄 Export PDF Tout</button>
+    <button class="btn" data-print="all"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export PDF Tout</button>
     <button class="btn ghost" data-reset="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Clôturer un mois…</button>
   </div>
   ${searchBox('Rechercher une famille, un enfant…')}
@@ -440,8 +440,8 @@ function lFacture(){
     let total = 0, body = '';
     for(const k of fams[f]){
       const c = calc(k); total += c.tot;
-      body += `<h3 style="margin:14px 0 6px;font-size:16px">${esc(k.prenom)} ${esc(k.nom)} <span class="hint">· ${esc(cn(k))} · 🍽️ ${TL[tier(k)]}</span></h3>` + 
-      (c.lines.length ? `<div class="scroll"><table><tr><th>Date</th><th class="cm">☀️ Matin</th><th class="cs">🌙 Soir</th><th class="cc">🍽️ Cantine</th><th>Total</th></tr>${
+      body += `<h3 style="margin:14px 0 6px;font-size:16px">${esc(k.prenom)} ${esc(k.nom)} <span class="hint">· ${esc(cn(k))} · Cantine ${TL[tier(k)]}</span></h3>` + 
+      (c.lines.length ? `<div class="scroll"><table><tr><th>Date</th><th class="cm">Matin</th><th class="cs">Soir</th><th class="cc">Cantine</th><th>Total</th></tr>${
         c.lines.map(l => `<tr><td>${fd(l.d)}</td><td class="cm">${l.m ? `${l.mt} (${eur(l.m)})` : '—'}</td><td class="cs">${l.s ? `${l.st} (${eur(l.s)})` : '—'}</td><td class="cc">${l.cOn ? eur(l.c) : '—'}</td><td><b>${eur(r2(l.m+l.s+l.c))}</b></td></tr>`).join('')
       }<tr><th colspan="4">Sous-total ${esc(k.prenom)}</th><th>${eur(c.tot)}</th></tr></table></div>` : `<p class="hint">Aucun pointage ce mois-ci.</p>`);
     }
@@ -452,7 +452,7 @@ function lFacture(){
         ${body}
         <p class="tot">Total à payer : ${eur(r2(total))}</p>
         <div class="noprint" style="margin-top:12px">
-          <button class="btn alt sm" data-print="1">📥 Télécharger la Facture PDF</button>
+          <button class="btn alt sm" data-print="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Télécharger la Facture PDF</button>
         </div>
       </div>
     </details>`;
@@ -587,7 +587,8 @@ async function pdfFactures(only){
   return true;
 }
 
-let unlocked = false, lastAct = Date.now();
+let unlocked = false, unlockExp = 0, lastAct = Date.now();
+function checkLock(){ if(unlocked && Date.now() > unlockExp){ unlocked = false; closeEdit(); if(tab !== 'pointage') render(); } }
 const getPin = () => { try { return localStorage.getItem('garderie_pin'); } catch(e){ return null; } };
 const sha = async s => {
   try {
@@ -599,9 +600,9 @@ const sha = async s => {
 function vLock(){
   const has = !!getPin();
   return `<div class="lock">
-    <div class="lockic">🔒</div>
+    <div class="lockic" style="color:var(--text-muted)"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
     <h2>Espace Direction</h2>
-    <p class="hint">${has ? 'Saisis ton code PIN pour accéder à cette section.' : 'Crée un code PIN à 4 ou 6 chiffres pour protéger la gestion des enfants et factures.'}</p>
+    <p class="hint">${has ? 'Saisis ton code PIN (valable 5 minutes).' : 'Crée un code PIN à 4 ou 6 chiffres pour protéger la gestion des enfants et factures.'}</p>
     <input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="Code PIN" aria-label="Code PIN">
     ${has ? '' : '<input id="pin2" type="password" inputmode="numeric" maxlength="6" placeholder="Confirme le PIN">'}
     <p class="err" id="perr" role="alert"></p>
@@ -617,9 +618,9 @@ async function doUnlock(){
   if(!st){
     if($('#pin2').value.trim() !== p){ err('Les codes ne correspondent pas.'); return; }
     try { localStorage.setItem('garderie_pin', await sha(p)); } catch(e){ err('Erreur de sauvegarde.'); return; }
-    unlocked = true; lastAct = Date.now(); toast('Code PIN configuré'); render(); return;
+    unlocked = true; unlockExp = Date.now() + 300000; lastAct = Date.now(); toast('Code PIN configuré'); render(); return;
   }
-  if(await sha(p) === st){ unlocked = true; lastAct = Date.now(); render(); }
+  if(await sha(p) === st){ unlocked = true; unlockExp = Date.now() + 300000; lastAct = Date.now(); render(); }
   else { err('Code PIN incorrect.'); $('#pin').value = ''; }
 }
 
@@ -650,11 +651,11 @@ function openSettings(){
   const c = S.cfg, v = n => String(n).replace('.', ',');
   const f = (id, l, x) => `<label class="setf"><span>${l}</span><input id="${id}" inputmode="decimal" value="${v(x)}"></label>`;
   $('#ovb').innerHTML = `<h2>Tarifs</h2>
-  <h3 class="sh">☀️ Garderie du matin (€)</h3>
+  <h3 class="sh">Garderie du matin (€)</h3>
   ${f('cm0','Arrivée jusqu’à 7h30',c.mat[0])}${f('cm1','7h30 – 8h00',c.mat[1])}${f('cm2','8h00 – 8h30',c.mat[2])}
-  <h3 class="sh">🌙 Garderie du soir (€)</h3>
+  <h3 class="sh">Garderie du soir (€)</h3>
   ${f('cs0','16h40 – 17h10',c.soir[0])}${f('cs1','17h10 – 17h40',c.soir[1])}${f('cs2','17h40 – 18h10',c.soir[2])}${f('cs3','18h10 – 18h40',c.soir[3])}${f('cs4','Après 18h40',c.soir[4])}
-  <h3 class="sh">🍽️ Cantine (€)</h3>
+  <h3 class="sh">Cantine (€)</h3>
   ${f('cp','Tarif plein (+1,1k€)',c.plein)}
   ${f('ca','Aide famille -1k€ (réduction)',c.aide.a)}
   ${f('cb','Aide famille -1,1k€ (réduction)',c.aide.b)}
@@ -667,6 +668,7 @@ function openSettings(){
 }
 
 function saveSettings(){
+  if(!unlocked){ closeEdit(); return; }
   const g = id => parseFloat($('#' + id).value.replace(',', '.'));
   const mat = [0,1,2].map(i => g('cm'+i)), soir = [0,1,2,3,4].map(i => g('cs'+i));
   const plein = g('cp'), aide = {a:g('ca'), b:g('cb'), c:0};
@@ -725,11 +727,11 @@ const closeEdit = () => { $('#ov').style.display = 'none'; };
 const setT = (id, t) => { const day = S.rec[date] = S.rec[date] || {}; const r = day[id] = day[id] || {}; if(t) r[mode] = t; else delete r[mode]; save(); };
 
 document.addEventListener('click', e => {
-  lastAct = Date.now();
+  lastAct = Date.now(); checkLock();
   const b = e.target.closest('button'); if(!b) return;
   const d = b.dataset;
   
-  if(d.t !== undefined){ tab = d.t; q = ''; cls = ''; if(tab === 'pointage') unlocked = false; render(); }
+  if(d.t !== undefined){ tab = d.t; q = ''; cls = ''; render(); }
   else if(d.cls !== undefined){ cls = d.cls; render(); }
   else if(d.mode){ mode = d.mode; render(); }
   else if(d.pt){
@@ -739,7 +741,6 @@ document.addEventListener('click', e => {
     else { setT(d.pt, nowHM()); toast(mode === 'c' ? 'Cantine notée' : 'Pointé à ' + nowHM()); }
     relist();
     const el = document.querySelector('[data-pt="'+d.pt+'"]');
-    if(el) anim(el.parentElement, [{transform:'scale(0.92)'}, {transform:'scale(1.05)'}, {transform:'scale(1)'}], {duration:250});
   }
   else if(d.edt) openEdit(d.edt);
   else if(d.msave){ const t = $('#mt').value; if(!t){ toast('Saisis une heure'); return; } setT(d.msave, t); closeEdit(); toast('Heure enregistrée'); relist(); }
@@ -795,9 +796,7 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Enter' && (e.target.id === 'pin' || e.target.id === 'pin2')) doUnlock();
 });
 
-setInterval(() => {
-  if(unlocked && tab !== 'pointage' && Date.now() - lastAct > 300000){ unlocked = false; closeEdit(); render(); }
-}, 15000);
+setInterval(checkLock, 5000);
 
 render();
 </script>
