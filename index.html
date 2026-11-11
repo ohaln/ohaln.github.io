@@ -76,6 +76,7 @@ h2 { font-family: 'Baloo 2', cursive; margin: 0 0 12px; font-size: 24px; font-we
 .btn.ghost { background: #EBE5F5; color: var(--text-dark); box-shadow: none; }
 .btn.edit-btn { background: #E0E7FF; color: #4338CA; border: 1px solid #C7D2FE; box-shadow: none; }
 .btn.danger { background: #FFE4E6; color: #E11D48; border: 1px solid #FECDD3; box-shadow: none; }
+.btn.del { background: #E11D48; color: #FFFFFF; box-shadow: none; }
 .btn.sm { min-height: 38px; padding: 6px 14px; font-size: 14px; border-radius: 12px; }
 input, select { font-size: 16px; font-weight: 700; font-family: inherit; padding: 10px 14px; border-radius: var(--radius-md); border: 2px solid var(--border-light); background: #FFFFFF; color: var(--text-dark); min-height: 46px; transition: all 0.2s ease; }
 input:focus, select:focus { outline: none; border-color: var(--tab-pointage); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15); }
@@ -207,7 +208,7 @@ details.fact[open] .fb { animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
 <nav role="tablist" id="nav">
   <button data-t="pointage" aria-selected="true"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Pointage</span></button>
   <button data-t="enfants"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Enfants</span></button>
-  <button data-t="facture"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Factures</span></button>
+  <button data-t="facture"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Relevés</span></button>
 </nav>
 
 <main>
@@ -215,6 +216,7 @@ details.fact[open] .fb { animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
 </main>
 
 <div id="ov"><div class="box" id="ovb"></div></div>
+<input type="file" id="imp" accept=".csv,.txt,text/csv,text/plain" hidden>
 <div id="toast" role="status"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -444,13 +446,14 @@ function calc(kid){
 const fd = d => d.split('-').reverse().join('/');
 
 function vFacture(){
-  return `<h2 class="noprint">Facturation Périscolaire</h2>
+  return `<h2 class="noprint">Relevés de consommation</h2>
   <div class="row noprint">
     <input type="month" id="month" value="${month}" aria-label="Mois">
   </div>
   <div class="modes noprint">
-    <button class="btn" data-print="all"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exporter tout</button>
-    <button class="btn ghost" data-reset="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Clôturer un mois</button>
+    <button class="btn" data-print="all"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button>
+    <button class="btn ghost" data-csv="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> CSV</button>
+    <button class="btn ghost" data-reset="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Clôturer</button>
   </div>
   ${searchBox('Rechercher une famille, un enfant…')}
   ${chips()}
@@ -480,11 +483,11 @@ function lFacture(){
     return `<details class="fact" data-fam="${esc(f)}"${open}>
       <summary><span class="n">Famille ${esc(f)} <span class="hint">(${fams[f].length} enfant${fams[f].length>1?'s':''})</span></span><span>${eur(r2(total))}</span></summary>
       <div class="fb">
-        <h4 style="margin:10px 0 4px">Relevé de Garderie · ${mois}</h4>
+        <h4 style="margin:10px 0 4px">Relevé de consommation · ${mois}</h4>
         ${body}
-        <p class="tot">Total à payer : ${eur(r2(total))}</p>
+        <p class="tot">Total du mois : ${eur(r2(total))}</p>
         <div class="noprint" style="margin-top:12px">
-          <button class="btn alt sm" data-print="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Télécharger la Facture PDF</button>
+          <button class="btn alt sm" data-print="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Télécharger le relevé PDF</button>
         </div>
       </div>
     </details>`;
@@ -492,19 +495,6 @@ function lFacture(){
 }
 
 async function pdfFactures(only){
-  const dl = typeof claude !== 'undefined' ? await claude.use('downloads') : {
-    save: async({filename, data}) => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([data], {type:'application/pdf'}));
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    }
-  };
-  
-  if(!dl){ toast('Téléchargement indisponible'); return; }
   if(!window.jspdf){ toast('Module PDF non disponible'); return; }
   
   const fams = {};
@@ -560,7 +550,7 @@ async function pdfFactures(only){
     doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor(255, 255, 255);
     doc.text('Pointiii', 22, y + 10);
     doc.setFontSize(11); doc.setFont('helvetica', 'normal');
-    doc.text('Relevé de Garderie Périscolaire', 22, y + 16);
+    doc.text('Relevé de consommation · garderie et cantine', 22, y + 16);
     
     doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(255, 234, 167);
     doc.text('Famille ' + f, 188, y + 10, {align: 'right'});
@@ -581,7 +571,7 @@ async function pdfFactures(only){
       
       if(!c.lines.length){
         doc.setFont('helvetica', 'italic'); doc.setFontSize(9.5); doc.setTextColor(130, 130, 150);
-        doc.text('Aucune garderie ni cantine facturée ce mois-ci.', 15, y + 4);
+        doc.text('Aucune consommation ce mois-ci.', 15, y + 4);
         y += 16;
         continue;
       }
@@ -610,13 +600,117 @@ async function pdfFactures(only){
     doc.setFillColor(0, 184, 148);
     doc.roundedRect(15, y, 180, 14, 3, 3, 'F');
     doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(255, 255, 255);
-    doc.text('TOTAL À PAYER :', 22, y + 9);
+    doc.text('TOTAL DU MOIS :', 22, y + 9);
     doc.setFontSize(15);
     doc.text(eur(r2(total)), 188, y + 9.5, {align: 'right'});
+
+    let fy = y + 24; if(fy + 18 > 288){ doc.addPage(); fy = 20; }
+    const cf = S.cfg;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(130, 130, 150);
+    [ 'Tarifs appliqués · Garderie matin : jusqu\'à 7h30 ' + eur(cf.mat[0]) + ' · 7h30-8h00 ' + eur(cf.mat[1]) + ' · 8h00-8h30 ' + eur(cf.mat[2]),
+      'Garderie soir : 16h40-17h10 ' + eur(cf.soir[0]) + ' · 17h10-17h40 ' + eur(cf.soir[1]) + ' · 17h40-18h10 ' + eur(cf.soir[2]) + ' · 18h10-18h40 ' + eur(cf.soir[3]) + ' · après 18h40 ' + eur(cf.soir[4]),
+      'Cantine : tarif plein ' + eur(cf.plein) + ' · aide famille -1k€ : ' + eur(cf.aide.a) + ' · aide famille -1,1k€ : ' + eur(cf.aide.b),
+      'Document informatif établi à partir des pointages. Il ne remplace pas l\'avis des sommes à payer émis par la collectivité.'
+    ].forEach((t, i) => doc.text(t, 15, fy + i * 4));
   });
   
-  await dl.save({filename: 'factures-' + month + (only ? '-' + only.replace(/[^\w-]+/g,'_') : '') + '.pdf', data: doc.output('arraybuffer')});
+  const ok = await saveFile('releves-' + month + (only ? '-' + only.replace(/[^\w-]+/g,'_') : '') + '.pdf', doc.output('arraybuffer'), 'application/pdf');
+  if(!ok) return false;
   return true;
+}
+
+async function saveFile(filename, data, type){
+  let dl;
+  if(typeof claude !== 'undefined'){
+    try { dl = await claude.use('downloads'); } catch(e){}
+    if(!dl){ toast('Téléchargement indisponible'); return false; }
+  } else {
+    dl = { save: async({filename, data}) => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([data], {type}));
+      a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    }};
+  }
+  await dl.save({filename, data});
+  return true;
+}
+
+/* CSV (séparateur ; et UTF-8 avec BOM pour Excel) */
+const csvCell = v => { v = String(v == null ? '' : v); return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+const toCSV = rows => new TextEncoder().encode('\uFEFF' + rows.map(r => r.map(csvCell).join(';')).join('\r\n')).buffer;
+const f2 = n => n.toFixed(2).replace('.', ',');
+const norm = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+const tierOf = x => { const v = String(x || '').toLowerCase().replace(/[\s€]/g, '').replace(',', '.'); return (v === 'a' || v === '-1k') ? 'a' : (v === 'b' || v === '-1.1k') ? 'b' : 'c'; };
+
+function parseCSV(t){
+  t = t.replace(/^\uFEFF/, '');
+  const first = t.split(/\r?\n/)[0] || '';
+  const sep = [';', ',', '\t'].map(c => [c, first.split(c).length]).sort((a, b) => b[1] - a[1])[0][0];
+  const rows = []; let row = [], cur = '', q = false;
+  for(let i = 0; i < t.length; i++){
+    const c = t[i];
+    if(q){ if(c === '"'){ if(t[i+1] === '"'){ cur += '"'; i++; } else q = false; } else cur += c; }
+    else if(c === '"') q = true;
+    else if(c === sep){ row.push(cur); cur = ''; }
+    else if(c === '\n' || c === '\r'){ if(c === '\r' && t[i+1] === '\n') i++; row.push(cur); cur = ''; rows.push(row); row = []; }
+    else cur += c;
+  }
+  if(cur !== '' || row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim() !== ''));
+}
+
+async function csvReleves(){
+  const rows = [['Mois','Famille','Prénom','Nom','Classe','Tranche cantine','Date','Heure matin','Montant matin (€)','Heure soir','Montant soir (€)','Cantine','Montant cantine (€)','Total (€)']];
+  const ks = filt().slice().sort((a, b) => (a.famille || '').localeCompare(b.famille || '', 'fr') || byName(a, b));
+  for(const k of ks) for(const l of calc(k).lines)
+    rows.push([month, k.famille || '', k.prenom, k.nom, k.classe || '', TL[tier(k)], fd(l.d), l.m ? l.mt : '', l.m ? f2(l.m) : '', l.s ? l.st : '', l.s ? f2(l.s) : '', l.cOn ? 'Oui' : '', l.cOn ? f2(l.c) : '', f2(r2(l.m + l.s + l.c))]);
+  if(rows.length < 2){ toast('Aucune donnée à exporter'); return; }
+  if(await saveFile('releves-' + month + '.csv', toCSV(rows), 'text/csv')) toast('CSV exporté');
+}
+
+async function exportKids(){
+  const rows = [['Prénom','Nom','Classe','Famille','Tranche cantine']];
+  S.kids.slice().sort((a, b) => ord(a.classe) - ord(b.classe) || byName(a, b)).forEach(k => rows.push([k.prenom, k.nom, k.classe || '', k.famille || '', TL[tier(k)]]));
+  if(await saveFile('enfants.csv', toCSV(rows), 'text/csv')) toast('Liste exportée');
+}
+
+async function importKids(file){
+  if(!file || !unlocked) return;
+  try {
+    const buf = await file.arrayBuffer(); let txt;
+    try { txt = new TextDecoder('utf-8', {fatal:true}).decode(buf); } catch(e){ txt = new TextDecoder('windows-1252').decode(buf); }
+    const rows = parseCSV(txt);
+    if(!rows.length){ toast('Fichier vide'); return; }
+    const h = rows[0].map(norm), has = h.includes('prenom') && h.includes('nom');
+    const col = (names, def) => has ? h.findIndex(x => names.includes(x)) : def;
+    const ci = {p: col(['prenom'], 0), n: col(['nom'], 1), c: col(['classe'], 2), f: col(['famille'], 3), t: col(['tranche', 'tranchecantine', 'cantine', 'tier'], 4)};
+    let add = 0, upd = 0; const fam = {};
+    for(const r of (has ? rows.slice(1) : rows)){
+      const g = i => i < 0 ? '' : String(r[i] || '').trim();
+      const prenom = g(ci.p), nom = g(ci.n); if(!prenom || !nom) continue;
+      const up = g(ci.c).toUpperCase(), classe = CL.includes(up) ? up : '', famille = g(ci.f), tr = tierOf(g(ci.t));
+      const ex = S.kids.find(k => k.prenom.toLowerCase() === prenom.toLowerCase() && k.nom.toLowerCase() === nom.toLowerCase());
+      if(ex){ if(classe) ex.classe = classe; if(famille) ex.famille = famille; if(g(ci.t)) ex.tier = tr; upd++; }
+      else { S.kids.push({id:'k' + Date.now() + '_' + (add + upd), prenom, nom, classe, famille, tier:tr}); add++; }
+      if(famille && g(ci.t)) fam[famille] = tr;
+    }
+    if(!add && !upd){ toast('Aucun enfant reconnu'); return; }
+    S.kids.forEach(k => { if(k.famille && fam[k.famille]) k.tier = fam[k.famille]; });
+    save(); render(); toast(add + ' ajouté(s), ' + upd + ' mis à jour');
+  } catch(e){ toast('Fichier illisible'); }
+}
+
+function openDel(id){
+  const k = S.kids.find(x => x.id === id); if(!k) return;
+  $('#ovb').innerHTML = `<h2>Supprimer ${esc(k.prenom)} ${esc(k.nom)} ?</h2>
+  <p class="hint">Son historique de pointage sera aussi supprimé. Cette action est définitive.</p>
+  <div class="row">
+    <button class="btn del" data-dodel="${k.id}" style="width:100%">Supprimer</button>
+    <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
+  </div>`;
+  showOv();
 }
 
 let unlocked = false, unlockExp = 0, lastAct = Date.now();
@@ -692,6 +786,12 @@ function openSettings(){
   ${f('ca','Aide famille -1k€ (réduction)',c.aide.a)}
   ${f('cb','Aide famille -1,1k€ (réduction)',c.aide.b)}
   <p class="hint" style="margin-top:6px">Prix payé = tarif plein − aide. Les changements s’appliquent aussi aux mois non clôturés.</p>
+  <h3 class="sh">Enfants et familles (CSV)</h3>
+  <div class="modes">
+    <button class="btn ghost" data-expkids="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exporter</button>
+    <button class="btn ghost" data-impkids="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Importer</button>
+  </div>
+  <p class="hint">Colonnes : Prénom ; Nom ; Classe ; Famille ; Tranche cantine. L’import ajoute les nouveaux enfants et met à jour ceux qui existent déjà.</p>
   <div class="row">
     <button class="btn" data-savecfg="1" style="width:100%">Enregistrer les tarifs</button>
     <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
@@ -810,6 +910,15 @@ document.addEventListener('click', e => {
   else if(d.mclose) closeEdit();
   else if(d.gear) openSettings();
   else if(d.savecfg) saveSettings();
+  else if(d.csv) csvReleves();
+  else if(d.expkids) exportKids();
+  else if(d.impkids) $('#imp').click();
+  else if(d.dodel){
+    const id = d.dodel;
+    S.kids = S.kids.filter(x => x.id !== id);
+    Object.values(S.rec).forEach(r => delete r[id]);
+    save(); closeEdit(); render(); toast('Enfant supprimé');
+  }
   else if(d.unlock) doUnlock();
   else if(d.lock){ unlocked = false; render(true); }
   else if(d.chpin) openPin();
@@ -827,14 +936,7 @@ document.addEventListener('click', e => {
   else if(d.ed) openKid(d.ed);
   else if(d.addkid) openKid();
   else if(d.cancel){ editKid = null; closeEdit(); }
-  else if(d.del){
-    const k = S.kids.find(x => x.id === d.del);
-    if(confirm('Supprimer ' + k.prenom + ' ' + k.nom + ' ?')){
-      S.kids = S.kids.filter(x => x.id !== k.id);
-      Object.values(S.rec).forEach(r => delete r[k.id]);
-      save(); render();
-    }
-  }
+  else if(d.del) openDel(d.del);
   else if(d.print){ pdfFactures(d.print === 'all' ? null : b.closest('details').dataset.fam).catch(() => toast('Erreur PDF')); }
 });
 
@@ -842,6 +944,7 @@ document.addEventListener('input', e => { lastAct = Date.now(); if(e.target.id =
 document.addEventListener('change', e => {
   if(e.target.id === 'date' && e.target.value){ date = e.target.value; render(); }
   if(e.target.id === 'month' && e.target.value){ month = e.target.value; render(); }
+  if(e.target.id === 'imp'){ importKids(e.target.files[0]); e.target.value = ''; }
   if(e.target.id === 'ff'){ const m = S.kids.find(k => k.famille === e.target.value.trim() && k.id !== editKid); if(m && $('#ft')) $('#ft').value = tier(m); }
 });
 
