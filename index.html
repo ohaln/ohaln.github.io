@@ -44,9 +44,9 @@
   --radius-md: 14px;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg-main); color: var(--text-dark); font-family: 'Nunito', system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.3; min-height: 100vh; -webkit-tap-highlight-color: transparent; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+body { margin: 0; background: #6C5CE7; display: flex; flex-direction: column; color: var(--text-dark); font-family: 'Nunito', system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.3; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
 html { background-color: #6C5CE7; }
-header { background: linear-gradient(180deg, #6C5CE7 0%, #8573E7 100%); padding: calc(18px + env(safe-area-inset-top, 0px)) 20px 26px; color: white; border-radius: 0 0 var(--radius-xl) var(--radius-xl); box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+header { background: linear-gradient(180deg, #6C5CE7 0%, #8573E7 100%); padding: calc(18px + env(safe-area-inset-top, 0px) * 1.27) 20px 26px; color: white; border-radius: 0 0 var(--radius-xl) var(--radius-xl); box-shadow: var(--shadow-md); position: relative; z-index: 1; flex: none; overflow: hidden; }
 .header-decor { position: absolute; right: -10px; top: -10px; opacity: 0.15; pointer-events: none; }
 .header-content { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
 .brand { display: flex; align-items: center; gap: 12px; }
@@ -69,6 +69,7 @@ nav button:active { transform: scale(0.95); }
 nav button[data-t="pointage"][aria-selected="true"] { background: var(--tab-pointage); color: #FFFFFF; box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35); }
 nav button[data-t="enfants"][aria-selected="true"] { background: var(--tab-enfants); color: #FFFFFF; box-shadow: 0 8px 20px rgba(255, 118, 117, 0.35); }
 nav button[data-t="facture"][aria-selected="true"] { background: var(--tab-factures); color: #FFFFFF; box-shadow: 0 8px 20px rgba(0, 184, 148, 0.35); }
+.page { flex: 1; position: relative; margin-top: -28px; padding: 28px 0 calc(24px + env(safe-area-inset-bottom, 0px)); background: var(--bg-main); }
 main { padding: 0 16px; }
 .wrap { max-width: 900px; margin: 0 auto; }
 h2 { font-family: 'Baloo 2', cursive; margin: 0 0 12px; font-size: 24px; font-weight: 800; color: var(--text-dark); }
@@ -209,6 +210,7 @@ body.scrolled::before { display: block; }
   </div>
 </header>
 
+<div class="page">
 <nav role="tablist" id="nav">
   <button data-t="pointage" aria-selected="true"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Pointage</span></button>
   <button data-t="enfants"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Enfants</span></button>
@@ -218,6 +220,7 @@ body.scrolled::before { display: block; }
 <main>
   <div class="wrap" id="app"></div>
 </main>
+</div>
 
 <div id="ov"><div class="box" id="ovb"></div></div>
 <input type="file" id="imp" accept=".csv,.txt,text/csv,text/plain" hidden>
