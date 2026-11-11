@@ -175,8 +175,7 @@ nav button:nth-child(3) { animation-delay: 0.12s; }
 details.fact[open] .fb { animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .bar, .modes .btn, .chip, .gear { transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
-body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--bg-main); z-index: 8; display: none; pointer-events: none; }
-body.scrolled::before { display: block; }
+body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: #6C5CE7; z-index: 8; pointer-events: none; }
 @media print {
   body { background: #fff; }
   header, nav, .noprint, #toast, #ov { display: none !important; }
@@ -1015,8 +1014,6 @@ document.addEventListener('keydown', e => {
 });
 
 setInterval(checkLock, 5000);
-
-window.addEventListener('scroll', () => document.body.classList.toggle('scrolled', window.scrollY > 24), {passive:true});
 
 render();
 </script>
