@@ -220,6 +220,7 @@ details.fact[open] .fb { animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
 <div id="toast" role="status"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -452,7 +453,7 @@ function vFacture(){
   </div>
   <div class="modes noprint">
     <button class="btn" data-print="all"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button>
-    <button class="btn ghost" data-csv="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> CSV</button>
+    <button class="btn ghost" data-xlsx="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Excel</button>
     <button class="btn ghost" data-reset="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Clôturer</button>
   </div>
   ${searchBox('Rechercher une famille, un enfant…')}
@@ -661,13 +662,58 @@ function parseCSV(t){
   return rows.filter(r => r.some(x => x.trim() !== ''));
 }
 
-async function csvReleves(){
-  const rows = [['Mois','Famille','Prénom','Nom','Classe','Tranche cantine','Date','Heure matin','Montant matin (€)','Heure soir','Montant soir (€)','Cantine','Montant cantine (€)','Total (€)']];
-  const ks = filt().slice().sort((a, b) => (a.famille || '').localeCompare(b.famille || '', 'fr') || byName(a, b));
-  for(const k of ks) for(const l of calc(k).lines)
-    rows.push([month, k.famille || '', k.prenom, k.nom, k.classe || '', TL[tier(k)], fd(l.d), l.m ? l.mt : '', l.m ? f2(l.m) : '', l.s ? l.st : '', l.s ? f2(l.s) : '', l.cOn ? 'Oui' : '', l.cOn ? f2(l.c) : '', f2(r2(l.m + l.s + l.c))]);
-  if(rows.length < 2){ toast('Aucune donnée à exporter'); return; }
-  if(await saveFile('releves-' + month + '.csv', toCSV(rows), 'text/csv')) toast('CSV exporté');
+async function xlsxReleves(){
+  if(!window.XLSX){ toast('Module Excel indisponible'); return; }
+  const X = window.XLSX, EUR = '#,##0.00 "€"';
+  const txt = v => ({t:'s', v:String(v)});
+  const num = (v, f, z) => { const c = {t:'n', v, z: z || EUR}; if(f) c.f = f; return c; };
+  const fams = {};
+  filt().forEach(k => { const c = calc(k); if(c.lines.length) (fams[k.famille || 'Sans famille'] = fams[k.famille || 'Sans famille'] || []).push({k, c}); });
+  const names = Object.keys(fams).sort((a, b) => a.localeCompare(b, 'fr'));
+  if(!names.length){ toast('Aucune donnée à exporter'); return; }
+  const mois = new Date(month + '-01T12:00').toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
+
+  /* Détail : une ligne par jour et par enfant */
+  const det = [['Famille','Enfant','Classe','Date','Heure matin','Matin (€)','Heure soir','Soir (€)','Cantine','Cantine (€)','Total (€)'].map(txt)];
+  for(const f of names) for(const {k, c} of fams[f].sort((x, y) => byName(x.k, y.k))) for(const l of c.lines){
+    const r = det.length + 1;
+    det.push([txt(f), txt(k.prenom + ' ' + k.nom), txt(k.classe || ''), txt(fd(l.d)), txt(l.m ? l.mt : ''), num(l.m), txt(l.s ? l.st : ''), num(l.s), txt(l.cOn ? 'Oui' : ''), num(l.c), num(r2(l.m + l.s + l.c), `F${r}+H${r}+J${r}`)]);
+  }
+
+  /* Récapitulatif : par famille, avec formules reliées au détail */
+  const D = "'Détail'!", rec = [[txt('Relevé de consommation · ' + mois)], [], ['Famille','Enfant','Classe','Tranche cantine','Jours matin','Matin (€)','Jours soir','Soir (€)','Jours cantine','Cantine (€)','Total (€)'].map(txt)];
+  const subs = [], G = {e:0, f:0, g:0, h:0, i:0, j:0};
+  for(const f of names){
+    const start = rec.length + 1, T = {e:0, f:0, g:0, h:0, i:0, j:0};
+    for(const {k, c} of fams[f]){
+      const r = rec.length + 1, cr = `${D}$A:$A,$A${r},${D}$B:$B,$B${r}`;
+      const v = {e: c.lines.filter(l => l.m).length, f: r2(c.lines.reduce((t, l) => t + l.m, 0)), g: c.lines.filter(l => l.s).length, h: r2(c.lines.reduce((t, l) => t + l.s, 0)), i: c.lines.filter(l => l.cOn).length, j: r2(c.lines.reduce((t, l) => t + l.c, 0))};
+      for(const x in v){ T[x] += v[x]; G[x] += v[x]; }
+      rec.push([txt(f), txt(k.prenom + ' ' + k.nom), txt(k.classe || ''), txt(TL[tier(k)]),
+        num(v.e, `COUNTIFS(${cr},${D}$E:$E,"?*")`, '0'), num(v.f, `SUMIFS(${D}$F:$F,${cr})`),
+        num(v.g, `COUNTIFS(${cr},${D}$G:$G,"?*")`, '0'), num(v.h, `SUMIFS(${D}$H:$H,${cr})`),
+        num(v.i, `COUNTIFS(${cr},${D}$I:$I,"Oui")`, '0'), num(v.j, `SUMIFS(${D}$J:$J,${cr})`),
+        num(r2(v.f + v.h + v.j), `F${r}+H${r}+J${r}`)]);
+    }
+    const end = rec.length, r = end + 1, sum = L => `SUM(${L}${start}:${L}${end})`;
+    rec.push([txt('Total famille ' + f), txt(''), txt(''), txt(''), num(T.e, sum('E'), '0'), num(r2(T.f), sum('F')), num(T.g, sum('G'), '0'), num(r2(T.h), sum('H')), num(T.i, sum('I'), '0'), num(r2(T.j), sum('J')), num(r2(T.f + T.h + T.j), `F${r}+H${r}+J${r}`)]);
+    subs.push(r); rec.push([]);
+  }
+  const gr = rec.length + 1, tot = L => subs.map(r => L + r).join('+');
+  rec.push([txt('TOTAL GÉNÉRAL'), txt(''), txt(''), txt(''), num(G.e, tot('E'), '0'), num(r2(G.f), tot('F')), num(G.g, tot('G'), '0'), num(r2(G.h), tot('H')), num(G.i, tot('I'), '0'), num(r2(G.j), tot('J')), num(r2(G.f + G.h + G.j), `F${gr}+H${gr}+J${gr}`)]);
+
+  const c = S.cfg, tar = [[txt('Tarifs appliqués')], [], [txt('Garderie matin'), txt('Montant')],
+    [txt('Jusqu’à 7h30'), num(c.mat[0])], [txt('7h30 – 8h00'), num(c.mat[1])], [txt('8h00 – 8h30'), num(c.mat[2])], [],
+    [txt('Garderie soir'), txt('Montant')],
+    [txt('16h40 – 17h10'), num(c.soir[0])], [txt('17h10 – 17h40'), num(c.soir[1])], [txt('17h40 – 18h10'), num(c.soir[2])], [txt('18h10 – 18h40'), num(c.soir[3])], [txt('Après 18h40'), num(c.soir[4])], [],
+    [txt('Cantine'), txt('Montant')],
+    [txt('Tarif plein (+1,1k€)'), num(c.plein)], [txt('Aide famille -1,1k€'), num(c.aide.b)], [txt('Aide famille -1k€'), num(c.aide.a)]];
+
+  const wb = X.utils.book_new(), sheet = (rows, w) => { const ws = X.utils.aoa_to_sheet(rows); ws['!cols'] = w.map(wch => ({wch})); return ws; };
+  X.utils.book_append_sheet(wb, sheet(rec, [26,24,8,14,12,12,11,12,14,13,12]), 'Récapitulatif');
+  X.utils.book_append_sheet(wb, sheet(det, [20,24,8,12,12,11,11,10,9,12,11]), 'Détail');
+  X.utils.book_append_sheet(wb, sheet(tar, [26,12]), 'Tarifs');
+  if(await saveFile('releves-' + month + '.xlsx', X.write(wb, {bookType:'xlsx', type:'array'}), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) toast('Excel exporté');
 }
 
 async function exportKids(){
@@ -910,7 +956,7 @@ document.addEventListener('click', e => {
   else if(d.mclose) closeEdit();
   else if(d.gear) openSettings();
   else if(d.savecfg) saveSettings();
-  else if(d.csv) csvReleves();
+  else if(d.xlsx) xlsxReleves();
   else if(d.expkids) exportKids();
   else if(d.impkids) $('#imp').click();
   else if(d.dodel){
