@@ -110,7 +110,7 @@ input:focus, select:focus { outline: none; border-color: var(--tab-pointage); bo
 .kid .main small { font-size: 13px; font-weight: 700; opacity: 0.75; }
 .kid .tm { margin: 4px 10px 10px; align-self: stretch; border: 0; border-radius: 12px; padding: 6px 10px; font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer; height: 34px; display: flex; align-items: center; justify-content: center; gap: 4px; }
 .kid div.tm { cursor: default; }
-.kid .not-pointed { margin: 4px 10px 10px; height: 34px; padding: 6px 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; opacity: 0.5; }
+.kid .not-pointed { border: 0; background: transparent; color: inherit; font-family: inherit; cursor: pointer; touch-action: manipulation; margin: 4px 10px 10px; height: 34px; padding: 6px 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; opacity: 0.5; }
 .list { display: flex; flex-direction: column; gap: 10px; }
 .item { display: flex; align-items: center; gap: 14px; border-radius: var(--radius-lg); padding: 14px 16px; box-shadow: var(--shadow-sm); }
 .item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
@@ -408,7 +408,7 @@ function lPointage(){
           <b>${esc(k.prenom)}</b>
           <small>${esc(k.nom)}</small>
         </button>
-        ${t ? (mode === 'c' ? `<div class="tm">🍽️ Cantine 🍽️</div>` : `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${mode === 'm' ? '☀️ '+t+' ☀️' : '🌙 '+t+' 🌙'}</button>`) : `<div class="not-pointed">À pointer</div>`}
+        ${t ? (mode === 'c' ? `<button class="tm" data-pt="${k.id}" aria-label="Annuler la cantine">🍽️ Cantine 🍽️</button>` : `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${mode === 'm' ? '☀️ '+t+' ☀️' : '🌙 '+t+' 🌙'}</button>`) : `<button class="not-pointed" data-pt="${k.id}">À pointer</button>`}
       </div>`;
     }).join('') + '</div>';
   }
