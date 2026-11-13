@@ -166,6 +166,7 @@ nav button:nth-child(3) { animation-delay: 0.12s; }
 @keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
 @keyframes ring { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ct, #6C5CE7) 30%, transparent); } to { box-shadow: 0 0 0 10px color-mix(in srgb, var(--ct, #6C5CE7) 0%, transparent); } }
 .kid .tm.pop { animation: popIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.kid, .kid * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .kid .tm { white-space: nowrap; padding: 6px 4px; }
 .kid[class*="checked-"] { box-shadow: var(--shadow-md); }
 .kid[class*="checked-"] .tm { background: var(--ct); color: var(--cb); }
@@ -1041,12 +1042,14 @@ document.addEventListener('change', e => {
 });
 
 document.addEventListener('pointerdown', e => {
-  const b = e.target.closest('.main[data-pt]'); if(!b) return;
+  const b = e.target.closest('.main[data-pt], .not-pointed[data-pt]'); if(!b) return;
   long = false;
   if(mode === 'c') return;
   timer = setTimeout(() => { long = true; openEdit(b.dataset.pt); }, 500);
 });
 ['pointerup','pointerleave','pointercancel','scroll'].forEach(ev => document.addEventListener(ev, () => clearTimeout(timer), true));
+
+document.addEventListener('contextmenu', e => { if(e.target.closest('.kid')) e.preventDefault(); });
 
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape') closeEdit();
