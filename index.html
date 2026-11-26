@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Sonomètre</title>
+<title>Chut ! Sonomètre</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Sonomètre">
+<meta name="apple-mobile-web-app-title" content="Chut !">
 <meta name="theme-color" content="#f1f5f9">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='42' fill='%232563eb'/%3E%3Ctext x='90' y='120' font-size='96' text-anchor='middle'%3E%F0%9F%8E%9A%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%232563eb'/%3E%3Cg fill='%23fff'%3E%3Crect x='36' y='72' width='18' height='36' rx='9'/%3E%3Crect x='66' y='44' width='18' height='92' rx='9'/%3E%3Crect x='96' y='28' width='18' height='124' rx='9'/%3E%3Crect x='126' y='62' width='18' height='56' rx='9'/%3E%3C/g%3E%3C/svg%3E">
 <style>
 :root{--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--blue:#2563eb;--r:20px}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
-body{--c:#94a3b8;--bg:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));transition:background .5s;user-select:none;-webkit-user-select:none}
+body{--c:#94a3b8;--bg:#f1f5f9;font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,'Nunito','Segoe UI',sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));transition:background .5s;user-select:none;-webkit-user-select:none}
 body[data-state=green]{--c:#10b981;--bg:#ecfdf5}
 body[data-state=yellow]{--c:#f59e0b;--bg:#fffbeb}
 body[data-state=orange]{--c:#f97316;--bg:#fff7ed}
@@ -38,12 +38,13 @@ main{display:grid;gap:14px}
 #timer{font-size:12px;font-weight:800;color:var(--mut);visibility:hidden}
 #timer.show{visibility:visible}
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:4px 0}
-#mascot{font-size:84px;line-height:1;height:96px;display:flex;align-items:center;justify-content:center}
+#mascot{width:132px;height:132px;border-radius:50%;background:color-mix(in srgb,var(--c) 14%,#fff);display:flex;align-items:center;justify-content:center;margin-bottom:6px;transition:background .4s}
+#mascot svg{width:100px;height:100px}
 #title{font-size:28px;font-weight:900;letter-spacing:-.01em;text-transform:uppercase;color:var(--c);line-height:1.1}
 body[data-state=idle] #title{color:var(--mut)}
 #sub{font-size:14px;font-weight:600;color:var(--mut);min-height:20px;max-width:360px}
-body[data-state=green] #mascot{animation:bob 3s ease-in-out infinite}
-body[data-state=red] #mascot,body[data-state=siren] #mascot{animation:loud .4s ease-in-out infinite}
+body[data-state=green] #mascot svg{animation:bob 3s ease-in-out infinite}
+body[data-state=red] #mascot svg,body[data-state=siren] #mascot svg{animation:loud .4s ease-in-out infinite}
 .meter{height:26px;background:var(--line);border-radius:999px;position:relative;overflow:hidden}
 #fill{height:100%;width:0;background:var(--c);border-radius:999px;transition:width .08s linear,background .3s}
 #mark{position:absolute;top:0;bottom:0;left:65%;width:3px;margin-left:-1.5px;background:#e11d48}
@@ -81,6 +82,17 @@ details summary::-webkit-details-marker{display:none}
 .adv button{height:42px;border-radius:12px;background:#f1f5f9;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink)}
 .adv p{font-size:12px;color:var(--mut);font-weight:600;line-height:1.4}
 .foot{text-align:center;font-size:12px;font-weight:600;color:var(--mut);padding:2px 0}
+.ic{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.h{display:flex;align-items:center;gap:8px}.h .ic{color:var(--blue);width:1.3em;height:1.3em}
+.brand{display:flex;align-items:center;gap:12px}.brand svg{width:44px;height:44px;border-radius:13px;flex:none;box-shadow:0 6px 14px -6px rgba(37,99,235,.7)}
+h1{font-size:23px!important;font-weight:900!important}
+body::before,body::after{content:"";position:fixed;border-radius:50%;background:var(--c);pointer-events:none;transition:background .5s;opacity:.1}
+body::before{width:440px;height:440px;top:-170px;right:-150px}body::after{width:300px;height:300px;bottom:-130px;left:-110px;opacity:.07}
+.wrap{position:relative;z-index:1}
+#timer{display:inline-flex;align-items:center;gap:5px}
+#banner button,.btn,.adv button,.foot{display:flex;align-items:center;justify-content:center;gap:8px}
+#banner button{padding:0}
+.btn .ic{width:1.3em;height:1.3em}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes loud{0%,100%{transform:rotate(0) scale(1.05)}25%{transform:rotate(-10deg) scale(1.12)}75%{transform:rotate(10deg) scale(1.12)}}
 @keyframes flash{0%,100%{background:#ffe4e6}50%{background:#fda4af}}
@@ -90,14 +102,28 @@ details summary::-webkit-details-marker{display:none}
 </style>
 </head>
 <body data-state="idle">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="3"/></symbol>
+<symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+<symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+<symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 10a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 19l-5-10V3"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+</defs></svg>
 <div class="wrap">
 
 <header>
-  <div><h1>🎚️ Sonomètre</h1><p>Salle de jeu · Périscolaire</p></div>
+  <div class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" fill="#2563eb"/><g fill="#fff"><rect x="7" y="16" width="4.5" height="8" rx="2.25"/><rect x="14.5" y="9" width="4.5" height="22" rx="2.25"/><rect x="22" y="5" width="4.5" height="30" rx="2.25"/><rect x="29.5" y="14" width="4.5" height="12" rx="2.25"/></g></svg><div><h1>Chut !</h1><p>Le sonomètre de la salle de jeu</p></div></div>
   <span class="pill"><span id="wl-dot" class="dot"></span><span id="wl">Écran auto</span></span>
 </header>
 
-<div id="banner"><span id="banner-text"></span><button type="button" onclick="banner()">✕</button></div>
+<div id="banner"><span id="banner-text"></span><button type="button" onclick="banner()" aria-label="Fermer"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button></div>
 
 <main>
   <section id="card" class="card">
@@ -107,9 +133,9 @@ details summary::-webkit-details-marker{display:none}
     </div>
 
     <div class="hero">
-      <div id="mascot">😴</div>
-      <h2 id="title">Prêt à démarrer</h2>
-      <p id="sub">Connecte l'enceinte puis lance l'écoute</p>
+      <div id="mascot"></div>
+      <h2 id="title">Chuti dort</h2>
+      <p id="sub">Lance l'écoute pour le réveiller</p>
     </div>
 
     <div>
@@ -124,17 +150,17 @@ details summary::-webkit-details-marker{display:none}
 
     <div class="btns">
       <button type="button" id="toggle" class="btn primary"></button>
-      <button type="button" id="reset" class="btn ghost">🕊️ Retour au calme</button>
+      <button type="button" id="reset" class="btn ghost"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg>Retour au calme</button>
     </div>
   </section>
 
   <aside class="card">
     <div class="group">
-      <div><h3>🔊 Tester les alarmes</h3><div id="tests" class="tests"></div></div>
+      <div><h3 class="h"><svg class="ic" aria-hidden="true"><use href="#i-volume"/></svg>Tester les alarmes</h3><div id="tests" class="tests"></div></div>
     </div>
 
     <div class="group">
-      <h3 style="margin:0">⚙️ Réglages</h3>
+      <h3 class="h" style="margin:0"><svg class="ic" aria-hidden="true"><use href="#i-sliders"/></svg>Réglages</h3>
       <div class="field"><label for="s-th">Seuil de bruit <span id="v-th" class="val">65%</span></label><input type="range" id="s-th" min="10" max="95" value="65"></div>
       <div class="field"><label for="s-gain">Sensibilité du micro <span id="v-gain" class="val">4.5x</span></label><input type="range" id="s-gain" min="1" max="10" step="0.5" value="4.5"></div>
       <div class="field"><label for="s-delay">Délai avant alerte <span id="v-delay" class="val">1.5s</span></label><input type="range" id="s-delay" min="0.5" max="5" step="0.5" value="1.5"></div>
@@ -143,10 +169,10 @@ details summary::-webkit-details-marker{display:none}
 
     <div class="group">
       <details>
-        <summary><span>🧪 Avancé : sortie audio</span><span class="chev">▾</span></summary>
+        <summary><span class="h"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg>Avancé : sortie audio</span><svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg></summary>
         <div class="adv">
           <button type="button" id="mode-btn"></button>
-          <button type="button" id="diag-btn">🔍 Diagnostic audio</button>
+          <button type="button" id="diag-btn"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>Diagnostic audio</button>
           <p>Mode recommandé : élément audio. Si le son repart sur le téléphone, change de mode puis arrête et relance l'écoute.</p>
         </div>
       </details>
@@ -154,13 +180,14 @@ details summary::-webkit-details-marker{display:none}
   </aside>
 </main>
 
-<p class="foot">📲 Safari : Partager → Sur l'écran d'accueil</p>
+<p class="foot"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg>Safari : Partager → Sur l'écran d'accueil</p>
 </div>
 
 <audio id="out" playsinline></audio>
 
 <script>
 const $ = id => document.getElementById(id);
+const ico = n => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 const NAMES = ['Carillon', 'Bip', 'Buzzer', 'Klaxon', 'Sirène'];
 NAMES.forEach((n, i) => {
   $('steps').insertAdjacentHTML('beforeend', `<div class="step" id="step-${i + 1}"><b>${i + 1}</b><span>${n}</span></div>`);
@@ -246,18 +273,28 @@ async function playAlarm(n) {
   } catch (e) { console.error(e); }
 }
 
-function setState(s, emoji, title, sub) {
+const E = (x, y) => `<circle cx="${x}" cy="${y}" r="5.5" fill="#0f172a" stroke="none"/>`;
+const FACES = {
+  idle: '<path d="M26 48q9 8 18 0M56 48q9 8 18 0M43 68q7 5 14 0"/><path d="M72 18h11l-11 13h11" stroke-width="4"/>',
+  green: E(35, 46) + E(65, 46) + '<path d="M31 62q19 22 38 0"/><circle cx="22" cy="62" r="7" fill="#fff" opacity=".4" stroke="none"/><circle cx="78" cy="62" r="7" fill="#fff" opacity=".4" stroke="none"/>',
+  yellow: E(35, 46) + E(65, 46) + '<path d="M38 68h24"/>',
+  orange: E(35, 48) + E(65, 48) + '<path d="M25 34l16 6M75 34l-16 6M33 72q4-6 8 0t8 0t8 0t8 0"/>',
+  red: '<path d="M27 38l15 8-15 8M73 38l-15 8 15 8"/><ellipse cx="50" cy="72" rx="12" ry="9" fill="#0f172a"/>',
+  siren: '<path d="M27 38l15 8-15 8M73 38l-15 8 15 8"/><ellipse cx="50" cy="72" rx="12" ry="9" fill="#0f172a"/><path d="M14 20l-8-6M86 20l8-6M50 4V-6" stroke-width="4"/>'
+};
+function setState(s, title, sub) {
   document.body.dataset.state = s;
-  $('mascot').textContent = emoji; $('title').textContent = title; $('sub').textContent = sub;
+  $('mascot').innerHTML = `<svg viewBox="-6 -12 112 118" aria-hidden="true"><circle cx="50" cy="52" r="44" fill="var(--c)"/><g fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">${FACES[s]}</g></svg>`;
+  $('title').textContent = title; $('sub').textContent = sub;
 }
 function sirenMode(ms) {
   siren = true; clearTimeout(sirenT);
-  setState('siren', '🚨', 'Niveau 5 : sirène !', 'Trop bruyant ! Ça va être long de tout ranger !');
+  setState('siren', 'Niveau 5 : sirène !', 'Trop bruyant ! Ça va être long de tout ranger !');
   sirenT = setTimeout(() => { siren = false; if (!listening) idle(); }, ms);
 }
 function idle() {
   siren = false;
-  setState('idle', '😴', 'Micro en pause', "Connecte l'enceinte puis lance l'écoute");
+  setState('idle', 'Chuti dort', "Lance l'écoute pour le réveiller");
   $('fill').style.width = '0%'; $('pct').textContent = '0%'; $('timer').className = '';
 }
 
@@ -320,7 +357,7 @@ function loop() {
 function escalate(v) {
   const now = Date.now(), tm = $('timer');
   if (lastAlert > 0 && now - lastAlert < cooldownMs) {
-    tm.className = 'show'; tm.textContent = `⏸️ Pause ${Math.ceil((cooldownMs - (now - lastAlert)) / 1000)}s`; overSince = null; return;
+    tm.className = 'show'; tm.innerHTML = ico('pause') + `Pause ${Math.ceil((cooldownMs - (now - lastAlert)) / 1000)}s`; overSince = null; return;
   }
   if (v >= threshold) {
     if (!overSince) overSince = now;
@@ -328,23 +365,23 @@ function escalate(v) {
     if (el >= delayMs) {
       if (level < 5) level++;
       updateSteps(); playAlarm(level); lastAlert = now; overSince = null; tm.className = '';
-    } else { tm.className = 'show'; tm.textContent = `⏳ Niveau ${Math.min(5, level + 1)} dans ${((delayMs - el) / 1000).toFixed(1)}s`; }
+    } else { tm.className = 'show'; tm.innerHTML = ico('timer') + `Niveau ${Math.min(5, level + 1)} dans ${((delayMs - el) / 1000).toFixed(1)}s`; }
   } else { overSince = null; tm.className = ''; }
 }
 
 function paint(v) {
   $('fill').style.width = v + '%'; $('pct').textContent = v + '%';
   if (siren) return;
-  if (v >= threshold) setState('red', '🙉', 'Trop bruyant !', `Alerte niveau ${level}/5`);
-  else if (v >= Math.max(12, threshold * .82)) setState('orange', '😬', 'Limite atteinte', "On baisse la voix avant l'alarme");
-  else if (v >= Math.max(8, threshold * .62)) setState('yellow', '😐', 'Ça monte', 'On parle un peu moins fort');
-  else setState('green', '😊', "C'est calme", level > 0 ? `Bien ! Niveau actuel : ${level}/5` : 'Super ambiance, continuez !');
+  if (v >= threshold) setState('red', 'Trop de bruit !', `Alerte niveau ${level}/5`);
+  else if (v >= Math.max(12, threshold * .82)) setState('orange', 'Chuuut !', "Dernier avertissement avant l'alarme");
+  else if (v >= Math.max(8, threshold * .62)) setState('yellow', 'Ça chauffe…', 'On baisse un peu le volume');
+  else setState('green', 'Tout est zen', level > 0 ? `Bien ! Niveau actuel : ${level}/5` : 'Super ambiance, continuez !');
 }
 
 function refresh() {
   const b = $('toggle');
   b.className = 'btn primary' + (listening ? ' stop' : '');
-  b.textContent = listening ? "⏹️ Arrêter l'écoute" : "🎙️ Démarrer l'écoute";
+  b.innerHTML = listening ? ico('stop') + "Arrêter l'écoute" : ico('mic') + "Démarrer l'écoute";
   $('mic-dot').className = 'dot' + (listening ? ' live' : '');
   $('mic-text').textContent = listening ? `Écoute active · ${gainMul.toFixed(1)}x` : 'Micro en pause';
 }
@@ -369,7 +406,7 @@ try {
 document.querySelectorAll('input[type=range]').forEach(i => i.addEventListener('change', save));
 $('mode-btn').addEventListener('click', save);
 
-modeLabel(); refresh(); updateSteps();
+idle(); modeLabel(); refresh(); updateSteps();
 </script>
 </body>
 </html>
