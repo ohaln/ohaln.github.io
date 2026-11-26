@@ -9,15 +9,35 @@
 <meta name="apple-mobile-web-app-title" content="Sonomètre">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='42' fill='%232563eb'/%3E%3Ctext x='90' y='120' font-size='96' text-anchor='middle'%3E%F0%9F%8E%9A%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#ecfdf5">
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;transition:background-color .3s;padding:max(.75rem,env(safe-area-inset-top)) env(safe-area-inset-right) max(1rem,env(safe-area-inset-bottom)) env(safe-area-inset-left);-webkit-tap-highlight-color:transparent;user-select:none}
-@keyframes calm{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes loud{0%,100%{transform:rotate(0) scale(1.06)}25%{transform:rotate(-11deg) scale(1.14)}75%{transform:rotate(11deg) scale(1.14)}}
-@keyframes flash{0%,100%{background:#ffe4e6}50%{background:#fda4af}}
-.a-calm{animation:calm 2.4s infinite ease-in-out}.a-loud{animation:loud .38s infinite ease-in-out}.a-flash{animation:flash .55s infinite}
-input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:36px;width:100%}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;height:28px;width:28px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);margin-top:-10px}
-input[type=range]::-webkit-slider-runnable-track{height:8px;background:#cbd5e1;border-radius:999px}
+:root{--ease:cubic-bezier(.34,1.56,.64,1)}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;transition:background-color .6s ease;padding:max(.75rem,env(safe-area-inset-top)) env(safe-area-inset-right) max(1rem,env(safe-area-inset-bottom)) env(safe-area-inset-left);-webkit-tap-highlight-color:transparent;user-select:none;background-image:radial-gradient(circle at 15% -10%,rgba(255,255,255,.95),transparent 55%),radial-gradient(circle at 100% 100%,rgba(255,255,255,.6),transparent 50%);background-attachment:fixed}
+@keyframes calm{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
+@keyframes loud{0%,100%{transform:rotate(0) scale(1.06)}25%{transform:rotate(-11deg) scale(1.16)}75%{transform:rotate(11deg) scale(1.16)}}
+@keyframes flash{0%,100%{background-color:#ffe4e6}50%{background-color:#fda4af}}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}100%{box-shadow:0 0 0 12px rgba(16,185,129,0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes fadeSwap{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:none}}
+.a-calm{animation:calm 3s infinite ease-in-out}.a-loud{animation:loud .38s infinite ease-in-out}.a-flash{animation:flash .55s infinite}
+.a-shake{animation:shake .5s}.swap{animation:fadeSwap .35s ease}
+main>*{animation:rise .6s var(--ease) both}main>*:nth-child(2){animation-delay:.12s}
+#card{transition:border-color .4s ease,box-shadow .4s ease,background-color .4s ease}
+#mascot{transition:transform .3s;filter:drop-shadow(0 8px 10px rgba(0,0,0,.12))}
+#bar{background-image:linear-gradient(to top,rgba(0,0,0,.12),rgba(255,255,255,.3));box-shadow:0 0 18px -2px currentColor;transition:height .08s linear,background-color .3s}
+.pop{animation:pop .5s var(--ease)}
+.dot-live{animation:ring 1.4s infinite}
+.btn{transition:transform .15s var(--ease),box-shadow .2s,background-color .3s}.btn:active{transform:scale(.95)}
+summary{list-style:none;cursor:pointer}summary::-webkit-details-marker{display:none}
+details[open] .chev{transform:rotate(180deg)}.chev{transition:transform .3s}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:36px;width:100%;touch-action:pan-y}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;height:28px;width:28px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);border:3px solid #fff;box-shadow:0 3px 8px rgba(37,99,235,.45);margin-top:-10px;transition:transform .15s}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
+input[type=range]::-webkit-slider-runnable-track{height:8px;background:#e2e8f0;border-radius:999px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body id="body" class="bg-emerald-50 text-slate-800 min-h-screen flex flex-col gap-3">
@@ -41,14 +61,14 @@ input[type=range]::-webkit-slider-runnable-track{height:8px;background:#cbd5e1;b
 
 <section id="card" class="lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 border-slate-200 p-5 flex flex-col justify-between">
   <div class="flex items-center justify-between gap-2">
-    <span id="mic-badge" class="px-3 py-1.5 rounded-full text-xs font-extrabold bg-slate-100 text-slate-600">Micro en pause</span>
+    <span id="mic-badge" class="px-3 py-1.5 rounded-full text-xs font-extrabold bg-slate-100 text-slate-600"><span class="inline-block w-2.5 h-2.5 rounded-full mr-1.5 bg-slate-400"></span>Micro en pause</span>
     <span id="timer" class="hidden px-3 py-1.5 rounded-full text-xs font-extrabold"></span>
   </div>
 
   <div class="my-3 bg-slate-50 p-3 rounded-2xl border">
     <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
       <span class="text-xs font-black uppercase text-slate-700">🚨 Escalade : <span id="lvl-text" class="text-rose-600 text-base">0 / 5</span></span>
-      <button type="button" id="reset" class="px-3 py-2 bg-emerald-600 active:scale-95 text-white text-xs font-extrabold rounded-xl">🕊️ Retour au calme (0/5)</button>
+      <button type="button" id="reset" class="btn px-3 py-2 bg-emerald-600 shadow shadow-emerald-600/30 text-white text-xs font-extrabold rounded-xl">🕊️ Retour au calme (0/5)</button>
     </div>
     <div id="steps" class="grid grid-cols-5 gap-2"></div>
   </div>
@@ -70,10 +90,10 @@ input[type=range]::-webkit-slider-runnable-track{height:8px;background:#cbd5e1;b
     </div>
   </div>
 
-  <button type="button" id="toggle" class="w-full mt-3 py-4 rounded-2xl font-black text-lg text-white bg-blue-600 active:scale-95 shadow-lg">🎙️ Démarrer l'écoute</button>
+  <button type="button" id="toggle" class="btn w-full mt-3 py-4 rounded-2xl font-black text-lg text-white bg-blue-600 active:scale-95 shadow-lg">🎙️ Démarrer l'écoute</button>
 </section>
 
-<aside class="lg:col-span-5 bg-white rounded-3xl shadow-lg border p-5 space-y-3">
+<aside class="lg:col-span-5 bg-white rounded-3xl shadow-xl shadow-slate-900/5 border border-white/80 backdrop-blur p-5 space-y-3">
   <h3 class="font-black text-slate-900 pb-2 border-b">⚙️ Réglages & Test enceinte</h3>
 
   <div class="bg-blue-50 p-3 rounded-2xl border border-blue-200">
@@ -81,12 +101,14 @@ input[type=range]::-webkit-slider-runnable-track{height:8px;background:#cbd5e1;b
     <div id="tests" class="grid grid-cols-5 gap-1.5"></div>
   </div>
 
-  <div class="bg-amber-50 p-3 rounded-2xl border border-amber-300 space-y-2">
-    <div class="font-extrabold text-amber-900 text-xs">🧪 Tests de routage audio (écoute active)</div>
-    <button type="button" id="mode-btn" class="w-full py-2.5 rounded-xl bg-white border border-amber-300 text-xs font-extrabold text-amber-900">Sortie : Web Audio (par défaut)</button>
+  <details class="bg-amber-50 p-3 rounded-2xl border border-amber-300">
+    <summary class="font-extrabold text-amber-900 text-xs flex justify-between"><span>🧪 Avancé : routage audio</span><span class="chev">▾</span></summary>
+    <div class="space-y-2 mt-2">
+    <button type="button" id="mode-btn" class="w-full py-2.5 rounded-xl bg-white border border-amber-300 text-xs font-extrabold text-amber-900">Sortie : Élément audio (recommandé)</button>
     <button type="button" id="diag-btn" class="w-full py-2.5 rounded-xl bg-white border border-amber-300 text-xs font-extrabold text-amber-900">🔍 Diagnostic audio</button>
-    <p class="text-[11px] text-amber-800 font-semibold leading-snug">Si le son sort sur le téléphone, essaie « Élément audio », puis refais Arrêter/Démarrer l'écoute.</p>
-  </div>
+    <p class="text-[11px] text-amber-800 font-semibold leading-snug">Mode recommandé : Élément audio. Si le son repart sur le téléphone, essaie l'autre mode puis Arrêter/Démarrer.</p>
+    </div>
+  </details>
 
   <div class="bg-slate-50 p-3 rounded-2xl border space-y-1">
     <div class="flex justify-between"><label for="s-th" class="font-extrabold text-xs">🚨 Seuil de bruit maximum</label><span id="v-th" class="bg-rose-100 text-rose-700 font-black px-2 rounded text-xs">65%</span></div>
@@ -115,13 +137,13 @@ const STEP_ON = [null,'bg-emerald-500 border-emerald-600 text-white','bg-amber-4
 
 LEVELS.forEach(([name], i) => {
   $('steps').insertAdjacentHTML('beforeend', `<div id="step-${i+1}" class="h-12 rounded-xl border-2 flex flex-col items-center justify-center transition-all"><span class="text-xs font-black">Niv. ${i+1}</span><span class="text-[10px] font-bold">${name}</span></div>`);
-  $('tests').insertAdjacentHTML('beforeend', `<button type="button" onclick="playAlarm(${i+1})" class="py-2.5 bg-white active:scale-95 border border-blue-200 rounded-xl shadow-sm"><span class="block text-xs font-black">Test ${i+1}</span><span class="block text-[10px] font-bold text-slate-500">${name}</span></button>`);
+  $('tests').insertAdjacentHTML('beforeend', `<button type="button" onclick="playAlarm(${i+1})" class="btn py-2.5 bg-white border border-blue-200 rounded-xl shadow-sm"><span class="block text-xs font-black">Test ${i+1}</span><span class="block text-[10px] font-bold text-slate-500">${name}</span></button>`);
 });
 
 // --- État ---
 let ctx, comp, master, streamDest, analyser, micStream, source;
 let listening = false, raf = null, wakeLock = null;
-let useMediaElement = false;
+let useMediaElement = true;
 let threshold = 65, gainMul = 4.5, delayMs = 1500, cooldownMs = 4000;
 let level = 0, overSince = null, lastAlert = 0, smooth = 0, siren = false, sirenT = null;
 
@@ -174,7 +196,7 @@ function routeOutput() {
 
 $('mode-btn').addEventListener('click', async () => {
   useMediaElement = !useMediaElement;
-  $('mode-btn').textContent = 'Sortie : ' + (useMediaElement ? 'Élément audio (test)' : 'Web Audio (par défaut)');
+  $('mode-btn').textContent = 'Sortie : ' + (useMediaElement ? 'Élément audio (recommandé)' : 'Web Audio (direct)');
   if (ctx) routeOutput();
   banner('Mode changé. Arrête puis redémarre l\'écoute, puis touche un Test.', 'info');
 });
@@ -230,8 +252,11 @@ function sirenMode(ms) {
   sirenT = setTimeout(() => siren = false, ms);
 }
 
+let shownLevel = 0;
 function updateSteps() {
   $('lvl-text').textContent = `${level} / 5`;
+  if (level > shownLevel) { requestAnimationFrame(() => { $('step-' + level).classList.add('pop'); $('card').classList.add('a-shake'); setTimeout(() => $('card').classList.remove('a-shake'), 520); }); }
+  shownLevel = level;
   for (let i = 1; i <= 5; i++) {
     $('step-' + i).className = 'h-12 rounded-xl border-2 flex flex-col items-center justify-center transition-all ' +
       (i <= level ? STEP_ON[i] : 'bg-slate-100 border-slate-200 text-slate-400');
@@ -328,17 +353,18 @@ const THEMES = {
   orange: ['bg-orange-50','border-orange-400','bg-orange-500','😬','','Limite atteinte !','text-orange-600'],
   red:    ['bg-rose-100','border-rose-500','bg-rose-500','🙉','a-loud','TROP BRUYANT !','text-rose-600']
 };
+let lastTitle = '';
 function paint(v) {
   $('bar').style.height = v + '%'; $('pct').textContent = v + '%';
-  if (siren) { $('bar').className = 'w-full bg-rose-600 rounded-2xl transition-all duration-75'; return; }
+  if (siren) { $('bar').className = 'w-full bg-rose-600 text-rose-600 rounded-2xl'; return; }
   const k = v >= threshold ? 'red' : v >= Math.max(12, threshold * .82) ? 'orange' : v >= Math.max(8, threshold * .62) ? 'yellow' : 'green';
   const [bg, bd, bar, emo, anim, title, tc] = THEMES[k];
   $('body').className = `${bg} text-slate-800 min-h-screen flex flex-col gap-3`;
   $('card').className = `lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 ${bd} p-5 flex flex-col justify-between`;
-  $('bar').className = `w-full ${bar} rounded-2xl transition-all duration-75`;
+  $('bar').className = `w-full ${bar} rounded-2xl ${k === 'red' ? 'text-rose-500' : k === 'orange' ? 'text-orange-500' : k === 'yellow' ? 'text-amber-400' : 'text-emerald-500'}`;
   $('mascot').textContent = (k === 'red' && level >= 5) ? '🚨' : emo;
   $('mascot').className = `text-7xl sm:text-8xl mb-3 ${anim}`;
-  $('title').textContent = title; $('title').className = `text-2xl sm:text-4xl font-black uppercase ${tc}`;
+  $('title').textContent = title; $('title').className = `text-2xl sm:text-4xl font-black uppercase ${tc}` + (title !== lastTitle ? ' swap' : ''); lastTitle = title;
   $('sub').className = 'text-sm font-bold text-slate-600 mt-1.5';
   $('sub').textContent = k === 'red' ? `Niveau d'alerte ${level}/5 !` : k === 'orange' ? "On baisse la voix avant l'alarme !" :
     k === 'yellow' ? 'Le volume monte, on parle moins fort...' : (level > 0 ? `Bien ! Niveau actuel : ${level}/5` : 'Super ambiance, continuez !');
@@ -356,10 +382,10 @@ function idle() {
 }
 
 function refreshButton() {
-  $('toggle').className = `w-full mt-3 py-4 rounded-2xl font-black text-lg text-white active:scale-95 shadow-lg ${listening ? 'bg-rose-600' : 'bg-blue-600'}`;
+  $('toggle').className = `btn w-full mt-3 py-4 rounded-2xl font-black text-lg text-white shadow-lg ${listening ? 'bg-rose-600 shadow-rose-600/30' : 'bg-blue-600 shadow-blue-600/30'}`;
   $('toggle').textContent = listening ? "⏹️ Arrêter l'écoute" : "🎙️ Démarrer l'écoute";
   $('mic-badge').className = `px-3 py-1.5 rounded-full text-xs font-extrabold ${listening ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}`;
-  $('mic-badge').textContent = listening ? `Écoute active (${gainMul.toFixed(1)}x)` : 'Micro en pause';
+  $('mic-badge').innerHTML = `<span class="inline-block w-2.5 h-2.5 rounded-full mr-1.5 ${listening ? 'bg-emerald-500 dot-live' : 'bg-slate-400'}"></span>` + (listening ? `Écoute active (${gainMul.toFixed(1)}x)` : 'Micro en pause');
 }
 
 // --- Contrôles ---
@@ -369,6 +395,20 @@ $('s-th').addEventListener('input', e => { threshold = +e.target.value; $('v-th'
 $('s-gain').addEventListener('input', e => { gainMul = +e.target.value; $('v-gain').textContent = gainMul.toFixed(1) + 'x'; if (listening) refreshButton(); });
 $('s-delay').addEventListener('input', e => { const s = +e.target.value; delayMs = s * 1000; $('v-delay').textContent = s.toFixed(1) + 's'; });
 $('s-cd').addEventListener('input', e => { const s = +e.target.value; cooldownMs = s * 1000; $('v-cd').textContent = s + 's'; });
+
+// --- Mémorisation des réglages ---
+const KEY = 'sonometre-settings';
+const SL = { 's-th': 'th', 's-gain': 'gain', 's-delay': 'delay', 's-cd': 'cd' };
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
+  for (const [id, k] of Object.entries(SL)) if (saved[k] != null) { $(id).value = saved[k]; $(id).dispatchEvent(new Event('input')); }
+  if (saved.media === false) $('mode-btn').click();
+} catch (e) {}
+function saveSettings() {
+  try { const o = { media: useMediaElement }; for (const [id, k] of Object.entries(SL)) o[k] = $(id).value; localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
+}
+document.querySelectorAll('input[type=range]').forEach(i => i.addEventListener('change', saveSettings));
+$('mode-btn').addEventListener('click', saveSettings);
 
 updateSteps();
 </script>
