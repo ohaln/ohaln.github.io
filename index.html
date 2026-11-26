@@ -11,6 +11,7 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%232563eb'/%3E%3Cg fill='%23fff'%3E%3Crect x='36' y='72' width='18' height='36' rx='9'/%3E%3Crect x='66' y='44' width='18' height='92' rx='9'/%3E%3Crect x='96' y='28' width='18' height='124' rx='9'/%3E%3Crect x='126' y='62' width='18' height='56' rx='9'/%3E%3C/g%3E%3C/svg%3E">
 <style>
 :root{--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--blue:#2563eb;--r:20px}
+[hidden]{display:none!important}
 *{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 body{--c:#94a3b8;--bg:#f1f5f9;font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,'Nunito','Segoe UI',sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));transition:background .5s;user-select:none;-webkit-user-select:none}
 body[data-state=green]{--c:#10b981;--bg:#ecfdf5}
@@ -150,6 +151,7 @@ body::before{width:440px;height:440px;top:-170px;right:-150px}body::after{width:
 
     <div class="btns">
       <button type="button" id="toggle" class="btn primary"></button>
+      <button type="button" id="bt-btn" class="btn ghost" hidden><svg class="ic" aria-hidden="true"><use href="#i-volume"/></svg>Activer la sortie enceinte</button>
       <button type="button" id="reset" class="btn ghost"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg>Retour au calme</button>
     </div>
   </section>
@@ -216,8 +218,6 @@ async function ensureAudio() {
     master = ctx.createGain(); master.gain.value = 1.35;
     comp.connect(master);
     streamDest = ctx.createMediaStreamDestination();
-    const ka = ctx.createOscillator(), kg = ctx.createGain();
-    kg.gain.value = 0.0001; ka.frequency.value = 20; ka.connect(kg); kg.connect(streamDest); ka.start();
     route();
   }
   if (ctx.state !== 'running') await ctx.resume();
@@ -247,9 +247,15 @@ async function resetAudio() {
   banner("Audio réinitialisé. Vérifie que l'enceinte est connectée, puis lance l'écoute.", 'info');
 }
 $('fix-btn').addEventListener('click', resetAudio);
+$('bt-btn').addEventListener('click', async () => {
+  if (!ctx) return;
+  if (ctx.state !== 'running') await ctx.resume();
+  route();                       // relance l'élément <audio> pendant que le micro est ouvert
+  banner('Sortie enceinte relancée. Fais un test (1 à 5).', 'info');
+});
 function modeLabel() { $('mode-btn').textContent = 'Sortie : ' + (useMedia ? 'élément audio (recommandé)' : 'Web Audio (direct)'); }
 $('mode-btn').addEventListener('click', () => {
-  useMedia = !useMedia; modeLabel(); if (ctx) route();
+  useMedia = !useMedia; modeLabel(); if (ctx) route(); refresh();
   banner("Mode changé. Arrête puis relance l'écoute, puis fais un test.", 'info');
 });
 $('diag-btn').addEventListener('click', async () => {
@@ -349,6 +355,7 @@ async function startMic() {
     if (ctx.state !== 'running') await ctx.resume();
     if (useMedia && $('out').paused) $('out').play().catch(() => {});
     listening = true; overSince = null; refresh(); loop();
+    if (useMedia) banner("Écoute active. Touche « Activer la sortie enceinte », puis fais un test.", 'info');
   } catch (e) {
     banner(e.name === 'NotAllowedError' ? "Micro bloqué : Réglages > Safari > Microphone (ou icône « AA » dans la barre d'adresse)." : "Impossible d'accéder au micro. Autorise-le dans Safari.");
     stopMic();
@@ -401,6 +408,7 @@ function refresh() {
   const b = $('toggle');
   b.className = 'btn primary' + (listening ? ' stop' : '');
   b.innerHTML = listening ? ico('stop') + "Arrêter l'écoute" : ico('mic') + "Démarrer l'écoute";
+  $('bt-btn').hidden = !(listening && useMedia);
   $('mic-dot').className = 'dot' + (listening ? ' live' : '');
   $('mic-text').textContent = listening ? `Écoute active · ${gainMul.toFixed(1)}x` : 'Micro en pause';
 }
