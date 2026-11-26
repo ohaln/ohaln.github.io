@@ -3,165 +3,181 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Sonomètre Périscolaire</title>
+<title>Sonomètre</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Sonomètre">
+<meta name="theme-color" content="#f1f5f9">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='42' fill='%232563eb'/%3E%3Ctext x='90' y='120' font-size='96' text-anchor='middle'%3E%F0%9F%8E%9A%EF%B8%8F%3C/text%3E%3C/svg%3E">
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#ecfdf5">
 <style>
-:root{--ease:cubic-bezier(.34,1.56,.64,1)}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;transition:background-color .6s ease;padding:max(.75rem,env(safe-area-inset-top)) env(safe-area-inset-right) max(1rem,env(safe-area-inset-bottom)) env(safe-area-inset-left);-webkit-tap-highlight-color:transparent;user-select:none;background-image:radial-gradient(circle at 15% -10%,rgba(255,255,255,.95),transparent 55%),radial-gradient(circle at 100% 100%,rgba(255,255,255,.6),transparent 50%);background-attachment:fixed}
-@keyframes calm{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)}}
-@keyframes loud{0%,100%{transform:rotate(0) scale(1.06)}25%{transform:rotate(-11deg) scale(1.16)}75%{transform:rotate(11deg) scale(1.16)}}
-@keyframes flash{0%,100%{background-color:#ffe4e6}50%{background-color:#fda4af}}
-@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
-@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
-@keyframes ring{0%{box-shadow:0 0 0 0 rgba(16,185,129,.55)}100%{box-shadow:0 0 0 12px rgba(16,185,129,0)}}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
-@keyframes fadeSwap{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:none}}
-.a-calm{animation:calm 3s infinite ease-in-out}.a-loud{animation:loud .38s infinite ease-in-out}.a-flash{animation:flash .55s infinite}
-.a-shake{animation:shake .5s}.swap{animation:fadeSwap .35s ease}
-main>*{animation:rise .6s var(--ease) both}main>*:nth-child(2){animation-delay:.12s}
-#card{transition:border-color .4s ease,box-shadow .4s ease,background-color .4s ease}
-#mascot{transition:transform .3s;filter:drop-shadow(0 8px 10px rgba(0,0,0,.12))}
-#bar{background-image:linear-gradient(to top,rgba(0,0,0,.12),rgba(255,255,255,.3));box-shadow:0 0 18px -2px currentColor;transition:height .08s linear,background-color .3s}
-.pop{animation:pop .5s var(--ease)}
-.dot-live{animation:ring 1.4s infinite}
-.btn{transition:transform .15s var(--ease),box-shadow .2s,background-color .3s}.btn:active{transform:scale(.95)}
-summary{list-style:none;cursor:pointer}summary::-webkit-details-marker{display:none}
-details[open] .chev{transform:rotate(180deg)}.chev{transition:transform .3s}
-input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:36px;width:100%;touch-action:pan-y}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;height:28px;width:28px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);border:3px solid #fff;box-shadow:0 3px 8px rgba(37,99,235,.45);margin-top:-10px;transition:transform .15s}
-input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
-input[type=range]::-webkit-slider-runnable-track{height:8px;background:#e2e8f0;border-radius:999px}
+:root{--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--blue:#2563eb;--r:20px}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{--c:#94a3b8;--bg:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));transition:background .5s;user-select:none;-webkit-user-select:none}
+body[data-state=green]{--c:#10b981;--bg:#ecfdf5}
+body[data-state=yellow]{--c:#f59e0b;--bg:#fffbeb}
+body[data-state=orange]{--c:#f97316;--bg:#fff7ed}
+body[data-state=red]{--c:#f43f5e;--bg:#fff1f2}
+body[data-state=siren]{--c:#e11d48;--bg:#ffe4e6;animation:flash .55s infinite}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 4px}
+h1{font-size:20px;font-weight:800;letter-spacing:-.01em}
+header p{font-size:12px;font-weight:600;color:var(--mut);margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:700;color:var(--mut);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#cbd5e1;flex:none}
+.dot.on{background:#10b981}
+.dot.live{background:#10b981;animation:ring 1.4s infinite}
+#banner{display:none;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:14px;font-size:13px;font-weight:700;line-height:1.35}
+#banner.show{display:flex}
+#banner.error{background:#ffe4e6;color:#9f1239}#banner.info{background:#dbeafe;color:#1e40af}
+#banner button{flex:none;width:28px;height:28px;border:0;border-radius:8px;background:rgba(0,0,0,.08);font-weight:800;color:inherit}
+main{display:grid;gap:14px}
+@media(min-width:900px){main{grid-template-columns:1.25fr 1fr;align-items:start}}
+.card{background:#fff;border-radius:var(--r);padding:20px;box-shadow:0 1px 2px rgba(15,23,42,.06),0 10px 28px -14px rgba(15,23,42,.18)}
+#card{border:2px solid var(--c);transition:border-color .4s;display:flex;flex-direction:column;gap:18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:30px}
+#timer{font-size:12px;font-weight:800;color:var(--mut);visibility:hidden}
+#timer.show{visibility:visible}
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:4px 0}
+#mascot{font-size:84px;line-height:1;height:96px;display:flex;align-items:center;justify-content:center}
+#title{font-size:28px;font-weight:900;letter-spacing:-.01em;text-transform:uppercase;color:var(--c);line-height:1.1}
+body[data-state=idle] #title{color:var(--mut)}
+#sub{font-size:14px;font-weight:600;color:var(--mut);min-height:20px;max-width:360px}
+body[data-state=green] #mascot{animation:bob 3s ease-in-out infinite}
+body[data-state=red] #mascot,body[data-state=siren] #mascot{animation:loud .4s ease-in-out infinite}
+.meter{height:26px;background:var(--line);border-radius:999px;position:relative;overflow:hidden}
+#fill{height:100%;width:0;background:var(--c);border-radius:999px;transition:width .08s linear,background .3s}
+#mark{position:absolute;top:0;bottom:0;left:65%;width:3px;margin-left:-1.5px;background:#e11d48}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:700;color:var(--mut)}
+.row b{color:var(--ink);font-weight:800}
+#pct{font-size:18px}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.step{height:52px;border-radius:12px;background:#f1f5f9;border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#94a3b8;transition:background .3s,border-color .3s,color .3s}
+.step b{font-size:15px;font-weight:900;line-height:1}.step span{font-size:10px;font-weight:700}
+.step.on{color:#fff;border-color:transparent}
+.step.on:nth-child(1){background:#10b981}.step.on:nth-child(2){background:#f59e0b}.step.on:nth-child(3){background:#f97316}.step.on:nth-child(4){background:#f43f5e}.step.on:nth-child(5){background:#be123c}
+.step.pop{animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+button{font:inherit;cursor:pointer;border:0;transition:transform .12s,background .25s,opacity .2s}
+button:active{transform:scale(.97)}
+.btn{width:100%;height:54px;border-radius:16px;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px}
+.primary{background:var(--blue);color:#fff;box-shadow:0 8px 20px -8px rgba(37,99,235,.6)}
+.primary.stop{background:#e11d48;box-shadow:0 8px 20px -8px rgba(225,29,72,.6)}
+.ghost{height:46px;font-size:14px;background:#f1f5f9;color:var(--ink);border:1px solid var(--line)}
+.btns{display:flex;flex-direction:column;gap:10px}
+h3{font-size:15px;font-weight:800;margin-bottom:12px}
+.group{display:flex;flex-direction:column;gap:16px}
+.group+.group{margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+.tests{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tests button{height:54px;border-radius:12px;background:#f1f5f9;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--ink)}
+.tests b{font-size:15px;font-weight:900;line-height:1}.tests span{font-size:10px;font-weight:700;color:var(--mut)}
+.field label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;font-weight:700;margin-bottom:2px}
+.val{min-width:52px;text-align:center;padding:3px 10px;border-radius:999px;background:#eff6ff;color:var(--blue);font-size:12px;font-weight:800}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;width:100%;height:32px;margin:0;touch-action:pan-y}
+input[type=range]::-webkit-slider-runnable-track{height:6px;background:var(--line);border-radius:999px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--blue);border:3px solid #fff;box-shadow:0 2px 8px rgba(37,99,235,.45)}
+details summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:800}
+details summary::-webkit-details-marker{display:none}
+.chev{transition:transform .25s;color:var(--mut)}details[open] .chev{transform:rotate(180deg)}
+.adv{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.adv button{height:42px;border-radius:12px;background:#f1f5f9;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink)}
+.adv p{font-size:12px;color:var(--mut);font-weight:600;line-height:1.4}
+.foot{text-align:center;font-size:12px;font-weight:600;color:var(--mut);padding:2px 0}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes loud{0%,100%{transform:rotate(0) scale(1.05)}25%{transform:rotate(-10deg) scale(1.12)}75%{transform:rotate(10deg) scale(1.12)}}
+@keyframes flash{0%,100%{background:#ffe4e6}50%{background:#fda4af}}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(16,185,129,.5)}100%{box-shadow:0 0 0 9px rgba(16,185,129,0)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
-<body id="body" class="bg-emerald-50 text-slate-800 min-h-screen flex flex-col gap-3">
+<body data-state="idle">
+<div class="wrap">
 
-<header class="w-full max-w-6xl mx-auto px-4 flex items-center justify-between gap-2">
-  <div>
-    <h1 class="text-lg sm:text-2xl font-black text-slate-900 leading-none">🎚️ Sonomètre Salle de Jeu</h1>
-    <p class="text-xs text-slate-600 font-semibold mt-1">Périscolaire • Escalade 5 niveaux</p>
-  </div>
-  <div id="wl" class="bg-white px-3 py-1.5 rounded-xl shadow-sm border text-xs font-bold text-slate-600">Écran auto</div>
+<header>
+  <div><h1>🎚️ Sonomètre</h1><p>Salle de jeu · Périscolaire</p></div>
+  <span class="pill"><span id="wl-dot" class="dot"></span><span id="wl">Écran auto</span></span>
 </header>
 
-<div id="banner" class="hidden w-full max-w-6xl mx-auto px-4">
-  <div id="banner-box" class="p-3 rounded-2xl font-bold text-xs flex justify-between items-center gap-2">
-    <span id="banner-text"></span>
-    <button type="button" onclick="banner()" class="px-2.5 py-1 rounded-lg bg-black/10 font-black">✕</button>
-  </div>
-</div>
+<div id="banner"><span id="banner-text"></span><button type="button" onclick="banner()">✕</button></div>
 
-<main class="w-full max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-5 flex-grow">
-
-<section id="card" class="lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 border-slate-200 p-5 flex flex-col justify-between">
-  <div class="flex items-center justify-between gap-2">
-    <span id="mic-badge" class="px-3 py-1.5 rounded-full text-xs font-extrabold bg-slate-100 text-slate-600"><span class="inline-block w-2.5 h-2.5 rounded-full mr-1.5 bg-slate-400"></span>Micro en pause</span>
-    <span id="timer" class="hidden px-3 py-1.5 rounded-full text-xs font-extrabold"></span>
-  </div>
-
-  <div class="my-3 bg-slate-50 p-3 rounded-2xl border">
-    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-      <span class="text-xs font-black uppercase text-slate-700">🚨 Escalade : <span id="lvl-text" class="text-rose-600 text-base">0 / 5</span></span>
-      <button type="button" id="reset" class="btn px-3 py-2 bg-emerald-600 shadow shadow-emerald-600/30 text-white text-xs font-extrabold rounded-xl">🕊️ Retour au calme (0/5)</button>
+<main>
+  <section id="card" class="card">
+    <div class="top">
+      <span class="pill"><span id="mic-dot" class="dot"></span><span id="mic-text">Micro en pause</span></span>
+      <span id="timer"></span>
     </div>
-    <div id="steps" class="grid grid-cols-5 gap-2"></div>
-  </div>
 
-  <div class="flex items-center justify-between gap-4 my-2">
-    <div class="flex flex-col items-center text-center flex-1">
-      <div id="mascot" class="text-7xl sm:text-8xl mb-3">😴</div>
-      <h2 id="title" class="text-2xl sm:text-4xl font-black uppercase text-slate-700">Prêt à démarrer</h2>
-      <p id="sub" class="text-sm font-bold text-slate-500 mt-1.5">Connecte ton enceinte puis appuie sur Démarrer</p>
+    <div class="hero">
+      <div id="mascot">😴</div>
+      <h2 id="title">Prêt à démarrer</h2>
+      <p id="sub">Connecte l'enceinte puis lance l'écoute</p>
     </div>
-    <div class="flex flex-col items-center shrink-0">
-      <div class="relative w-16 sm:w-20 h-56 bg-slate-100 rounded-3xl p-1.5 border-2 shadow-inner flex flex-col justify-end overflow-hidden">
-        <div id="bar" class="w-full bg-emerald-500 rounded-2xl transition-all duration-75" style="height:0%"></div>
-        <div id="tline" class="absolute inset-x-0 border-t-4 border-rose-600 z-10 flex justify-end pr-1" style="bottom:65%">
-          <span id="ttag" class="bg-rose-600 text-white text-[9px] font-black px-1 rounded -mt-5">MAX 65%</span>
+
+    <div>
+      <div class="meter"><div id="fill"></div><div id="mark"></div></div>
+      <div class="row" style="margin-top:8px"><span>Seuil : <b id="th-text">65%</b></span><b id="pct">0%</b></div>
+    </div>
+
+    <div>
+      <div class="row" style="margin-bottom:8px"><span>Escalade</span><b id="lvl-text">0 / 5</b></div>
+      <div id="steps" class="steps"></div>
+    </div>
+
+    <div class="btns">
+      <button type="button" id="toggle" class="btn primary"></button>
+      <button type="button" id="reset" class="btn ghost">🕊️ Retour au calme</button>
+    </div>
+  </section>
+
+  <aside class="card">
+    <div class="group">
+      <div><h3>🔊 Tester les alarmes</h3><div id="tests" class="tests"></div></div>
+    </div>
+
+    <div class="group">
+      <h3 style="margin:0">⚙️ Réglages</h3>
+      <div class="field"><label for="s-th">Seuil de bruit <span id="v-th" class="val">65%</span></label><input type="range" id="s-th" min="10" max="95" value="65"></div>
+      <div class="field"><label for="s-gain">Sensibilité du micro <span id="v-gain" class="val">4.5x</span></label><input type="range" id="s-gain" min="1" max="10" step="0.5" value="4.5"></div>
+      <div class="field"><label for="s-delay">Délai avant alerte <span id="v-delay" class="val">1.5s</span></label><input type="range" id="s-delay" min="0.5" max="5" step="0.5" value="1.5"></div>
+      <div class="field"><label for="s-cd">Pause entre alertes <span id="v-cd" class="val">4s</span></label><input type="range" id="s-cd" min="2" max="12" value="4"></div>
+    </div>
+
+    <div class="group">
+      <details>
+        <summary><span>🧪 Avancé : sortie audio</span><span class="chev">▾</span></summary>
+        <div class="adv">
+          <button type="button" id="mode-btn"></button>
+          <button type="button" id="diag-btn">🔍 Diagnostic audio</button>
+          <p>Mode recommandé : élément audio. Si le son repart sur le téléphone, change de mode puis arrête et relance l'écoute.</p>
         </div>
-      </div>
-      <span id="pct" class="mt-1.5 text-lg font-black text-slate-700">0%</span>
+      </details>
     </div>
-  </div>
-
-  <button type="button" id="toggle" class="btn w-full mt-3 py-4 rounded-2xl font-black text-lg text-white bg-blue-600 active:scale-95 shadow-lg">🎙️ Démarrer l'écoute</button>
-</section>
-
-<aside class="lg:col-span-5 bg-white rounded-3xl shadow-xl shadow-slate-900/5 border border-white/80 backdrop-blur p-5 space-y-3">
-  <h3 class="font-black text-slate-900 pb-2 border-b">⚙️ Réglages & Test enceinte</h3>
-
-  <div class="bg-blue-50 p-3 rounded-2xl border border-blue-200">
-    <div class="font-extrabold text-blue-950 text-xs mb-2">🔊 Tester les 5 niveaux :</div>
-    <div id="tests" class="grid grid-cols-5 gap-1.5"></div>
-  </div>
-
-  <details class="bg-amber-50 p-3 rounded-2xl border border-amber-300">
-    <summary class="font-extrabold text-amber-900 text-xs flex justify-between"><span>🧪 Avancé : routage audio</span><span class="chev">▾</span></summary>
-    <div class="space-y-2 mt-2">
-    <button type="button" id="mode-btn" class="w-full py-2.5 rounded-xl bg-white border border-amber-300 text-xs font-extrabold text-amber-900">Sortie : Élément audio (recommandé)</button>
-    <button type="button" id="diag-btn" class="w-full py-2.5 rounded-xl bg-white border border-amber-300 text-xs font-extrabold text-amber-900">🔍 Diagnostic audio</button>
-    <p class="text-[11px] text-amber-800 font-semibold leading-snug">Mode recommandé : Élément audio. Si le son repart sur le téléphone, essaie l'autre mode puis Arrêter/Démarrer.</p>
-    </div>
-  </details>
-
-  <div class="bg-slate-50 p-3 rounded-2xl border space-y-1">
-    <div class="flex justify-between"><label for="s-th" class="font-extrabold text-xs">🚨 Seuil de bruit maximum</label><span id="v-th" class="bg-rose-100 text-rose-700 font-black px-2 rounded text-xs">65%</span></div>
-    <input type="range" id="s-th" min="10" max="95" value="65">
-    <div class="flex justify-between border-t pt-1"><label for="s-gain" class="font-extrabold text-xs">🎤 Sensibilité micro</label><span id="v-gain" class="bg-blue-100 text-blue-700 font-black px-2 rounded text-xs">4.5x</span></div>
-    <input type="range" id="s-gain" min="1" max="10" step="0.5" value="4.5">
-  </div>
-
-  <div class="bg-slate-50 p-3 rounded-2xl border space-y-1">
-    <div class="flex justify-between"><label for="s-delay" class="font-extrabold text-xs">⏱️ Délai avant alerte</label><span id="v-delay" class="bg-amber-100 text-amber-800 font-black px-2 rounded text-xs">1.5s</span></div>
-    <input type="range" id="s-delay" min="0.5" max="5" step="0.5" value="1.5">
-    <div class="flex justify-between border-t pt-1"><label for="s-cd" class="font-extrabold text-xs">⏸️ Pause entre deux alertes</label><span id="v-cd" class="bg-indigo-100 text-indigo-800 font-black px-2 rounded text-xs">4s</span></div>
-    <input type="range" id="s-cd" min="2" max="12" value="4">
-  </div>
-
-  <p class="text-center text-[11px] text-slate-500 font-semibold">📲 Safari : Partager → Sur l'écran d'accueil.</p>
-</aside>
+  </aside>
 </main>
+
+<p class="foot">📲 Safari : Partager → Sur l'écran d'accueil</p>
+</div>
 
 <audio id="out" playsinline></audio>
 
 <script>
 const $ = id => document.getElementById(id);
-const LEVELS = [['Carillon','emerald'],['Double bip','amber'],['Buzzer','orange'],['Klaxon','rose'],['SIRÈNE','rose']];
-const STEP_ON = [null,'bg-emerald-500 border-emerald-600 text-white','bg-amber-400 border-amber-500 text-slate-900','bg-orange-500 border-orange-600 text-white','bg-rose-500 border-rose-600 text-white','bg-rose-700 border-rose-900 text-white scale-105'];
-
-LEVELS.forEach(([name], i) => {
-  $('steps').insertAdjacentHTML('beforeend', `<div id="step-${i+1}" class="h-12 rounded-xl border-2 flex flex-col items-center justify-center transition-all"><span class="text-xs font-black">Niv. ${i+1}</span><span class="text-[10px] font-bold">${name}</span></div>`);
-  $('tests').insertAdjacentHTML('beforeend', `<button type="button" onclick="playAlarm(${i+1})" class="btn py-2.5 bg-white border border-blue-200 rounded-xl shadow-sm"><span class="block text-xs font-black">Test ${i+1}</span><span class="block text-[10px] font-bold text-slate-500">${name}</span></button>`);
+const NAMES = ['Carillon', 'Bip', 'Buzzer', 'Klaxon', 'Sirène'];
+NAMES.forEach((n, i) => {
+  $('steps').insertAdjacentHTML('beforeend', `<div class="step" id="step-${i + 1}"><b>${i + 1}</b><span>${n}</span></div>`);
+  $('tests').insertAdjacentHTML('beforeend', `<button type="button" onclick="playAlarm(${i + 1})"><b>${i + 1}</b><span>${n}</span></button>`);
 });
 
-// --- État ---
-let ctx, comp, master, streamDest, analyser, micStream, source;
-let listening = false, raf = null, wakeLock = null;
-let useMediaElement = true;
+let ctx, comp, master, streamDest, analyser, micStream;
+let listening = false, raf = null, wakeLock = null, useMedia = true;
 let threshold = 65, gainMul = 4.5, delayMs = 1500, cooldownMs = 4000;
-let level = 0, overSince = null, lastAlert = 0, smooth = 0, siren = false, sirenT = null;
+let level = 0, shown = 0, overSince = null, lastAlert = 0, smooth = 0, siren = false, sirenT = null;
 
-function banner(msg, type) {
-  $('banner').classList.toggle('hidden', !msg);
-  if (!msg) return;
-  $('banner-text').textContent = msg;
-  $('banner-box').className = 'p-3 rounded-2xl font-bold text-xs flex justify-between items-center gap-2 border ' +
-    (type === 'info' ? 'bg-blue-100 text-blue-800 border-blue-300' : 'bg-rose-100 text-rose-800 border-rose-300');
+function banner(msg, type = 'error') {
+  $('banner').className = msg ? 'show ' + type : '';
+  if (msg) $('banner-text').textContent = msg;
 }
+function setSession(t) { try { if (navigator.audioSession) navigator.audioSession.type = t; } catch (e) {} }
 
-// --- AudioSession (Safari 16.4+) : demande explicite lecture + enregistrement ---
-function setSession(type) {
-  try { if (navigator.audioSession) { navigator.audioSession.type = type; return true; } } catch (e) {}
-  return false;
-}
-
-// --- Audio ---
 async function ensureAudio() {
   if (!ctx) {
     ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -170,45 +186,33 @@ async function ensureAudio() {
     master = ctx.createGain(); master.gain.value = 1.35;
     comp.connect(master);
     streamDest = ctx.createMediaStreamDestination();
-    routeOutput();
+    route();
   }
   if (ctx.state !== 'running') await ctx.resume();
 }
-
-// Deux routes de sortie : Web Audio direct, ou via un élément <audio>
-function routeOutput() {
+function route() {
   try { master.disconnect(); } catch (e) {}
   const el = $('out');
-  if (useMediaElement) {
-    master.connect(streamDest);
-    el.srcObject = streamDest.stream;
-    el.play().catch(() => {});
-  } else {
-    master.connect(ctx.destination);
-    el.pause(); el.srcObject = null;
-  }
+  if (useMedia) { master.connect(streamDest); el.srcObject = streamDest.stream; el.play().catch(() => {}); }
+  else { master.connect(ctx.destination); el.pause(); el.srcObject = null; }
 }
-
 ['touchstart', 'click'].forEach(e => document.addEventListener(e, () => {
   if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
-  if (useMediaElement && $('out').paused && $('out').srcObject) $('out').play().catch(() => {});
+  const el = $('out'); if (useMedia && el.srcObject && el.paused) el.play().catch(() => {});
 }, { passive: true }));
 
-$('mode-btn').addEventListener('click', async () => {
-  useMediaElement = !useMediaElement;
-  $('mode-btn').textContent = 'Sortie : ' + (useMediaElement ? 'Élément audio (recommandé)' : 'Web Audio (direct)');
-  if (ctx) routeOutput();
-  banner('Mode changé. Arrête puis redémarre l\'écoute, puis touche un Test.', 'info');
+function modeLabel() { $('mode-btn').textContent = 'Sortie : ' + (useMedia ? 'élément audio (recommandé)' : 'Web Audio (direct)'); }
+$('mode-btn').addEventListener('click', () => {
+  useMedia = !useMedia; modeLabel(); if (ctx) route();
+  banner("Mode changé. Arrête puis relance l'écoute, puis fais un test.", 'info');
 });
-
 $('diag-btn').addEventListener('click', async () => {
-  let txt = `audioSession: ${navigator.audioSession ? 'oui (' + navigator.audioSession.type + ')' : 'non supporté'} | Contexte: ${ctx ? ctx.state : 'aucun'}`;
+  let t = `audioSession : ${navigator.audioSession ? navigator.audioSession.type : 'non supporté'} · Contexte : ${ctx ? ctx.state : 'aucun'}`;
   try {
-    const devs = await navigator.mediaDevices.enumerateDevices();
-    const outs = devs.filter(d => d.kind === 'audiooutput').length, ins = devs.filter(d => d.kind === 'audioinput');
-    txt += ` | Sorties: ${outs} | Entrée: ${ins.map(d => d.label || '?').join(', ') || 'aucune'}`;
+    const d = await navigator.mediaDevices.enumerateDevices();
+    t += ` · Entrée : ${d.filter(x => x.kind === 'audioinput').map(x => x.label || '?').join(', ') || 'aucune'}`;
   } catch (e) {}
-  banner(txt, 'info');
+  banner(t, 'info');
 });
 
 async function playAlarm(n) {
@@ -216,10 +220,10 @@ async function playAlarm(n) {
     await ensureAudio();
     if (listening) setSession('play-and-record');
     const t = ctx.currentTime;
-    const env = (g, t0, peak, atk, dur) => { g.gain.setValueAtTime(0.001, t0); g.gain.linearRampToValueAtTime(peak, t0 + atk); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur); };
     const tone = (type, f, t0, dur, peak, atk) => {
       const o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = type; o.frequency.setValueAtTime(f, t0); env(g, t0, peak, atk, dur);
+      o.type = type; o.frequency.setValueAtTime(f, t0);
+      g.gain.setValueAtTime(0.001, t0); g.gain.linearRampToValueAtTime(peak, t0 + atk); g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
       o.connect(g); g.connect(comp); o.start(t0); o.stop(t0 + dur + 0.02);
     };
     if (n === 1) { tone('sine', 659.25, t, .48, .85, .025); tone('triangle', 523.25, t + .24, .68, .85, .025); }
@@ -242,34 +246,34 @@ async function playAlarm(n) {
   } catch (e) { console.error(e); }
 }
 
+function setState(s, emoji, title, sub) {
+  document.body.dataset.state = s;
+  $('mascot').textContent = emoji; $('title').textContent = title; $('sub').textContent = sub;
+}
 function sirenMode(ms) {
   siren = true; clearTimeout(sirenT);
-  $('body').className = 'a-flash text-slate-900 min-h-screen flex flex-col gap-3';
-  $('card').className = 'lg:col-span-7 bg-rose-50 rounded-3xl shadow-2xl border-4 border-rose-600 p-5 flex flex-col justify-between';
-  $('mascot').textContent = '🚨'; $('mascot').className = 'text-7xl sm:text-8xl mb-3 a-loud';
-  $('title').textContent = 'NIVEAU 5 : SIRÈNE !'; $('title').className = 'text-2xl sm:text-4xl font-black uppercase text-rose-700';
-  $('sub').textContent = 'TROP BRUYANT ! ÇA VA ÊTRE LONG DE TOUT RANGER !'; $('sub').className = 'text-sm font-black text-rose-800 mt-1.5';
-  sirenT = setTimeout(() => siren = false, ms);
+  setState('siren', '🚨', 'Niveau 5 : sirène !', 'Trop bruyant ! Ça va être long de tout ranger !');
+  sirenT = setTimeout(() => { siren = false; if (!listening) idle(); }, ms);
+}
+function idle() {
+  siren = false;
+  setState('idle', '😴', 'Micro en pause', "Connecte l'enceinte puis lance l'écoute");
+  $('fill').style.width = '0%'; $('pct').textContent = '0%'; $('timer').className = '';
 }
 
-let shownLevel = 0;
 function updateSteps() {
   $('lvl-text').textContent = `${level} / 5`;
-  if (level > shownLevel) { requestAnimationFrame(() => { $('step-' + level).classList.add('pop'); $('card').classList.add('a-shake'); setTimeout(() => $('card').classList.remove('a-shake'), 520); }); }
-  shownLevel = level;
-  for (let i = 1; i <= 5; i++) {
-    $('step-' + i).className = 'h-12 rounded-xl border-2 flex flex-col items-center justify-center transition-all ' +
-      (i <= level ? STEP_ON[i] : 'bg-slate-100 border-slate-200 text-slate-400');
-  }
+  for (let i = 1; i <= 5; i++) $('step-' + i).classList.toggle('on', i <= level);
+  if (level > shown) { const el = $('step-' + level); el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+  shown = level;
 }
 
-// --- Écran allumé ---
 async function lockScreen() {
   try {
     if ('wakeLock' in navigator) {
       wakeLock = await navigator.wakeLock.request('screen');
-      $('wl').textContent = 'Écran allumé';
-      wakeLock.addEventListener('release', () => $('wl').textContent = 'Écran auto');
+      $('wl').textContent = 'Écran allumé'; $('wl-dot').className = 'dot on';
+      wakeLock.addEventListener('release', () => { $('wl').textContent = 'Écran auto'; $('wl-dot').className = 'dot'; });
     }
   } catch (e) {}
 }
@@ -277,39 +281,28 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && listening) { lockScreen(); if (ctx) ctx.resume().catch(() => {}); }
 });
 
-// --- Micro ---
 async function startMic() {
   banner();
   try {
-    await ensureAudio();
-    await lockScreen();
-    setSession('play-and-record');           // AVANT getUserMedia
-    micStream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }, video: false
-    });
-    setSession('play-and-record');           // APRÈS aussi : iOS peut le réinitialiser
-    source = ctx.createMediaStreamSource(micStream);
+    await ensureAudio(); await lockScreen();
+    setSession('play-and-record');
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }, video: false });
+    setSession('play-and-record');
     analyser = ctx.createAnalyser(); analyser.fftSize = 512; analyser.smoothingTimeConstant = .25;
-    source.connect(analyser);                // jamais vers la sortie (Larsen)
+    ctx.createMediaStreamSource(micStream).connect(analyser);   // jamais vers la sortie (Larsen)
     if (ctx.state !== 'running') await ctx.resume();
-    if (useMediaElement) routeOutput();
-    listening = true; overSince = null;
-    refreshButton(); loop();
+    if (useMedia) route();
+    listening = true; overSince = null; refresh(); loop();
   } catch (e) {
-    let m = "Impossible d'accéder au micro. Autorise-le dans Safari.";
-    if (e.name === 'NotAllowedError') m = "Micro bloqué : Réglages > Safari > Microphone (ou icône 'AA' dans la barre d'adresse).";
-    banner(m); stopMic();
+    banner(e.name === 'NotAllowedError' ? "Micro bloqué : Réglages > Safari > Microphone (ou icône « AA » dans la barre d'adresse)." : "Impossible d'accéder au micro. Autorise-le dans Safari.");
+    stopMic();
   }
 }
-
 function stopMic() {
-  listening = false;
+  listening = false; cancelAnimationFrame(raf); smooth = 0; overSince = null;
   if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
-  cancelAnimationFrame(raf);
   if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
-  overSince = null; smooth = 0;
-  setSession('playback');                    // rend la sortie à l'enceinte hors écoute
-  refreshButton(); idle();
+  setSession('playback'); refresh(); if (!siren) idle();
 }
 
 function loop() {
@@ -318,8 +311,7 @@ function loop() {
   analyser.getByteTimeDomainData(buf);
   let sum = 0, peak = 0;
   for (const v of buf) { const x = Math.abs((v - 128) / 128); sum += x * x; if (x > peak) peak = x; }
-  const sig = Math.sqrt(sum / buf.length) * .7 + peak * .3;
-  const raw = Math.min(100, Math.round(sig * 220 * gainMul));
+  const raw = Math.min(100, Math.round((Math.sqrt(sum / buf.length) * .7 + peak * .3) * 220 * gainMul));
   smooth = raw > smooth ? Math.round(smooth * .35 + raw * .65) : Math.round(smooth * .7 + raw * .3);
   paint(smooth); escalate(smooth);
   raf = requestAnimationFrame(loop);
@@ -328,89 +320,56 @@ function loop() {
 function escalate(v) {
   const now = Date.now(), tm = $('timer');
   if (lastAlert > 0 && now - lastAlert < cooldownMs) {
-    tm.className = 'px-3 py-1.5 rounded-full text-xs font-extrabold bg-blue-100 text-blue-800';
-    tm.textContent = `⏸️ Pause (${Math.ceil((cooldownMs - (now - lastAlert)) / 1000)}s)`;
-    overSince = null; return;
+    tm.className = 'show'; tm.textContent = `⏸️ Pause ${Math.ceil((cooldownMs - (now - lastAlert)) / 1000)}s`; overSince = null; return;
   }
   if (v >= threshold) {
     if (!overSince) overSince = now;
     const el = now - overSince;
     if (el >= delayMs) {
       if (level < 5) level++;
-      updateSteps(); playAlarm(level);
-      lastAlert = now; overSince = null; tm.className = 'hidden';
-    } else {
-      tm.className = 'px-3 py-1.5 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800';
-      tm.textContent = `⏳ Alerte niv.${Math.min(5, level + 1)} dans ${((delayMs - el) / 1000).toFixed(1)}s`;
-    }
-  } else { overSince = null; tm.className = 'hidden'; }
+      updateSteps(); playAlarm(level); lastAlert = now; overSince = null; tm.className = '';
+    } else { tm.className = 'show'; tm.textContent = `⏳ Niveau ${Math.min(5, level + 1)} dans ${((delayMs - el) / 1000).toFixed(1)}s`; }
+  } else { overSince = null; tm.className = ''; }
 }
 
-// Thèmes visuels : [fond, bordure, barre, emoji, anim, titre, couleur titre]
-const THEMES = {
-  green:  ['bg-emerald-50','border-emerald-400','bg-emerald-500','😊','a-calm',"C'est calme",'text-emerald-600'],
-  yellow: ['bg-amber-50','border-amber-400','bg-amber-400','😐','','Attention au bruit','text-amber-600'],
-  orange: ['bg-orange-50','border-orange-400','bg-orange-500','😬','','Limite atteinte !','text-orange-600'],
-  red:    ['bg-rose-100','border-rose-500','bg-rose-500','🙉','a-loud','TROP BRUYANT !','text-rose-600']
-};
-let lastTitle = '';
 function paint(v) {
-  $('bar').style.height = v + '%'; $('pct').textContent = v + '%';
-  if (siren) { $('bar').className = 'w-full bg-rose-600 text-rose-600 rounded-2xl'; return; }
-  const k = v >= threshold ? 'red' : v >= Math.max(12, threshold * .82) ? 'orange' : v >= Math.max(8, threshold * .62) ? 'yellow' : 'green';
-  const [bg, bd, bar, emo, anim, title, tc] = THEMES[k];
-  $('body').className = `${bg} text-slate-800 min-h-screen flex flex-col gap-3`;
-  $('card').className = `lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 ${bd} p-5 flex flex-col justify-between`;
-  $('bar').className = `w-full ${bar} rounded-2xl ${k === 'red' ? 'text-rose-500' : k === 'orange' ? 'text-orange-500' : k === 'yellow' ? 'text-amber-400' : 'text-emerald-500'}`;
-  $('mascot').textContent = (k === 'red' && level >= 5) ? '🚨' : emo;
-  $('mascot').className = `text-7xl sm:text-8xl mb-3 ${anim}`;
-  $('title').textContent = title; $('title').className = `text-2xl sm:text-4xl font-black uppercase ${tc}` + (title !== lastTitle ? ' swap' : ''); lastTitle = title;
-  $('sub').className = 'text-sm font-bold text-slate-600 mt-1.5';
-  $('sub').textContent = k === 'red' ? `Niveau d'alerte ${level}/5 !` : k === 'orange' ? "On baisse la voix avant l'alarme !" :
-    k === 'yellow' ? 'Le volume monte, on parle moins fort...' : (level > 0 ? `Bien ! Niveau actuel : ${level}/5` : 'Super ambiance, continuez !');
+  $('fill').style.width = v + '%'; $('pct').textContent = v + '%';
+  if (siren) return;
+  if (v >= threshold) setState('red', '🙉', 'Trop bruyant !', `Alerte niveau ${level}/5`);
+  else if (v >= Math.max(12, threshold * .82)) setState('orange', '😬', 'Limite atteinte', "On baisse la voix avant l'alarme");
+  else if (v >= Math.max(8, threshold * .62)) setState('yellow', '😐', 'Ça monte', 'On parle un peu moins fort');
+  else setState('green', '😊', "C'est calme", level > 0 ? `Bien ! Niveau actuel : ${level}/5` : 'Super ambiance, continuez !');
 }
 
-function idle() {
-  siren = false;
-  $('body').className = 'bg-emerald-50 text-slate-800 min-h-screen flex flex-col gap-3';
-  $('card').className = 'lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 border-slate-200 p-5 flex flex-col justify-between';
-  $('bar').style.height = '0%'; $('pct').textContent = '0%';
-  $('mascot').textContent = '😴'; $('mascot').className = 'text-7xl sm:text-8xl mb-3';
-  $('title').textContent = 'Micro en pause'; $('title').className = 'text-2xl sm:text-4xl font-black uppercase text-slate-700';
-  $('sub').textContent = 'Connecte ton enceinte puis appuie sur Démarrer'; $('sub').className = 'text-sm font-bold text-slate-500 mt-1.5';
-  $('timer').className = 'hidden';
+function refresh() {
+  const b = $('toggle');
+  b.className = 'btn primary' + (listening ? ' stop' : '');
+  b.textContent = listening ? "⏹️ Arrêter l'écoute" : "🎙️ Démarrer l'écoute";
+  $('mic-dot').className = 'dot' + (listening ? ' live' : '');
+  $('mic-text').textContent = listening ? `Écoute active · ${gainMul.toFixed(1)}x` : 'Micro en pause';
 }
 
-function refreshButton() {
-  $('toggle').className = `btn w-full mt-3 py-4 rounded-2xl font-black text-lg text-white shadow-lg ${listening ? 'bg-rose-600 shadow-rose-600/30' : 'bg-blue-600 shadow-blue-600/30'}`;
-  $('toggle').textContent = listening ? "⏹️ Arrêter l'écoute" : "🎙️ Démarrer l'écoute";
-  $('mic-badge').className = `px-3 py-1.5 rounded-full text-xs font-extrabold ${listening ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}`;
-  $('mic-badge').innerHTML = `<span class="inline-block w-2.5 h-2.5 rounded-full mr-1.5 ${listening ? 'bg-emerald-500 dot-live' : 'bg-slate-400'}"></span>` + (listening ? `Écoute active (${gainMul.toFixed(1)}x)` : 'Micro en pause');
-}
-
-// --- Contrôles ---
 $('toggle').addEventListener('click', () => listening ? stopMic() : startMic());
 $('reset').addEventListener('click', () => { level = 0; siren = false; clearTimeout(sirenT); overSince = null; updateSteps(); if (!listening) idle(); });
-$('s-th').addEventListener('input', e => { threshold = +e.target.value; $('v-th').textContent = threshold + '%'; $('tline').style.bottom = threshold + '%'; $('ttag').textContent = `MAX ${threshold}%`; });
-$('s-gain').addEventListener('input', e => { gainMul = +e.target.value; $('v-gain').textContent = gainMul.toFixed(1) + 'x'; if (listening) refreshButton(); });
-$('s-delay').addEventListener('input', e => { const s = +e.target.value; delayMs = s * 1000; $('v-delay').textContent = s.toFixed(1) + 's'; });
-$('s-cd').addEventListener('input', e => { const s = +e.target.value; cooldownMs = s * 1000; $('v-cd').textContent = s + 's'; });
+
+const bind = (id, fn) => $(id).addEventListener('input', e => fn(+e.target.value));
+bind('s-th', v => { threshold = v; $('v-th').textContent = $('th-text').textContent = v + '%'; $('mark').style.left = v + '%'; });
+bind('s-gain', v => { gainMul = v; $('v-gain').textContent = v.toFixed(1) + 'x'; if (listening) refresh(); });
+bind('s-delay', v => { delayMs = v * 1000; $('v-delay').textContent = v.toFixed(1) + 's'; });
+bind('s-cd', v => { cooldownMs = v * 1000; $('v-cd').textContent = v + 's'; });
 
 // --- Mémorisation des réglages ---
-const KEY = 'sonometre-settings';
-const SL = { 's-th': 'th', 's-gain': 'gain', 's-delay': 'delay', 's-cd': 'cd' };
+const KEY = 'sonometre-settings', IDS = ['s-th', 's-gain', 's-delay', 's-cd'];
+function save() { try { const o = { media: useMedia }; IDS.forEach(i => o[i] = $(i).value); localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
 try {
-  const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
-  for (const [id, k] of Object.entries(SL)) if (saved[k] != null) { $(id).value = saved[k]; $(id).dispatchEvent(new Event('input')); }
-  if (saved.media === false) $('mode-btn').click();
+  const o = JSON.parse(localStorage.getItem(KEY) || '{}');
+  IDS.forEach(i => { if (o[i] != null) { $(i).value = o[i]; $(i).dispatchEvent(new Event('input')); } });
+  if (o.media === false) useMedia = false;
 } catch (e) {}
-function saveSettings() {
-  try { const o = { media: useMediaElement }; for (const [id, k] of Object.entries(SL)) o[k] = $(id).value; localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
-}
-document.querySelectorAll('input[type=range]').forEach(i => i.addEventListener('change', saveSettings));
-$('mode-btn').addEventListener('click', saveSettings);
+document.querySelectorAll('input[type=range]').forEach(i => i.addEventListener('change', save));
+$('mode-btn').addEventListener('click', save);
 
-updateSteps();
+modeLabel(); refresh(); updateSteps();
 </script>
 </body>
 </html>
