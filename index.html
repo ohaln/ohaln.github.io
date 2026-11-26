@@ -172,8 +172,10 @@ body::before{width:440px;height:440px;top:-170px;right:-150px}body::after{width:
         <summary><span class="h"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg>Avancé : sortie audio</span><svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg></summary>
         <div class="adv">
           <button type="button" id="mode-btn"></button>
+          <button type="button" id="sess-btn"></button>
           <button type="button" id="diag-btn"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>Diagnostic audio</button>
-          <p>Mode recommandé : élément audio. Si le son repart sur le téléphone, change de mode puis arrête et relance l'écoute.</p>
+          <button type="button" id="fix-btn"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg>Réinitialiser l'audio</button>
+          <p>Si le son repart sur le téléphone : 1) Réinitialise l'audio. 2) Connecte l'enceinte avant de lancer l'écoute. 3) Si besoin, essaie une autre session iOS puis relance l'écoute.</p>
         </div>
       </details>
     </div>
@@ -195,7 +197,7 @@ NAMES.forEach((n, i) => {
 });
 
 let ctx, comp, master, streamDest, analyser, micStream;
-let listening = false, raf = null, wakeLock = null, useMedia = true;
+let listening = false, raf = null, wakeLock = null, useMedia = true, sessionMode = 'play-and-record';
 let threshold = 65, gainMul = 4.5, delayMs = 1500, cooldownMs = 4000;
 let level = 0, shown = 0, overSince = null, lastAlert = 0, smooth = 0, siren = false, sirenT = null;
 
@@ -203,6 +205,7 @@ function banner(msg, type = 'error') {
   $('banner').className = msg ? 'show ' + type : '';
   if (msg) $('banner-text').textContent = msg;
 }
+function applySession() { if (sessionMode !== 'auto') setSession(sessionMode); }
 function setSession(t) { try { if (navigator.audioSession) navigator.audioSession.type = t; } catch (e) {} }
 
 async function ensureAudio() {
@@ -213,6 +216,8 @@ async function ensureAudio() {
     master = ctx.createGain(); master.gain.value = 1.35;
     comp.connect(master);
     streamDest = ctx.createMediaStreamDestination();
+    const ka = ctx.createOscillator(), kg = ctx.createGain();
+    kg.gain.value = 0.0001; ka.frequency.value = 20; ka.connect(kg); kg.connect(streamDest); ka.start();
     route();
   }
   if (ctx.state !== 'running') await ctx.resume();
@@ -228,13 +233,27 @@ function route() {
   const el = $('out'); if (useMedia && el.srcObject && el.paused) el.play().catch(() => {});
 }, { passive: true }));
 
+const SESS = { 'play-and-record': 'Lecture + micro', 'auto': 'Auto (iOS décide)', 'playback': 'Lecture seule' };
+function sessLabel() { $('sess-btn').textContent = 'Session iOS : ' + SESS[sessionMode]; }
+$('sess-btn').addEventListener('click', () => {
+  const k = Object.keys(SESS); sessionMode = k[(k.indexOf(sessionMode) + 1) % k.length]; sessLabel(); save();
+  banner("Session changée. Arrête puis relance l'écoute, puis fais un test.", 'info');
+});
+async function resetAudio() {
+  if (listening) stopMic();
+  try { if (ctx) await ctx.close(); } catch (e) {}
+  ctx = null; $('out').pause(); $('out').srcObject = null;
+  useMedia = true; sessionMode = 'play-and-record'; modeLabel(); sessLabel(); save();
+  banner("Audio réinitialisé. Vérifie que l'enceinte est connectée, puis lance l'écoute.", 'info');
+}
+$('fix-btn').addEventListener('click', resetAudio);
 function modeLabel() { $('mode-btn').textContent = 'Sortie : ' + (useMedia ? 'élément audio (recommandé)' : 'Web Audio (direct)'); }
 $('mode-btn').addEventListener('click', () => {
   useMedia = !useMedia; modeLabel(); if (ctx) route();
   banner("Mode changé. Arrête puis relance l'écoute, puis fais un test.", 'info');
 });
 $('diag-btn').addEventListener('click', async () => {
-  let t = `audioSession : ${navigator.audioSession ? navigator.audioSession.type : 'non supporté'} · Contexte : ${ctx ? ctx.state : 'aucun'}`;
+  let t = `audioSession : ${navigator.audioSession ? navigator.audioSession.type : 'non supporté'} · Contexte : ${ctx ? ctx.state : 'aucun'} · Élément : ${$('out').paused ? 'en pause' : 'en lecture'} · Session demandée : ${SESS[sessionMode]}`;
   try {
     const d = await navigator.mediaDevices.enumerateDevices();
     t += ` · Entrée : ${d.filter(x => x.kind === 'audioinput').map(x => x.label || '?').join(', ') || 'aucune'}`;
@@ -245,7 +264,7 @@ $('diag-btn').addEventListener('click', async () => {
 async function playAlarm(n) {
   try {
     await ensureAudio();
-    if (listening) setSession('play-and-record');
+    if (listening) applySession();
     const t = ctx.currentTime;
     const tone = (type, f, t0, dur, peak, atk) => {
       const o = ctx.createOscillator(), g = ctx.createGain();
@@ -322,13 +341,13 @@ async function startMic() {
   banner();
   try {
     await ensureAudio(); await lockScreen();
-    setSession('play-and-record');
+    applySession();
     micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }, video: false });
-    setSession('play-and-record');
+    applySession();
     analyser = ctx.createAnalyser(); analyser.fftSize = 512; analyser.smoothingTimeConstant = .25;
     ctx.createMediaStreamSource(micStream).connect(analyser);   // jamais vers la sortie (Larsen)
     if (ctx.state !== 'running') await ctx.resume();
-    if (useMedia) route();
+    if (useMedia && $('out').paused) $('out').play().catch(() => {});
     listening = true; overSince = null; refresh(); loop();
   } catch (e) {
     banner(e.name === 'NotAllowedError' ? "Micro bloqué : Réglages > Safari > Microphone (ou icône « AA » dans la barre d'adresse)." : "Impossible d'accéder au micro. Autorise-le dans Safari.");
@@ -339,7 +358,7 @@ function stopMic() {
   listening = false; cancelAnimationFrame(raf); smooth = 0; overSince = null;
   if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
   if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
-  setSession('playback'); refresh(); if (!siren) idle();
+  if (sessionMode !== 'auto') setSession('playback'); refresh(); if (!siren) idle();
 }
 
 function loop() {
@@ -397,16 +416,17 @@ bind('s-cd', v => { cooldownMs = v * 1000; $('v-cd').textContent = v + 's'; });
 
 // --- Mémorisation des réglages ---
 const KEY = 'sonometre-settings', IDS = ['s-th', 's-gain', 's-delay', 's-cd'];
-function save() { try { const o = { media: useMedia }; IDS.forEach(i => o[i] = $(i).value); localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+function save() { try { const o = { media: useMedia, sess: sessionMode }; IDS.forEach(i => o[i] = $(i).value); localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
 try {
   const o = JSON.parse(localStorage.getItem(KEY) || '{}');
   IDS.forEach(i => { if (o[i] != null) { $(i).value = o[i]; $(i).dispatchEvent(new Event('input')); } });
   if (o.media === false) useMedia = false;
+  if (o.sess && SESS[o.sess]) sessionMode = o.sess;
 } catch (e) {}
 document.querySelectorAll('input[type=range]').forEach(i => i.addEventListener('change', save));
 $('mode-btn').addEventListener('click', save);
 
-idle(); modeLabel(); refresh(); updateSteps();
+idle(); sessLabel(); modeLabel(); refresh(); updateSteps();
 </script>
 </body>
 </html>
