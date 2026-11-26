@@ -1,1125 +1,1033 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>pointii - Garderie Périscolaire</title>
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#F4EFFA" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#151022" media="(prefers-color-scheme: dark)">
-<meta name="application-name" content="pointii">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="pointii">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg-main: #F4EFFA;
-  --bg-card: #FFFFFF;
-  --text-dark: #2D1B4E;
-  --text-muted: #7A6B94;
-  --border-light: #EBE5F5;
-  --tab-pointage: #6C5CE7;
-  --tab-enfants: #FF7675;
-  --tab-factures: #00B894;
-  --cls-tps-bg: #FFF0F3; --cls-tps-txt: #C0392B; --cls-tps-border: #FFCCD5;
-  --cls-ps-bg:  #FFF3BF; --cls-ps-txt:  #B45309; --cls-ps-border: #FFE066;
-  --cls-ms-bg:  #FFE8D6; --cls-ms-txt:  #D35400; --cls-ms-border: #FFD7BA;
-  --cls-gs-bg:  #FFE3D8; --cls-gs-txt:  #C0392B; --cls-gs-border: #FFC6FF;
-  --cls-cp-bg:  #E6FCF5; --cls-cp-txt:  #099268; --cls-cp-border: #96F2D7;
-  --cls-ce1-bg: #E0F2FE; --cls-ce1-txt: #0284C7; --cls-ce1-border: #BAE6FD;
-  --cls-ce2-bg: #E0E7FF; --cls-ce2-txt: #3730A3; --cls-ce2-border: #C7D2FE;
-  --cls-cm1-bg: #F3E8FF; --cls-cm1-txt: #6B21A8; --cls-cm1-border: #E9D5FF;
-  --cls-cm2-bg: #FAE8FF; --cls-cm2-txt: #86198F; --cls-cm2-border: #F5D0FE;
-  --cls-def-bg: #FFFFFF; --cls-def-txt: #2D1B4E; --cls-def-border: #EBE5F5;
-  --shadow-sm: 0 4px 12px rgba(45, 27, 78, 0.05);
-  --shadow-md: 0 8px 24px rgba(45, 27, 78, 0.08);
-  --shadow-lg: 0 16px 32px rgba(45, 27, 78, 0.12);
-  --radius-xl: 28px;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg-main); color: var(--text-dark); font-family: 'Nunito', system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.3; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
-html { background-color: var(--bg-main); }
-.top { padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 14px; }
-.pill { display: flex; align-items: center; justify-content: space-between; height: 56px; max-width: 900px; margin: 0 auto; padding: 0 8px; border-radius: 999px; background: linear-gradient(135deg, #6C5CE7 0%, #8C7AE6 100%); color: #fff; box-shadow: 0 10px 24px rgba(108, 92, 231, 0.35); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sonomètre Périscolaire</title>
 
-.brand { display: flex; align-items: center; gap: 10px; }
-.mascot-avatar { width: 40px; height: 40px; background: #FFEAA7; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.15); transform: rotate(-4deg); }
-.logo-text { font-family: 'Baloo 2', cursive; font-size: 26px; font-weight: 800; margin: 0; line-height: 1; color: #FFFFFF; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.15); }
-.logo-text span.dot { color: #FFEAA7; }
-.gear { border: 0; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.22); color: #fff; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease; }
-.modes { display: flex; gap: 8px; margin-bottom: 12px; }
-.modes .btn { flex: 1; padding: 10px 6px; white-space: nowrap; box-shadow: none; }
-.modes .btn[data-mode="m"] { background: #FFF4CC; color: #B45309; }
-.modes .btn[data-mode="c"] { background: #D1FAE5; color: #047857; }
-.modes .btn[data-mode="s"] { background: #E0F2FE; color: #0984E3; }
-.modes .btn[data-mode="m"][aria-pressed="true"] { background: #F59E0B; color: #fff; box-shadow: 0 6px 14px rgba(245,158,11,0.4); }
-.modes .btn[data-mode="c"][aria-pressed="true"] { background: #00B894; color: #fff; box-shadow: 0 6px 14px rgba(0,184,148,0.4); }
-.modes .btn[data-mode="s"][aria-pressed="true"] { background: #0984E3; color: #fff; box-shadow: 0 6px 14px rgba(9,132,227,0.4); }
-.gear:active { transform: rotate(60deg) scale(0.92); }
-nav { display: flex; gap: 10px; padding: 0 16px; max-width: 900px; margin: 4px auto 16px; position: relative; z-index: 10; }
-nav button { flex: 1; border: 0; border-radius: var(--radius-lg); padding: 12px 10px; font-size: 15px; font-weight: 800; font-family: 'Baloo 2', cursive; background: #FFFFFF; color: var(--text-muted); cursor: pointer; min-height: 52px; box-shadow: var(--shadow-sm); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center; gap: 6px; }
-nav button:active { transform: scale(0.95); }
-nav button[data-t="pointage"][aria-selected="true"] { background: var(--tab-pointage); color: #FFFFFF; box-shadow: 0 8px 20px rgba(108, 92, 231, 0.35); }
-nav button[data-t="enfants"][aria-selected="true"] { background: var(--tab-enfants); color: #FFFFFF; box-shadow: 0 8px 20px rgba(255, 118, 117, 0.35); }
-nav button[data-t="facture"][aria-selected="true"] { background: var(--tab-factures); color: #FFFFFF; box-shadow: 0 8px 20px rgba(0, 184, 148, 0.35); }
-.page { padding: 0 0 calc(24px + env(safe-area-inset-bottom, 0px)); }
-main { padding: 0 16px; }
-.wrap { max-width: 900px; margin: 0 auto; }
-h2 { font-family: 'Baloo 2', cursive; margin: 0 0 12px; font-size: 24px; font-weight: 800; color: var(--text-dark); }
-.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
-.btn { border: 0; border-radius: var(--radius-md); padding: 10px 18px; font-size: 15px; font-weight: 800; font-family: 'Baloo 2', cursive; background: var(--tab-pointage); color: #FFFFFF; cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: all 0.2s ease; }
-.btn:active { transform: scale(0.96); }
-.btn.alt { background: #FFEAA7; color: #D63031; }
-.btn.ghost { background: #EBE5F5; color: var(--text-dark); box-shadow: none; }
-.btn.edit-btn { background: #E0E7FF; color: #4338CA; border: 1px solid #C7D2FE; box-shadow: none; }
-.btn.danger { background: #FFE4E6; color: #E11D48; border: 1px solid #FECDD3; box-shadow: none; }
-.btn.del { background: #E11D48; color: #FFFFFF; box-shadow: none; }
-.btn.sm { min-height: 38px; padding: 6px 14px; font-size: 14px; border-radius: 12px; }
-input, select { font-size: 16px; font-weight: 700; font-family: inherit; padding: 10px 14px; border-radius: var(--radius-md); border: 2px solid var(--border-light); background: #FFFFFF; color: var(--text-dark); min-height: 46px; transition: all 0.2s ease; }
-input:focus, select:focus { outline: none; border-color: var(--tab-pointage); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15); }
-.search { flex: 1; min-width: 180px; }
-.chips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 12px; margin-bottom: 4px; scrollbar-width: none; }
-.chips::-webkit-scrollbar { display: none; }
-.chip { border: 2px solid var(--border-light); background: #FFFFFF; color: var(--text-muted); border-radius: 999px; padding: 4px 16px; font-size: 14px; font-weight: 800; font-family: 'Baloo 2', cursive; white-space: nowrap; cursor: pointer; min-height: 36px; transition: all 0.2s ease; }
-.chip[aria-pressed="true"] { background: var(--text-dark); color: #FFFFFF; border-color: var(--text-dark); box-shadow: 0 4px 10px rgba(45, 27, 78, 0.2); }
-.ch { margin: 18px 0 10px; font-family: 'Baloo 2', cursive; font-size: 20px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; padding: 6px 14px; border-radius: var(--radius-md); background: rgba(255,255,255,0.7); }
-.ch span { font-size: 14px; font-weight: 700; opacity: 0.8; }
-.card-tps { --cb: var(--cls-tps-bg); --ct: var(--cls-tps-txt); background: var(--cls-tps-bg) !important; color: var(--cls-tps-txt); border: 1.5px solid var(--cls-tps-border) !important; }
-.card-ps  { --cb: var(--cls-ps-bg); --ct: var(--cls-ps-txt); background: var(--cls-ps-bg)  !important; color: var(--cls-ps-txt);  border: 1.5px solid var(--cls-ps-border)  !important; }
-.card-ms  { --cb: var(--cls-ms-bg); --ct: var(--cls-ms-txt); background: var(--cls-ms-bg)  !important; color: var(--cls-ms-txt);  border: 1.5px solid var(--cls-ms-border)  !important; }
-.card-gs  { --cb: var(--cls-gs-bg); --ct: var(--cls-gs-txt); background: var(--cls-gs-bg)  !important; color: var(--cls-gs-txt);  border: 1.5px solid var(--cls-gs-border)  !important; }
-.card-cp  { --cb: var(--cls-cp-bg); --ct: var(--cls-cp-txt); background: var(--cls-cp-bg)  !important; color: var(--cls-cp-txt);  border: 1.5px solid var(--cls-cp-border)  !important; }
-.card-ce1 { --cb: var(--cls-ce1-bg); --ct: var(--cls-ce1-txt); background: var(--cls-ce1-bg) !important; color: var(--cls-ce1-txt); border: 1.5px solid var(--cls-ce1-border) !important; }
-.card-ce2 { --cb: var(--cls-ce2-bg); --ct: var(--cls-ce2-txt); background: var(--cls-ce2-bg) !important; color: var(--cls-ce2-txt); border: 1.5px solid var(--cls-ce2-border) !important; }
-.card-cm1 { --cb: var(--cls-cm1-bg); --ct: var(--cls-cm1-txt); background: var(--cls-cm1-bg) !important; color: var(--cls-cm1-txt); border: 1.5px solid var(--cls-cm1-border) !important; }
-.card-cm2 { --cb: var(--cls-cm2-bg); --ct: var(--cls-cm2-txt); background: var(--cls-cm2-bg) !important; color: var(--cls-cm2-txt); border: 1.5px solid var(--cls-cm2-border) !important; }
-.card-def { --cb: var(--cls-def-bg); --ct: var(--cls-def-txt); background: var(--cls-def-bg) !important; color: var(--cls-def-txt); border: 1.5px solid var(--cls-def-border) !important; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 12px; }
-.kid { display: flex; flex-direction: column; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
-.kid .main { flex: 1; border: 0; background: transparent; color: inherit; font-family: inherit; text-align: left; padding: 14px 14px 8px; min-height: 60px; cursor: pointer; display: flex; flex-direction: column; justify-content: center; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
-.kid .main b { font-size: 18px; font-weight: 800; font-family: 'Baloo 2', cursive; line-height: 1.1; }
-.kid .main small { font-size: 13px; font-weight: 700; opacity: 0.75; }
-.kid .tm { margin: 4px 10px 10px; align-self: stretch; border: 0; border-radius: 12px; padding: 6px 10px; font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer; height: 34px; display: flex; align-items: center; justify-content: center; gap: 4px; }
-.kid div.tm { cursor: default; }
-.kid .not-pointed { border: 0; background: transparent; color: inherit; font-family: inherit; cursor: pointer; touch-action: manipulation; margin: 4px 10px 10px; height: 34px; padding: 6px 10px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; opacity: 0.5; }
-.list { display: flex; flex-direction: column; gap: 10px; }
-.item { display: flex; align-items: center; gap: 14px; border-radius: var(--radius-lg); padding: 14px 16px; box-shadow: var(--shadow-sm); }
-.item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
-.item-info b { font-size: 17px; font-weight: 800; font-family: 'Baloo 2', cursive; line-height: 1.1; }
-.item-info .fam { font-size: 13px; font-weight: 700; opacity: 0.75; }
-.item-actions { display: flex; gap: 8px; align-items: center; }
-.hint { font-size: 14px; color: var(--text-muted); margin: 0 0 10px; font-weight: 600; }
-details.fact { background: #FFFFFF; border-radius: var(--radius-lg); padding: 0 16px; margin-bottom: 10px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); }
-details.fact summary { cursor: pointer; display: flex; gap: 10px; align-items: center; min-height: 54px; font-weight: 800; font-family: 'Baloo 2', cursive; font-size: 17px; list-style: none; }
-details.fact summary::-webkit-details-marker { display: none; }
-details.fact summary::before { content: "➔"; font-size: 12px; transition: transform 0.2s ease; color: var(--tab-factures); }
-details.fact[open] summary::before { transform: rotate(90deg); }
-details.fact summary .n { flex: 1; }
-.fb { padding: 4px 0 16px; border-top: 1px solid var(--border-light); }
-.tot { font-weight: 800; font-size: 20px; margin: 14px 0 0; color: var(--tab-factures); font-family: 'Baloo 2'; }
-table { width: 100%; border-collapse: collapse; background: #F9F8FD; border-radius: 12px; overflow: hidden; font-size: 14px; margin-top: 8px; }
-th, td { padding: 8px 12px; text-align: left; }
-th { background: #EBE5F5; color: var(--text-dark); font-weight: 800; }
-th.cm, td.cm { background: #FFF9E6; }
-th.cs, td.cs { background: #EBF5FF; }
-th.cc, td.cc { background: #E8FAF4; }
-.scroll { overflow-x: auto; }
-.empty { padding: 30px 20px; text-align: center; background: #FFFFFF; border-radius: var(--radius-lg); color: var(--text-muted); font-weight: 700; box-shadow: var(--shadow-sm); }
-.sticky { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 6; background-color: transparent; background-image: linear-gradient(var(--bg-main), var(--bg-main)); margin: 0 -16px 8px; padding: 12px 16px 4px; }
-.bar { position: relative; display: flex; justify-content: space-between; align-items: center; border-radius: var(--radius-md); padding: 12px 16px; font-weight: 800; font-family: 'Baloo 2', cursive; margin: 0 0 12px; box-shadow: var(--shadow-sm); }
-.bar.m { background: #FFF4CC; color: #D63031; }
-.bar.s { background: #E0F2FE; color: #0984E3; }
-.bar.c { background: #D1FAE5; color: #047857; }
-#ov { position: fixed; inset: 0; background: rgba(45, 27, 78, 0.4); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; padding: 0; z-index: 100; }
-#ov .box { background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 14px 22px calc(26px + env(safe-area-inset-bottom, 0px)); width: 100%; max-width: 520px; box-shadow: 0 -10px 40px rgba(45, 27, 78, 0.18); max-height: 86vh; overflow: auto; overscroll-behavior: contain; }
-#ov .box::before { content: ""; display: block; width: 42px; height: 5px; border-radius: 3px; background: #D9D2E8; margin: 0 auto 16px; }
-#ov .box input, #ov .box select { width: 100%; margin-bottom: 8px; }
-.sh { font-family: 'Baloo 2', cursive; font-size: 17px; margin: 16px 0 6px; }
-.setf { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
-#ov .box .setf input { width: 110px; margin: 0; text-align: right; min-height: 40px; }
-.lock { max-width: 360px; margin: 40px auto; text-align: center; background: #FFFFFF; padding: 32px 24px; border-radius: var(--radius-xl); box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: 12px; }
-.lock input { text-align: center; font-size: 26px; letter-spacing: 0.3em; }
-.lock input:placeholder-shown { letter-spacing: normal; font-size: 16px; }
-.lockic { font-size: 52px; line-height: 1; }
-.err { margin: 0; min-height: 1.3em; font-weight: 700; color: #FF7675; }
-.kid, .btn, .chip, nav button { transition: transform 0.15s ease, background-color 0.25s ease, box-shadow 0.2s ease; }
-.btn:active, .chip:active, nav button:active { transform: scale(0.96); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-#app.enter .kid, #app.enter .item, #app.enter details.fact, #app.enter .ch { animation: fadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; animation-delay: calc(var(--i, 0) * 30ms); }
-#toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--text-dark); color: #FFFFFF; padding: 10px 20px; border-radius: 999px; display: none; font-weight: 800; font-family: 'Baloo 2', cursive; z-index: 200; box-shadow: var(--shadow-lg); }
-/* Alignement des icônes + animations */
-nav button span { display: inline-flex; align-items: center; gap: 6px; }
-nav button svg { display: block; flex-shrink: 0; }
-nav button { animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
-nav button:nth-child(2) { animation-delay: 0.06s; }
-nav button:nth-child(3) { animation-delay: 0.12s; }
-@keyframes dropIn { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: none; } }
-@keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
-@keyframes ring { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ct, #6C5CE7) 30%, transparent); } to { box-shadow: 0 0 0 10px color-mix(in srgb, var(--ct, #6C5CE7) 0%, transparent); } }
-.kid .tm.pop { animation: popIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.kid, .kid * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-.kid .tm { white-space: nowrap; padding: 6px 4px; }
-.kid[class*="checked-"] { box-shadow: var(--shadow-md); }
-.kid[class*="checked-"] .tm { background: var(--ct); color: var(--cb); }
-.kid.flash { animation: ring 0.55s ease-out; }
-details.fact[open] .fb { animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.bar, .modes .btn, .chip, .gear { transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease; }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+    <!-- Configuration PWA / Écran d'accueil iOS & Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sonomètre">
+    <meta name="theme-color" content="#ecfdf5">
 
-@media screen and (prefers-color-scheme: dark) {
-  :root {
-    --bg-main: #151022; --bg-card: #221A36; --text-dark: #F1ECFA; --text-muted: #A99BC4; --border-light: #34284F;
-    --cls-tps-bg: #3A1F2A; --cls-tps-txt: #FF9AA8; --cls-tps-border: #5A2D3C;
-    --cls-ps-bg: #3A3216; --cls-ps-txt: #FFD166; --cls-ps-border: #5C4E1E;
-    --cls-ms-bg: #3A2616; --cls-ms-txt: #FFB070; --cls-ms-border: #5C3C1E;
-    --cls-gs-bg: #3A2222; --cls-gs-txt: #FF9A8A; --cls-gs-border: #5A3350;
-    --cls-cp-bg: #123A30; --cls-cp-txt: #5EE0B5; --cls-cp-border: #1E5C4C;
-    --cls-ce1-bg: #12303F; --cls-ce1-txt: #6CC8F5; --cls-ce1-border: #1E4C62;
-    --cls-ce2-bg: #1E2252; --cls-ce2-txt: #A5B4FC; --cls-ce2-border: #2F3680;
-    --cls-cm1-bg: #2E1F4A; --cls-cm1-txt: #D2A8FF; --cls-cm1-border: #46307A;
-    --cls-cm2-bg: #3C1F48; --cls-cm2-txt: #F0A8FF; --cls-cm2-border: #5C2F70;
-    --cls-def-bg: #221A36; --cls-def-txt: #F1ECFA; --cls-def-border: #34284F;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3); --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35); --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.45);
-  }
-  nav button, input, select, .chip, details.fact, .empty, .lock, #ov .box { background: var(--bg-card); }
-  .chip[aria-pressed="true"] { color: var(--bg-main); }
-  #toast { color: var(--bg-main); }
-  .ch { background: rgba(34, 26, 54, 0.8); }
-  .btn.ghost { background: #2E2447; }
-  .btn.alt { background: #5C4A12; color: #FFD166; }
-  .btn.edit-btn { background: #2A2F5E; color: #A5B4FC; border-color: #3B4290; }
-  .btn.danger { background: #4A1F2B; color: #FF8CA0; border-color: #6B2A3C; }
-  .bar.m, .modes .btn[data-mode="m"] { background: #3D3212; color: #FFC857; }
-  .bar.s, .modes .btn[data-mode="s"] { background: #12304A; color: #6CB8FF; }
-  .bar.c, .modes .btn[data-mode="c"] { background: #123D32; color: #5EE0B5; }
-  .modes .btn[data-mode="m"][aria-pressed="true"] { background: #F59E0B; color: #fff; }
-  .modes .btn[data-mode="c"][aria-pressed="true"] { background: #00B894; color: #fff; }
-  .modes .btn[data-mode="s"][aria-pressed="true"] { background: #0984E3; color: #fff; }
-  table { background: #1C1530; }
-  th { background: #2E2447; }
-  th.cm, td.cm { background: #3A3112; }
-  th.cs, td.cs { background: #14304A; }
-  th.cc, td.cc { background: #123A30; }
-  #ov { background: rgba(0, 0, 0, 0.55); }
-  #ov .box::before { background: #4A3D68; }
-  .err { color: #FF8C8B; }
-}
-/* ---------- Version ordinateur / grand écran ---------- */
-button:focus-visible, .chip:focus-visible { outline: 3px solid rgba(108, 92, 231, 0.55); outline-offset: 2px; }
-@media (hover: hover) {
-  .btn:hover { filter: brightness(1.07); }
-  .chip:hover { border-color: var(--tab-pointage); }
-  nav button:hover { transform: translateY(-1px); }
-  .kid { cursor: pointer; }
-  .kid:hover { box-shadow: var(--shadow-md); }
-  details.fact summary:hover { color: var(--tab-factures); }
-}
-@media (min-width: 900px) {
-  .top { padding: 28px 32px 12px; }
-  .pill { max-width: 1216px; height: 62px; padding: 0 10px; }
-  .logo-text { font-size: 28px; }
-  .mascot-avatar { width: 44px; height: 44px; }
-  .gear { width: 44px; height: 44px; }
-  .page { display: grid; grid-template-columns: 220px minmax(0, 1fr); column-gap: 32px; align-items: start; max-width: 1280px; margin: 0 auto; padding: 12px 32px 48px; }
-  nav { position: sticky; top: 24px; flex-direction: column; gap: 8px; width: auto; max-width: none; margin: 0; padding: 0; }
-  nav button { justify-content: flex-start; padding: 12px 18px; font-size: 16px; min-height: 54px; }
-  main { padding: 0; }
-  .wrap { max-width: none; }
-  h2 { font-size: 28px; }
-  .sticky { display: grid; grid-template-columns: minmax(320px, 520px) minmax(220px, 1fr); column-gap: 16px; align-items: center; margin: 0 0 8px; padding: 12px 0 4px; }
-  .sticky .chips { grid-column: 1 / -1; }
-  .sticky .row { margin-bottom: 12px; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
-  main .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 12px; }
-  #list.l-pointage, #list.l-enfants { column-count: 2; column-gap: 28px; }
-  #list .bar { column-span: all; }
-  .cg { break-inside: avoid; padding-top: 18px; }
-  .cg .ch { margin: 0 0 10px; }
-  .cg .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-  .cg .list { grid-template-columns: 1fr; }
-  #ov { align-items: center; padding: 24px; }
-  #ov .box { border-radius: 28px; max-width: 480px; padding: 30px; max-height: 88vh; }
-  #ov .box::before { display: none; }
-}
-/* ---------- Version tablette (portrait) ---------- */
-@media (min-width: 600px) and (max-width: 899px) {
-  .top { padding: 22px 24px 8px; }
-  .pill { max-width: none; height: 60px; }
-  nav { padding: 0 24px; max-width: none; }
-  nav button { font-size: 16px; min-height: 56px; }
-  main { padding: 0 24px; }
-  .wrap { max-width: none; }
-  .sticky { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(200px, 1fr); column-gap: 14px; align-items: center; margin: 0 -24px 8px; padding: 12px 24px 4px; }
-  .sticky .chips { grid-column: 1 / -1; }
-  .sticky .row { margin-bottom: 12px; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 14px; }
-  #list.l-pointage, #list.l-enfants { column-count: 2; column-gap: 24px; }
-  #list .bar { column-span: all; }
-  .cg { break-inside: avoid; padding-top: 14px; }
-  .cg .ch { margin: 0 0 10px; }
-  .cg .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-  .cg .list { grid-template-columns: 1fr; }
-  #ov { align-items: center; padding: 24px; }
-  #ov .box { border-radius: 28px; max-width: 480px; padding: 30px; max-height: 88vh; }
-  #ov .box::before { display: none; }
-}
-@media (display-mode: standalone) and (max-width: 599px) {
-  :root { --pill-gap: 36px; } /* espace sous la zone de flou iOS : à ajuster ici */
-  .top { padding-top: calc(var(--pill-gap) + env(safe-area-inset-top, 0px)); }
-  .sticky { padding-top: 30px; }
-}
-@media print {
-  body { background: #fff; }
-  .top, header, nav, .noprint, #toast, #ov { display: none !important; }
-  main { padding: 0; }
-  details.fact { border: 1px solid #ddd; break-after: page; }
-  details.fact summary::before { content: ""; }
-}
-</style>
-</head>
-<body>
+    <!-- Icône SVG intégrée pour l'ajout sur l'écran d'accueil iPhone / iPad -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='42' fill='%232563eb'/%3E%3Ctext x='90' y='120' font-size='96' text-anchor='middle'%3E%F0%9F%8E%9A%EF%B8%8F%3C/text%3E%3C/svg%3E">
 
-<div class="top"><header class="pill">
-  <div class="brand">
-    <div class="mascot-avatar">
-      <svg width="26" height="26" viewBox="0 0 36 36" fill="none">
-        <circle cx="18" cy="18" r="16" fill="#FF7675"/>
-        <circle cx="12" cy="14" r="5" fill="white"/>
-        <circle cx="24" cy="14" r="5" fill="white"/>
-        <circle cx="13" cy="14" r="2.5" fill="#2D1B4E"/>
-        <circle cx="25" cy="14" r="2.5" fill="#2D1B4E"/>
-        <path d="M16 22 Q18 25 20 22" stroke="#2D1B4E" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    </div>
-    <h1 class="logo-text">point<span class="dot">ii</span></h1>
-  </div>
-  <button class="gear" data-gear="1" aria-label="Paramètres des tarifs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-</header></div>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Police Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
 
-<div class="page">
-<nav role="tablist" id="nav">
-  <button data-t="pointage" aria-selected="true"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Pointage</span></button>
-  <button data-t="enfants"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Enfants</span></button>
-  <button data-t="facture"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Relevés</span></button>
-</nav>
-
-<main>
-  <div class="wrap" id="app"></div>
-</main>
-</div>
-
-<div id="ov"><div class="box" id="ovb"></div></div>
-<input type="file" id="imp" accept=".csv,.txt,text/csv,text/plain" hidden>
-<div id="toast" role="status"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
-const $=s=>document.querySelector(s);
-const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-let S = { kids: [], rec: {} };
-try {
-  const r = localStorage.getItem('garderie');
-  if(r) S = JSON.parse(r);
-} catch(e){}
-
-/* Tarifs par défaut (modifiables via les paramètres) */
-const DEF = { mat:[2.7,1.8,0.9], soir:[0.9,1.8,2.7,3.9,5.1], plein:4.85, aide:{a:1.25,b:1,c:0} };
-S.kids = S.kids || []; S.rec = S.rec || {};
-S.cfg = Object.assign(JSON.parse(JSON.stringify(DEF)), S.cfg || {});
-S.cfg.aide = Object.assign({}, DEF.aide, S.cfg.aide);
-
-const save = () => { try { localStorage.setItem('garderie', JSON.stringify(S)); } catch(e){} };
-const pad = n => String(n).padStart(2, '0');
-const today = () => { const d = new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); };
-const nowHM = () => { const d = new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); };
-const mins = h => { const[a,b] = h.split(':').map(Number); return a*60+b; };
-const eur = n => n.toFixed(2).replace('.',',')+' €';
-const r2 = n => Math.round(n*100)/100;
-
-/* Une heure pile tombe dans la tranche la plus chère */
-const prixMatin = h => { const t=mins(h), p=S.cfg.mat; return t>510?0:t>480?p[2]:t>450?p[1]:p[0]; };
-const prixSoir  = h => { const t=mins(h), p=S.cfg.soir; return t<1000?0:t<1030?p[0]:t<1060?p[1]:t<1090?p[2]:t<1120?p[3]:p[4]; };
-
-/* Cantine : tarif plein moins l'aide de la tranche de la famille */
-const TL = { a:'-1k€', b:'-1,1k€', c:'+1,1k€' };
-const tier = k => k.tier || 'c';
-const prixCantine = k => r2(Math.max(0, S.cfg.plein - (S.cfg.aide[tier(k)] || 0)));
-
-let tab = 'pointage', mode = new Date().getHours() < 12 ? 'm' : 's', date = today(), month = today().slice(0,7), editKid = null, cls = [], q = '', long = false, timer = null;
-
-const toast = m => {
-  const t = $('#toast');
-  t.textContent = m;
-  t.style.display = 'block';
-  anim(t, [{opacity:0, transform:'translate(-50%,12px)'},{opacity:1, transform:'translate(-50%,0)'}], {duration:200});
-  clearTimeout(toast.i);
-  toast.i = setTimeout(() => t.style.display = 'none', 1800);
-};
-
-const cn = k => k.classe || 'Sans classe';
-const CL = ['TPS','PS','MS','GS','CP','CE1','CE2','CM1','CM2'];
-const ord = c => { const i = CL.indexOf(c); return i < 0 ? 99 : i; };
-const classes = () => [...new Set(S.kids.map(cn))].sort((a,b) => ord(a) - ord(b));
-
-const getCardColorClass = (c) => {
-  const key = String(c).toUpperCase();
-  if(key.includes('TPS')) return 'card-tps';
-  if(key.includes('PS')) return 'card-ps';
-  if(key.includes('MS')) return 'card-ms';
-  if(key.includes('GS')) return 'card-gs';
-  if(key.includes('CP')) return 'card-cp';
-  if(key.includes('CE1')) return 'card-ce1';
-  if(key.includes('CE2')) return 'card-ce2';
-  if(key.includes('CM1')) return 'card-cm1';
-  if(key.includes('CM2')) return 'card-cm2';
-  return 'card-def';
-};
-
-const filt = () => {
-  const w = q.trim().toLowerCase();
-  return S.kids.filter(k => (!cls.length || cls.includes(cn(k))) && (!w || (k.prenom+' '+k.nom+' '+cn(k)+' '+(k.famille||'')).toLowerCase().includes(w)));
-};
-
-const byName = (a,b) => (a.nom + a.prenom).localeCompare(b.nom + b.prenom, 'fr');
-const chips = () => S.kids.length ? `<div class="chips noprint"><button class="chip" data-cls="" aria-pressed="${!cls.length}">Toutes les classes</button>${classes().map(c => `<button class="chip" data-cls="${esc(c)}" aria-pressed="${cls.includes(c)}">${esc(c)}</button>`).join('')}</div>` : '';
-const searchBox = ph => `<div class="row noprint"><input class="search" id="q" type="search" placeholder="${ph}" value="${esc(q)}" aria-label="Rechercher"></div>`;
-
-const desk = () => matchMedia('(min-width: 600px)').matches;
-const anim = (el, k, o) => { if(!el || matchMedia('(prefers-reduced-motion:reduce)').matches) return; el.animate(k, o); };
-const showOv = () => {
-  clearTimeout(closeEdit.t);
-  const ov = $('#ov'), bx = $('#ovb');
-  ov.getAnimations().forEach(x => x.cancel()); bx.getAnimations().forEach(x => x.cancel()); bx.style.transform = '';
-  ov.style.display = 'flex'; bx.scrollTop = 0;
-  anim(ov, [{opacity:0}, {opacity:1}], {duration:200});
-  anim(bx, desk() ? [{opacity:0, transform:'translateY(14px) scale(.96)'}, {opacity:1, transform:'none'}] : [{transform:'translateY(100%)'}, {transform:'none'}], {duration: desk() ? 240 : 360, easing:'cubic-bezier(.2,.8,.2,1)'});
-};
-
-const barHtml = () => {
-  const day = S.rec[date] || {}, ks = filt();
-  const n = ks.filter(k => (day[k.id] || {})[mode]).length;
-  const lbl = {m:'Arrivées du Matin', s:'Départs du Soir', c:'Repas à la Cantine'}[mode];
-  return `<div class="bar ${mode}"><span>${lbl}</span><span><b>${n}</b> / ${ks.length} présent${n>1?'s':''}</span></div>`;
-};
-
-function render(a){
-  document.querySelectorAll('#nav button').forEach(b => b.setAttribute('aria-selected', b.dataset.t === tab));
-  const app = $('#app');
-  app.innerHTML = (tab !== 'pointage' && !unlocked) ? vLock() : (tab === 'pointage' ? vPointage() : (tab === 'enfants' ? vEnfants() : vFacture()));
-  
-  if(tab !== 'pointage' && unlocked) {
-    app.insertAdjacentHTML('afterbegin', '<div class="row noprint" style="justify-content:flex-end"><button class="btn ghost sm" data-chpin="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Code PIN</button><button class="btn alt sm" data-lock="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Verrouiller</button></div>');
-  }
-  
-  if(a){
-    app.querySelectorAll('.kid, .item, details.fact, .ch').forEach((el, i) => el.style.setProperty('--i', Math.min(i, 14)));
-    app.classList.add('enter');
-    clearTimeout(render.t);
-    render.t = setTimeout(() => app.classList.remove('enter'), 1000);
-  }
-}
-
-const lists = { pointage: () => barHtml() + lPointage(), enfants: () => lEnfants(), facture: () => lFacture() };
-const relist = () => { const l = $('#list'); if(l) l.innerHTML = lists[tab](); };
-
-function vPointage(){
-  return `<h2>Pointage du jour</h2>
-  <div class="row noprint"><input type="date" id="date" value="${date}" aria-label="Date"></div>
-  <div class="sticky">
-    <div class="modes noprint">
-      <button class="btn" data-mode="m" aria-pressed="${mode==='m'}">☀️ Matin</button>
-      <button class="btn" data-mode="c" aria-pressed="${mode==='c'}">🍽️ Cantine</button>
-      <button class="btn" data-mode="s" aria-pressed="${mode==='s'}">🌙 Soir</button>
-    </div>
-    ${searchBox('Rechercher un enfant, une classe…')}
-    ${chips()}
-  </div>
-  <p class="hint">${mode==='c' ? 'Touche un enfant pour noter qu’il mange à la cantine.' : 'Touche un enfant pour enregistrer son arrivée/départ. Maintiens appuyé pour modifier l’heure.'}</p>
-  <div id="list" class="l-pointage">${barHtml() + lPointage()}</div>`;
-}
-
-function lPointage(){
-  const day = S.rec[date] || {}, ks = filt();
-  if(!S.kids.length) return `<div class="empty">Aucun enfant inscrit. Ajoute-les dans l'onglet Enfants.</div>`;
-  if(!ks.length) return `<div class="empty">Aucun enfant trouvé.</div>`;
-  
-  let h = '';
-  for(const c of classes()){
-    const g = ks.filter(k => cn(k) === c).sort(byName);
-    if(!g.length) continue;
-    const n = g.filter(k => (day[k.id] || {})[mode]).length;
-    const cardCls = getCardColorClass(c);
-    
-    h += `<section class="cg"><div class="ch">${esc(c)} <span>${n} / ${g.length} présent${n>1?'s':''}</span></div><div class="grid">` + 
-    g.map(k => {
-      const t = (day[k.id] || {})[mode];
-      return `<div class="kid ${cardCls} ${t ? 'checked-'+mode : ''}">
-        <button class="main" data-pt="${k.id}">
-          <b>${esc(k.prenom)}</b>
-          <small>${esc(k.nom)}</small>
-        </button>
-        ${t ? (mode === 'c' ? `<button class="tm" data-pt="${k.id}" aria-label="Annuler la cantine">🍽️ Cantine 🍽️</button>` : `<button class="tm" data-edt="${k.id}" aria-label="Modifier l'heure">${mode === 'm' ? '☀️ '+t+' ☀️' : '🌙 '+t+' 🌙'}</button>`) : `<button class="not-pointed" data-pt="${k.id}">À pointer</button>`}
-      </div>`;
-    }).join('') + '</div></section>';
-  }
-  return h;
-}
-
-function vEnfants(){
-  return `<div class="row"><h2 style="flex:1;margin:0">Gestion des Enfants (${S.kids.length})</h2><button class="btn" data-addkid="1">+ Enfant</button></div>
-  ${searchBox('Rechercher un enfant, une classe, une famille…')}
-  ${chips()}
-  <div id="list" class="l-enfants">${lEnfants()}</div>`;
-}
-
-function openKid(id){
-  editKid = id || null;
-  $('#ovb').innerHTML = kidForm();
-  showOv();
-}
-
-function kidForm(){
-  const e = S.kids.find(k => k.id === editKid) || {prenom:'', nom:'', classe:'', famille:'', tier:'c'};
-  const dl = (id, a) => `<datalist id="${id}">${a.map(x => `<option value="${esc(x)}">`).join('')}</datalist>`;
-  const opts = [['c','+1,1k€ · tarif plein'],['b','-1,1k€ · aide'],['a','-1k€ · aide']];
-  return `<h2>${editKid ? 'Modifier l’enfant' : 'Ajouter un enfant'}</h2>
-  <div class="row">
-    <input id="fp" placeholder="Prénom" value="${esc(e.prenom)}">
-    <input id="fn" placeholder="Nom" value="${esc(e.nom)}">
-    <select id="fc">
-      <option value="">Sélectionner une classe…</option>
-      ${CL.map(c => `<option ${e.classe===c ? 'selected':''}>${c}</option>`).join('')}
-    </select>
-    <input id="ff" placeholder="Nom de Famille (Factures)" value="${esc(e.famille)}" list="fams">
-    <select id="ft" aria-label="Tranche cantine de la famille">${opts.map(([v,l]) => `<option value="${v}" ${(e.tier||'c')===v?'selected':''}>Cantine : ${l}</option>`).join('')}</select>
-    ${dl('fams', [...new Set(S.kids.map(k => k.famille).filter(Boolean))])}
-    <p class="hint" style="margin:0">La tranche s’applique à tous les enfants de la même famille.</p>
-    <button class="btn" data-sk="1" style="width:100%">${editKid ? 'Enregistrer' : 'Ajouter l’enfant'}</button>
-    <button class="btn ghost" data-cancel="1" style="width:100%">Annuler</button>
-  </div>`;
-}
-
-function lEnfants(){
-  if(!S.kids.length) return `<div class="empty">Aucun enfant enregistré.</div>`;
-  const ks = filt();
-  if(!ks.length) return `<div class="empty">Aucun enfant trouvé.</div>`;
-  
-  let h = '';
-  for(const c of classes()){
-    const g = ks.filter(k => cn(k) === c).sort(byName);
-    if(!g.length) continue;
-    const cardCls = getCardColorClass(c);
-    
-    h += `<section class="cg"><div class="ch">${esc(c)} <span>${g.length} enfant${g.length>1?'s':''}</span></div><div class="list">` + 
-    g.map(k => `<div class="item ${cardCls}">
-      <div class="item-info">
-        <b>${esc(k.prenom)} ${esc(k.nom)}</b>
-        <span class="fam">Famille ${esc(k.famille||'non renseignée')} · Cantine ${TL[tier(k)]}</span>
-      </div>
-      <div class="item-actions">
-        <button class="btn edit-btn sm" data-ed="${k.id}">Modifier</button>
-        <button class="btn danger sm" data-del="${k.id}">Supprimer</button>
-      </div>
-    </div>`).join('') + '</div></section>';
-  }
-  return h;
-}
-
-function calc(kid){
-  const lines = []; let tot = 0;
-  for(const d of Object.keys(S.rec).filter(d => d.startsWith(month)).sort()){
-    const r = S.rec[d][kid.id]; if(!r) continue;
-    const m = r.m ? prixMatin(r.m) : 0, s = r.s ? prixSoir(r.s) : 0;
-    const cOn = !!r.c, c = cOn ? prixCantine(kid) : 0;
-    if(m || s || cOn){ lines.push({d, mt:r.m, m, st:r.s, s, cOn, c}); tot += m + s + c; }
-  }
-  return {lines, tot: r2(tot)};
-}
-
-const fd = d => d.split('-').reverse().join('/');
-
-function vFacture(){
-  return `<h2 class="noprint">Relevés de consommation</h2>
-  <div class="row noprint">
-    <input type="month" id="month" value="${month}" aria-label="Mois">
-  </div>
-  <div class="modes noprint">
-    <button class="btn" data-print="all"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button>
-    <button class="btn ghost" data-xlsx="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Excel</button>
-    <button class="btn ghost" data-reset="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg> Clôturer</button>
-  </div>
-  ${searchBox('Rechercher une famille, un enfant…')}
-  ${chips()}
-  <div id="list">${lFacture()}</div>`;
-}
-
-function lFacture(){
-  const fams = {};
-  filt().forEach(k => { const f = k.famille || 'Sans famille'; (fams[f] = fams[f] || []).push(k); });
-  const names = Object.keys(fams).sort((a,b) => a.localeCompare(b, 'fr'));
-  
-  if(!S.kids.length) return `<div class="empty">Aucun enfant configuré.</div>`;
-  if(!names.length) return `<div class="empty">Aucune famille trouvée.</div>`;
-  
-  const mois = new Date(month+'-01T12:00').toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
-  const open = names.length === 1 && q ? ' open' : '';
-  
-  return names.map(f => {
-    let total = 0, body = '';
-    for(const k of fams[f]){
-      const c = calc(k); total += c.tot;
-      body += `<h3 style="margin:14px 0 6px;font-size:16px">${esc(k.prenom)} ${esc(k.nom)} <span class="hint">· ${esc(cn(k))} · Cantine ${TL[tier(k)]}</span></h3>` + 
-      (c.lines.length ? `<div class="scroll"><table><tr><th>Date</th><th class="cm">Matin</th><th class="cs">Soir</th><th class="cc">Cantine</th><th>Total</th></tr>${
-        c.lines.map(l => `<tr><td>${fd(l.d)}</td><td class="cm">${l.m ? `${l.mt} (${eur(l.m)})` : '—'}</td><td class="cs">${l.s ? `${l.st} (${eur(l.s)})` : '—'}</td><td class="cc">${l.cOn ? eur(l.c) : '—'}</td><td><b>${eur(r2(l.m+l.s+l.c))}</b></td></tr>`).join('')
-      }<tr><th colspan="4">Sous-total ${esc(k.prenom)}</th><th>${eur(c.tot)}</th></tr></table></div>` : `<p class="hint">Aucun pointage ce mois-ci.</p>`);
-    }
-    return `<details class="fact" data-fam="${esc(f)}"${open}>
-      <summary><span class="n">Famille ${esc(f)} <span class="hint">(${fams[f].length} enfant${fams[f].length>1?'s':''})</span></span><span>${eur(r2(total))}</span></summary>
-      <div class="fb">
-        <h4 style="margin:10px 0 4px">Relevé de consommation · ${mois}</h4>
-        ${body}
-        <p class="tot">Total du mois : ${eur(r2(total))}</p>
-        <div class="noprint" style="margin-top:12px">
-          <button class="btn alt sm" data-print="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Télécharger le relevé PDF</button>
-        </div>
-      </div>
-    </details>`;
-  }).join('');
-}
-
-async function pdfFactures(only){
-  if(!window.jspdf){ toast('Module PDF non disponible'); return; }
-  
-  const fams = {};
-  filt().forEach(k => { const n = k.famille || 'Sans famille'; (fams[n] = fams[n] || []).push(k); });
-  let names = Object.keys(fams).sort((a,b) => a.localeCompare(b, 'fr'));
-  if(only) names = names.filter(n => n === only);
-  if(!names.length){ toast('Aucune donnée à exporter'); return; }
-  
-  const doc = new window.jspdf.jsPDF({unit:'mm', format:'a4'});
-  const mois = new Date(month+'-01T12:00').toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
-  
-  // Colonnes : Jour, Matin, Soir, Cantine, Total (largeur 180mm)
-  const X = [15, 45, 85, 125, 160], W = [30, 40, 40, 35, 35];
-  const COL = [
-    {head:[241,245,249], txt:[45,27,78],  bg:null},
-    {head:[255,243,191], txt:[180,83,9],  bg:[254,252,232]},
-    {head:[224,231,255], txt:[67,56,202], bg:[238,242,255]},
-    {head:[209,250,229], txt:[4,120,87],  bg:[236,253,245]},
-    {head:[241,245,249], txt:[45,27,78],  bg:null}
-  ];
-
-  const drawRow = (y, vals, isHeader = false, isSubtotal = false) => {
-    const h = isHeader ? 8 : 7;
-    if(isSubtotal){
-      doc.setFillColor(248, 247, 252);
-      doc.roundedRect(15, y, 180, h, 1.5, 1.5, 'F');
-    } else if(isHeader){
-      COL.forEach((c, i) => { doc.setFillColor(...c.head); doc.rect(X[i], y, W[i], h, 'F'); });
-      doc.setDrawColor(220, 220, 230); doc.setLineWidth(0.1);
-      doc.line(15, y, 195, y);
-      doc.line(15, y+h, 195, y+h);
-    } else {
-      COL.forEach((c, i) => { if(c.bg && vals[i] !== '-'){ doc.setFillColor(...c.bg); doc.rect(X[i], y, W[i], h, 'F'); } });
-      doc.setDrawColor(235, 235, 245); doc.setLineWidth(0.15);
-      doc.line(15, y+h, 195, y+h);
-    }
-    doc.setFont('helvetica', isHeader || isSubtotal ? 'bold' : 'normal');
-    doc.setFontSize(isHeader ? 10 : 9.5);
-    vals.forEach((v, i) => {
-      const dim = !isHeader && !isSubtotal && v === '-';
-      doc.setTextColor(...(dim ? [140,140,140] : COL[i].txt));
-      doc.text(String(v), X[i] + 3, y + (h/2) + 1.5);
-    });
-  };
-
-  names.forEach((f, i) => {
-    if(i) doc.addPage();
-    let y = 16, total = 0;
-    
-    doc.setFillColor(108, 92, 231);
-    doc.roundedRect(15, y, 180, 22, 4, 4, 'F');
-    
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor(255, 255, 255);
-    doc.text('pointii', 22, y + 10);
-    doc.setFontSize(11); doc.setFont('helvetica', 'normal');
-    doc.text('Relevé de consommation · garderie et cantine', 22, y + 16);
-    
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(255, 234, 167);
-    doc.text('Famille ' + f, 188, y + 10, {align: 'right'});
-    doc.setFontSize(10); doc.setFont('helvetica', 'normal'); doc.setTextColor(255, 255, 255);
-    doc.text(mois.charAt(0).toUpperCase() + mois.slice(1), 188, y + 16, {align: 'right'});
-    
-    y += 32;
-    
-    for(const k of fams[f]){
-      const c = calc(k); total += c.tot;
-      
-      if(y + 45 > 275){ doc.addPage(); y = 20; }
-      
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(45, 27, 78);
-      doc.text(k.prenom + ' ' + k.nom + ' (' + cn(k) + ')', 15, y);
-      
-      y += 6;
-      
-      if(!c.lines.length){
-        doc.setFont('helvetica', 'italic'); doc.setFontSize(9.5); doc.setTextColor(130, 130, 150);
-        doc.text('Aucune consommation ce mois-ci.', 15, y + 4);
-        y += 16;
-        continue;
-      }
-      
-      drawRow(y, ['Jour', 'Matin', 'Soir', 'Cantine', 'Total'], true);
-      y += 8;
-      
-      for(const l of c.lines){
-        if(y + 8 > 275){
-          doc.addPage(); y = 20;
-          drawRow(y, ['Jour', 'Matin', 'Soir', 'Cantine', 'Total'], true);
-          y += 8;
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: background-color 0.3s ease;
+            padding-top: max(0.75rem, env(safe-area-inset-top));
+            padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
-        const mStr = l.m ? `${l.mt} (${eur(l.m)})` : '-';
-        const sStr = l.s ? `${l.st} (${eur(l.s)})` : '-';
-        const cStr = l.cOn ? eur(l.c) : '-';
-        drawRow(y, [fd(l.d), mStr, sStr, cStr, eur(r2(l.m + l.s + l.c))]);
-        y += 7;
-      }
-      
-      drawRow(y, ['Sous-total ' + k.prenom, '', '', '', eur(c.tot)], false, true);
-      y += 16;
-    }
-    
-    if(y + 20 > 275){ doc.addPage(); y = 20; }
-    doc.setFillColor(0, 184, 148);
-    doc.roundedRect(15, y, 180, 14, 3, 3, 'F');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(255, 255, 255);
-    doc.text('TOTAL DU MOIS :', 22, y + 9);
-    doc.setFontSize(15);
-    doc.text(eur(r2(total)), 188, y + 9.5, {align: 'right'});
 
-    let fy = y + 24; if(fy + 18 > 288){ doc.addPage(); fy = 20; }
-    const cf = S.cfg;
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(130, 130, 150);
-    [ 'Tarifs appliqués · Garderie matin : jusqu\'à 7h30 ' + eur(cf.mat[0]) + ' · 7h30-8h00 ' + eur(cf.mat[1]) + ' · 8h00-8h30 ' + eur(cf.mat[2]),
-      'Garderie soir : 16h40-17h10 ' + eur(cf.soir[0]) + ' · 17h10-17h40 ' + eur(cf.soir[1]) + ' · 17h40-18h10 ' + eur(cf.soir[2]) + ' · 18h10-18h40 ' + eur(cf.soir[3]) + ' · après 18h40 ' + eur(cf.soir[4]),
-      'Cantine : tarif plein ' + eur(cf.plein) + ' · aide famille -1k€ : ' + eur(cf.aide.a) + ' · aide famille -1,1k€ : ' + eur(cf.aide.b),
-      'Document informatif établi à partir des pointages. Il ne remplace pas l\'avis des sommes à payer émis par la collectivité.'
-    ].forEach((t, i) => doc.text(t, 15, fy + i * 4));
-  });
-  
-  const ok = await saveFile('releves-' + month + (only ? '-' + only.replace(/[^\w-]+/g,'_') : '') + '.pdf', doc.output('arraybuffer'), 'application/pdf');
-  if(!ok) return false;
-  return true;
-}
+        /* Animations visuelles */
+        @keyframes bounce-calm {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-7px); }
+        }
 
-async function saveFile(filename, data, type){
-  let dl;
-  if(typeof claude !== 'undefined'){
-    try { dl = await claude.use('downloads'); } catch(e){}
-    if(!dl){ toast('Téléchargement indisponible'); return false; }
-  } else {
-    dl = { save: async({filename, data}) => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([data], {type}));
-      a.download = filename;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    }};
-  }
-  await dl.save({filename, data});
-  return true;
-}
+        @keyframes shake-loud {
+            0%, 100% { transform: rotate(0deg) scale(1.06); }
+            25% { transform: rotate(-11deg) scale(1.14); }
+            75% { transform: rotate(11deg) scale(1.14); }
+        }
 
-/* CSV (séparateur ; et UTF-8 avec BOM pour Excel) */
-const csvCell = v => { v = String(v == null ? '' : v); return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
-const toCSV = rows => new TextEncoder().encode('\uFEFF' + rows.map(r => r.map(csvCell).join(';')).join('\r\n')).buffer;
-const f2 = n => n.toFixed(2).replace('.', ',');
-const norm = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-const tierOf = x => { const v = String(x || '').toLowerCase().replace(/[\s€]/g, '').replace(',', '.'); return (v === 'a' || v === '-1k') ? 'a' : (v === 'b' || v === '-1.1k') ? 'b' : 'c'; };
+        @keyframes siren-screen-flash {
+            0%, 100% { background-color: #ffe4e6; border-color: #e11d48; }
+            50% { background-color: #fda4af; border-color: #881337; }
+        }
 
-function parseCSV(t){
-  t = t.replace(/^\uFEFF/, '');
-  const first = t.split(/\r?\n/)[0] || '';
-  const sep = [';', ',', '\t'].map(c => [c, first.split(c).length]).sort((a, b) => b[1] - a[1])[0][0];
-  const rows = []; let row = [], cur = '', q = false;
-  for(let i = 0; i < t.length; i++){
-    const c = t[i];
-    if(q){ if(c === '"'){ if(t[i+1] === '"'){ cur += '"'; i++; } else q = false; } else cur += c; }
-    else if(c === '"') q = true;
-    else if(c === sep){ row.push(cur); cur = ''; }
-    else if(c === '\n' || c === '\r'){ if(c === '\r' && t[i+1] === '\n') i++; row.push(cur); cur = ''; rows.push(row); row = []; }
-    else cur += c;
-  }
-  if(cur !== '' || row.length){ row.push(cur); rows.push(row); }
-  return rows.filter(r => r.some(x => x.trim() !== ''));
-}
+        .animate-calm {
+            animation: bounce-calm 2.4s infinite ease-in-out;
+        }
 
-async function xlsxReleves(){
-  if(!window.XLSX){ toast('Module Excel indisponible'); return; }
-  const X = window.XLSX, EUR = '#,##0.00 "€"';
-  const txt = v => ({t:'s', v:String(v)});
-  const num = (v, f, z) => { const c = {t:'n', v, z: z || EUR}; if(f) c.f = f; return c; };
-  const fams = {};
-  filt().forEach(k => { const c = calc(k); if(c.lines.length) (fams[k.famille || 'Sans famille'] = fams[k.famille || 'Sans famille'] || []).push({k, c}); });
-  const names = Object.keys(fams).sort((a, b) => a.localeCompare(b, 'fr'));
-  if(!names.length){ toast('Aucune donnée à exporter'); return; }
-  const mois = new Date(month + '-01T12:00').toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
+        .animate-loud {
+            animation: shake-loud 0.38s infinite ease-in-out;
+        }
 
-  /* Détail : une ligne par jour et par enfant */
-  const det = [['Famille','Enfant','Classe','Date','Heure matin','Matin (€)','Heure soir','Soir (€)','Cantine','Cantine (€)','Total (€)'].map(txt)];
-  for(const f of names) for(const {k, c} of fams[f].sort((x, y) => byName(x.k, y.k))) for(const l of c.lines){
-    const r = det.length + 1;
-    det.push([txt(f), txt(k.prenom + ' ' + k.nom), txt(k.classe || ''), txt(fd(l.d)), txt(l.m ? l.mt : ''), num(l.m), txt(l.s ? l.st : ''), num(l.s), txt(l.cOn ? 'Oui' : ''), num(l.c), num(r2(l.m + l.s + l.c), `F${r}+H${r}+J${r}`)]);
-  }
+        .animate-siren-flash {
+            animation: siren-screen-flash 0.55s infinite ease-in-out;
+        }
 
-  /* Récapitulatif : par famille, avec formules reliées au détail */
-  const D = "'Détail'!", rec = [[txt('Relevé de consommation · ' + mois)], [], ['Famille','Enfant','Classe','Tranche cantine','Jours matin','Matin (€)','Jours soir','Soir (€)','Jours cantine','Cantine (€)','Total (€)'].map(txt)];
-  const subs = [], G = {e:0, f:0, g:0, h:0, i:0, j:0};
-  for(const f of names){
-    const start = rec.length + 1, T = {e:0, f:0, g:0, h:0, i:0, j:0};
-    for(const {k, c} of fams[f]){
-      const r = rec.length + 1, cr = `${D}$A:$A,$A${r},${D}$B:$B,$B${r}`;
-      const v = {e: c.lines.filter(l => l.m).length, f: r2(c.lines.reduce((t, l) => t + l.m, 0)), g: c.lines.filter(l => l.s).length, h: r2(c.lines.reduce((t, l) => t + l.s, 0)), i: c.lines.filter(l => l.cOn).length, j: r2(c.lines.reduce((t, l) => t + l.c, 0))};
-      for(const x in v){ T[x] += v[x]; G[x] += v[x]; }
-      rec.push([txt(f), txt(k.prenom + ' ' + k.nom), txt(k.classe || ''), txt(TL[tier(k)]),
-        num(v.e, `COUNTIFS(${cr},${D}$E:$E,"?*")`, '0'), num(v.f, `SUMIFS(${D}$F:$F,${cr})`),
-        num(v.g, `COUNTIFS(${cr},${D}$G:$G,"?*")`, '0'), num(v.h, `SUMIFS(${D}$H:$H,${cr})`),
-        num(v.i, `COUNTIFS(${cr},${D}$I:$I,"Oui")`, '0'), num(v.j, `SUMIFS(${D}$J:$J,${cr})`),
-        num(r2(v.f + v.h + v.j), `F${r}+H${r}+J${r}`)]);
-    }
-    const end = rec.length, r = end + 1, sum = L => `SUM(${L}${start}:${L}${end})`;
-    rec.push([txt('Total famille ' + f), txt(''), txt(''), txt(''), num(T.e, sum('E'), '0'), num(r2(T.f), sum('F')), num(T.g, sum('G'), '0'), num(r2(T.h), sum('H')), num(T.i, sum('I'), '0'), num(r2(T.j), sum('J')), num(r2(T.f + T.h + T.j), `F${r}+H${r}+J${r}`)]);
-    subs.push(r); rec.push([]);
-  }
-  const gr = rec.length + 1, tot = L => subs.map(r => L + r).join('+');
-  rec.push([txt('TOTAL GÉNÉRAL'), txt(''), txt(''), txt(''), num(G.e, tot('E'), '0'), num(r2(G.f), tot('F')), num(G.g, tot('G'), '0'), num(r2(G.h), tot('H')), num(G.i, tot('I'), '0'), num(r2(G.j), tot('J')), num(r2(G.f + G.h + G.j), `F${gr}+H${gr}+J${gr}`)]);
+        /* Curseurs tactiles grands formats pour iOS */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            height: 36px;
+            touch-action: pan-y;
+        }
 
-  const c = S.cfg, tar = [[txt('Tarifs appliqués')], [], [txt('Garderie matin'), txt('Montant')],
-    [txt('Jusqu’à 7h30'), num(c.mat[0])], [txt('7h30 – 8h00'), num(c.mat[1])], [txt('8h00 – 8h30'), num(c.mat[2])], [],
-    [txt('Garderie soir'), txt('Montant')],
-    [txt('16h40 – 17h10'), num(c.soir[0])], [txt('17h10 – 17h40'), num(c.soir[1])], [txt('17h40 – 18h10'), num(c.soir[2])], [txt('18h10 – 18h40'), num(c.soir[3])], [txt('Après 18h40'), num(c.soir[4])], [],
-    [txt('Cantine'), txt('Montant')],
-    [txt('Tarif plein (+1,1k€)'), num(c.plein)], [txt('Aide famille -1,1k€'), num(c.aide.b)], [txt('Aide famille -1k€'), num(c.aide.a)]];
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 28px;
+            width: 28px;
+            border-radius: 50%;
+            background: #2563eb;
+            border: 3px solid #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+            cursor: pointer;
+            margin-top: -10px;
+        }
 
-  const wb = X.utils.book_new(), sheet = (rows, w) => { const ws = X.utils.aoa_to_sheet(rows); ws['!cols'] = w.map(wch => ({wch})); return ws; };
-  X.utils.book_append_sheet(wb, sheet(rec, [26,24,8,14,12,12,11,12,14,13,12]), 'Récapitulatif');
-  X.utils.book_append_sheet(wb, sheet(det, [20,24,8,12,12,11,11,10,9,12,11]), 'Détail');
-  X.utils.book_append_sheet(wb, sheet(tar, [26,12]), 'Tarifs');
-  if(await saveFile('releves-' + month + '.xlsx', X.write(wb, {bookType:'xlsx', type:'array'}), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) toast('Excel exporté');
-}
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
 
-async function exportKids(){
-  const rows = [['Prénom','Nom','Classe','Famille','Tranche cantine']];
-  S.kids.slice().sort((a, b) => ord(a.classe) - ord(b.classe) || byName(a, b)).forEach(k => rows.push([k.prenom, k.nom, k.classe || '', k.famille || '', TL[tier(k)]]));
-  if(await saveFile('enfants.csv', toCSV(rows), 'text/csv')) toast('Liste exportée');
-}
+        input[type=range]:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body id="app-body" class="bg-emerald-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
-async function importKids(file){
-  if(!file || !unlocked) return;
-  try {
-    const buf = await file.arrayBuffer(); let txt;
-    try { txt = new TextDecoder('utf-8', {fatal:true}).decode(buf); } catch(e){ txt = new TextDecoder('windows-1252').decode(buf); }
-    const rows = parseCSV(txt);
-    if(!rows.length){ toast('Fichier vide'); return; }
-    const h = rows[0].map(norm), has = h.includes('prenom') && h.includes('nom');
-    const col = (names, def) => has ? h.findIndex(x => names.includes(x)) : def;
-    const ci = {p: col(['prenom'], 0), n: col(['nom'], 1), c: col(['classe'], 2), f: col(['famille'], 3), t: col(['tranche', 'tranchecantine', 'cantine', 'tier'], 4)};
-    let add = 0, upd = 0; const fam = {};
-    for(const r of (has ? rows.slice(1) : rows)){
-      const g = i => i < 0 ? '' : String(r[i] || '').trim();
-      const prenom = g(ci.p), nom = g(ci.n); if(!prenom || !nom) continue;
-      const up = g(ci.c).toUpperCase(), classe = CL.includes(up) ? up : '', famille = g(ci.f), tr = tierOf(g(ci.t));
-      const ex = S.kids.find(k => k.prenom.toLowerCase() === prenom.toLowerCase() && k.nom.toLowerCase() === nom.toLowerCase());
-      if(ex){ if(classe) ex.classe = classe; if(famille) ex.famille = famille; if(g(ci.t)) ex.tier = tr; upd++; }
-      else { S.kids.push({id:'k' + Date.now() + '_' + (add + upd), prenom, nom, classe, famille, tier:tr}); add++; }
-      if(famille && g(ci.t)) fam[famille] = tr;
-    }
-    if(!add && !upd){ toast('Aucun enfant reconnu'); return; }
-    S.kids.forEach(k => { if(k.famille && fam[k.famille]) k.tier = fam[k.famille]; });
-    save(); render(); toast(add + ' ajouté(s), ' + upd + ' mis à jour');
-  } catch(e){ toast('Fichier illisible'); }
-}
+    <!-- EN-TÊTE -->
+    <header class="w-full max-w-6xl mx-auto px-4 pb-2 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+            <div class="bg-white p-2 rounded-2xl shadow-sm text-2xl border border-slate-200/70">🎚️</div>
+            <div>
+                <h1 class="text-lg sm:text-2xl font-black tracking-tight text-slate-900 leading-none">Sonomètre Salle de Jeu</h1>
+                <p class="text-xs text-slate-600 font-semibold mt-0.5">Périscolaire • Bluetooth A2DP & Escalade 5 niveaux</p>
+            </div>
+        </div>
 
-function openDel(id){
-  const k = S.kids.find(x => x.id === id); if(!k) return;
-  $('#ovb').innerHTML = `<h2>Supprimer ${esc(k.prenom)} ${esc(k.nom)} ?</h2>
-  <p class="hint">Son historique de pointage sera aussi supprimé. Cette action est définitive.</p>
-  <div class="row">
-    <button class="btn del" data-dodel="${k.id}" style="width:100%">Supprimer</button>
-    <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
-  </div>`;
-  showOv();
-}
+        <!-- Indicateurs Écran Allumé & Liaison Bluetooth -->
+        <div class="flex items-center gap-2">
+            <div id="bt-keepalive-badge" class="hidden sm:flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl shadow-sm border border-slate-200 text-xs font-bold text-slate-600">
+                <span id="bt-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <span id="bt-text">Audio prêt</span>
+            </div>
+            <div id="wakelock-badge" class="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl shadow-sm border border-slate-200 text-xs font-bold text-slate-600">
+                <span id="wakelock-dot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <span id="wakelock-text">Écran auto</span>
+            </div>
+        </div>
+    </header>
 
-let unlocked = false, unlockExp = 0, lastAct = Date.now();
-function checkLock(){ if(unlocked && Date.now() > unlockExp){ unlocked = false; closeEdit(); if(tab !== 'pointage') render(); } }
-const getPin = () => { try { return localStorage.getItem('garderie_pin'); } catch(e){ return null; } };
-const sha = async s => {
-  try {
-    const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('nudge:' + s));
-    return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join('');
-  } catch(e){ return 'x' + btoa(s); }
-};
+    <!-- BANDEAU D'ALERTE / DIAGNOSTIC (Remplace alert()) -->
+    <div id="status-banner" class="hidden w-full max-w-6xl mx-auto px-4 mb-2">
+        <div id="status-banner-content" class="p-3.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-between shadow-sm">
+            <span id="status-banner-text"></span>
+            <button type="button" onclick="hideBanner()" class="ml-3 px-2.5 py-1 rounded-lg bg-black/10 font-black">✕</button>
+        </div>
+    </div>
 
-function vLock(){
-  const has = !!getPin();
-  return `<div class="lock">
-    <div class="lockic" style="color:var(--text-muted)"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-    <h2>Espace Direction</h2>
-    <p class="hint">${has ? 'Saisis ton code PIN (valable 5 minutes).' : 'Crée un code PIN à 4 ou 6 chiffres pour protéger la gestion des enfants et factures.'}</p>
-    <input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="Code PIN" aria-label="Code PIN">
-    ${has ? '' : '<input id="pin2" type="password" inputmode="numeric" maxlength="6" placeholder="Confirme le PIN">'}
-    <p class="err" id="perr" role="alert"></p>
-    <button class="btn" data-unlock="1">${has ? 'Déverrouiller' : 'Créer le PIN'}</button>
-  </div>`;
-}
+    <!-- GRILLE PRINCIPALE -->
+    <main class="w-full max-w-6xl mx-auto px-4 py-1 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
 
-async function doUnlock(){
-  const err = m => { $('#perr').textContent = m; anim($('.lock'), [{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'none'}], {duration:200}); };
-  const p = $('#pin').value.trim();
-  if(!/^\d{4,6}$/.test(p)){ err('Le code doit contenir 4 à 6 chiffres.'); return; }
-  const st = getPin();
-  if(!st){
-    if($('#pin2').value.trim() !== p){ err('Les codes ne correspondent pas.'); return; }
-    try { localStorage.setItem('garderie_pin', await sha(p)); } catch(e){ err('Erreur de sauvegarde.'); return; }
-    unlocked = true; unlockExp = Date.now() + 300000; lastAct = Date.now(); toast('Code PIN configuré'); render(true); return;
-  }
-  if(await sha(p) === st){ unlocked = true; unlockExp = Date.now() + 300000; lastAct = Date.now(); render(true); }
-  else { err('Code PIN incorrect.'); $('#pin').value = ''; }
-}
+        <!-- COLONNE GAUCHE (7 cols) : Affichage Enfants & Escalade 5 Niveaux -->
+        <section id="visual-card" class="lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 border-emerald-300 p-5 sm:p-6 flex flex-col justify-between transition-colors duration-300">
 
-function openPin(){
-  $('#ovb').innerHTML = `<h2>Changer le code PIN</h2>
-  <div class="row">
-    <input id="np1" type="password" inputmode="numeric" maxlength="6" placeholder="Nouveau PIN">
-    <input id="np2" type="password" inputmode="numeric" maxlength="6" placeholder="Confirmation">
-  </div>
-  <p class="err" id="nperr" role="alert"></p>
-  <div class="row">
-    <button class="btn" data-savepin="1" style="width:100%">Enregistrer</button>
-    <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
-  </div>`;
-  showOv(); $('#np1').focus();
-}
+            <!-- Barre d'état Micro & Minuterie -->
+            <div class="w-full flex items-center justify-between gap-2">
+                <span id="mic-badge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-extrabold bg-slate-100 text-slate-600">
+                    <span id="mic-dot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                    <span id="mic-status-text">Micro en pause</span>
+                </span>
 
-async function savePin(){
-  const a = $('#np1').value.trim(), b = $('#np2').value.trim(), e = $('#nperr');
-  if(!/^\d{4,6}$/.test(a)){ e.textContent = '4 à 6 chiffres requis.'; return; }
-  if(a !== b){ e.textContent = 'Les deux codes diffèrent.'; return; }
-  try { localStorage.setItem('garderie_pin', await sha(a)); closeEdit(); toast('PIN mis à jour'); } catch(x){ e.textContent = 'Erreur d’enregistrement.'; }
-}
+                <span id="timer-badge" class="hidden px-3 py-1.5 rounded-full text-xs sm:text-sm font-extrabold bg-amber-100 text-amber-800">
+                    ⏳ Détection...
+                </span>
+            </div>
 
-/* Paramètres : tarifs garderie + cantine (protégés par le PIN) */
-function openSettings(){
-  if(!unlocked){ tab = 'enfants'; q = ''; cls = []; render(); toast('Déverrouille pour modifier les tarifs'); return; }
-  const c = S.cfg, v = n => String(n).replace('.', ',');
-  const f = (id, l, x) => `<label class="setf"><span>${l}</span><input id="${id}" inputmode="decimal" value="${v(x)}"></label>`;
-  $('#ovb').innerHTML = `<h2>Tarifs</h2>
-  <h3 class="sh">Garderie du matin (€)</h3>
-  ${f('cm0','Arrivée jusqu’à 7h30',c.mat[0])}${f('cm1','7h30 – 8h00',c.mat[1])}${f('cm2','8h00 – 8h30',c.mat[2])}
-  <h3 class="sh">Garderie du soir (€)</h3>
-  ${f('cs0','16h40 – 17h10',c.soir[0])}${f('cs1','17h10 – 17h40',c.soir[1])}${f('cs2','17h40 – 18h10',c.soir[2])}${f('cs3','18h10 – 18h40',c.soir[3])}${f('cs4','Après 18h40',c.soir[4])}
-  <h3 class="sh">Cantine (€)</h3>
-  ${f('cp','Tarif plein (+1,1k€)',c.plein)}
-  ${f('ca','Aide famille -1k€ (réduction)',c.aide.a)}
-  ${f('cb','Aide famille -1,1k€ (réduction)',c.aide.b)}
-  <p class="hint" style="margin-top:6px">Prix payé = tarif plein − aide. Les changements s’appliquent aussi aux mois non clôturés.</p>
-  <h3 class="sh">Enfants et familles (CSV)</h3>
-  <div class="modes">
-    <button class="btn ghost" data-expkids="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Exporter</button>
-    <button class="btn ghost" data-impkids="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Importer</button>
-  </div>
-  <p class="hint">Colonnes : Prénom ; Nom ; Classe ; Famille ; Tranche cantine. L’import ajoute les nouveaux enfants et met à jour ceux qui existent déjà.</p>
-  <div class="row">
-    <button class="btn" data-savecfg="1" style="width:100%">Enregistrer les tarifs</button>
-    <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
-  </div>`;
-  showOv();
-}
+            <!-- PROGRESSION DES 5 NIVEAUX D'ALERTE -->
+            <div class="my-3.5 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                    <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-700">
+                        🚨 Escalade : <span id="level-counter-text" class="text-rose-600 text-base sm:text-lg">0 / 5</span>
+                    </span>
+                    <button type="button" id="reset-level-btn" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs sm:text-sm font-extrabold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                        <span>🕊️</span> Retour au calme (Remettre à 0/5)
+                    </button>
+                </div>
 
-function saveSettings(){
-  if(!unlocked){ closeEdit(); return; }
-  const g = id => parseFloat($('#' + id).value.replace(',', '.'));
-  const mat = [0,1,2].map(i => g('cm'+i)), soir = [0,1,2,3,4].map(i => g('cs'+i));
-  const plein = g('cp'), aide = {a:g('ca'), b:g('cb'), c:0};
-  if([...mat, ...soir, plein, aide.a, aide.b].some(x => isNaN(x) || x < 0)){ toast('Valeur invalide'); return; }
-  S.cfg = {mat, soir, plein, aide};
-  save(); closeEdit(); toast('Tarifs enregistrés'); render();
-}
+                <!-- 5 Voyants -->
+                <div class="grid grid-cols-5 gap-2">
+                    <div id="step-1" class="h-12 rounded-xl bg-slate-100 border-2 border-slate-200 flex flex-col items-center justify-center transition-all duration-300">
+                        <span class="text-xs font-black text-slate-500">Niv. 1</span>
+                        <span class="text-[10px] font-bold text-slate-400">Carillon</span>
+                    </div>
+                    <div id="step-2" class="h-12 rounded-xl bg-slate-100 border-2 border-slate-200 flex flex-col items-center justify-center transition-all duration-300">
+                        <span class="text-xs font-black text-slate-500">Niv. 2</span>
+                        <span class="text-[10px] font-bold text-slate-400">Double Bip</span>
+                    </div>
+                    <div id="step-3" class="h-12 rounded-xl bg-slate-100 border-2 border-slate-200 flex flex-col items-center justify-center transition-all duration-300">
+                        <span class="text-xs font-black text-slate-500">Niv. 3</span>
+                        <span class="text-[10px] font-bold text-slate-400">Buzzer</span>
+                    </div>
+                    <div id="step-4" class="h-12 rounded-xl bg-slate-100 border-2 border-slate-200 flex flex-col items-center justify-center transition-all duration-300">
+                        <span class="text-xs font-black text-slate-500">Niv. 4</span>
+                        <span class="text-[10px] font-bold text-slate-400">Klaxon</span>
+                    </div>
+                    <div id="step-5" class="h-12 rounded-xl bg-slate-100 border-2 border-slate-200 flex flex-col items-center justify-center transition-all duration-300">
+                        <span class="text-xs font-black text-slate-500">Niv. 5</span>
+                        <span class="text-[10px] font-bold text-slate-400">SIRÈNE</span>
+                    </div>
+                </div>
+            </div>
 
-const monthsData = () => {
-  const m = {};
-  for(const d in S.rec){
-    if(Object.values(S.rec[d]).some(x => x.m || x.s || x.c)){
-      const k = d.slice(0,7); m[k] = (m[k] || 0) + 1;
-    }
-  }
-  return Object.entries(m).sort();
-};
+            <!-- ZONE VISUELLE CENTRALE : Mascotte + Message + Thermomètre Vertical -->
+            <div class="w-full flex flex-row items-center justify-between gap-4 my-2">
+                <!-- Mascotte & Message Géant -->
+                <div class="flex flex-col items-center text-center flex-1">
+                    <div id="mascot-emoji" class="text-7xl sm:text-8xl mb-3 select-none">😴</div>
+                    <h2 id="status-title" class="text-2xl sm:text-4xl font-black tracking-tight text-slate-800 uppercase leading-tight">
+                        Prêt à démarrer
+                    </h2>
+                    <p id="status-subtitle" class="text-sm sm:text-base font-bold text-slate-500 mt-1.5 max-w-md">
+                        Connecte ton enceinte Bluetooth puis appuie sur Démarrer
+                    </p>
+                </div>
 
-function openReset(){
-  const ms = monthsData();
-  $('#ovb').innerHTML = ms.length ? `<h2>Clôturer des mois</h2>
-  <p class="hint">Coche les mois à réinitialiser. Un PDF sera d'abord généré pour chaque mois avant suppression des pointages.</p>
-  <div class="list">${ms.map(([m,n]) => `<label class="item"><input type="checkbox" name="rm" value="${m}"><b>${m}</b><span class="hint">${n} jours de présence</span></label>`).join('')}</div>
-  <div class="row" style="margin-top:14px">
-    <button class="btn" data-doreset="1" style="width:100%">Exporter et Clôturer</button>
-    <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
-  </div>` : `<h2>Clôture</h2><p class="hint">Aucun mois à réinitialiser.</p><button class="btn ghost" data-mclose="1">Fermer</button>`;
-  showOv();
-}
+                <!-- Thermomètre Sonore -->
+                <div class="flex flex-col items-center shrink-0">
+                    <div class="relative w-16 sm:w-20 h-56 sm:h-64 bg-slate-100 rounded-3xl p-1.5 border-2 border-slate-200 shadow-inner flex flex-col justify-end overflow-hidden">
+                        <div class="absolute inset-x-0 top-1/4 border-t border-dashed border-slate-300 pointer-events-none"></div>
+                        <div class="absolute inset-x-0 top-2/4 border-t border-dashed border-slate-300 pointer-events-none"></div>
+                        <div class="absolute inset-x-0 top-3/4 border-t border-dashed border-slate-300 pointer-events-none"></div>
 
-async function exportMonth(m){ const sm=month, sq=q, sc=cls; month=m; q=''; cls=[]; try{ return await pdfFactures(null); } finally { month=sm; q=sq; cls=sc; } }
-async function doReset(){
-  const ms = [...document.querySelectorAll('#ovb input[name=rm]:checked')].map(i => i.value);
-  if(!ms.length){ toast('Sélectionne au moins un mois'); return; }
-  const done = [];
-  for(const m of ms){ try{ if(!(await exportMonth(m))) break; done.push(m); }catch(e){ break; } }
-  done.forEach(m => { for(const d of Object.keys(S.rec)) if(d.startsWith(m)) delete S.rec[d]; });
-  save(); closeEdit(); render();
-  toast(done.length + ' mois clôturé(s)');
-}
+                        <!-- Barre dynamique -->
+                        <div id="volume-bar" class="w-full bg-emerald-500 rounded-2xl transition-all duration-75 ease-out" style="height: 0%;"></div>
 
-function openEdit(id){
-  const k = S.kids.find(x => x.id === id), t = ((S.rec[date] || {})[id] || {})[mode] || '';
-  $('#ovb').innerHTML = `<h2>${esc(k.prenom)} ${esc(k.nom)}</h2>
-  <p class="hint">${mode === 'm' ? 'Matin · Heure d’arrivée' : 'Soir · Heure de départ'}</p>
-  <div class="row"><input type="time" id="mt" value="${t}" aria-label="Heure"></div>
-  <div class="row">
-    <button class="btn" data-msave="${id}" style="width:100%">Enregistrer l'heure</button>
-    ${t ? `<button class="btn danger" data-mdel="${id}" style="width:100%">Effacer</button>` : ''}
-    <button class="btn ghost" data-mclose="1" style="width:100%">Annuler</button>
-  </div>`;
-  showOv(); $('#mt').focus();
-}
+                        <!-- Ligne de seuil rouge -->
+                        <div id="threshold-line" class="absolute inset-x-0 border-t-4 border-rose-600 z-10 flex items-center justify-end pr-1" style="bottom: 65%;">
+                            <span id="threshold-tag" class="bg-rose-600 text-white text-[9px] font-black px-1 py-0.5 rounded -mt-5 shadow">
+                                MAX 65%
+                            </span>
+                        </div>
+                    </div>
+                    <span id="volume-percent" class="mt-1.5 text-lg font-black text-slate-700">0%</span>
+                </div>
+            </div>
 
-const closeEdit = () => {
-  const ov = $('#ov'), bx = $('#ovb');
-  if(ov.style.display !== 'flex') return;
-  clearTimeout(closeEdit.t);
-  const rm = matchMedia('(prefers-reduced-motion:reduce)').matches;
-  if(!rm){
-    bx.animate(desk() ? {opacity:0, transform:'scale(.96)'} : {transform:'translateY(100%)'}, {duration:240, easing:'cubic-bezier(.4,0,1,1)', fill:'forwards'});
-    ov.animate({opacity:0}, {duration:240, fill:'forwards'});
-  }
-  closeEdit.t = setTimeout(() => {
-    ov.style.display = 'none'; bx.style.transform = '';
-    ov.getAnimations().forEach(x => x.cancel()); bx.getAnimations().forEach(x => x.cancel());
-  }, rm ? 0 : 240);
-};
-$('#ov').addEventListener('click', e => { if(e.target.id === 'ov'){ editKid = null; closeEdit(); } });
-(() => {
-  const bx = $('#ovb'); let y0 = null, dy = 0, drag = false;
-  bx.addEventListener('touchstart', e => { y0 = bx.scrollTop <= 0 ? e.touches[0].clientY : null; dy = 0; drag = false; }, {passive:true});
-  bx.addEventListener('touchmove', e => {
-    if(y0 === null) return;
-    dy = e.touches[0].clientY - y0;
-    if(dy > 10){ drag = true; e.preventDefault(); bx.style.transform = 'translateY(' + dy + 'px)'; }
-  }, {passive:false});
-  bx.addEventListener('touchend', () => {
-    if(!drag){ y0 = null; return; }
-    drag = false; y0 = null;
-    if(dy > 110){ editKid = null; closeEdit(); }
-    else { bx.style.transform = ''; anim(bx, [{transform:'translateY(' + dy + 'px)'}, {transform:'none'}], {duration:220, easing:'cubic-bezier(.2,.8,.2,1)'}); }
-  });
-})();
-const setT = (id, t) => { const day = S.rec[date] = S.rec[date] || {}; const r = day[id] = day[id] || {}; if(t) r[mode] = t; else delete r[mode]; save(); };
+            <!-- BOUTON PRINCIPAL DÉMARRER / ARRÊTER -->
+            <div class="w-full mt-3">
+                <button type="button" id="toggle-mic-btn" class="w-full py-4 px-6 rounded-2xl font-black text-lg sm:text-xl text-white bg-blue-600 hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-3">
+                    <span id="toggle-btn-icon" class="text-2xl">🎙️</span>
+                    <span id="toggle-btn-text">Démarrer l'écoute</span>
+                </button>
+            </div>
+        </section>
 
-document.addEventListener('click', e => {
-  lastAct = Date.now(); checkLock();
-  const b = e.target.closest('button'); if(!b) return;
-  const d = b.dataset;
-  
-  if(d.t !== undefined){ tab = d.t; q = ''; cls = []; render(true); }
-  else if(d.cls !== undefined){
-    if(d.cls === '') cls = []; else cls = cls.includes(d.cls) ? cls.filter(x => x !== d.cls) : [...cls, d.cls];
-    document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.cls === '' ? !cls.length : cls.includes(c.dataset.cls)));
-    relist();
-  }
-  else if(d.mode){ mode = d.mode; render(); }
-  else if(d.pt){
-    if(long){ long = false; return; }
-    const t = (S.rec[date] || {})[d.pt];
-    if(t && t[mode]){ setT(d.pt, ''); toast('Pointage annulé'); }
-    else { setT(d.pt, nowHM()); toast(mode === 'c' ? 'Cantine notée' : 'Pointé à ' + nowHM()); }
-    relist();
-    const kc = document.querySelector('[data-pt="'+d.pt+'"]')?.parentElement;
-    if(kc){ const tm = kc.querySelector('.tm'); if(tm) tm.classList.add('pop'); kc.classList.add('flash'); }
-  }
-  else if(d.edt) openEdit(d.edt);
-  else if(d.msave){ const t = $('#mt').value; if(!t){ toast('Saisis une heure'); return; } setT(d.msave, t); closeEdit(); toast('Heure enregistrée'); relist(); }
-  else if(d.mdel){ setT(d.mdel, ''); closeEdit(); relist(); }
-  else if(d.mclose) closeEdit();
-  else if(d.gear) openSettings();
-  else if(d.savecfg) saveSettings();
-  else if(d.xlsx) xlsxReleves();
-  else if(d.expkids) exportKids();
-  else if(d.impkids) $('#imp').click();
-  else if(d.dodel){
-    const id = d.dodel;
-    S.kids = S.kids.filter(x => x.id !== id);
-    Object.values(S.rec).forEach(r => delete r[id]);
-    save(); closeEdit(); render(); toast('Enfant supprimé');
-  }
-  else if(d.unlock) doUnlock();
-  else if(d.lock){ unlocked = false; render(true); }
-  else if(d.chpin) openPin();
-  else if(d.savepin) savePin();
-  else if(d.reset) openReset();
-  else if(d.doreset) doReset();
-  else if(d.sk){
-    const p = $('#fp').value.trim(), n = $('#fn').value.trim(), c = $('#fc').value.trim(), f = $('#ff').value.trim(), t = $('#ft').value;
-    if(!p || !n){ toast('Prénom et nom requis'); return; }
-    if(editKid){ Object.assign(S.kids.find(k => k.id === editKid), {prenom:p, nom:n, classe:c, famille:f, tier:t}); editKid = null; }
-    else S.kids.push({id:'k'+Date.now(), prenom:p, nom:n, classe:c, famille:f, tier:t});
-    if(f) S.kids.forEach(x => { if(x.famille === f) x.tier = t; });
-    save(); closeEdit(); toast('Enregistré'); render();
-  }
-  else if(d.ed) openKid(d.ed);
-  else if(d.addkid) openKid();
-  else if(d.cancel){ editKid = null; closeEdit(); }
-  else if(d.del) openDel(d.del);
-  else if(d.print){ pdfFactures(d.print === 'all' ? null : b.closest('details').dataset.fam).catch(() => toast('Erreur PDF')); }
-});
+        <!-- COLONNE DROITE (5 cols) : Réglages Périscolaires & Banc d'essai Bluetooth -->
+        <aside class="lg:col-span-5 bg-white rounded-3xl shadow-lg border border-slate-200/80 p-5 flex flex-col justify-between gap-4">
+            <div class="space-y-3.5">
+                <h3 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2 pb-2 border-b border-slate-100">
+                    <span>⚙️</span> Réglages & Test Enceinte Bluetooth
+                </h3>
 
-document.addEventListener('input', e => { lastAct = Date.now(); if(e.target.id === 'q'){ q = e.target.value; relist(); } });
-document.addEventListener('change', e => {
-  if(e.target.id === 'date' && e.target.value){ date = e.target.value; render(); }
-  if(e.target.id === 'month' && e.target.value){ month = e.target.value; render(); }
-  if(e.target.id === 'imp'){ importKids(e.target.files[0]); e.target.value = ''; }
-  if(e.target.id === 'ff'){ const m = S.kids.find(k => k.famille === e.target.value.trim() && k.id !== editKid); if(m && $('#ft')) $('#ft').value = tier(m); }
-});
+                <!-- 1. Banc d'essai direct des 5 alarmes -->
+                <div class="bg-blue-50/80 p-3.5 rounded-2xl border border-blue-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-extrabold text-blue-950 text-xs sm:text-sm">🔊 Tester les 5 niveaux sur l'enceinte :</span>
+                    </div>
+                    <div class="grid grid-cols-5 gap-1.5">
+                        <button type="button" onclick="testSpecificLevel(1)" class="py-2.5 px-1 bg-white hover:bg-emerald-50 active:scale-95 border border-blue-200 rounded-xl text-center shadow-sm transition">
+                            <span class="block text-xs font-black text-slate-800">Test 1</span>
+                            <span class="block text-[10px] font-bold text-emerald-600">Carillon</span>
+                        </button>
+                        <button type="button" onclick="testSpecificLevel(2)" class="py-2.5 px-1 bg-white hover:bg-amber-50 active:scale-95 border border-blue-200 rounded-xl text-center shadow-sm transition">
+                            <span class="block text-xs font-black text-slate-800">Test 2</span>
+                            <span class="block text-[10px] font-bold text-amber-600">Bip x2</span>
+                        </button>
+                        <button type="button" onclick="testSpecificLevel(3)" class="py-2.5 px-1 bg-white hover:bg-orange-50 active:scale-95 border border-blue-200 rounded-xl text-center shadow-sm transition">
+                            <span class="block text-xs font-black text-slate-800">Test 3</span>
+                            <span class="block text-[10px] font-bold text-orange-600">Buzzer</span>
+                        </button>
+                        <button type="button" onclick="testSpecificLevel(4)" class="py-2.5 px-1 bg-white hover:bg-rose-50 active:scale-95 border border-blue-200 rounded-xl text-center shadow-sm transition">
+                            <span class="block text-xs font-black text-slate-800">Test 4</span>
+                            <span class="block text-[10px] font-bold text-rose-600">Klaxon</span>
+                        </button>
+                        <button type="button" onclick="testSpecificLevel(5)" class="py-2.5 px-1 bg-rose-600 hover:bg-rose-700 active:scale-95 border border-rose-700 rounded-xl text-center shadow-sm transition text-white">
+                            <span class="block text-xs font-black">Test 5</span>
+                            <span class="block text-[10px] font-extrabold">Sirène</span>
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-blue-800 font-semibold mt-2 leading-snug">
+                        Protection anti-appel activée : le son reste sur l'enceinte Bluetooth même quand le micro écoute.
+                    </p>
+                </div>
 
-document.addEventListener('pointerdown', e => {
-  const b = e.target.closest('.main[data-pt], .not-pointed[data-pt]'); if(!b) return;
-  long = false;
-  if(mode === 'c') return;
-  timer = setTimeout(() => { long = true; openEdit(b.dataset.pt); }, 500);
-});
-['pointerup','pointerleave','pointercancel','scroll'].forEach(ev => document.addEventListener(ev, () => clearTimeout(timer), true));
+                <!-- 2. Curseurs de Seuil & Sensibilité Micro -->
+                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2.5">
+                    <!-- Seuil maximum (10% à 95%) -->
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <label for="threshold-slider" class="font-extrabold text-slate-800 text-xs sm:text-sm">
+                                🚨 Seuil de bruit maximum
+                            </label>
+                            <span id="threshold-value-display" class="bg-rose-100 text-rose-700 font-black px-2.5 py-0.5 rounded-lg text-xs">
+                                65%
+                            </span>
+                        </div>
+                        <input type="range" id="threshold-slider" min="10" max="95" value="65" class="w-full">
+                    </div>
 
-document.addEventListener('contextmenu', e => { if(e.target.closest('.kid')) e.preventDefault(); });
+                    <!-- Sensibilité / Gain micro (1.0x à 10.0x, défaut 4.5x) -->
+                    <div class="pt-1.5 border-t border-slate-200">
+                        <div class="flex justify-between items-center">
+                            <label for="mic-gain-slider" class="font-extrabold text-slate-800 text-xs sm:text-sm">
+                                🎤 Sensibilité / Gain micro
+                            </label>
+                            <span id="mic-gain-display" class="bg-blue-100 text-blue-700 font-black px-2.5 py-0.5 rounded-lg text-xs">
+                                4.5x
+                            </span>
+                        </div>
+                        <input type="range" id="mic-gain-slider" min="1" max="10" step="0.5" value="4.5" class="w-full">
+                    </div>
+                </div>
 
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') closeEdit();
-  if(e.key === '/' && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName) && $('#q')){ e.preventDefault(); $('#q').focus(); }
-  if(e.key === 'Enter' && (e.target.id === 'pin' || e.target.id === 'pin2')) doUnlock();
-});
+                <!-- 3. Curseurs de Délai avant alerte & Pause (Cooldown) -->
+                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2.5">
+                    <!-- Délai avant alerte (0.5s à 5.0s, défaut 1.5s) -->
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <label for="delay-slider" class="font-extrabold text-slate-800 text-xs sm:text-sm">
+                                ⏱️ Délai avant alerte
+                            </label>
+                            <span id="delay-value-display" class="bg-amber-100 text-amber-800 font-black px-2.5 py-0.5 rounded-lg text-xs">
+                                1.5s
+                            </span>
+                        </div>
+                        <input type="range" id="delay-slider" min="0.5" max="5.0" step="0.5" value="1.5" class="w-full">
+                    </div>
 
-setInterval(checkLock, 5000);
+                    <!-- Pause entre deux alertes / Cooldown (2s à 12s, défaut 4s) -->
+                    <div class="pt-1.5 border-t border-slate-200">
+                        <div class="flex justify-between items-center">
+                            <label for="cooldown-slider" class="font-extrabold text-slate-800 text-xs sm:text-sm">
+                                ⏸️ Pause entre deux alertes
+                            </label>
+                            <span id="cooldown-value-display" class="bg-indigo-100 text-indigo-800 font-black px-2.5 py-0.5 rounded-lg text-xs">
+                                4s
+                            </span>
+                        </div>
+                        <input type="range" id="cooldown-slider" min="2" max="12" step="1" value="4" class="w-full">
+                    </div>
+                </div>
+            </div>
 
-render();
-</script>
+            <!-- Astuce Safari iOS -->
+            <div class="text-center text-[11px] text-slate-500 font-semibold pt-2 border-t border-slate-100">
+                📲 Safari iOS : touchez <strong>Partager</strong> puis <strong>Sur l'écran d'accueil</strong> pour l'utiliser en plein écran.
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        /**
+         * Sonomètre Périscolaire iOS / Safari
+         * 1. Prévention du basculement Bluetooth en mode appel mains-libres (HFP) :
+         *    - Désactivation explicite de echoCancellation, noiseSuppression et autoGainControl
+         *    - Maintien d'un flux audio continu quasi-inaudible (1 Hz à gain 0.0001) pour garder la liaison A2DP active
+         *    - Réveil systématique de l'AudioContext sur touchstart/click et avant chaque alarme
+         *    - Compresseur/limiteur DynamicsCompressorNode pour maximiser le volume clair sur enceinte Bluetooth
+         * 2. Escalade sur 5 niveaux progressifs jusqu'à la grande sirène de rangement.
+         */
+
+        // --- Éléments DOM ---
+        const appBody = document.getElementById('app-body');
+        const visualCard = document.getElementById('visual-card');
+        const toggleMicBtn = document.getElementById('toggle-mic-btn');
+        const toggleBtnIcon = document.getElementById('toggle-btn-icon');
+        const toggleBtnText = document.getElementById('toggle-btn-text');
+        const micBadge = document.getElementById('mic-badge');
+        const micDot = document.getElementById('mic-dot');
+        const micStatusText = document.getElementById('mic-status-text');
+        const timerBadge = document.getElementById('timer-badge');
+
+        const mascotEmoji = document.getElementById('mascot-emoji');
+        const statusTitle = document.getElementById('status-title');
+        const statusSubtitle = document.getElementById('status-subtitle');
+        const volumeBar = document.getElementById('volume-bar');
+        const volumePercent = document.getElementById('volume-percent');
+
+        const levelCounterText = document.getElementById('level-counter-text');
+        const resetLevelBtn = document.getElementById('reset-level-btn');
+
+        const thresholdSlider = document.getElementById('threshold-slider');
+        const thresholdValueDisplay = document.getElementById('threshold-value-display');
+        const thresholdLine = document.getElementById('threshold-line');
+        const thresholdTag = document.getElementById('threshold-tag');
+
+        const micGainSlider = document.getElementById('mic-gain-slider');
+        const micGainDisplay = document.getElementById('mic-gain-display');
+
+        const delaySlider = document.getElementById('delay-slider');
+        const delayValueDisplay = document.getElementById('delay-value-display');
+
+        const cooldownSlider = document.getElementById('cooldown-slider');
+        const cooldownValueDisplay = document.getElementById('cooldown-value-display');
+
+        const wakeLockBadge = document.getElementById('wakelock-badge');
+        const wakeLockDot = document.getElementById('wakelock-dot');
+        const wakeLockText = document.getElementById('wakelock-text');
+
+        const btKeepAliveBadge = document.getElementById('bt-keepalive-badge');
+        const btDot = document.getElementById('bt-dot');
+        const btText = document.getElementById('bt-text');
+
+        const statusBanner = document.getElementById('status-banner');
+        const statusBannerContent = document.getElementById('status-banner-content');
+        const statusBannerText = document.getElementById('status-banner-text');
+
+        // --- Variables Audio & État ---
+        let audioCtx = null;
+        let masterCompressor = null;
+        let masterOutputGain = null;
+        let keepAliveOsc = null;
+        let keepAliveGain = null;
+
+        let analyser = null;
+        let microphoneStream = null;
+        let isListening = false;
+        let animationFrameId = null;
+        let wakeLockSentinel = null;
+
+        // Paramètres par défaut demandés
+        let threshold = 65;            // 10% à 95%
+        let micGainMultiplier = 4.5;   // 1.0x à 10.0x (défaut 4.5x)
+        let triggerDelayMs = 1500;     // 0.5s à 5.0s (défaut 1.5s)
+        let cooldownMs = 4000;         // 2s à 12s (défaut 4s)
+
+        // Escalade 0 à 5
+        let currentAlertLevel = 0;
+        let overThresholdStartTime = null;
+        let lastAlertTime = 0;
+        let smoothedVolume = 0;
+        let isSirenActive = false;
+        let sirenTimeout = null;
+
+        // --- Bandeau d'information sans alert() ---
+        function showBanner(message, type = 'error') {
+            statusBanner.classList.remove('hidden');
+            statusBannerText.textContent = message;
+            if (type === 'error') {
+                statusBannerContent.className = 'p-3.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-between shadow-sm bg-rose-100 text-rose-800 border border-rose-300';
+            } else {
+                statusBannerContent.className = 'p-3.5 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-between shadow-sm bg-blue-100 text-blue-800 border border-blue-300';
+            }
+        }
+
+        function hideBanner() {
+            statusBanner.classList.add('hidden');
+        }
+
+        // --- Initialisation & Réveil du moteur Audio Bluetooth iOS ---
+        async function ensureAudioReady() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+
+                // Compresseur/limiteur pour un rendu puissant et sans saturation sur enceinte Bluetooth
+                masterCompressor = audioCtx.createDynamicsCompressor();
+                masterCompressor.threshold.setValueAtTime(-14, audioCtx.currentTime);
+                masterCompressor.knee.setValueAtTime(12, audioCtx.currentTime);
+                masterCompressor.ratio.setValueAtTime(8, audioCtx.currentTime);
+                masterCompressor.attack.setValueAtTime(0.003, audioCtx.currentTime);
+                masterCompressor.release.setValueAtTime(0.15, audioCtx.currentTime);
+
+                // Gain maître amplifié
+                masterOutputGain = audioCtx.createGain();
+                masterOutputGain.gain.setValueAtTime(1.35, audioCtx.currentTime);
+
+                masterCompressor.connect(masterOutputGain);
+                masterOutputGain.connect(audioCtx.destination);
+            }
+
+            if (audioCtx.state === 'suspended') {
+                await audioCtx.resume();
+            }
+
+            // Démarre le flux audio continu quasi-inaudible (1 Hz à gain 0.0001)
+            // Empêche l'enceinte Bluetooth iOS de couper ou basculer en veille
+            if (!keepAliveOsc) {
+                keepAliveOsc = audioCtx.createOscillator();
+                keepAliveGain = audioCtx.createGain();
+                keepAliveOsc.type = 'sine';
+                keepAliveOsc.frequency.setValueAtTime(1, audioCtx.currentTime); // 1 Hz inaudible
+                keepAliveGain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+
+                keepAliveOsc.connect(keepAliveGain);
+                keepAliveGain.connect(audioCtx.destination);
+                keepAliveOsc.start();
+
+                btDot.className = 'w-2 h-2 rounded-full bg-blue-500 animate-pulse';
+                btText.textContent = 'Bluetooth maintenu';
+            }
+        }
+
+        // Réveil automatique sur chaque interaction tactile ou clic iOS
+        ['touchstart', 'click'].forEach(evtName => {
+            document.addEventListener(evtName, () => {
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().catch(() => {});
+                }
+            }, { passive: true });
+        });
+
+        // --- Gestion WakeLock API (Maintien de l'écran allumé sur iOS) ---
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLockSentinel = await navigator.wakeLock.request('screen');
+                    wakeLockDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+                    wakeLockText.textContent = 'Écran allumé';
+
+                    wakeLockSentinel.addEventListener('release', () => {
+                        wakeLockDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+                        wakeLockText.textContent = 'Écran auto';
+                    });
+                } catch (err) {
+                    console.warn('WakeLock non activé:', err);
+                }
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLockSentinel) {
+                wakeLockSentinel.release().catch(() => {});
+                wakeLockSentinel = null;
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && isListening) {
+                requestWakeLock();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().catch(() => {});
+                }
+            }
+        });
+
+        // --- Générateur des 5 Niveaux d'Alerte Progressives ---
+        async function playEscalatingAlarm(level) {
+            try {
+                await ensureAudioReady();
+                const now = audioCtx.currentTime;
+
+                if (level === 1) {
+                    // NIVEAU 1 : Carillon doux à 2 notes (triangle / sine)
+                    const notes = [
+                        { freq: 659.25, type: 'sine', start: 0, dur: 0.48 },      // Mi5
+                        { freq: 523.25, type: 'triangle', start: 0.24, dur: 0.68 } // Do5
+                    ];
+                    notes.forEach(n => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = n.type;
+                        osc.frequency.setValueAtTime(n.freq, now + n.start);
+
+                        gain.gain.setValueAtTime(0.001, now + n.start);
+                        gain.gain.linearRampToValueAtTime(0.85, now + n.start + 0.025);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + n.start + n.dur);
+
+                        osc.connect(gain);
+                        gain.connect(masterCompressor);
+                        osc.start(now + n.start);
+                        osc.stop(now + n.start + n.dur + 0.02);
+                    });
+
+                } else if (level === 2) {
+                    // NIVEAU 2 : Double bip aigu et sec
+                    [0, 0.21].forEach(offset => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(1100, now + offset);
+
+                        gain.gain.setValueAtTime(0.001, now + offset);
+                        gain.gain.linearRampToValueAtTime(0.95, now + offset + 0.012);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.15);
+
+                        osc.connect(gain);
+                        gain.connect(masterCompressor);
+                        osc.start(now + offset);
+                        osc.stop(now + offset + 0.16);
+                    });
+
+                } else if (level === 3) {
+                    // NIVEAU 3 : Triple buzzer discordant (ondes sawtooth / square)
+                    [0, 0.23, 0.46].forEach(offset => {
+                        const osc1 = audioCtx.createOscillator();
+                        const osc2 = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+
+                        osc1.type = 'sawtooth';
+                        osc2.type = 'square';
+                        osc1.frequency.setValueAtTime(560, now + offset);
+                        osc2.frequency.setValueAtTime(598, now + offset); // Dissonance agaçante
+
+                        gain.gain.setValueAtTime(0.001, now + offset);
+                        gain.gain.linearRampToValueAtTime(0.8, now + offset + 0.015);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.18);
+
+                        osc1.connect(gain);
+                        osc2.connect(gain);
+                        gain.connect(masterCompressor);
+
+                        osc1.start(now + offset);
+                        osc2.start(now + offset);
+                        osc1.stop(now + offset + 0.19);
+                        osc2.stop(now + offset + 0.19);
+                    });
+
+                } else if (level === 4) {
+                    // NIVEAU 4 : Klaxon rapide saccadé façon buzzer d'émission
+                    for (let i = 0; i < 5; i++) {
+                        const offset = i * 0.15;
+                        const osc1 = audioCtx.createOscillator();
+                        const osc2 = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+
+                        osc1.type = 'sawtooth';
+                        osc2.type = 'square';
+                        osc1.frequency.setValueAtTime(330, now + offset);
+                        osc2.frequency.setValueAtTime(485, now + offset); // Triton dissonant
+
+                        gain.gain.setValueAtTime(0.001, now + offset);
+                        gain.gain.linearRampToValueAtTime(0.9, now + offset + 0.01);
+                        gain.gain.setValueAtTime(0.9, now + offset + 0.095);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.125);
+
+                        osc1.connect(gain);
+                        osc2.connect(gain);
+                        gain.connect(masterCompressor);
+
+                        osc1.start(now + offset);
+                        osc2.start(now + offset);
+                        osc1.stop(now + offset + 0.13);
+                        osc2.stop(now + offset + 0.13);
+                    }
+
+                } else if (level >= 5) {
+                    // NIVEAU 5 : Grande sirène d'alarme modulée de 4 secondes
+                    const duration = 4.0;
+                    const oscMain = audioCtx.createOscillator();
+                    const oscHarmonic = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    oscMain.type = 'sawtooth';
+                    oscHarmonic.type = 'square';
+
+                    const cycles = 4;
+                    const cycleDur = duration / cycles;
+                    for (let c = 0; c < cycles; c++) {
+                        const t0 = now + c * cycleDur;
+                        const tPeak = t0 + cycleDur * 0.55;
+                        const tEnd = t0 + cycleDur;
+
+                        oscMain.frequency.setValueAtTime(460, t0);
+                        oscMain.frequency.linearRampToValueAtTime(1220, tPeak);
+                        oscMain.frequency.linearRampToValueAtTime(460, tEnd);
+
+                        oscHarmonic.frequency.setValueAtTime(230, t0);
+                        oscHarmonic.frequency.linearRampToValueAtTime(610, tPeak);
+                        oscHarmonic.frequency.linearRampToValueAtTime(230, tEnd);
+                    }
+
+                    gain.gain.setValueAtTime(0.01, now);
+                    gain.gain.linearRampToValueAtTime(0.95, now + 0.08);
+                    gain.gain.setValueAtTime(0.95, now + duration - 0.25);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                    oscMain.connect(gain);
+                    oscHarmonic.connect(gain);
+                    gain.connect(masterCompressor);
+
+                    oscMain.start(now);
+                    oscHarmonic.start(now);
+                    oscMain.stop(now + duration + 0.02);
+                    oscHarmonic.stop(now + duration + 0.02);
+
+                    triggerSirenVisualMode(duration * 1000);
+                }
+            } catch (err) {
+                console.error("Erreur lecture sonnerie :", err);
+            }
+        }
+
+        // --- Animation visuelle Niveau 5 ---
+        function triggerSirenVisualMode(durationMs) {
+            isSirenActive = true;
+            if (sirenTimeout) clearTimeout(sirenTimeout);
+
+            appBody.className = 'animate-siren-flash text-slate-900 min-h-screen flex flex-col justify-between';
+            visualCard.className = 'lg:col-span-7 bg-rose-50 rounded-3xl shadow-2xl border-4 border-rose-600 p-5 sm:p-6 flex flex-col justify-between animate-siren-flash';
+            mascotEmoji.textContent = '🚨';
+            mascotEmoji.className = 'text-7xl sm:text-8xl mb-3 select-none animate-loud';
+            statusTitle.textContent = 'NIVEAU 5 : SIRÈNE !';
+            statusTitle.className = 'text-2xl sm:text-4xl font-black tracking-tight text-rose-700 uppercase leading-tight';
+            statusSubtitle.textContent = 'TROP BRUYANT ! ÇA VA ÊTRE LONG DE TOUT RANGER !';
+            statusSubtitle.className = 'text-sm sm:text-lg font-black text-rose-800 mt-1.5 max-w-md';
+
+            sirenTimeout = setTimeout(() => {
+                isSirenActive = false;
+            }, durationMs);
+        }
+
+        // --- Mise à jour visuelle des 5 voyants ---
+        function updateLevelStepsUI() {
+            levelCounterText.textContent = `${currentAlertLevel} / 5`;
+
+            const activeClasses = [
+                null,
+                'bg-emerald-500 border-emerald-600 text-white shadow-sm',
+                'bg-amber-400 border-amber-500 text-slate-900 shadow-sm',
+                'bg-orange-500 border-orange-600 text-white shadow-sm',
+                'bg-rose-500 border-rose-600 text-white shadow-sm',
+                'bg-rose-700 border-rose-900 text-white shadow-md scale-105'
+            ];
+
+            for (let i = 1; i <= 5; i++) {
+                const el = document.getElementById(`step-${i}`);
+                const titleSpan = el.querySelector('span:first-child');
+                const subSpan = el.querySelector('span:last-child');
+
+                if (i <= currentAlertLevel) {
+                    el.className = `h-12 rounded-xl border-2 flex flex-col items-center justify-center transition-all duration-300 ${activeClasses[i]}`;
+                    titleSpan.className = 'text-xs font-black';
+                    subSpan.className = 'text-[10px] font-extrabold opacity-95';
+                } else {
+                    el.className = 'h-12 rounded-xl bg-slate-100 border-2 border-slate-200 flex flex-col items-center justify-center transition-all duration-300';
+                    titleSpan.className = 'text-xs font-black text-slate-400';
+                    subSpan.className = 'text-[10px] font-bold text-slate-400';
+                }
+            }
+        }
+
+        // Boutons de test individuel (Test 1 à Test 5)
+        function testSpecificLevel(lvl) {
+            playEscalatingAlarm(lvl);
+        }
+
+        // --- Ouverture du Microphone (Anti-mode appel vocal iOS / Bluetooth A2DP) ---
+        async function startMicrophone() {
+            hideBanner();
+            try {
+                // 1. Verrouille d'abord la sortie audio A2DP avant d'ouvrir le micro
+                await ensureAudioReady();
+                await requestWakeLock();
+
+                // 2. Désactive explicitement tous les traitements vocaux pour empêcher iOS
+                //    de basculer l'enceinte Bluetooth en profil appel mains-libres (HFP)
+                microphoneStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false,
+                        channelCount: 1
+                    },
+                    video: false
+                });
+
+                const source = audioCtx.createMediaStreamSource(microphoneStream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 512;
+                analyser.smoothingTimeConstant = 0.25;
+
+                // On connecte le micro UNIQUEMENT à l'analyseur (jamais à destination pour éviter le Larsen)
+                source.connect(analyser);
+
+                // Ré-assure que l'AudioContext est actif après l'ouverture du flux micro
+                if (audioCtx.state === 'suspended') {
+                    await audioCtx.resume();
+                }
+
+                isListening = true;
+                overThresholdStartTime = null;
+                updateButtonState();
+                analyzeAudioLoop();
+
+            } catch (err) {
+                console.error("Erreur accès micro :", err);
+                let msg = "Impossible d'accéder au microphone. Autorise le micro dans Safari pour démarrer.";
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    msg = "Micro bloqué : sur iOS, ouvre Réglages > Safari > Microphone (ou touche 'AA' dans la barre d'adresse) pour l'autoriser.";
+                }
+                showBanner(msg, 'error');
+                stopMicrophone();
+            }
+        }
+
+        function stopMicrophone() {
+            isListening = false;
+            releaseWakeLock();
+
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            if (microphoneStream) {
+                microphoneStream.getTracks().forEach(track => track.stop());
+                microphoneStream = null;
+            }
+            overThresholdStartTime = null;
+            smoothedVolume = 0;
+            updateButtonState();
+            resetVisualToIdle();
+        }
+
+        // --- Boucle d'analyse sonore (RMS + Crêtes vocales avec gain 1.0x à 10.0x) ---
+        function analyzeAudioLoop() {
+            if (!isListening || !analyser) return;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteTimeDomainData(dataArray);
+
+            let sumSquares = 0;
+            let peak = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const normalized = Math.abs((dataArray[i] - 128) / 128);
+                sumSquares += normalized * normalized;
+                if (normalized > peak) peak = normalized;
+            }
+            const rms = Math.sqrt(sumSquares / bufferLength);
+
+            // Combinaison RMS (volume moyen) et crêtes vocales (claquements/cris)
+            const combinedSignal = (rms * 0.7 + peak * 0.3);
+            const rawPercent = Math.min(100, Math.round(combinedSignal * 220 * micGainMultiplier));
+
+            if (rawPercent > smoothedVolume) {
+                smoothedVolume = Math.round(smoothedVolume * 0.35 + rawPercent * 0.65);
+            } else {
+                smoothedVolume = Math.round(smoothedVolume * 0.70 + rawPercent * 0.30);
+            }
+
+            updateVisuals(smoothedVolume);
+            checkEscalationLogic(smoothedVolume);
+
+            animationFrameId = requestAnimationFrame(analyzeAudioLoop);
+        }
+
+        // --- Logique d'escalade sur 5 niveaux ---
+        function checkEscalationLogic(currentLevel) {
+            const now = Date.now();
+            const timeSinceLastAlert = now - lastAlertTime;
+            const isInCooldown = lastAlertTime > 0 && timeSinceLastAlert < cooldownMs;
+
+            if (isInCooldown) {
+                const remainingSec = Math.ceil((cooldownMs - timeSinceLastAlert) / 1000);
+                timerBadge.classList.remove('hidden');
+                timerBadge.className = 'px-3 py-1.5 rounded-full text-xs sm:text-sm font-extrabold bg-blue-100 text-blue-800';
+                timerBadge.textContent = `⏸️ Pause (${remainingSec}s)`;
+                overThresholdStartTime = null;
+                return;
+            }
+
+            if (currentLevel >= threshold) {
+                if (!overThresholdStartTime) {
+                    overThresholdStartTime = now;
+                }
+
+                const elapsed = now - overThresholdStartTime;
+
+                if (elapsed >= triggerDelayMs) {
+                    if (currentAlertLevel < 5) {
+                        currentAlertLevel++;
+                    }
+                    updateLevelStepsUI();
+                    playEscalatingAlarm(currentAlertLevel);
+
+                    lastAlertTime = now;
+                    overThresholdStartTime = null;
+                    timerBadge.classList.add('hidden');
+                } else {
+                    const left = ((triggerDelayMs - elapsed) / 1000).toFixed(1);
+                    timerBadge.classList.remove('hidden');
+                    timerBadge.className = 'px-3 py-1.5 rounded-full text-xs sm:text-sm font-extrabold bg-amber-100 text-amber-800';
+                    timerBadge.textContent = `⏳ Alerte niv.${Math.min(5, currentAlertLevel + 1)} dans ${left}s...`;
+                }
+            } else {
+                overThresholdStartTime = null;
+                timerBadge.classList.add('hidden');
+            }
+        }
+
+        // --- Mise à jour visuelle (Vert -> Jaune -> Orange -> Rouge) ---
+        function updateVisuals(level) {
+            volumeBar.style.height = `${level}%`;
+            volumePercent.textContent = `${level}%`;
+
+            if (isSirenActive) {
+                volumeBar.className = 'w-full bg-rose-600 rounded-2xl transition-all duration-75 ease-out';
+                return;
+            }
+
+            const orangeStart = Math.max(12, threshold * 0.82);
+            const yellowStart = Math.max(8, threshold * 0.62);
+
+            if (level >= threshold) {
+                // ROUGE : Seuil dépassé
+                appBody.className = 'bg-rose-100 text-slate-800 min-h-screen flex flex-col justify-between transition-colors duration-300';
+                visualCard.className = 'lg:col-span-7 bg-white rounded-3xl shadow-xl border-4 border-rose-500 p-5 sm:p-6 flex flex-col justify-between transition-colors duration-200';
+                volumeBar.className = 'w-full bg-rose-500 rounded-2xl transition-all duration-75 ease-out';
+
+                mascotEmoji.textContent = currentAlertLevel >= 5 ? '🚨' : '🙉';
+                mascotEmoji.className = 'text-7xl sm:text-8xl mb-3 select-none animate-loud';
+
+                if (currentAlertLevel >= 5) {
+                    statusTitle.textContent = 'NIVEAU 5 : SIRÈNE !';
+                    statusSubtitle.textContent = 'TROP BRUYANT ! ÇA VA ÊTRE LONG DE TOUT RANGER !';
+                } else {
+                    statusTitle.textContent = 'TROP BRUYANT !';
+                    statusSubtitle.textContent = `Attention : Niveau d'alerte ${currentAlertLevel}/5 atteint !`;
+                }
+                statusTitle.className = 'text-2xl sm:text-4xl font-black tracking-tight text-rose-600 uppercase leading-tight';
+                statusSubtitle.className = 'text-sm sm:text-base font-extrabold text-rose-700 mt-1.5 max-w-md';
+
+            } else if (level >= orangeStart) {
+                // ORANGE : Très proche du seuil
+                appBody.className = 'bg-orange-50 text-slate-800 min-h-screen flex flex-col justify-between transition-colors duration-300';
+                visualCard.className = 'lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 border-orange-400 p-5 sm:p-6 flex flex-col justify-between transition-colors duration-200';
+                volumeBar.className = 'w-full bg-orange-500 rounded-2xl transition-all duration-75 ease-out';
+
+                mascotEmoji.textContent = '😬';
+                mascotEmoji.className = 'text-7xl sm:text-8xl mb-3 select-none';
+                statusTitle.textContent = 'Limite atteinte !';
+                statusTitle.className = 'text-2xl sm:text-4xl font-black tracking-tight text-orange-600 uppercase leading-tight';
+                statusSubtitle.textContent = 'On baisse la voix tout de suite avant l\'alarme !';
+                statusSubtitle.className = 'text-sm sm:text-base font-bold text-orange-700 mt-1.5 max-w-md';
+
+            } else if (level >= yellowStart) {
+                // JAUNE : Bruit modéré
+                appBody.className = 'bg-amber-50 text-slate-800 min-h-screen flex flex-col justify-between transition-colors duration-300';
+                visualCard.className = 'lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 border-amber-400 p-5 sm:p-6 flex flex-col justify-between transition-colors duration-200';
+                volumeBar.className = 'w-full bg-amber-400 rounded-2xl transition-all duration-75 ease-out';
+
+                mascotEmoji.textContent = '😐';
+                mascotEmoji.className = 'text-7xl sm:text-8xl mb-3 select-none';
+                statusTitle.textContent = 'Attention au bruit';
+                statusTitle.className = 'text-2xl sm:text-4xl font-black tracking-tight text-amber-600 uppercase leading-tight';
+                statusSubtitle.textContent = currentAlertLevel > 0
+                    ? `On chuchote (Déjà ${currentAlertLevel}/5 alerte(s))`
+                    : 'Le volume monte, on parle moins fort...';
+                statusSubtitle.className = 'text-sm sm:text-base font-bold text-amber-700 mt-1.5 max-w-md';
+
+            } else {
+                // VERT : Calme
+                appBody.className = 'bg-emerald-50 text-slate-800 min-h-screen flex flex-col justify-between transition-colors duration-300';
+                visualCard.className = 'lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 border-emerald-400 p-5 sm:p-6 flex flex-col justify-between transition-colors duration-200';
+                volumeBar.className = 'w-full bg-emerald-500 rounded-2xl transition-all duration-75 ease-out';
+
+                mascotEmoji.textContent = '😊';
+                mascotEmoji.className = 'text-7xl sm:text-8xl mb-3 select-none animate-calm';
+                statusTitle.textContent = 'C\'est calme';
+                statusTitle.className = 'text-2xl sm:text-4xl font-black tracking-tight text-emerald-600 uppercase leading-tight';
+                statusSubtitle.textContent = currentAlertLevel > 0
+                    ? `Bien ! Niveau actuel : ${currentAlertLevel}/5`
+                    : 'Super ambiance, continuez à jouer calmement !';
+                statusSubtitle.className = 'text-sm sm:text-base font-bold text-emerald-700 mt-1.5 max-w-md';
+            }
+        }
+
+        function resetVisualToIdle() {
+            isSirenActive = false;
+            appBody.className = 'bg-emerald-50 text-slate-800 min-h-screen flex flex-col justify-between transition-colors duration-300';
+            visualCard.className = 'lg:col-span-7 bg-white rounded-3xl shadow-lg border-4 border-slate-200 p-5 sm:p-6 flex flex-col justify-between transition-colors duration-200';
+            volumeBar.style.height = '0%';
+            volumeBar.className = 'w-full bg-emerald-500 rounded-2xl transition-all duration-150';
+            volumePercent.textContent = '0%';
+
+            mascotEmoji.textContent = '😴';
+            mascotEmoji.className = 'text-7xl sm:text-8xl mb-3 select-none';
+            statusTitle.textContent = 'Micro en pause';
+            statusTitle.className = 'text-2xl sm:text-4xl font-black tracking-tight text-slate-700 uppercase leading-tight';
+            statusSubtitle.textContent = 'Connecte ton enceinte Bluetooth puis appuie sur Démarrer';
+            statusSubtitle.className = 'text-sm sm:text-base font-bold text-slate-500 mt-1.5 max-w-md';
+            timerBadge.classList.add('hidden');
+        }
+
+        function updateButtonState() {
+            if (isListening) {
+                toggleMicBtn.className = 'w-full py-4 px-6 rounded-2xl font-black text-lg sm:text-xl text-white bg-rose-600 hover:bg-rose-700 active:scale-95 shadow-lg shadow-rose-600/30 transition flex items-center justify-center gap-3';
+                toggleBtnIcon.textContent = '⏹️';
+                toggleBtnText.textContent = 'Arrêter l\'écoute';
+
+                micBadge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-extrabold bg-emerald-100 text-emerald-800';
+                micDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping';
+                micStatusText.textContent = `Écoute active (${micGainMultiplier.toFixed(1)}x)`;
+            } else {
+                toggleMicBtn.className = 'w-full py-4 px-6 rounded-2xl font-black text-lg sm:text-xl text-white bg-blue-600 hover:bg-blue-700 active:scale-95 shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-3';
+                toggleBtnIcon.textContent = '🎙️';
+                toggleBtnText.textContent = 'Démarrer l\'écoute';
+
+                micBadge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs sm:text-sm font-extrabold bg-slate-100 text-slate-600';
+                micDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
+                micStatusText.textContent = 'Micro en pause';
+            }
+        }
+
+        // --- Écouteurs des contrôles ---
+        toggleMicBtn.addEventListener('click', () => {
+            if (isListening) {
+                stopMicrophone();
+            } else {
+                startMicrophone();
+            }
+        });
+
+        // Bouton Retour au calme (Remettre à 0/5)
+        resetLevelBtn.addEventListener('click', () => {
+            currentAlertLevel = 0;
+            isSirenActive = false;
+            if (sirenTimeout) clearTimeout(sirenTimeout);
+            overThresholdStartTime = null;
+            updateLevelStepsUI();
+            if (!isListening) {
+                resetVisualToIdle();
+            }
+        });
+
+        // Seuil de bruit maximum (10% à 95%)
+        thresholdSlider.addEventListener('input', (e) => {
+            threshold = parseInt(e.target.value, 10);
+            thresholdValueDisplay.textContent = `${threshold}%`;
+            thresholdLine.style.bottom = `${threshold}%`;
+            thresholdTag.textContent = `MAX ${threshold}%`;
+        });
+
+        // Sensibilité / Gain micro (1.0x à 10.0x)
+        micGainSlider.addEventListener('input', (e) => {
+            micGainMultiplier = parseFloat(e.target.value);
+            micGainDisplay.textContent = `${micGainMultiplier.toFixed(1)}x`;
+            if (isListening) {
+                micStatusText.textContent = `Écoute active (${micGainMultiplier.toFixed(1)}x)`;
+            }
+        });
+
+        // Délai avant alerte (0.5s à 5.0s)
+        delaySlider.addEventListener('input', (e) => {
+            const sec = parseFloat(e.target.value);
+            triggerDelayMs = Math.round(sec * 1000);
+            delayValueDisplay.textContent = `${sec.toFixed(1)}s`;
+        });
+
+        // Pause entre deux alertes / Cooldown (2s à 12s)
+        cooldownSlider.addEventListener('input', (e) => {
+            const sec = parseInt(e.target.value, 10);
+            cooldownMs = sec * 1000;
+            cooldownValueDisplay.textContent = `${sec}s`;
+        });
+
+        // Initialisation des 5 voyants
+        updateLevelStepsUI();
+    </script>
 </body>
 </html>
