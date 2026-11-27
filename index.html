@@ -205,7 +205,7 @@ async function ensureAudio() {
     comp.connect(master);
     master.connect(ctx.destination);
   }
-  if (ctx.state !== 'running') await ctx.resume();
+  if (ctx.state !== 'running') await Promise.race([ctx.resume(), new Promise(r => setTimeout(r, 600))]);
 }
 ['touchstart', 'click'].forEach(e => document.addEventListener(e, () => {
   if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
@@ -242,6 +242,51 @@ async function playAlarm(n) {
   } catch (e) { console.error(e); }
 }
 
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const DUR = { 1: .95, 2: .4, 3: .7, 4: .8, 5: 4.1 };
+function closeMicOnly() {
+  cancelAnimationFrame(raf);
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  analyser = null;
+}
+async function openMic() {
+  micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }, video: false });
+  analyser = ctx.createAnalyser(); analyser.fftSize = 512; analyser.smoothingTimeConstant = .25;
+  ctx.createMediaStreamSource(micStream).connect(analyser);
+}
+async function ensureRunning() {
+  for (let i = 0; i < 4 && ctx.state !== 'running'; i++) {
+    try { await Promise.race([ctx.resume(), wait(400)]); } catch (e) {}
+  }
+  return ctx.state === 'running';
+}
+async function rebuildCtx() {          // contexte audio bloqué par iOS : on en recrée un propre
+  try { ctx.close(); } catch (e) {}
+  ctx = null; await ensureAudio(); await ensureRunning();
+}
+// Pendant l'alarme, le micro est libéré : iOS rend alors la sortie à l'enceinte Bluetooth
+async function alarm(n) {
+  if (!listening) return playAlarm(n);
+  if (paused) return;
+  paused = true;
+  const tm = $('timer');
+  try {
+    closeMicOnly(); setSession('playback');
+    tm.className = 'show'; tm.innerHTML = ico('volume') + 'Alarme en cours';
+    await wait(700);
+    if (!(await ensureRunning())) await rebuildCtx();
+    await playAlarm(n);
+    await wait(DUR[n] * 1000 + 350);
+    if (!listening) return;
+    applySession();
+    if (!(await ensureRunning())) await rebuildCtx();
+    await openMic();
+    if (!(await ensureRunning())) { await rebuildCtx(); closeMicOnly(); await openMic(); }
+    smooth = 0; overSince = null; lastAlert = Date.now(); tm.className = ''; loop();
+  } catch (e) {
+    console.error(e); banner("Le micro n'a pas pu redémarrer. Relance l'écoute."); stopMic();
+  } finally { paused = false; }
+}
 const EMOJI = { idle: '😴', green: '😊', yellow: '😐', orange: '😬', red: '🙉', siren: '🚨' };
 function setState(s, title, sub) {
   document.body.dataset.state = s;
@@ -304,6 +349,7 @@ function stopMic() {
 
 function loop() {
   if (!listening || !analyser) return;
+  if (ctx.state !== 'running') ctx.resume().catch(() => {});
   const buf = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteTimeDomainData(buf);
   let sum = 0, peak = 0;
