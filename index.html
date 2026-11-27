@@ -174,6 +174,7 @@ body::before{width:440px;height:440px;top:-170px;right:-150px}body::after{width:
         <summary><span class="h"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg>Avancé : sortie audio</span><svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg></summary>
         <div class="adv">
           <button type="button" id="mode-btn"></button>
+          <button type="button" id="pm-btn"></button>
           <button type="button" id="sess-btn"></button>
           <button type="button" id="diag-btn"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>Diagnostic audio</button>
           <button type="button" id="fix-btn"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg>Réinitialiser l'audio</button>
@@ -195,11 +196,11 @@ const ico = n => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>
 const NAMES = ['Carillon', 'Bip', 'Buzzer', 'Klaxon', 'Sirène'];
 NAMES.forEach((n, i) => {
   $('steps').insertAdjacentHTML('beforeend', `<div class="step" id="step-${i + 1}"><b>${i + 1}</b><span>${n}</span></div>`);
-  $('tests').insertAdjacentHTML('beforeend', `<button type="button" onclick="playAlarm(${i + 1})"><b>${i + 1}</b><span>${n}</span></button>`);
+  $('tests').insertAdjacentHTML('beforeend', `<button type="button" onclick="alarm(${i + 1})"><b>${i + 1}</b><span>${n}</span></button>`);
 });
 
 let ctx, comp, master, streamDest, analyser, micStream;
-let listening = false, raf = null, wakeLock = null, useMedia = true, sessionMode = 'play-and-record';
+let listening = false, raf = null, wakeLock = null, useMedia = true, sessionMode = 'play-and-record', pauseMic = true, paused = false;
 let threshold = 65, gainMul = 4.5, delayMs = 1500, cooldownMs = 4000;
 let level = 0, shown = 0, overSince = null, lastAlert = 0, smooth = 0, siren = false, sirenT = null;
 
@@ -243,7 +244,7 @@ async function resetAudio() {
   if (listening) stopMic();
   try { if (ctx) await ctx.close(); } catch (e) {}
   ctx = null; $('out').pause(); $('out').srcObject = null;
-  useMedia = true; sessionMode = 'play-and-record'; modeLabel(); sessLabel(); save();
+  useMedia = true; sessionMode = 'play-and-record'; pauseMic = true; pmLabel(); modeLabel(); sessLabel(); save();
   banner("Audio réinitialisé. Vérifie que l'enceinte est connectée, puis lance l'écoute.", 'info');
 }
 $('fix-btn').addEventListener('click', resetAudio);
@@ -253,6 +254,8 @@ $('bt-btn').addEventListener('click', async () => {
   route();                       // relance l'élément <audio> pendant que le micro est ouvert
   banner('Sortie enceinte relancée. Fais un test (1 à 5).', 'info');
 });
+function pmLabel() { $('pm-btn').textContent = 'Couper le micro pendant l\'alarme : ' + (pauseMic ? 'oui (recommandé)' : 'non'); }
+$('pm-btn').addEventListener('click', () => { pauseMic = !pauseMic; pmLabel(); refresh(); save(); });
 function modeLabel() { $('mode-btn').textContent = 'Sortie : ' + (useMedia ? 'élément audio (recommandé)' : 'Web Audio (direct)'); }
 $('mode-btn').addEventListener('click', () => {
   useMedia = !useMedia; modeLabel(); if (ctx) route(); refresh();
@@ -270,7 +273,7 @@ $('diag-btn').addEventListener('click', async () => {
 async function playAlarm(n) {
   try {
     await ensureAudio();
-    if (listening) applySession();
+    if (listening && !paused) applySession();
     const t = ctx.currentTime;
     const tone = (type, f, t0, dur, peak, atk) => {
       const o = ctx.createOscillator(), g = ctx.createGain();
@@ -307,6 +310,35 @@ const FACES = {
   red: '<path d="M27 38l15 8-15 8M73 38l-15 8 15 8"/><ellipse cx="50" cy="72" rx="12" ry="9" fill="#0f172a"/>',
   siren: '<path d="M27 38l15 8-15 8M73 38l-15 8 15 8"/><ellipse cx="50" cy="72" rx="12" ry="9" fill="#0f172a"/><path d="M14 20l-8-6M86 20l8-6M50 4V-6" stroke-width="4"/>'
 };
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const DUR = { 1: .95, 2: .4, 3: .7, 4: .8, 5: 4.1 };
+function closeMicOnly() {
+  cancelAnimationFrame(raf);
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  analyser = null;
+}
+async function openMic() {
+  micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }, video: false });
+  analyser = ctx.createAnalyser(); analyser.fftSize = 512; analyser.smoothingTimeConstant = .25;
+  ctx.createMediaStreamSource(micStream).connect(analyser);
+}
+// Pendant l'alarme, on libère le micro : iOS rend alors la sortie à l'enceinte Bluetooth
+async function alarm(n) {
+  if (!listening || !pauseMic) return playAlarm(n);
+  if (paused) return;
+  paused = true;
+  closeMicOnly(); setSession('playback');
+  const tm = $('timer'); tm.className = 'show'; tm.innerHTML = ico('volume') + 'Alarme en cours';
+  await wait(700);
+  const el = $('out'); if (useMedia && el.srcObject && el.paused) el.play().catch(() => {});
+  await playAlarm(n);
+  await wait(DUR[n] * 1000 + 350);
+  if (!listening) { paused = false; return; }
+  try {
+    applySession(); await openMic();
+    smooth = 0; overSince = null; lastAlert = Date.now(); paused = false; tm.className = ''; loop();
+  } catch (e) { paused = false; banner("Le micro n'a pas pu redémarrer. Relance l'écoute."); stopMic(); }
+}
 function setState(s, title, sub) {
   document.body.dataset.state = s;
   $('mascot').innerHTML = `<svg viewBox="-6 -12 112 118" aria-hidden="true"><circle cx="50" cy="52" r="44" fill="var(--c)"/><g fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">${FACES[s]}</g></svg>`;
@@ -355,7 +387,7 @@ async function startMic() {
     if (ctx.state !== 'running') await ctx.resume();
     if (useMedia && $('out').paused) $('out').play().catch(() => {});
     listening = true; overSince = null; refresh(); loop();
-    if (useMedia) banner("Écoute active. Touche « Activer la sortie enceinte », puis fais un test.", 'info');
+    if (useMedia && !pauseMic) banner("Écoute active. Touche « Activer la sortie enceinte », puis fais un test.", 'info');
   } catch (e) {
     banner(e.name === 'NotAllowedError' ? "Micro bloqué : Réglages > Safari > Microphone (ou icône « AA » dans la barre d'adresse)." : "Impossible d'accéder au micro. Autorise-le dans Safari.");
     stopMic();
@@ -390,7 +422,7 @@ function escalate(v) {
     const el = now - overSince;
     if (el >= delayMs) {
       if (level < 5) level++;
-      updateSteps(); playAlarm(level); lastAlert = now; overSince = null; tm.className = '';
+      updateSteps(); alarm(level); lastAlert = now; overSince = null; tm.className = '';
     } else { tm.className = 'show'; tm.innerHTML = ico('timer') + `Niveau ${Math.min(5, level + 1)} dans ${((delayMs - el) / 1000).toFixed(1)}s`; }
   } else { overSince = null; tm.className = ''; }
 }
@@ -408,7 +440,7 @@ function refresh() {
   const b = $('toggle');
   b.className = 'btn primary' + (listening ? ' stop' : '');
   b.innerHTML = listening ? ico('stop') + "Arrêter l'écoute" : ico('mic') + "Démarrer l'écoute";
-  $('bt-btn').hidden = !(listening && useMedia);
+  $('bt-btn').hidden = !(listening && useMedia && !pauseMic);
   $('mic-dot').className = 'dot' + (listening ? ' live' : '');
   $('mic-text').textContent = listening ? `Écoute active · ${gainMul.toFixed(1)}x` : 'Micro en pause';
 }
@@ -424,17 +456,18 @@ bind('s-cd', v => { cooldownMs = v * 1000; $('v-cd').textContent = v + 's'; });
 
 // --- Mémorisation des réglages ---
 const KEY = 'sonometre-settings', IDS = ['s-th', 's-gain', 's-delay', 's-cd'];
-function save() { try { const o = { media: useMedia, sess: sessionMode }; IDS.forEach(i => o[i] = $(i).value); localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+function save() { try { const o = { media: useMedia, sess: sessionMode, pm: pauseMic }; IDS.forEach(i => o[i] = $(i).value); localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
 try {
   const o = JSON.parse(localStorage.getItem(KEY) || '{}');
   IDS.forEach(i => { if (o[i] != null) { $(i).value = o[i]; $(i).dispatchEvent(new Event('input')); } });
   if (o.media === false) useMedia = false;
   if (o.sess && SESS[o.sess]) sessionMode = o.sess;
+  if (o.pm === false) pauseMic = false;
 } catch (e) {}
 document.querySelectorAll('input[type=range]').forEach(i => i.addEventListener('change', save));
 $('mode-btn').addEventListener('click', save);
 
-idle(); sessLabel(); modeLabel(); refresh(); updateSteps();
+idle(); pmLabel(); sessLabel(); modeLabel(); refresh(); updateSteps();
 </script>
 </body>
 </html>
