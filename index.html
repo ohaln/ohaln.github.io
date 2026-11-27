@@ -40,12 +40,16 @@ main{display:grid;gap:14px}
 #timer.show{visibility:visible}
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:4px 0}
 #mascot{width:132px;height:132px;border-radius:50%;background:color-mix(in srgb,var(--c) 14%,#fff);display:flex;align-items:center;justify-content:center;margin-bottom:6px;transition:background .4s}
-#mascot svg{width:100px;height:100px}
+#mascot span{font-size:76px;line-height:1;display:block;transform-origin:50% 80%;will-change:transform}
 #title{font-size:28px;font-weight:900;letter-spacing:-.01em;text-transform:uppercase;color:var(--c);line-height:1.1}
 body[data-state=idle] #title{color:var(--mut)}
 #sub{font-size:14px;font-weight:600;color:var(--mut);min-height:20px;max-width:360px}
-body[data-state=green] #mascot svg{animation:bob 3s ease-in-out infinite}
-body[data-state=red] #mascot svg,body[data-state=siren] #mascot svg{animation:loud .4s ease-in-out infinite}
+body[data-state=idle] #mascot span{animation:breathe 3.6s ease-in-out infinite}
+body[data-state=green] #mascot span{animation:bob 2.4s ease-in-out infinite}
+body[data-state=yellow] #mascot span{animation:sway 1.6s ease-in-out infinite}
+body[data-state=orange] #mascot span{animation:tremble .25s linear infinite}
+body[data-state=red] #mascot span{animation:loud .4s ease-in-out infinite}
+body[data-state=siren] #mascot span{animation:siren .35s ease-in-out infinite}
 .meter{height:26px;background:var(--line);border-radius:999px;position:relative;overflow:hidden}
 #fill{height:100%;width:0;background:var(--c);border-radius:999px;transition:width .08s linear,background .3s}
 #mark{position:absolute;top:0;bottom:0;left:65%;width:3px;margin-left:-1.5px;background:#e11d48}
@@ -76,12 +80,6 @@ h3{font-size:15px;font-weight:800;margin-bottom:12px}
 input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;width:100%;height:32px;margin:0;touch-action:pan-y}
 input[type=range]::-webkit-slider-runnable-track{height:6px;background:var(--line);border-radius:999px}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--blue);border:3px solid #fff;box-shadow:0 2px 8px rgba(37,99,235,.45)}
-details summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:14px;font-weight:800}
-details summary::-webkit-details-marker{display:none}
-.chev{transition:transform .25s;color:var(--mut)}details[open] .chev{transform:rotate(180deg)}
-.adv{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-.adv button{height:42px;border-radius:12px;background:#f1f5f9;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink)}
-.adv p{font-size:12px;color:var(--mut);font-weight:600;line-height:1.4}
 .foot{text-align:center;font-size:12px;font-weight:600;color:var(--mut);padding:2px 0}
 .ic{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .h{display:flex;align-items:center;gap:8px}.h .ic{color:var(--blue);width:1.3em;height:1.3em}
@@ -91,10 +89,14 @@ body::before,body::after{content:"";position:fixed;border-radius:50%;background:
 body::before{width:440px;height:440px;top:-170px;right:-150px}body::after{width:300px;height:300px;bottom:-130px;left:-110px;opacity:.07}
 .wrap{position:relative;z-index:1}
 #timer{display:inline-flex;align-items:center;gap:5px}
-#banner button,.btn,.adv button,.foot{display:flex;align-items:center;justify-content:center;gap:8px}
+#banner button,.btn,.foot{display:flex;align-items:center;justify-content:center;gap:8px}
 #banner button{padding:0}
 .btn .ic{width:1.3em;height:1.3em}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08) translateY(2px)}}
+@keyframes sway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes tremble{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-2px,1px) rotate(-2deg)}75%{transform:translate(2px,-1px) rotate(2deg)}}
+@keyframes siren{0%,100%{transform:scale(1) rotate(-8deg)}50%{transform:scale(1.25) rotate(8deg)}}
 @keyframes loud{0%,100%{transform:rotate(0) scale(1.05)}25%{transform:rotate(-10deg) scale(1.12)}75%{transform:rotate(10deg) scale(1.12)}}
 @keyframes flash{0%,100%{background:#ffe4e6}50%{background:#fda4af}}
 @keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
@@ -135,8 +137,8 @@ body::before{width:440px;height:440px;top:-170px;right:-150px}body::after{width:
 
     <div class="hero">
       <div id="mascot"></div>
-      <h2 id="title">Chuti dort</h2>
-      <p id="sub">Lance l'écoute pour le réveiller</p>
+      <h2 id="title">En veille</h2>
+      <p id="sub">Lance l'écoute pour démarrer</p>
     </div>
 
     <div>
@@ -151,7 +153,6 @@ body::before{width:440px;height:440px;top:-170px;right:-150px}body::after{width:
 
     <div class="btns">
       <button type="button" id="toggle" class="btn primary"></button>
-      <button type="button" id="bt-btn" class="btn ghost" hidden><svg class="ic" aria-hidden="true"><use href="#i-volume"/></svg>Activer la sortie enceinte</button>
       <button type="button" id="reset" class="btn ghost"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg>Retour au calme</button>
     </div>
   </section>
@@ -168,27 +169,11 @@ body::before{width:440px;height:440px;top:-170px;right:-150px}body::after{width:
       <div class="field"><label for="s-delay">Délai avant alerte <span id="v-delay" class="val">1.5s</span></label><input type="range" id="s-delay" min="0.5" max="5" step="0.5" value="1.5"></div>
       <div class="field"><label for="s-cd">Pause entre alertes <span id="v-cd" class="val">4s</span></label><input type="range" id="s-cd" min="2" max="12" value="4"></div>
     </div>
-
-    <div class="group">
-      <details>
-        <summary><span class="h"><svg class="ic" aria-hidden="true"><use href="#i-flask"/></svg>Avancé : sortie audio</span><svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg></summary>
-        <div class="adv">
-          <button type="button" id="mode-btn"></button>
-          <button type="button" id="pm-btn"></button>
-          <button type="button" id="sess-btn"></button>
-          <button type="button" id="diag-btn"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>Diagnostic audio</button>
-          <button type="button" id="fix-btn"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg>Réinitialiser l'audio</button>
-          <p>Si le son repart sur le téléphone : 1) Réinitialise l'audio. 2) Connecte l'enceinte avant de lancer l'écoute. 3) Si besoin, essaie une autre session iOS puis relance l'écoute.</p>
-        </div>
-      </details>
-    </div>
   </aside>
 </main>
 
 <p class="foot"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg>Safari : Partager → Sur l'écran d'accueil</p>
 </div>
-
-<audio id="out" playsinline></audio>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -199,8 +184,8 @@ NAMES.forEach((n, i) => {
   $('tests').insertAdjacentHTML('beforeend', `<button type="button" onclick="alarm(${i + 1})"><b>${i + 1}</b><span>${n}</span></button>`);
 });
 
-let ctx, comp, master, streamDest, analyser, micStream;
-let listening = false, raf = null, wakeLock = null, useMedia = true, sessionMode = 'play-and-record', pauseMic = true, paused = false;
+let ctx, comp, master, analyser, micStream;
+let listening = false, raf = null, wakeLock = null, sessionMode = 'play-and-record', paused = false;
 let threshold = 65, gainMul = 4.5, delayMs = 1500, cooldownMs = 4000;
 let level = 0, shown = 0, overSince = null, lastAlert = 0, smooth = 0, siren = false, sirenT = null;
 
@@ -218,57 +203,13 @@ async function ensureAudio() {
     comp.threshold.value = -14; comp.knee.value = 12; comp.ratio.value = 8; comp.attack.value = 0.003; comp.release.value = 0.15;
     master = ctx.createGain(); master.gain.value = 1.35;
     comp.connect(master);
-    streamDest = ctx.createMediaStreamDestination();
-    route();
+    master.connect(ctx.destination);
   }
   if (ctx.state !== 'running') await ctx.resume();
 }
-function route() {
-  try { master.disconnect(); } catch (e) {}
-  const el = $('out');
-  if (useMedia) { master.connect(streamDest); el.srcObject = streamDest.stream; el.play().catch(() => {}); }
-  else { master.connect(ctx.destination); el.pause(); el.srcObject = null; }
-}
 ['touchstart', 'click'].forEach(e => document.addEventListener(e, () => {
   if (ctx && ctx.state !== 'running') ctx.resume().catch(() => {});
-  const el = $('out'); if (useMedia && el.srcObject && el.paused) el.play().catch(() => {});
 }, { passive: true }));
-
-const SESS = { 'play-and-record': 'Lecture + micro', 'auto': 'Auto (iOS décide)', 'playback': 'Lecture seule' };
-function sessLabel() { $('sess-btn').textContent = 'Session iOS : ' + SESS[sessionMode]; }
-$('sess-btn').addEventListener('click', () => {
-  const k = Object.keys(SESS); sessionMode = k[(k.indexOf(sessionMode) + 1) % k.length]; sessLabel(); save();
-  banner("Session changée. Arrête puis relance l'écoute, puis fais un test.", 'info');
-});
-async function resetAudio() {
-  if (listening) stopMic();
-  try { if (ctx) await ctx.close(); } catch (e) {}
-  ctx = null; $('out').pause(); $('out').srcObject = null;
-  useMedia = true; sessionMode = 'play-and-record'; pauseMic = true; pmLabel(); modeLabel(); sessLabel(); save();
-  banner("Audio réinitialisé. Vérifie que l'enceinte est connectée, puis lance l'écoute.", 'info');
-}
-$('fix-btn').addEventListener('click', resetAudio);
-$('bt-btn').addEventListener('click', async () => {
-  if (!ctx) return;
-  if (ctx.state !== 'running') await ctx.resume();
-  route();                       // relance l'élément <audio> pendant que le micro est ouvert
-  banner('Sortie enceinte relancée. Fais un test (1 à 5).', 'info');
-});
-function pmLabel() { $('pm-btn').textContent = 'Couper le micro pendant l\'alarme : ' + (pauseMic ? 'oui (recommandé)' : 'non'); }
-$('pm-btn').addEventListener('click', () => { pauseMic = !pauseMic; pmLabel(); refresh(); save(); });
-function modeLabel() { $('mode-btn').textContent = 'Sortie : ' + (useMedia ? 'élément audio (recommandé)' : 'Web Audio (direct)'); }
-$('mode-btn').addEventListener('click', () => {
-  useMedia = !useMedia; modeLabel(); if (ctx) route(); refresh();
-  banner("Mode changé. Arrête puis relance l'écoute, puis fais un test.", 'info');
-});
-$('diag-btn').addEventListener('click', async () => {
-  let t = `audioSession : ${navigator.audioSession ? navigator.audioSession.type : 'non supporté'} · Contexte : ${ctx ? ctx.state : 'aucun'} · Élément : ${$('out').paused ? 'en pause' : 'en lecture'} · Session demandée : ${SESS[sessionMode]}`;
-  try {
-    const d = await navigator.mediaDevices.enumerateDevices();
-    t += ` · Entrée : ${d.filter(x => x.kind === 'audioinput').map(x => x.label || '?').join(', ') || 'aucune'}`;
-  } catch (e) {}
-  banner(t, 'info');
-});
 
 async function playAlarm(n) {
   try {
@@ -301,47 +242,10 @@ async function playAlarm(n) {
   } catch (e) { console.error(e); }
 }
 
-const E = (x, y) => `<circle cx="${x}" cy="${y}" r="5.5" fill="#0f172a" stroke="none"/>`;
-const FACES = {
-  idle: '<path d="M26 48q9 8 18 0M56 48q9 8 18 0M43 68q7 5 14 0"/><path d="M72 18h11l-11 13h11" stroke-width="4"/>',
-  green: E(35, 46) + E(65, 46) + '<path d="M31 62q19 22 38 0"/><circle cx="22" cy="62" r="7" fill="#fff" opacity=".4" stroke="none"/><circle cx="78" cy="62" r="7" fill="#fff" opacity=".4" stroke="none"/>',
-  yellow: E(35, 46) + E(65, 46) + '<path d="M38 68h24"/>',
-  orange: E(35, 48) + E(65, 48) + '<path d="M25 34l16 6M75 34l-16 6M33 72q4-6 8 0t8 0t8 0t8 0"/>',
-  red: '<path d="M27 38l15 8-15 8M73 38l-15 8 15 8"/><ellipse cx="50" cy="72" rx="12" ry="9" fill="#0f172a"/>',
-  siren: '<path d="M27 38l15 8-15 8M73 38l-15 8 15 8"/><ellipse cx="50" cy="72" rx="12" ry="9" fill="#0f172a"/><path d="M14 20l-8-6M86 20l8-6M50 4V-6" stroke-width="4"/>'
-};
-const wait = ms => new Promise(r => setTimeout(r, ms));
-const DUR = { 1: .95, 2: .4, 3: .7, 4: .8, 5: 4.1 };
-function closeMicOnly() {
-  cancelAnimationFrame(raf);
-  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
-  analyser = null;
-}
-async function openMic() {
-  micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 }, video: false });
-  analyser = ctx.createAnalyser(); analyser.fftSize = 512; analyser.smoothingTimeConstant = .25;
-  ctx.createMediaStreamSource(micStream).connect(analyser);
-}
-// Pendant l'alarme, on libère le micro : iOS rend alors la sortie à l'enceinte Bluetooth
-async function alarm(n) {
-  if (!listening || !pauseMic) return playAlarm(n);
-  if (paused) return;
-  paused = true;
-  closeMicOnly(); setSession('playback');
-  const tm = $('timer'); tm.className = 'show'; tm.innerHTML = ico('volume') + 'Alarme en cours';
-  await wait(700);
-  const el = $('out'); if (useMedia && el.srcObject && el.paused) el.play().catch(() => {});
-  await playAlarm(n);
-  await wait(DUR[n] * 1000 + 350);
-  if (!listening) { paused = false; return; }
-  try {
-    applySession(); await openMic();
-    smooth = 0; overSince = null; lastAlert = Date.now(); paused = false; tm.className = ''; loop();
-  } catch (e) { paused = false; banner("Le micro n'a pas pu redémarrer. Relance l'écoute."); stopMic(); }
-}
+const EMOJI = { idle: '😴', green: '😊', yellow: '😐', orange: '😬', red: '🙉', siren: '🚨' };
 function setState(s, title, sub) {
   document.body.dataset.state = s;
-  $('mascot').innerHTML = `<svg viewBox="-6 -12 112 118" aria-hidden="true"><circle cx="50" cy="52" r="44" fill="var(--c)"/><g fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">${FACES[s]}</g></svg>`;
+  const m = $('mascot'); if (m.dataset.s !== s) { m.dataset.s = s; m.innerHTML = `<span>${EMOJI[s]}</span>`; }
   $('title').textContent = title; $('sub').textContent = sub;
 }
 function sirenMode(ms) {
@@ -351,7 +255,7 @@ function sirenMode(ms) {
 }
 function idle() {
   siren = false;
-  setState('idle', 'Chuti dort', "Lance l'écoute pour le réveiller");
+  setState('idle', 'En veille', "Lance l'écoute pour démarrer");
   $('fill').style.width = '0%'; $('pct').textContent = '0%'; $('timer').className = '';
 }
 
@@ -385,9 +289,7 @@ async function startMic() {
     analyser = ctx.createAnalyser(); analyser.fftSize = 512; analyser.smoothingTimeConstant = .25;
     ctx.createMediaStreamSource(micStream).connect(analyser);   // jamais vers la sortie (Larsen)
     if (ctx.state !== 'running') await ctx.resume();
-    if (useMedia && $('out').paused) $('out').play().catch(() => {});
     listening = true; overSince = null; refresh(); loop();
-    if (useMedia && !pauseMic) banner("Écoute active. Touche « Activer la sortie enceinte », puis fais un test.", 'info');
   } catch (e) {
     banner(e.name === 'NotAllowedError' ? "Micro bloqué : Réglages > Safari > Microphone (ou icône « AA » dans la barre d'adresse)." : "Impossible d'accéder au micro. Autorise-le dans Safari.");
     stopMic();
@@ -440,7 +342,6 @@ function refresh() {
   const b = $('toggle');
   b.className = 'btn primary' + (listening ? ' stop' : '');
   b.innerHTML = listening ? ico('stop') + "Arrêter l'écoute" : ico('mic') + "Démarrer l'écoute";
-  $('bt-btn').hidden = !(listening && useMedia && !pauseMic);
   $('mic-dot').className = 'dot' + (listening ? ' live' : '');
   $('mic-text').textContent = listening ? `Écoute active · ${gainMul.toFixed(1)}x` : 'Micro en pause';
 }
@@ -456,18 +357,14 @@ bind('s-cd', v => { cooldownMs = v * 1000; $('v-cd').textContent = v + 's'; });
 
 // --- Mémorisation des réglages ---
 const KEY = 'sonometre-settings', IDS = ['s-th', 's-gain', 's-delay', 's-cd'];
-function save() { try { const o = { media: useMedia, sess: sessionMode, pm: pauseMic }; IDS.forEach(i => o[i] = $(i).value); localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+function save() { try { const o = {}; IDS.forEach(i => o[i] = $(i).value); localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
 try {
   const o = JSON.parse(localStorage.getItem(KEY) || '{}');
   IDS.forEach(i => { if (o[i] != null) { $(i).value = o[i]; $(i).dispatchEvent(new Event('input')); } });
-  if (o.media === false) useMedia = false;
-  if (o.sess && SESS[o.sess]) sessionMode = o.sess;
-  if (o.pm === false) pauseMic = false;
 } catch (e) {}
 document.querySelectorAll('input[type=range]').forEach(i => i.addEventListener('change', save));
-$('mode-btn').addEventListener('click', save);
 
-idle(); pmLabel(); sessLabel(); modeLabel(); refresh(); updateSteps();
+idle(); refresh(); updateSteps();
 </script>
 </body>
 </html>
